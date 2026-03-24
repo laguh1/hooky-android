@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crochet Manager — B&W Design Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #FFFFFF;
+    --bg: #F3F4F6;
+    --muted: #F9FAFB;
+    --border: #E5E7EB;
+    --border-strong: #D1D5DB;
+    --text-muted: #9CA3AF;
+    --text-secondary: #6B7280;
+    --text-primary: #111827;
+    --slate: #1E293B;
+    --slate-hover: #0F172A;
+    --red: #EF4444;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0F0F0F;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px 64px;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: #F9FAFB;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .page-subtitle {
+    font-size: 11px;
+    color: #4B5563;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .phones-row {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .screen-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4B5563;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 320px;
+    height: 680px;
+    background: #1A1A1A;
+    border-radius: 44px;
+    padding: 10px;
+    box-shadow:
+      0 0 0 1px #2A2A2A,
+      0 24px 80px rgba(0,0,0,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    border-radius: 36px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 36px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 0;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .status-bar.dark-bar {
+    background: var(--slate);
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 2;
+  }
+
+  .status-bar-pill {
+    width: 88px; height: 20px;
+    background: #1A1A1A;
+    border-radius: 12px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .status-bar.dark-bar .status-bar-pill {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .status-time {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .status-time.light { color: rgba(255,255,255,0.9); }
+
+  .status-icons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .s-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-primary); }
+  .s-dot.light { background: rgba(255,255,255,0.8); }
+
+  /* Screen content */
+  .screen-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    height: 62px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px 6px;
+    flex-shrink: 0;
+    border-radius: 0 0 36px 36px;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    padding-top: 6px;
+  }
+
+  .nav-icon { width: 22px; height: 22px; }
+  .nav-label { font-size: 9px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.03em; }
+  .nav-item.active .nav-label { color: var(--slate); font-weight: 600; }
+
+  .nav-pill {
+    width: 40px; height: 26px;
+    background: var(--bg);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ─── SHARED COMPONENTS ─── */
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chip-outline {
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    color: var(--text-secondary);
+  }
+
+  .chip-solid {
+    background: var(--slate);
+    color: white;
+    border: 1.5px solid var(--slate);
+  }
+
+  .chip-muted {
+    background: var(--bg);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+  }
+
+  .chip-wip {
+    background: var(--text-primary);
+    color: white;
+    border: 1.5px solid var(--text-primary);
+  }
+
+  .chip-done {
+    background: white;
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-strong);
+  }
+
+  .chips-row { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 10px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .section-link {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ─── DASHBOARD ─── */
+
+  .dash-header {
+    padding: 12px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dash-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 3px;
+  }
+
+  .dash-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dash-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--slate);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: white; font-weight: 600;
+  }
+
+  .dash-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 14px 20px;
+  }
+
+  .stat-card {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .stat-label {
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Progress cards */
+  .progress-scroll {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 16px;
+    overflow: hidden;
+  }
+
+  .progress-card {
+    width: 128px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .progress-img {
+    width: 100%;
+    height: 72px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle crosshatch texture for image placeholders */
+  .texture {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 9px),
+      repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 9px);
+  }
+
+  .progress-img-dark { background: var(--slate); }
+  .progress-img-dark .texture {
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(255,255,255,0.06) 8px, rgba(255,255,255,0.06) 9px),
+      repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.06) 8px, rgba(255,255,255,0.06) 9px);
+  }
+
+  .img-placeholder-icon { position: relative; z-index: 1; opacity: 0.3; }
+  .progress-img-dark .img-placeholder-icon { opacity: 0.4; }
+
+  .progress-info { padding: 8px 10px; }
+  .progress-name { font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+
+  /* Recent card */
+  .recent-card {
+    margin: 0 20px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .recent-img-strip {
+    width: 56px;
+    flex-shrink: 0;
+    background: var(--slate);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  .recent-info { padding: 10px 12px; flex: 1; }
+  .recent-name { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .recent-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; }
+
+  /* ─── PIECE LIST ─── */
+
+  .list-header { padding: 12px 20px 14px; }
+
+  .list-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+
+  .search-placeholder { font-size: 12px; color: var(--text-muted); }
+
+  .filter-chips-row {
+    display: flex;
+    gap: 6px;
+    padding: 0 20px 14px;
+    overflow: hidden;
+  }
+
+  .filter-chip {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  .filter-chip.active { background: var(--slate); color: white; }
+  .filter-chip.inactive { background: var(--muted); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  .piece-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 20px;
+  }
+
+  .piece-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .piece-img {
+    width: 100%;
+    height: 86px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  .piece-img-2 { background: var(--slate); }
+  .piece-img-3 { background: #374151; }
+  .piece-img-4 { background: #E5E7EB; }
+
+  .piece-card-info { padding: 8px 10px 9px; }
+  .piece-card-name { font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; line-height: 1.3; }
+
+  .fab {
+    position: absolute;
+    bottom: 70px;
+    right: 18px;
+    width: 44px; height: 44px;
+    background: var(--slate);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    color: white;
+    font-size: 22px;
+    font-weight: 300;
+    z-index: 20;
+    line-height: 1;
+  }
+
+  /* ─── PIECE DETAIL ─── */
+
+  .detail-hero {
+    height: 178px;
+    background: var(--slate);
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px),
+      repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px);
+  }
+
+  .hero-corner-text {
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .detail-back {
+    position: absolute;
+    top: 44px;
+    left: 16px;
+    width: 28px; height: 28px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 3;
+  }
+
+  .detail-body {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .detail-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 5px;
+  }
+
+  .detail-section {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .detail-value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .detail-chips-section {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chips-group-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .edit-btn {
+    margin: 0 20px 4px;
+    padding: 11px;
+    background: var(--slate);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Crochet Manager</div>
+<div class="page-subtitle">Android App — Black &amp; White Design Preview</div>
+
+<div class="phones-row">
+
+  <!-- ═══ PHONE 1: DASHBOARD ═══ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Dashboard</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <div class="status-bar-pill"></div>
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="s-dot"></div><div class="s-dot"></div><div class="s-dot"></div>
+          </div>
+        </div>
+
+        <div class="screen-content">
+          <div class="dash-header">
+            <div class="dash-top-row">
+              <span class="dash-eyebrow">Good morning</span>
+              <div class="dash-avatar">J</div>
+            </div>
+            <div class="dash-title">My Crochet Studio</div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Pieces</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">34</div>
+              <div class="stat-label">Yarns</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Stitches</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">47h</div>
+              <div class="stat-label">Worked</div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <span class="section-title">In Progress</span>
+            <span class="section-link">See all</span>
+          </div>
+
+          <div class="progress-scroll">
+            <div class="progress-card">
+              <div class="progress-img progress-img-dark">
+                <div class="texture"></div>
+                <svg class="img-placeholder-icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="7" stroke="white" stroke-width="1.5"/>
+                  <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="white" stroke-width="1.2" fill="none"/>
+                </svg>
+              </div>
+              <div class="progress-info">
+                <div class="progress-name">Autumn Shawl</div>
+                <span class="chip chip-wip">WIP</span>
+              </div>
+            </div>
+            <div class="progress-card">
+              <div class="progress-img">
+                <div class="texture"></div>
+                <svg class="img-placeholder-icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="#9CA3AF" stroke-width="1.5"/>
+                  <path d="M4 10h16M4 14h16M9 6v12M15 6v12" stroke="#9CA3AF" stroke-width="1"/>
+                </svg>
+              </div>
+              <div class="progress-info">
+                <div class="progress-name">Baby Blanket</div>
+                <span class="chip chip-wip">WIP</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <span class="section-title">Recently Finished</span>
+            <span class="section-link">See all</span>
+          </div>
+
+          <div class="recent-card">
+            <div class="recent-img-strip">
+              <div class="texture" style="background-image:repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 9px),repeating-linear-gradient(90deg,transparent,transparent 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 9px)"></div>
+              <svg style="opacity:0.3;position:relative;z-index:1" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="7" stroke="white" stroke-width="1.5"/>
+                <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="white" stroke-width="1.2" fill="none"/>
+              </svg>
+            </div>
+            <div class="recent-info">
+              <div class="recent-name">Evening Scarf</div>
+              <div class="recent-meta">Finished Mar 20 · 8.5 h</div>
+              <div class="chips-row">
+                <span class="chip chip-done">Finished</span>
+                <span class="chip chip-outline">For Sale</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-nav">
+          <div class="nav-item active">
+            <div class="nav-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M3 12L12 3l9 9" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+                <path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="nav-label" style="color:#1E293B">Dashboard</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="7" stroke="#9CA3AF" stroke-width="1.8"/>
+              <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="#9CA3AF" stroke-width="1.5" fill="none"/>
+            </svg>
+            <span class="nav-label">Pieces</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M15 3a3 3 0 013 3M18 6l3-3" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Yarns</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16M4 12h10M4 18h7" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Stitches</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PHONE 2: PIECE LIST ═══ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Piece List</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <div class="status-bar-pill"></div>
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <div class="s-dot"></div><div class="s-dot"></div><div class="s-dot"></div>
+          </div>
+        </div>
+
+        <div class="screen-content" style="position:relative">
+          <div class="list-header">
+            <div class="list-title">My Pieces</div>
+            <div class="search-bar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="#9CA3AF" stroke-width="2"/>
+                <path d="M21 21l-4.35-4.35" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span class="search-placeholder">Search pieces…</span>
+            </div>
+          </div>
+
+          <div class="filter-chips-row">
+            <div class="filter-chip active">All</div>
+            <div class="filter-chip inactive">In Progress</div>
+            <div class="filter-chip inactive">Finished</div>
+            <div class="filter-chip inactive">Ready</div>
+          </div>
+
+          <div class="piece-grid">
+            <div class="piece-card">
+              <div class="piece-img">
+                <div class="texture"></div>
+                <svg class="img-placeholder-icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="7" stroke="#D1D5DB" stroke-width="1.5"/>
+                  <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="#D1D5DB" stroke-width="1.2" fill="none"/>
+                </svg>
+              </div>
+              <div class="piece-card-info">
+                <div class="piece-card-name">Autumn Shawl</div>
+                <div class="chips-row">
+                  <span class="chip chip-muted">Shawl</span>
+                  <span class="chip chip-wip">WIP</span>
+                </div>
+              </div>
+            </div>
+            <div class="piece-card">
+              <div class="piece-img piece-img-2">
+                <div class="texture" style="background-image:repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 9px),repeating-linear-gradient(90deg,transparent,transparent 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 9px)"></div>
+                <svg class="img-placeholder-icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                  <path d="M4 10h16M9 6v12M15 6v12" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                </svg>
+              </div>
+              <div class="piece-card-info">
+                <div class="piece-card-name">Baby Blanket</div>
+                <div class="chips-row">
+                  <span class="chip chip-muted">Blanket</span>
+                  <span class="chip chip-wip">WIP</span>
+                </div>
+              </div>
+            </div>
+            <div class="piece-card">
+              <div class="piece-img piece-img-3">
+                <div class="texture" style="background-image:repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(255,255,255,0.05) 8px,rgba(255,255,255,0.05) 9px),repeating-linear-gradient(90deg,transparent,transparent 8px,rgba(255,255,255,0.05) 8px,rgba(255,255,255,0.05) 9px)"></div>
+                <svg class="img-placeholder-icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="7" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="piece-card-info">
+                <div class="piece-card-name">Evening Scarf</div>
+                <div class="chips-row">
+                  <span class="chip chip-muted">Scarf</span>
+                  <span class="chip chip-done">Done</span>
+                </div>
+              </div>
+            </div>
+            <div class="piece-card">
+              <div class="piece-img piece-img-4">
+                <div class="texture"></div>
+                <svg class="img-placeholder-icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 3h12l2 6H4L6 3zM4 9v12h16V9" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="piece-card-info">
+                <div class="piece-card-name">Market Bag</div>
+                <div class="chips-row">
+                  <span class="chip chip-muted">Bag</span>
+                  <span class="chip chip-solid">Ready</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fab">+</div>
+        </div>
+
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M3 12L12 3l9 9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Dashboard</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="7" stroke="#1E293B" stroke-width="1.8"/>
+                <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="#1E293B" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <span class="nav-label" style="color:#1E293B">Pieces</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M15 3a3 3 0 013 3M18 6l3-3" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Yarns</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16M4 12h10M4 18h7" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Stitches</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PHONE 3: PIECE DETAIL ═══ -->
+  <div class="phone-wrap">
+    <div class="screen-label">Piece Detail</div>
+    <div class="phone">
+      <div class="phone-screen">
+
+        <div class="detail-hero">
+          <div class="status-bar dark-bar">
+            <div class="status-bar-pill"></div>
+            <span class="status-time light">9:41</span>
+            <div class="status-icons">
+              <div class="s-dot light"></div><div class="s-dot light"></div><div class="s-dot light"></div>
+            </div>
+          </div>
+          <div class="hero-grid"></div>
+          <div class="hero-corner-text">✦</div>
+          <div class="detail-back">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <svg style="opacity:0.12;position:relative;z-index:1" width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="30" stroke="white" stroke-width="3"/>
+            <path d="M12 40 Q40 10 68 40 Q40 70 12 40" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M12 40 Q40 25 68 40" stroke="white" stroke-width="2" fill="none"/>
+            <circle cx="40" cy="40" r="5" stroke="white" stroke-width="2.5"/>
+          </svg>
+        </div>
+
+        <div class="detail-body">
+          <div>
+            <div class="detail-title">Summer Shawl</div>
+            <div class="chips-row">
+              <span class="chip chip-wip">In Progress</span>
+              <span class="chip chip-outline">For Sale</span>
+              <span class="chip chip-muted">Shawl</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-row">
+              <span class="detail-label">Dimensions</span>
+              <span class="detail-value">180 × 60 cm</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Work Hours</span>
+              <span class="detail-value">14.5 h</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Hook Size</span>
+              <span class="detail-value">5.0 mm</span>
+            </div>
+          </div>
+
+          <div class="detail-chips-section">
+            <div class="chips-group-label">Yarns Used</div>
+            <div class="chips-row">
+              <span class="chip chip-solid">Merino Rust</span>
+              <span class="chip chip-done">Cotton Cream</span>
+            </div>
+            <div style="height:1px;background:var(--border);margin:2px 0"></div>
+            <div class="chips-group-label">Stitches Used</div>
+            <div class="chips-row">
+              <span class="chip chip-outline">Single Crochet</span>
+              <span class="chip chip-outline">Shell Stitch</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="edit-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Edit Piece
+        </div>
+
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M3 12L12 3l9 9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Dashboard</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-pill">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="7" stroke="#1E293B" stroke-width="1.8"/>
+                <path d="M5.5 12 Q12 3 18.5 12 Q12 21 5.5 12" stroke="#1E293B" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <span class="nav-label" style="color:#1E293B">Pieces</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M15 3a3 3 0 013 3M18 6l3-3" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Yarns</span>
+          </div>
+          <div class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M4 6h16M4 12h10M4 18h7" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">Stitches</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Palette reference -->
+<div style="margin-top:44px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center">
+  <div style="font-size:9px;color:#4B5563;letter-spacing:0.1em;text-transform:uppercase;margin-right:4px">Palette</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#FFFFFF;border:1px solid #E5E7EB"></div>
+      <span style="font-size:9px;color:#4B5563">White</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#F3F4F6;border:1px solid #E5E7EB"></div>
+      <span style="font-size:9px;color:#4B5563">Muted</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#E5E7EB"></div>
+      <span style="font-size:9px;color:#4B5563">Border</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#6B7280"></div>
+      <span style="font-size:9px;color:#4B5563">Secondary</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#111827"></div>
+      <span style="font-size:9px;color:#4B5563">Primary</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:28px;height:28px;border-radius:50%;background:#1E293B"></div>
+      <span style="font-size:9px;color:#4B5563">Slate</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
