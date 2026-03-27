@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -77,6 +78,7 @@ import com.crochet.manager.ui.theme.TextMuted
 import com.crochet.manager.ui.theme.TextSecondary
 import com.crochet.manager.ui.theme.White
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PieceDetailScreen(
     pieceId: Int,
@@ -136,7 +138,7 @@ fun PieceDetailScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun PieceDetailContent(
     piece: PieceEntity,

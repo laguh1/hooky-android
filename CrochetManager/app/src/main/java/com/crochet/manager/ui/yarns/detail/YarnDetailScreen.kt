@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -73,6 +74,7 @@ import com.crochet.manager.ui.theme.TextSecondary
 import com.crochet.manager.ui.theme.White
 import kotlinx.serialization.json.Json
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun YarnDetailScreen(
     yarnId: Int,
@@ -132,7 +134,7 @@ fun YarnDetailScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun YarnDetailContent(
     yarn: YarnEntity,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,6 +44,7 @@ import coil.compose.AsyncImage
  *                       confirmation then calls this lambda with the file path.
  * @param modifier       Modifier applied to the outer Box
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoGallery(
     photos: List<String>,

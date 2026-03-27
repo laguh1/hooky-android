@@ -1,0 +1,18 @@
+# Android build outputs
+build/
+.gradle/
+*.apk
+*.aab
+
+# Android Studio IDE files
+.idea/
+*.iml
+
+# Local configuration (contains machine-specific SDK path)
+local.properties
+
+# Gradle wrapper jar (large binary)
+gradle/wrapper/gradle-wrapper.jar
+
+# OS files
+.DS_Store
