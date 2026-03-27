@@ -13,6 +13,10 @@ local.properties
 
 # Gradle wrapper jar (large binary)
 gradle/wrapper/gradle-wrapper.jar
+**/gradle/wrapper/gradle-wrapper.jar
 
 # OS files
 .DS_Store
+
+# Unrelated files
+FACEBOOK-GROUPS.md
