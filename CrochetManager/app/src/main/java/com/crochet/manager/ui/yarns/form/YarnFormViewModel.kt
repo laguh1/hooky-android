@@ -5,7 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crochet.manager.data.db.entity.YarnEntity
 import com.crochet.manager.data.repository.YarnRepository
+import com.crochet.manager.data.scanner.PaletteColorExtractor
+import com.crochet.manager.data.scanner.ScanMode
+import com.crochet.manager.data.scanner.YarnLabelScannerService
 import com.crochet.manager.domain.model.CareInstructions
+import com.crochet.manager.domain.model.NeedleScanResult
+import com.crochet.manager.domain.model.YarnLabelScanResult
 import com.crochet.manager.domain.model.enums.Material
 import com.crochet.manager.domain.model.enums.WeightCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +60,15 @@ data class YarnFormUiState(
     val photos: List<String> = emptyList(),
     val notes: String = "",
     // Validation
-    val nameError: String? = null
+    val nameError: String? = null,
+    // Scanning
+    val scanMode: ScanMode = ScanMode.NONE,
+    val isScanning: Boolean = false,
+    val scanResult: YarnLabelScanResult? = null,
+    val needleScanResult: NeedleScanResult? = null,
+    // Color suggestion (auto-detected from photo via Palette API)
+    val suggestedColor: String? = null,
+    val suggestedColorRgb: Int? = null
 )
 
 sealed interface YarnFormAction {
@@ -85,15 +98,29 @@ sealed interface YarnFormAction {
     data class IronTemperatureChanged(val value: String) : YarnFormAction
     data class CareNotesChanged(val value: String) : YarnFormAction
     data class PhotoAdded(val uri: String) : YarnFormAction
+    data class PhotoReceived(val path: String) : YarnFormAction
     data class PhotoRemoved(val uri: String) : YarnFormAction
     data class NotesChanged(val value: String) : YarnFormAction
     object SaveYarn : YarnFormAction
     object ClearError : YarnFormAction
+    // Color suggestion
+    object ApplySuggestedColor : YarnFormAction
+    object DismissSuggestedColor : YarnFormAction
+    // Label scanning
+    object ScanLabelRequested : YarnFormAction
+    object ApplyScanResult : YarnFormAction
+    object DismissScanResult : YarnFormAction
+    // Needle/hook scanning
+    data class NeedleScanRequested(val target: ScanMode) : YarnFormAction
+    object ApplyNeedleScanResult : YarnFormAction
+    object DismissNeedleScanResult : YarnFormAction
 }
 
 @HiltViewModel
 class YarnFormViewModel @Inject constructor(
     private val yarnRepository: YarnRepository,
+    private val labelScannerService: YarnLabelScannerService,
+    private val colorExtractor: PaletteColorExtractor,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -224,8 +251,26 @@ class YarnFormViewModel @Inject constructor(
                 _uiState.update { it.copy(ironTemperature = action.value) }
             is YarnFormAction.CareNotesChanged ->
                 _uiState.update { it.copy(careNotes = action.value) }
-            is YarnFormAction.PhotoAdded ->
+            is YarnFormAction.PhotoAdded -> {
                 _uiState.update { it.copy(photos = it.photos + action.uri) }
+                if (_uiState.value.color.isBlank()) detectColor(action.uri)
+            }
+            is YarnFormAction.PhotoReceived -> {
+                when (_uiState.value.scanMode) {
+                    ScanMode.LABEL -> scanPhoto(action.path)
+                    ScanMode.HOOK, ScanMode.NEEDLE -> scanNeedle(action.path, _uiState.value.scanMode)
+                    ScanMode.NONE -> {
+                        _uiState.update { it.copy(photos = it.photos + action.path) }
+                        if (_uiState.value.color.isBlank()) detectColor(action.path)
+                    }
+                }
+            }
+            YarnFormAction.ApplySuggestedColor -> {
+                val suggested = _uiState.value.suggestedColor ?: return
+                _uiState.update { it.copy(color = suggested, suggestedColor = null, suggestedColorRgb = null) }
+            }
+            YarnFormAction.DismissSuggestedColor ->
+                _uiState.update { it.copy(suggestedColor = null, suggestedColorRgb = null) }
             is YarnFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
             is YarnFormAction.NotesChanged ->
@@ -233,6 +278,90 @@ class YarnFormViewModel @Inject constructor(
             YarnFormAction.SaveYarn -> saveYarn()
             YarnFormAction.ClearError ->
                 _uiState.update { it.copy(error = null) }
+            YarnFormAction.ScanLabelRequested ->
+                _uiState.update { it.copy(scanMode = ScanMode.LABEL) }
+            YarnFormAction.ApplyScanResult -> applyScanResult()
+            YarnFormAction.DismissScanResult ->
+                _uiState.update { it.copy(scanResult = null, scanMode = ScanMode.NONE) }
+            is YarnFormAction.NeedleScanRequested ->
+                _uiState.update { it.copy(scanMode = action.target) }
+            YarnFormAction.ApplyNeedleScanResult -> applyNeedleScanResult()
+            YarnFormAction.DismissNeedleScanResult ->
+                _uiState.update { it.copy(needleScanResult = null, scanMode = ScanMode.NONE) }
+        }
+    }
+
+    private fun detectColor(path: String) {
+        viewModelScope.launch {
+            val extracted = colorExtractor.extractFromPath(path) ?: return@launch
+            // Only suggest if color field is still blank (user may have filled it manually)
+            if (_uiState.value.color.isBlank()) {
+                _uiState.update { it.copy(suggestedColor = extracted.name, suggestedColorRgb = extracted.rgb) }
+            }
+        }
+    }
+
+    private fun scanPhoto(path: String) {
+        _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
+        viewModelScope.launch {
+            try {
+                val result = labelScannerService.scanFromPath(path)
+                if (result.hasAnyData) {
+                    _uiState.update { it.copy(isScanning = false, scanResult = result) }
+                } else {
+                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read label info. Try a clearer, closer photo with good lighting.") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+            }
+        }
+    }
+
+    private fun scanNeedle(path: String, target: ScanMode) {
+        _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
+        viewModelScope.launch {
+            try {
+                val result = labelScannerService.scanNeedleFromPath(path)
+                if (result != null) {
+                    _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = target) }
+                } else {
+                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size. Try a clearer, closer photo with good lighting.") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+            }
+        }
+    }
+
+    private fun applyNeedleScanResult() {
+        val result = _uiState.value.needleScanResult ?: return
+        val target = _uiState.value.scanMode
+        _uiState.update { current ->
+            when (target) {
+                ScanMode.HOOK -> current.copy(hookSizeMm = result.sizeMm, needleScanResult = null, scanMode = ScanMode.NONE)
+                ScanMode.NEEDLE -> current.copy(needleSizeMm = result.sizeMm, needleScanResult = null, scanMode = ScanMode.NONE)
+                else -> current.copy(needleScanResult = null, scanMode = ScanMode.NONE)
+            }
+        }
+    }
+
+    private fun applyScanResult() {
+        val result = _uiState.value.scanResult ?: return
+        _uiState.update { current ->
+            current.copy(
+                scanResult = null,
+                brand = result.brand?.takeIf { it.isNotBlank() } ?: current.brand,
+                color = result.colorName?.takeIf { it.isNotBlank() } ?: current.color,
+                colorCode = result.colorCode?.takeIf { it.isNotBlank() } ?: current.colorCode,
+                material = result.material ?: current.material,
+                materialComposition = result.materialComposition?.takeIf { it.isNotBlank() } ?: current.materialComposition,
+                weightCategory = result.weightCategory ?: current.weightCategory,
+                ballWeightG = result.ballWeightG?.takeIf { it.isNotBlank() } ?: current.ballWeightG,
+                ballLengthM = result.ballLengthM?.takeIf { it.isNotBlank() } ?: current.ballLengthM,
+                hookSizeMm = result.hookSizeMm?.takeIf { it.isNotBlank() } ?: current.hookSizeMm,
+                needleSizeMm = result.needleSizeMm?.takeIf { it.isNotBlank() } ?: current.needleSizeMm,
+                gauge = result.gauge?.takeIf { it.isNotBlank() } ?: current.gauge
+            )
         }
     }
 

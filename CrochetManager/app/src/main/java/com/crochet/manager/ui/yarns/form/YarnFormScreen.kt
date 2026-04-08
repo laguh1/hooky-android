@@ -24,7 +24,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -56,6 +63,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,9 +71,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.crochet.manager.data.scanner.ScanMode
 import com.crochet.manager.domain.model.enums.Material
 import com.crochet.manager.domain.model.enums.WeightCategory
 import com.crochet.manager.ui.camera.rememberPhotoPickerLauncher
+import com.crochet.manager.ui.components.NeedleScanConfirmDialog
 import com.crochet.manager.ui.components.PhotoGallery
 import com.crochet.manager.ui.theme.BorderLight
 import com.crochet.manager.ui.theme.Slate
@@ -94,19 +104,34 @@ fun YarnFormScreen(
         if (granted) onNavigateToCamera()
     }
 
-    // Gallery picker
+    // Gallery picker — adds photo to gallery
     val galleryLauncher = rememberPhotoPickerLauncher { path ->
         viewModel.onAction(YarnFormAction.PhotoAdded(path))
     }
 
-    // Observe photo_path result from CameraScreen
+    // Gallery picker — for label scanning
+    val scanGalleryLauncher = rememberPhotoPickerLauncher { path ->
+        viewModel.onAction(YarnFormAction.PhotoReceived(path))
+    }
+
+    // Helper to trigger needle scan via camera
+    fun launchNeedleScan(target: ScanMode) {
+        viewModel.onAction(YarnFormAction.NeedleScanRequested(target))
+        val granted = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+        if (granted) onNavigateToCamera()
+        else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    // Observe photo_path result from CameraScreen — ViewModel decides: add to gallery or scan
     LaunchedEffect(navController) {
         navController?.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("photo_path", "")
             ?.collect { path ->
                 if (path.isNotBlank()) {
-                    viewModel.onAction(YarnFormAction.PhotoAdded(path))
+                    viewModel.onAction(YarnFormAction.PhotoReceived(path))
                     navController.currentBackStackEntry?.savedStateHandle?.set("photo_path", "")
                 }
             }
@@ -149,6 +174,24 @@ fun YarnFormScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
+        // Label scan result dialog
+        if (uiState.scanResult != null) {
+            YarnLabelScanConfirmDialog(
+                result = uiState.scanResult,
+                onApply = { viewModel.onAction(YarnFormAction.ApplyScanResult) },
+                onDismiss = { viewModel.onAction(YarnFormAction.DismissScanResult) }
+            )
+        }
+
+        // Needle/hook scan result dialog
+        if (uiState.needleScanResult != null) {
+            NeedleScanConfirmDialog(
+                result = uiState.needleScanResult,
+                onApply = { viewModel.onAction(YarnFormAction.ApplyNeedleScanResult) },
+                onDismiss = { viewModel.onAction(YarnFormAction.DismissNeedleScanResult) }
+            )
+        }
+
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
@@ -159,6 +202,7 @@ fun YarnFormScreen(
                 CircularProgressIndicator(color = Slate)
             }
         } else {
+            Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -167,6 +211,84 @@ fun YarnFormScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Scan Label — camera + gallery
+                if (uiState.isScanning) {
+                    Button(
+                        onClick = {},
+                        enabled = false,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            disabledContainerColor = Slate.copy(alpha = 0.5f),
+                            disabledContentColor = White.copy(alpha = 0.7f)
+                        ),
+                        modifier = Modifier.fillMaxWidth().height(52.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            color = White,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Scanning label…", style = MaterialTheme.typography.labelLarge)
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                viewModel.onAction(YarnFormAction.ScanLabelRequested)
+                                val granted = ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.CAMERA
+                                ) == PackageManager.PERMISSION_GRANTED
+                                if (granted) onNavigateToCamera()
+                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Slate,
+                                contentColor = White
+                            ),
+                            modifier = Modifier.weight(1f).height(52.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.DocumentScanner,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                "Scan Label",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.onAction(YarnFormAction.ScanLabelRequested)
+                                scanGalleryLauncher()
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate),
+                            modifier = Modifier.weight(1f).height(52.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Image,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                "From Gallery",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
                 // Section: Basic Info
                 FormSection(title = "Basic Info") {
                     OutlinedTextField(
@@ -200,6 +322,16 @@ fun YarnFormScreen(
                         colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    // Color suggestion chip — appears after photo is added
+                    if (uiState.suggestedColor != null) {
+                        ColorSuggestionChip(
+                            colorName = uiState.suggestedColor,
+                            colorRgb = uiState.suggestedColorRgb,
+                            onApply = { viewModel.onAction(YarnFormAction.ApplySuggestedColor) },
+                            onDismiss = { viewModel.onAction(YarnFormAction.DismissSuggestedColor) }
+                        )
+                    }
 
                     OutlinedTextField(
                         value = uiState.colorCode,
@@ -293,6 +425,11 @@ fun YarnFormScreen(
                         value = uiState.hookSizeMm,
                         onValueChange = { viewModel.onAction(YarnFormAction.HookSizeMmChanged(it)) },
                         label = { Text("Hook size (mm)") },
+                        trailingIcon = {
+                            IconButton(onClick = { launchNeedleScan(ScanMode.HOOK) }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan hook", modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -305,6 +442,11 @@ fun YarnFormScreen(
                         onValueChange = { viewModel.onAction(YarnFormAction.NeedleSizeMmChanged(it)) },
                         label = { Text("Needle size (mm)") },
                         placeholder = { Text("e.g. 4.0-5.0", color = TextMuted) },
+                        trailingIcon = {
+                            IconButton(onClick = { launchNeedleScan(ScanMode.NEEDLE) }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan needle", modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -534,6 +676,7 @@ fun YarnFormScreen(
 
                 Spacer(modifier = Modifier.height(16.dp).navigationBarsPadding())
             }
+            } // end Box
         }
     }
 }
@@ -635,6 +778,56 @@ private fun EnumDropdown(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ColorSuggestionChip(
+    colorName: String,
+    colorRgb: Int?,
+    onApply: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            Icons.Filled.Palette,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = TextMuted
+        )
+        Text(
+            text = "Detected:",
+            style = MaterialTheme.typography.bodySmall,
+            color = TextMuted
+        )
+        if (colorRgb != null) {
+            Box(
+                modifier = Modifier
+                    .size(14.dp)
+                    .background(
+                        color = Color(colorRgb),
+                        shape = CircleShape
+                    )
+                    .border(0.5.dp, BorderLight, CircleShape)
+            )
+        }
+        Text(
+            text = colorName,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(onClick = onApply, modifier = Modifier.size(28.dp)) {
+            Icon(Icons.Filled.Check, contentDescription = "Apply color", modifier = Modifier.size(16.dp), tint = Slate)
+        }
+        IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+            Icon(Icons.Filled.Close, contentDescription = "Dismiss", modifier = Modifier.size(16.dp), tint = TextMuted)
         }
     }
 }

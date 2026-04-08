@@ -107,6 +107,13 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
+    // ML Kit — Yarn Label Scanner (Phase A)
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+
+    // Palette API — Color extraction from photos
+    implementation("androidx.palette:palette-ktx:1.0.0")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crochet.manager.data.db.entity.PieceEntity
 import com.crochet.manager.data.repository.PieceRepository
+import com.crochet.manager.data.scanner.ScanMode
+import com.crochet.manager.data.scanner.YarnLabelScannerService
+import com.crochet.manager.domain.model.NeedleScanResult
 import com.crochet.manager.domain.model.enums.Destination
 import com.crochet.manager.domain.model.enums.PieceType
 import com.crochet.manager.domain.model.enums.WorkStatus
@@ -47,7 +50,11 @@ data class PieceFormUiState(
     val stitchesUsed: List<String> = emptyList(),
     val notes: String = "",
     // Validation
-    val nameError: String? = null
+    val nameError: String? = null,
+    // Hook scanning
+    val scanMode: ScanMode = ScanMode.NONE,
+    val isScanning: Boolean = false,
+    val needleScanResult: NeedleScanResult? = null
 )
 
 sealed interface PieceFormAction {
@@ -62,7 +69,11 @@ sealed interface PieceFormAction {
     data class WorkHoursChanged(val value: String) : PieceFormAction
     data class HookSizeMmChanged(val value: String) : PieceFormAction
     data class PhotoAdded(val uri: String) : PieceFormAction
+    data class PhotoReceived(val path: String) : PieceFormAction
     data class PhotoRemoved(val uri: String) : PieceFormAction
+    object ScanHookRequested : PieceFormAction
+    object ApplyNeedleScanResult : PieceFormAction
+    object DismissNeedleScanResult : PieceFormAction
     data class PriceChanged(val value: String) : PieceFormAction
     data class MaterialCostChanged(val value: String) : PieceFormAction
     data class GiftRecipientChanged(val value: String) : PieceFormAction
@@ -78,6 +89,7 @@ sealed interface PieceFormAction {
 @HiltViewModel
 class PieceFormViewModel @Inject constructor(
     private val pieceRepository: PieceRepository,
+    private val labelScannerService: YarnLabelScannerService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -172,6 +184,13 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(hookSizeMm = action.value) }
             is PieceFormAction.PhotoAdded ->
                 _uiState.update { it.copy(photos = it.photos + action.uri) }
+            is PieceFormAction.PhotoReceived -> {
+                if (_uiState.value.scanMode == ScanMode.HOOK) {
+                    scanHook(action.path)
+                } else {
+                    _uiState.update { it.copy(photos = it.photos + action.path) }
+                }
+            }
             is PieceFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
             is PieceFormAction.PriceChanged ->
@@ -193,6 +212,30 @@ class PieceFormViewModel @Inject constructor(
             PieceFormAction.SavePiece -> savePiece()
             is PieceFormAction.ClearError ->
                 _uiState.update { it.copy(error = null) }
+            PieceFormAction.ScanHookRequested ->
+                _uiState.update { it.copy(scanMode = ScanMode.HOOK) }
+            PieceFormAction.ApplyNeedleScanResult -> {
+                val result = _uiState.value.needleScanResult ?: return
+                _uiState.update { it.copy(hookSizeMm = result.sizeMm, needleScanResult = null, scanMode = ScanMode.NONE) }
+            }
+            PieceFormAction.DismissNeedleScanResult ->
+                _uiState.update { it.copy(needleScanResult = null, scanMode = ScanMode.NONE) }
+        }
+    }
+
+    private fun scanHook(path: String) {
+        _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
+        viewModelScope.launch {
+            try {
+                val result = labelScannerService.scanNeedleFromPath(path)
+                if (result != null) {
+                    _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = ScanMode.HOOK) }
+                } else {
+                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size. Try a clearer, closer photo with good lighting.") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+            }
         }
     }
 

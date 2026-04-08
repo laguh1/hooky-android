@@ -397,35 +397,93 @@ Android's built-in string resource system handles language switching automatical
 - [ ] Import from desktop JSON files (one-time migration tool)
 - [ ] Export to JSON (backup)
 
-### Phase 10 — AI Vision Features (optional, future)
-All features use **on-device ML** (no API key, no server, works for any user, free to publish).
-Primary stack: **ML Kit** (Google, built on TFLite) + custom **TensorFlow Lite** models where domain-specific training is needed.
+### Phase 10 — AI Vision Features (3-phase roadmap)
 
-#### 9a — Piece Identification & Auto-Categorisation
-- [ ] On photo capture/import, run ML Kit Image Labeling to detect general object type
-- [ ] Map ML Kit labels → PieceType enum (shawl, scarf, blanket, bag, etc.) via a lookup table
-- [ ] For better crochet-specific accuracy: fine-tune a MobileNet/EfficientNet model on crochet piece images, export as `.tflite`, bundle in app assets
-- [ ] Pre-fill PieceType field in the form with the top prediction
-- [ ] Show confidence score — suggestion only, never auto-saved without user confirmation
-- [ ] Dependency: `com.google.mlkit:image-labeling` + optionally `org.tensorflow:tensorflow-lite`
+**Key differentiator:** automatic stitch and yarn information extraction from photos — no manual data entry.
+**Principle:** each phase only proceeds if the previous one gets traction. No wasted effort.
 
-#### 9b — Stitch Error Detection
-- [ ] Compare a photo of the work-in-progress against the expected stitch pattern (from StitchEntity)
-- [ ] Highlight anomalies: dropped stitches, wrong stitch type, tension inconsistencies
-- [ ] Overlay on photo showing flagged areas
-- [ ] Requires reference photo(s) per stitch in StitchEntity (already supported via `photos` field)
-- [ ] Implementation: custom TFLite model trained on labeled crochet stitch images (correct vs error examples)
-  - Use ML Kit's image segmentation primitives as the base
-  - Fine-tune on a collected dataset of crochet stitch photos
-  - **Note:** requires building a labeled training dataset — this is the most complex part
-- [ ] Result returned as: ✓ Looks correct / ⚠ Possible errors detected (with description + highlighted region)
-- [ ] Dependency: `com.google.mlkit:segmentation-selfie` (base) + custom `.tflite` model
+```
+Phase A → gets users
+Phase B → gets reviews & retention
+Phase C → gets revenue
+```
 
-#### 9c — Yarn Barcode Scanner (was already listed as optional in Phase 1)
-- [ ] Scan yarn label barcode using ML Kit Barcode Scanning — works out of the box, zero model training needed
-- [ ] Look up product info from barcode (requires external yarn database or web lookup)
-- [ ] Pre-fill yarn form fields on match
-- [ ] Dependency: `com.google.mlkit:barcode-scanning`
+---
+
+#### Phase A — Yarn Label Scanner (ship with v1, ML Kit OCR)
+**Goal:** photo of a yarn label → auto-fill yarn form fields
+**Stack:** ML Kit Text Recognition (on-device, free, offline, no API key)
+**What it extracts:**
+- Brand name
+- Yarn weight category (lace / DK / worsted / bulky)
+- Fiber content (100% cotton, 80% wool 20% acrylic, etc.)
+- Color name and color code
+- Ball weight (g) and length (m)
+- Recommended hook/needle size
+- Care symbols (via barcode or text)
+
+**Implementation:**
+- [ ] Add `com.google.mlkit:text-recognition` dependency
+- [ ] Create `YarnLabelScannerService` — takes `Bitmap`, returns `YarnLabelScanResult` data class
+- [ ] Structured regex/NLP parsing layer to extract fields from raw OCR text
+- [ ] "Scan Label" button on YarnFormScreen → CameraX → preview → confirm extracted fields
+- [ ] All suggestions shown for user review — never auto-saved without confirmation
+- [ ] Barcode scanning as bonus: `com.google.mlkit:barcode-scanning` → look up product if barcode found
+
+**Estimated effort:** 1–2 weeks
+
+---
+
+#### Phase B — Stitch & Project Recognition (after traction, TFLite custom model)
+**Goal:** photo of crochet work → identify stitch type, gauge, complexity
+**Stack:** TensorFlow Lite custom model (on-device, free, offline)
+**What it extracts:**
+- Stitch pattern type (granny square, ripple, single/double/treble crochet, etc.)
+- Approximate gauge / stitch density
+- Pattern complexity estimate
+- Piece type suggestion (shawl, blanket, bag, etc.)
+
+**Implementation:**
+- [ ] Collect and label training dataset of crochet images (minimum ~500 images per stitch type)
+- [ ] Fine-tune MobileNet or EfficientNet-Lite on labeled dataset
+- [ ] Export as `.tflite` model, bundle in `assets/`
+- [ ] Create `StitchRecognitionService` — takes `Bitmap`, returns top predictions with confidence scores
+- [ ] ML Kit Image Labeling for general piece type detection (zero training needed)
+- [ ] Pre-fill StitchesUsed and PieceType fields in form
+- [ ] Show confidence score — suggestion only, never auto-saved
+- [ ] Dependency: `org.tensorflow:tensorflow-lite` + `com.google.mlkit:image-labeling`
+
+**Note:** building the labeled training dataset is the hardest part — crowdsource from users if possible.
+**Estimated effort:** 2–3 months (model training dominates)
+
+---
+
+#### Phase C — Full AI Analysis via Backend (if it pays off, freemium)
+**Goal:** rich intelligent analysis without on-device model limitations
+**Stack:** your own lightweight backend (proxies Claude/OpenAI Vision API) — user never needs an account
+**What it adds over Phase B:**
+- Yarn weight and fiber texture hints from project photos
+- Detailed pattern analysis
+- Error detection (dropped stitches, tension inconsistencies)
+- Multi-language pattern description
+
+**Business model:**
+- Free tier: Phase A (ML Kit OCR) + Phase B (TFLite on-device)
+- Pro tier: Phase C (backend AI analysis) — subscription or per-scan credits
+
+**Implementation:**
+- [ ] Simple backend (Node.js or Python FastAPI) — single `/analyze-image` endpoint
+- [ ] You hold the API key — proxied securely, users just use the app
+- [ ] Android: `ImageAnalysisRepository` with `analyzeWithBackend(bitmap)` method
+- [ ] Graceful degradation — if offline or free tier, falls back to Phase A/B
+
+**Estimated effort:** 2–4 weeks once decided
+
+---
+
+#### Existing features (carry forward)
+- [ ] Stitch error detection (compare WIP photo vs reference stitch pattern — Phase B model)
+- [ ] Piece auto-categorisation overlay with confidence score
 
 ---
 

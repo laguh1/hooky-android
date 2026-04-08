@@ -65,6 +65,7 @@ import com.crochet.manager.domain.model.enums.Destination
 import com.crochet.manager.domain.model.enums.PieceType
 import com.crochet.manager.domain.model.enums.WorkStatus
 import com.crochet.manager.ui.camera.rememberPhotoPickerLauncher
+import com.crochet.manager.ui.components.NeedleScanConfirmDialog
 import com.crochet.manager.ui.components.PhotoGallery
 import com.crochet.manager.ui.theme.BorderLight
 import com.crochet.manager.ui.theme.Slate
@@ -98,14 +99,14 @@ fun PieceFormScreen(
         viewModel.onAction(PieceFormAction.PhotoAdded(path))
     }
 
-    // Observe photo_path result from CameraScreen via SavedStateHandle
+    // Observe photo_path result from CameraScreen — ViewModel decides: add to gallery or scan
     LaunchedEffect(navController) {
         navController?.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("photo_path", "")
             ?.collect { path ->
                 if (path.isNotBlank()) {
-                    viewModel.onAction(PieceFormAction.PhotoAdded(path))
+                    viewModel.onAction(PieceFormAction.PhotoReceived(path))
                     navController.currentBackStackEntry?.savedStateHandle?.set("photo_path", "")
                 }
             }
@@ -149,6 +150,15 @@ fun PieceFormScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
+        // Hook scan result dialog
+        if (uiState.needleScanResult != null) {
+            NeedleScanConfirmDialog(
+                result = uiState.needleScanResult,
+                onApply = { viewModel.onAction(PieceFormAction.ApplyNeedleScanResult) },
+                onDismiss = { viewModel.onAction(PieceFormAction.DismissNeedleScanResult) }
+            )
+        }
+
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
@@ -248,6 +258,18 @@ fun PieceFormScreen(
                         value = uiState.hookSizeMm,
                         onValueChange = { viewModel.onAction(PieceFormAction.HookSizeMmChanged(it)) },
                         label = { Text("Hook size (mm)") },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                viewModel.onAction(PieceFormAction.ScanHookRequested)
+                                val granted = ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.CAMERA
+                                ) == PackageManager.PERMISSION_GRANTED
+                                if (granted) onNavigateToCamera()
+                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan hook", modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),

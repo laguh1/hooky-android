@@ -77,7 +77,7 @@ Full plan in `PLAN.md`.
 - Standalone mobile app — no sync with desktop (same data model, independent storage)
 - Offline-first — Room replaces Python JSON backend
 - Min SDK: API 26+
-- Phase 9 AI features (piece classification, stitch error detection) use on-device ML Kit + TFLite — no API key required, publishable for all users
+- Phase 10 AI vision uses a 3-phase roadmap: A) ML Kit OCR yarn label scanner (ship with v1), B) TFLite custom model for stitch recognition (after traction), C) own backend proxying vision API as freemium pro tier (if it pays off) — no API key ever required from end users
 
 ---
 
