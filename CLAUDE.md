@@ -1,19 +1,35 @@
-# Crochet Manager Android — Claude Instructions
+# Hooky — Claude Instructions
 
-## Project Location
-`/Users/joanasocrates/Local Documents/claude/crochet-android/`
+## Project Structure
+```
+hooky/                        ← project root
+├── android/                  ← Android app (Kotlin/Jetpack Compose)
+├── ios/                      ← iOS app (future, Swift/SwiftUI)
+├── shared/
+│   ├── branding/             ← logos, icons (final/ and raw/)
+│   ├── translations/         ← strings reference
+│   └── design/               ← design preview HTML files
+├── docs/
+│   ├── PLAN.md               ← full feature spec + AI roadmap
+│   ├── MARKETING.md
+│   └── FACEBOOK-GROUPS.md
+└── CLAUDE.md                 ← this file
+```
+
+**Project root:** `/Users/joanasocrates/Documents/claude/hooky/`
+**Android project:** `android/` — open this folder in Android Studio
+**Package name:** `com.hooky.app`
 
 ## Reference Projects
-- **Desktop app** (source of truth for data model): `/Users/joanasocrates/Local Documents/claude/crochet/`
-- **The Nag** (same Android tech stack): `/Users/joanasocrates/Local Documents/claude/nag/`
+- **The Nag** (same Android tech stack): `/Users/joanasocrates/Documents/claude/nag/`
 
 ## What This App Is
-Android mobile version of the crochet hobby management desktop app. Tracks 3 entities:
-- **Pieces** — crochet items (shawls, scarves, blankets, etc.), work status, destination, pricing, photos
+Hooky is a crochet & knitting hobby management app. Tracks 3 entities:
+- **Pieces** — crochet/knit items (shawls, scarves, blankets, etc.), work status, destination, pricing, photos
 - **Yarns** — material inventory with care instructions
 - **Stitches** — technique library with tutorial links
 
-Full plan in `PLAN.md`.
+Full plan in `docs/PLAN.md`.
 
 ---
 
@@ -29,7 +45,7 @@ Full plan in `PLAN.md`.
 | Images | Coil (display) + CameraX (capture) |
 | State | StateFlow + ViewModel |
 | Async | Coroutines + Flow |
-| ML (Phase 9) | ML Kit + TensorFlow Lite (on-device, no API key) |
+| ML (Phase 10) | ML Kit + TensorFlow Lite (on-device, no API key) |
 
 ---
 
@@ -60,8 +76,7 @@ Full plan in `PLAN.md`.
 
 ---
 
-## Design Style
-- **Black & white minimalist** — matches the desktop app aesthetic
+## Design Style — B&W Minimalist
 - Pure white backgrounds (`#FFFFFF`)
 - Near-black text (`#1F2937`)
 - Light grey borders and muted backgrounds (`#E5E7EB`, `#F3F4F6`)
@@ -71,31 +86,37 @@ Full plan in `PLAN.md`.
 - No decorative colors — content is the focus
 - Bottom navigation: 4 tabs (Dashboard, Pieces, Yarns, Stitches)
 
+## Brand (Hooky)
+- App icon: purple `#8C015E` background + white infinity "oo" symbol
+- Wordmark: hand-drawn brush style, purple `#8C015E`
+- All brand assets in `shared/branding/final/`
+
 ---
 
 ## Key Decisions
-- Standalone mobile app — no sync with desktop (same data model, independent storage)
-- Offline-first — Room replaces Python JSON backend
+- Standalone mobile app — offline-first (Room/SQLite)
 - Min SDK: API 26+
-- Phase 10 AI vision uses a 3-phase roadmap: A) ML Kit OCR yarn label scanner (ship with v1), B) TFLite custom model for stitch recognition (after traction), C) own backend proxying vision API as freemium pro tier (if it pays off) — no API key ever required from end users
+- i18n: EN + ES (Spain) + PT-BR (Brazilian Portuguese)
+- Phase 10 AI vision: A) ML Kit OCR yarn label scanner ✅, B) TFLite stitch recognition, C) backend freemium
 
 ---
 
-## Implementation Phases (see PLAN.md for detail)
-1. Foundation — project, Room, Hilt, nav, theme
-2. Pieces module
-3. Yarns module
-4. Stitches module
-5. Dashboard
-6. Camera & Photos (CameraX)
-7. Polish — search, filters, price calculator, empty/loading states
-8. Data Migration (optional)
-9. AI Vision — ML Kit piece classification + stitch error detection (optional)
+## Implementation Status
+1. ✅ Foundation — project, Room, Hilt, nav, theme
+2. ✅ Pieces module
+3. ✅ Yarns module
+4. ✅ Stitches module
+5. ✅ Dashboard
+6. ✅ Camera & Photos (CameraX)
+7. ✅ Polish — search, filters, price calculator, empty/loading states
+8. ⬜ Data Migration (optional)
+9. ⬜ AI Vision Phase 10B — TFLite stitch recognition
+10. ✅ Phase 10A — ML Kit OCR yarn label + needle scanner, Palette API
+11. ✅ Phase 11 — Row Counter (−/+/voice/edit dialog) + Work Timer (Start/Pause/Resume/Stop, persists restarts) + Library pickers for Yarn/Needle/Stitch in piece form + splash screen purple background
 
 ---
 
 ## When Starting Work
-1. Read this file and `PLAN.md`
+1. Read this file and `docs/PLAN.md`
 2. Check The Nag project for patterns (same stack, same conventions)
-3. Follow the phase order — don't skip ahead
-4. Ask before any architectural decision not covered here
+3. Ask before any architectural decision not covered here

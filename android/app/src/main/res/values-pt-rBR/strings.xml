@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ================================================================ -->
+    <!-- App -->
+    <!-- ================================================================ -->
+    <string name="app_name">Crochet Manager</string>
+
+    <!-- ================================================================ -->
+    <!-- Navigation labels -->
+    <!-- ================================================================ -->
+    <string name="nav_dashboard">Painel</string>
+    <string name="nav_pieces">Peças</string>
+    <string name="nav_yarns">Fios</string>
+    <string name="nav_stitches">Pontos</string>
+    <string name="nav_needles">Agulhas</string>
+
+    <!-- ================================================================ -->
+    <!-- Dashboard -->
+    <!-- ================================================================ -->
+    <string name="dashboard_eyebrow">Meu Ateliê de Crochê</string>
+    <string name="dashboard_title">Meu Ateliê de Crochê</string>
+    <string name="dashboard_stat_pieces">PEÇAS</string>
+    <string name="dashboard_stat_yarns">FIOS</string>
+    <string name="dashboard_stat_stitches">PONTOS</string>
+    <string name="dashboard_stat_worked">TRABALHADO</string>
+    <string name="dashboard_section_in_progress">Em Andamento</string>
+    <string name="dashboard_section_recently_finished">Concluídos Recentemente</string>
+    <string name="dashboard_in_progress_empty">Nada em andamento — comece uma nova peça!</string>
+    <string name="dashboard_finished_empty">Nenhuma peça concluída ainda</string>
+    <string name="dashboard_see_all">Ver tudo</string>
+    <string name="dashboard_total_revenue">Receita Total</string>
+    <string name="dashboard_calculator_shortcut">Calculadora de Preços</string>
+
+    <!-- ================================================================ -->
+    <!-- Pieces — list & general -->
+    <!-- ================================================================ -->
+    <string name="pieces_title">Minhas Peças</string>
+    <string name="piece_new">Nova Peça</string>
+    <string name="piece_edit">Editar Peça</string>
+    <string name="piece_search_hint">Buscar peças…</string>
+    <string name="piece_filter_all">Todas</string>
+    <string name="piece_filter_in_progress">Em Andamento</string>
+    <string name="piece_filter_finished">Concluídas</string>
+    <string name="piece_empty_title">Nenhuma peça ainda</string>
+    <string name="piece_empty_subtitle">Adicione sua primeira peça</string>
+
+    <!-- Pieces — detail sections -->
+    <string name="piece_section_info">Detalhes</string>
+    <string name="piece_section_sessions">Sessões de Trabalho</string>
+    <string name="piece_section_yarns_used">Fios Utilizados</string>
+    <string name="piece_section_stitches_used">Pontos Utilizados</string>
+    <string name="piece_section_pricing">Precificação</string>
+    <string name="piece_section_gift">Presente</string>
+    <string name="piece_section_notes">Notas</string>
+
+    <!-- Pieces — form fields -->
+    <string name="piece_field_name">Nome</string>
+    <string name="piece_field_type">Tipo</string>
+    <string name="piece_field_status">Status</string>
+    <string name="piece_field_destination">Destino</string>
+    <string name="piece_field_width">Largura (cm)</string>
+    <string name="piece_field_length">Comprimento (cm)</string>
+    <string name="piece_field_hook_size">Tamanho do Gancho (mm)</string>
+    <string name="piece_field_date_started">Data de Início</string>
+    <string name="piece_field_date_finished">Data de Conclusão</string>
+    <string name="piece_field_work_hours">Horas de Trabalho</string>
+    <string name="piece_field_price">Preço Sugerido (R$)</string>
+    <string name="piece_field_material_cost">Custo do Material (R$)</string>
+    <string name="piece_field_gift_recipient">Destinatário do Presente</string>
+    <string name="piece_field_sale_platform">Plataforma de Venda</string>
+    <string name="piece_field_sale_link">Link da Venda</string>
+    <string name="piece_field_sold_date">Data de Venda</string>
+    <string name="piece_field_sold_price">Preço Vendido (R$)</string>
+    <string name="piece_field_notes">Notas</string>
+
+    <!-- Pieces — misc -->
+    <string name="piece_sessions_count">%d sessões</string>
+    <string name="piece_archive_title">Arquivar Peça</string>
+    <string name="piece_archive_message">Esta peça será arquivada e ocultada da sua lista principal.</string>
+    <string name="piece_archive_reason_hint">Motivo (opcional)</string>
+    <string name="piece_gift_for">Presente para %s</string>
+
+    <!-- ================================================================ -->
+    <!-- Yarns — list & general -->
+    <!-- ================================================================ -->
+    <string name="yarns_title">Meus Fios</string>
+    <string name="yarn_new">Novo Fio</string>
+    <string name="yarn_edit">Editar Fio</string>
+    <string name="yarn_search_hint">Buscar fios…</string>
+    <string name="yarn_filter_all">Todos</string>
+    <string name="yarn_filter_wool">Lã</string>
+    <string name="yarn_filter_cotton">Algodão</string>
+    <string name="yarn_filter_acrylic">Acrílico</string>
+    <string name="yarn_filter_other">Outros</string>
+    <string name="yarn_empty_title">Nenhum fio ainda</string>
+    <string name="yarn_empty_subtitle">Adicione seu primeiro fio</string>
+
+    <!-- Yarns — form fields -->
+    <string name="yarn_field_name">Nome</string>
+    <string name="yarn_field_brand">Marca</string>
+    <string name="yarn_field_color">Cor</string>
+    <string name="yarn_field_color_code">Código da Cor</string>
+    <string name="yarn_field_material">Material</string>
+    <string name="yarn_field_composition">Composição do Material</string>
+    <string name="yarn_field_specs">Especificações do Material</string>
+    <string name="yarn_field_weight_category">Categoria de Peso</string>
+    <string name="yarn_field_ball_weight">Peso do Novelo (g)</string>
+    <string name="yarn_field_ball_length">Comprimento do Novelo (m)</string>
+    <string name="yarn_field_hook_size">Tamanho do Gancho (mm)</string>
+    <string name="yarn_field_needle_size">Tamanho da Agulha (mm)</string>
+    <string name="yarn_field_gauge">Tensão</string>
+    <string name="yarn_field_price_paid">Preço Pago (R$)</string>
+    <string name="yarn_field_purchase_location">Local de Compra</string>
+    <string name="yarn_field_purchase_date">Data de Compra</string>
+    <string name="yarn_field_purchase_link">Link de Compra</string>
+    <string name="yarn_field_quantity">Quantidade em Estoque</string>
+
+    <!-- Yarns — detail sections -->
+    <string name="yarn_section_basic">Informações Básicas</string>
+    <string name="yarn_section_material">Material</string>
+    <string name="yarn_section_measurements">Medidas</string>
+    <string name="yarn_section_purchase">Compra</string>
+    <string name="yarn_section_care">Instruções de Lavagem</string>
+    <string name="yarn_section_photos">Fotos</string>
+    <string name="yarn_section_notes">Notas</string>
+
+    <!-- Yarns — care instructions -->
+    <string name="yarn_care_machine_wash">Lavar à Máquina</string>
+    <string name="yarn_care_hand_wash">Lavar à Mão</string>
+    <string name="yarn_care_dry_clean">Lavar a Seco</string>
+    <string name="yarn_care_bleach">Alvejante</string>
+    <string name="yarn_care_tumble_dry">Secadora</string>
+    <string name="yarn_care_iron_temp">Temperatura do Ferro</string>
+
+    <!-- Yarns — misc -->
+    <string name="yarn_archive_title">Arquivar Fio</string>
+    <string name="yarn_archive_message">Este fio será arquivado e ocultado do seu inventário.</string>
+
+    <!-- ================================================================ -->
+    <!-- Stitches — list & general -->
+    <!-- ================================================================ -->
+    <string name="stitches_title">Meus Pontos</string>
+    <string name="stitch_new">Novo Ponto</string>
+    <string name="stitch_edit">Editar Ponto</string>
+    <string name="stitch_search_hint">Buscar pontos…</string>
+    <string name="stitch_filter_all">Todos</string>
+    <string name="stitch_filter_basic">Básico</string>
+    <string name="stitch_filter_textured">Texturizado</string>
+    <string name="stitch_filter_lace">Renda</string>
+    <string name="stitch_filter_specialty">Especialidade</string>
+    <string name="stitch_empty_title">Nenhum ponto ainda</string>
+    <string name="stitch_empty_subtitle">Adicione seu primeiro ponto</string>
+
+    <!-- Stitches — form fields -->
+    <string name="stitch_field_name">Nome</string>
+    <string name="stitch_field_name_es">Nome em Espanhol</string>
+    <string name="stitch_field_abbreviation">Abreviação</string>
+    <string name="stitch_field_aliases">Outros Nomes</string>
+    <string name="stitch_field_category">Categoria</string>
+    <string name="stitch_field_difficulty">Dificuldade</string>
+    <string name="stitch_field_description">Descrição</string>
+    <string name="stitch_field_hookfully_link">Link do Hookfully</string>
+    <string name="stitch_field_instruction_link">Link de Instruções</string>
+    <string name="stitch_field_video_link">Link do Vídeo (YouTube)</string>
+    <string name="stitch_aliases_hint">ex: dc, double, dbl cr</string>
+
+    <!-- Stitches — detail sections -->
+    <string name="stitch_section_basic">Informações Básicas</string>
+    <string name="stitch_section_classification">Classificação</string>
+    <string name="stitch_section_description">Descrição</string>
+    <string name="stitch_section_links">Tutoriais</string>
+    <string name="stitch_section_photos">Fotos</string>
+    <string name="stitch_section_notes">Notas</string>
+
+    <!-- Stitches — detail content -->
+    <string name="stitch_learn_title">Aprender Este Ponto</string>
+    <string name="stitch_link_hookfully">Ver no Hookfully</string>
+    <string name="stitch_link_instructions">Ver Instruções</string>
+    <string name="stitch_link_video">Assistir Vídeo</string>
+
+    <!-- Stitches — misc -->
+    <string name="stitch_archive_title">Arquivar Ponto</string>
+    <string name="stitch_archive_message">Este ponto será arquivado e ocultado da sua biblioteca.</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — PieceType -->
+    <!-- ================================================================ -->
+    <string name="piece_type_shawl">Xale</string>
+    <string name="piece_type_scarf">Cachecol</string>
+    <string name="piece_type_blanket">Cobertor</string>
+    <string name="piece_type_hat">Chapéu</string>
+    <string name="piece_type_bag">Bolsa</string>
+    <string name="piece_type_amigurumi">Amigurumi</string>
+    <string name="piece_type_cardigan">Cardigan</string>
+    <string name="piece_type_sweater">Suéter</string>
+    <string name="piece_type_socks">Meias</string>
+    <string name="piece_type_gloves">Luvas</string>
+    <string name="piece_type_cowl">Gola</string>
+    <string name="piece_type_headband">Tiara</string>
+    <string name="piece_type_other">Outro</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — WorkStatus -->
+    <!-- ================================================================ -->
+    <string name="work_status_in_progress">Em Andamento</string>
+    <string name="work_status_finished">Concluído</string>
+    <string name="work_status_ready">Pronto</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — Destination -->
+    <!-- ================================================================ -->
+    <string name="destination_for_sale">Para Venda</string>
+    <string name="destination_sold">Vendido</string>
+    <string name="destination_for_gift">Para Presente</string>
+    <string name="destination_gifted">Presenteado</string>
+    <string name="destination_for_self">Para Mim</string>
+    <string name="destination_in_use">Em Uso</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — Material -->
+    <!-- ================================================================ -->
+    <string name="material_wool">Lã</string>
+    <string name="material_cotton">Algodão</string>
+    <string name="material_acrylic">Acrílico</string>
+    <string name="material_alpaca">Alpaca</string>
+    <string name="material_silk">Seda</string>
+    <string name="material_linen">Linho</string>
+    <string name="material_bamboo">Bambu</string>
+    <string name="material_mohair">Mohair</string>
+    <string name="material_blend">Misto</string>
+    <string name="material_other">Outro</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — WeightCategory -->
+    <!-- ================================================================ -->
+    <string name="weight_lace">Renda</string>
+    <string name="weight_fingering">Fingering</string>
+    <string name="weight_sport">Sport</string>
+    <string name="weight_dk">DK</string>
+    <string name="weight_worsted">Worsted</string>
+    <string name="weight_bulky">Bulky</string>
+    <string name="weight_super_bulky">Super Bulky</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — StitchCategory -->
+    <!-- ================================================================ -->
+    <string name="stitch_category_basic">Básico</string>
+    <string name="stitch_category_textured">Texturizado</string>
+    <string name="stitch_category_lace">Renda</string>
+    <string name="stitch_category_colorwork">Colorwork</string>
+    <string name="stitch_category_specialty">Especialidade</string>
+
+    <!-- ================================================================ -->
+    <!-- Enum display names — Difficulty -->
+    <!-- ================================================================ -->
+    <string name="difficulty_beginner">Iniciante</string>
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_intermediate">Intermediário</string>
+    <string name="difficulty_advanced">Avançado</string>
+    <string name="difficulty_expert">Especialista</string>
+
+    <!-- ================================================================ -->
+    <!-- Common / Shared — not specified -->
+    <!-- ================================================================ -->
+    <string name="not_specified">Não especificado</string>
+
+    <!-- ================================================================ -->
+    <!-- Common / Shared — actions -->
+    <!-- ================================================================ -->
+    <string name="action_save">Salvar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_archive">Arquivar</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_delete">Excluir</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_add_photo">Adicionar Foto</string>
+    <string name="action_take_photo">Tirar Foto</string>
+    <string name="action_choose_gallery">Escolher da Galeria</string>
+    <string name="action_copy">Copiar</string>
+    <string name="action_back">Voltar</string>
+
+    <!-- ================================================================ -->
+    <!-- Common / Shared — labels -->
+    <!-- ================================================================ -->
+    <string name="label_dimensions">Dimensões</string>
+    <string name="label_started">Iniciado</string>
+    <string name="label_finished">Concluído</string>
+    <string name="label_hours">Horas de Trabalho</string>
+    <string name="label_hook_size">Tamanho do Gancho</string>
+    <string name="label_notes">Notas</string>
+    <string name="label_photos">Fotos</string>
+    <string name="label_date_hint">aaaa-MM-dd</string>
+
+    <!-- ================================================================ -->
+    <!-- Common / Shared — errors -->
+    <!-- ================================================================ -->
+    <string name="error_name_required">Nome é obrigatório</string>
+    <string name="error_description_required">Descrição é obrigatória</string>
+    <string name="error_save_failed">Falha ao salvar. Por favor, tente novamente.</string>
+    <string name="error_load_failed">Falha ao carregar os dados.</string>
+
+    <!-- ================================================================ -->
+    <!-- Common / Shared — misc -->
+    <!-- ================================================================ -->
+    <string name="label_coming_phase_6">Captura de foto em breve</string>
+
+    <!-- ================================================================ -->
+    <!-- Search -->
+    <!-- ================================================================ -->
+    <string name="search_title">Buscar</string>
+    <string name="search_hint">Buscar peças, fios, pontos…</string>
+    <string name="search_prompt">Comece a digitar para buscar…</string>
+    <string name="search_no_results">Nenhum resultado encontrado</string>
+    <string name="search_section_pieces">Peças (%d)</string>
+    <string name="search_section_yarns">Fios (%d)</string>
+    <string name="search_section_stitches">Pontos (%d)</string>
+
+    <!-- ================================================================ -->
+    <!-- Price Calculator -->
+    <!-- ================================================================ -->
+    <string name="calculator_title">Calculadora de Preços</string>
+    <string name="calculator_material_cost">Custo do Material (R$)</string>
+    <string name="calculator_work_hours">Horas de Trabalho</string>
+    <string name="calculator_labor_rate">Taxa de Mão de Obra (R$/h)</string>
+    <string name="calculator_complexity">Complexidade</string>
+    <string name="calculator_complexity_normal">Normal (×1,0)</string>
+    <string name="calculator_complexity_complex">Complexo (×1,2)</string>
+    <string name="calculator_complexity_very">Muito Complexo (×1,5)</string>
+    <string name="calculator_profit_margin">Margem de Lucro: %d%%</string>
+    <string name="calculator_suggested_price">Preço Sugerido</string>
+    <string name="calculator_breakdown_materials">Materiais</string>
+    <string name="calculator_breakdown_labor">Mão de Obra (%s h × R$%s)</string>
+    <string name="calculator_breakdown_complexity">Complexidade</string>
+    <string name="calculator_breakdown_profit">Lucro (%d%%)</string>
+    <string name="calculator_copy_price">Copiar Preço</string>
+
+    <!-- ================================================================ -->
+    <!-- Camera -->
+    <!-- ================================================================ -->
+    <string name="camera_permission_required">Permissão de câmera é necessária para tirar fotos</string>
+    <string name="camera_grant_permission">Conceder Permissão</string>
+    <string name="camera_capture_error">Falha ao capturar a foto. Por favor, tente novamente.</string>
+
+</resources>
