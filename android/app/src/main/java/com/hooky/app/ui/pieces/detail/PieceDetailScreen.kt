@@ -419,19 +419,30 @@ private fun PieceDetailContent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Done button
+            Button(
+                onClick = onNavigateBack,
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Slate,
+                    contentColor = White
+                )
+            ) {
+                Text("Done", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            }
+
             // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Button(
+                OutlinedButton(
                     onClick = onNavigateToEdit,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Slate,
-                        contentColor = White
-                    )
+                    border = androidx.compose.foundation.BorderStroke(1.dp, BorderStrong),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate)
                 ) {
                     Icon(
                         Icons.Filled.Edit,
@@ -812,27 +823,43 @@ private fun RowCounterCard(
         if (!granted) scope.launch { onShowSnackbar("Microphone permission required for voice counting") }
     }
 
+    fun parseSpokenNumber(text: String): Int? {
+        Regex("\\d+").find(text)?.value?.toIntOrNull()?.let { return it }
+        val words = mapOf(
+            // English
+            "one" to 1, "two" to 2, "three" to 3, "four" to 4, "five" to 5,
+            "six" to 6, "seven" to 7, "eight" to 8, "nine" to 9, "ten" to 10,
+            // Spanish
+            "uno" to 1, "dos" to 2, "tres" to 3, "cuatro" to 4, "cinco" to 5,
+            "seis" to 6, "siete" to 7, "ocho" to 8, "nueve" to 9, "diez" to 10,
+            // Portuguese
+            "um" to 1, "uma" to 1, "dois" to 2, "duas" to 2, "três" to 3,
+            "quatro" to 4, "cinco" to 5, "seis" to 6, "sete" to 7, "oito" to 8,
+            "nove" to 9, "dez" to 10
+        )
+        val lower = text.lowercase()
+        return words.entries.firstOrNull { lower.contains(it.key) }?.value
+    }
+
     fun startListening() {
         val sr = speechRecognizer ?: return
         isListening = true
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
         }
         sr.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
                 isListening = false
-                val text = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    ?.firstOrNull() ?: ""
-                val number = Regex("\\d+").find(text)?.value?.toIntOrNull()
+                val candidates = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    ?: emptyList()
+                val number = candidates.firstNotNullOfOrNull { parseSpokenNumber(it) }
                 if (number != null && number > 0) onIncrementBy(number)
                 else scope.launch { onShowSnackbar("Didn't catch a number — try again") }
             }
             override fun onError(error: Int) {
                 isListening = false
-                if (error != SpeechRecognizer.ERROR_NO_MATCH &&
-                    error != SpeechRecognizer.ERROR_SPEECH_TIMEOUT
-                ) scope.launch { onShowSnackbar("Didn't catch a number — try again") }
+                scope.launch { onShowSnackbar("Didn't catch a number — try again") }
             }
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}

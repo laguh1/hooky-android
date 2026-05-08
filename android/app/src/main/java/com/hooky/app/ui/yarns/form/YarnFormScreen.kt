@@ -838,9 +838,9 @@ private fun ColorSuggestionChip(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = Slate,
-    unfocusedBorderColor = BorderLight,
-    cursorColor = Slate,
-    focusedLabelColor = Slate,
-    unfocusedLabelColor = TextSecondary
+    focusedBorderColor = BrandPurple,
+    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+    cursorColor = BrandPurple,
+    focusedLabelColor = BrandPurple,
+    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )

@@ -313,15 +313,6 @@ private fun DashboardHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                // Settings icon button
-                IconButton(onClick = onNavigateToSettings) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
-                        tint = TextSecondary,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
                 // Search icon button
                 IconButton(onClick = onNavigateToSearch) {
                     Icon(
@@ -344,6 +335,15 @@ private fun DashboardHeader(
                         style = MaterialTheme.typography.labelMedium,
                         color = White,
                         fontWeight = FontWeight.SemiBold
+                    )
+                }
+                // Settings icon button (extreme right)
+                IconButton(onClick = onNavigateToSettings) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint = TextSecondary,
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             }

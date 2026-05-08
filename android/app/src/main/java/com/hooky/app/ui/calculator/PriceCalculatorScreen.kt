@@ -54,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hooky.app.R
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.BorderStrong
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
@@ -144,9 +145,9 @@ fun PriceCalculatorScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedBorderColor = BorderLight,
-                                focusedBorderColor = Slate,
-                                cursorColor = Slate
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedBorderColor = BrandPurple,
+                                cursorColor = BrandPurple
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -164,9 +165,9 @@ fun PriceCalculatorScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedBorderColor = BorderLight,
-                                focusedBorderColor = Slate,
-                                cursorColor = Slate
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedBorderColor = BrandPurple,
+                                cursorColor = BrandPurple
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -184,9 +185,9 @@ fun PriceCalculatorScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedBorderColor = BorderLight,
-                                focusedBorderColor = Slate,
-                                cursorColor = Slate
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedBorderColor = BrandPurple,
+                                cursorColor = BrandPurple
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )

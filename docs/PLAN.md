@@ -394,6 +394,10 @@ Each section:
 - [x] Splash screen: full-screen brand purple `#8C015E` + white infinity symbol (`ic_splash_icon.xml` scaled to 55% to avoid circular clip) — `androidx.core:core-splashscreen:1.0.1`
 - [x] Dashboard logo 20% larger (48dp → 58dp)
 - [x] `WorkStatus.READY` removed — only `IN_PROGRESS` and `FINISHED` remain; `PieceFilter.READY` and `piece_filter_ready` strings removed from all 3 locales
+- [x] Dark mode text field fix: `formTextFieldColors()` in all form screens (Yarn/Piece/Stitch/Needle), Search, Calculator — focused border/label/cursor now use `BrandPurple`; unfocused border uses `MaterialTheme.colorScheme.outline` (adaptive)
+- [x] Dashboard: Settings icon moved to extreme right (after Search + Avatar), matching Pieces list layout
+- [x] Voice recognition fix: `parseSpokenNumber()` helper — tries digit regex first, then word-to-number lookup (EN/ES/PT, 1–10); `EXTRA_MAX_RESULTS` = 5; all errors show snackbar
+- [x] PieceDetailScreen: "Done" button (full-width, Slate) above Edit/Archive to navigate back; Edit demoted to OutlinedButton
 
 ### Phase 8 — Internationalisation (i18n) ✅ infrastructure / ⏳ wiring in progress
 Android's built-in string resource system handles language switching automatically — no runtime logic needed.
@@ -676,6 +680,189 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 - [x] "Materials & Stitches" form section: Yarn / Needle / Stitch pickers from their libraries
 - [x] PieceDetailScreen resolves IDs to names (yarnNames, stitchNames, needleNames maps)
 - [x] "Needles Used" chip section added to detail view
+
+---
+
+### Phase 12 — Stitch Chart Upload
+
+**Goal:** let users attach stitch diagrams (chart images) to stitches in their library, and surface those charts directly from the row counter while crocheting — so the reference is always one tap away.
+
+**Rationale:** the stitch screen already has tutorial and video links, but charts are visual references (symbol grids) that users photograph from books or download as images. They need to live in the app, not in a separate gallery. And when counting rows, switching apps to check the chart breaks flow — so the counter card should show it inline.
+
+**Scope:** JPEG and PNG for v1. PDF explicitly deferred (see Phase 12B).
+
+**Data model:** `StitchEntity` already has `photos: String = "[]"` (JSON list of file paths). Chart images reuse the same field — a dedicated `charts` field can be split out in Phase 12B if needed. No DB migration required.
+
+---
+
+#### 12A — Stitch library chart upload
+
+**UI changes — StitchFormScreen:**
+- Add a **"Charts"** section below the existing links (tutorial link, video link)
+- Placeholder state: large dashed-border box with camera icon + "Take photo" / "Upload image" buttons
+- Once added: thumbnail strip (same `PhotoGallery` composable already used in pieces/yarns)
+- Users can add multiple chart images (e.g. overview chart + detail chart)
+
+**UI changes — StitchDetailScreen:**
+- Show chart thumbnails in a horizontally scrollable strip above the tutorial/video links
+- Tap thumbnail → full-screen zoomable viewer (pinch-to-zoom essential for charts)
+
+**Reuse:** `PhotoGallery`, `PhotoStorageUtil`, `rememberPhotoPickerLauncher` — no new infrastructure.
+
+**Checklist:**
+- [ ] "Charts" section in `StitchFormScreen` — camera + gallery picker, placeholder when empty, thumbnail strip when filled
+- [ ] Zoomable full-screen chart viewer composable (pinch-to-zoom via `Modifier.transformable` or `accompanist-zoomable`)
+- [ ] Chart thumbnails in `StitchDetailScreen`
+- [ ] PDF viewer (Phase 12B — deferred): `PdfRenderer` + custom composable, separate file picker
+
+---
+
+#### 12B — Chart access from Row Counter
+
+**Goal:** when counting rows on a piece, the user can tap once to see the chart for the stitch they're working — no app switching.
+
+**How it works:**
+- If a piece has stitches linked (via `stitchesUsed` IDs) and any of those stitches has chart images, a **"View chart"** button appears in the `RowCounterCard`
+- If multiple stitches have charts, show a small stitch picker first
+- Tapping opens the full-screen zoomable chart viewer (same composable from 12A)
+- If a stitch has an `instructionLink` but no chart image, show **"Open chart link ↗"** instead (external browser)
+
+**Checklist:**
+- [ ] `RowCounterCard`: detect if any linked stitch has charts or instruction links
+- [ ] "View chart" button in counter card — opens zoomable viewer
+- [ ] "Open chart link ↗" fallback for stitches with URL only
+- [ ] Stitch picker dialog (if piece uses multiple stitches with charts)
+
+---
+
+### Phase 13 — Pro Tier (€4.99/month)
+
+**Goal:** monetise via a small set of genuinely useful features that go beyond hobbyist basics — priced at €4.99/month, targeting users who sell their work or crochet complex patterns regularly.
+
+**Free tier keeps everything built so far.** Pro is additive, not a paywall on existing features.
+
+---
+
+#### 13A — Cloud Backup & Sync
+
+**What:** all pieces, yarns, stitches, needles backed up to the cloud and synced across devices.
+**Why it's Pro:** free = local Room DB only; losing your phone = losing your data. Pro users get peace of mind.
+
+**Stack options (pick one):**
+- Firebase Firestore + Firebase Auth (anonymous auth, no account needed) — simplest
+- Supabase (Postgres + REST) — open source, cheaper at scale
+
+**Key decisions:**
+- Anonymous auth by default — user never creates an account; device gets a UUID token
+- Optional: link token to email for multi-device sync
+- Conflict resolution: last-write-wins per entity (timestamp-based)
+- Photos backed up to Firebase Storage / Supabase Storage
+
+**Checklist:**
+- [ ] Choose backend (Firebase recommended for speed)
+- [ ] Auth: anonymous sign-in on first Pro activation
+- [ ] Sync service: upload all entities on first Pro activation, then delta sync on change
+- [ ] Photo upload (optional v1: metadata only, photos stay local)
+- [ ] Restore flow: "restore from backup" on new device
+
+---
+
+#### 13B — Pattern Import & Row-by-Row Guide
+
+**What:** user imports a pattern (text paste or image OCR), app breaks it into steps. Row counter advances through the pattern automatically — each tap moves to the next instruction.
+
+**Why it's Pro:** this is the #1 pain point for crocheters (losing their place in a pattern). Free users get the raw row counter; Pro users get guided mode.
+
+**How it works:**
+1. User pastes pattern text (or photos it — OCR via ML Kit)
+2. App parses rows/rounds: `Row 1: ch 3, dc in 4th ch from hook...`
+3. Each row stored as a step in a new `PatternEntity` linked to a piece
+4. In PieceDetailScreen, guided mode shows current row instruction above the counter
+5. Tapping + advances both the count and the instruction
+
+**Parsing strategy:** regex-based for common formats (`Row N:`, `Round N:`, `Rnd N:`). Falls back to line-by-line split. No AI needed for v1.
+
+**Checklist:**
+- [ ] `PatternEntity` + `PatternStepEntity` — Room tables, linked to `PieceEntity`
+- [ ] Pattern import screen: paste text or scan image
+- [ ] Step parser: regex for common row/round formats
+- [ ] Guided mode composable in PieceDetailScreen (current step card above row counter)
+- [ ] Pro gate: show feature, explain Pro, link to subscription
+
+---
+
+#### 13C — Cost & Profit Reports
+
+**What:** monthly or per-project PDF/CSV export of materials spent, hours worked, suggested price vs sold price. Targeted at users who sell at craft fairs or online.
+
+**Why it's Pro:** the data is already in the app (materialCost, workHours, soldPrice). This is just presentation — but it's genuinely useful for sellers tracking profitability.
+
+**Report contents:**
+- Per-piece: materials cost, hours worked, labour cost (at user's hourly rate), suggested price, sold price, profit margin
+- Summary: total pieces made, total hours, total revenue, total material spend, net profit
+- Export: PDF (via Android's `PdfDocument` API) or CSV
+
+**Checklist:**
+- [ ] Report screen with date range filter and per-piece table
+- [ ] PDF export (`PdfDocument` API — no library needed)
+- [ ] CSV export (plain text, share via Android share sheet)
+- [ ] Pro gate
+
+---
+
+#### 13D — Multiple Counters per Piece
+
+**What:** Pro users get unlimited named counters per piece (e.g. "Body", "Left Sleeve", "Right Sleeve"). Free users get the one global counter.
+
+**Why it's Pro:** complex patterns with multiple components need separate tracking. Simple projects don't.
+
+**Data model:** new `CounterEntity` table — `pieceId`, `name`, `count`, `target`, `sortOrder`. The existing `rowCount`/`targetRowCount` on `PieceEntity` becomes the default "main" counter for free users.
+
+**Checklist:**
+- [ ] `CounterEntity` Room table + DAO + Repository
+- [ ] Multi-counter UI in PieceDetailScreen: tabs or expandable cards per counter
+- [ ] Add/rename/delete counter actions
+- [ ] Pro gate: free users see one counter; Pro users see "+ Add Counter" button
+
+---
+
+#### 13E — Pro Subscription Infrastructure
+
+**What:** in-app purchase via Google Play Billing — monthly subscription at €4.99.
+
+**Stack:** Google Play Billing Library 6.x + a lightweight entitlement check (local receipt validation or server-side via RevenueCat).
+
+**Recommendation:** use **RevenueCat** — handles receipt validation, subscription status, grace periods, and cross-platform (ready for iOS). Free up to $2.5k MRR.
+
+**Checklist:**
+- [ ] Add `com.revenuecat.purchases:purchases:7.x` dependency
+- [ ] Configure product in Google Play Console (monthly subscription, €4.99)
+- [ ] `ProStatusRepository` — checks entitlement, caches locally, refreshes on app open
+- [ ] Pro gate composable: reusable `ProFeatureGate` that shows paywall or content
+- [ ] Paywall screen: feature list, price, subscribe button, restore purchases
+
+---
+
+#### 13F — Photo limits (free vs Pro)
+
+**What:** free tier capped at 5 photos per piece; Pro gets unlimited.
+
+**Why it's a good gate:** photos are the most storage-heavy feature, and 5 is generous enough for casual users but limiting for sellers who want a full shoot of each piece.
+
+**Implementation:** ✅ already enforced in `PieceFormViewModel.MAX_FREE_PHOTOS = 5`. When the cap is hit, a snackbar explains the limit. Pro removes the check.
+
+- [x] 5-photo cap enforced in `PieceFormViewModel` (free tier)
+- [ ] Remove cap check when Pro entitlement is active (wire after 13E)
+
+---
+
+#### Pro rollout order
+1. **13E** — billing infrastructure first (nothing else works without it)
+2. **13A** — cloud backup (easiest to explain, lowest churn risk)
+3. **13F** — photo limit unlock (trivial once billing exists)
+4. **13B** — pattern import (highest value, most complex)
+5. **13C** — reports (quick win, data already exists)
+6. **13D** — multiple counters (targeted at power users)
 
 ---
 
