@@ -57,8 +57,8 @@ import coil.compose.AsyncImage
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.db.entity.StitchEntity
 import com.hooky.app.data.db.entity.YarnEntity
-import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -139,11 +139,11 @@ fun SearchScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = BackgroundLight,
-                    focusedContainerColor = BackgroundLight,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Slate,
-                    cursorColor = Slate
+                    focusedBorderColor = BrandPurple,
+                    cursorColor = BrandPurple
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

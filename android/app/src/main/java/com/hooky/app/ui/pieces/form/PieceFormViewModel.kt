@@ -116,6 +116,10 @@ class PieceFormViewModel @Inject constructor(
 
     private val pieceId: Int? = savedStateHandle["id"]
 
+    companion object {
+        const val MAX_FREE_PHOTOS = 5
+    }
+
     private val _uiState = MutableStateFlow(
         PieceFormUiState(isEditMode = pieceId != null)
     )
@@ -227,12 +231,16 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(workHours = action.value) }
             is PieceFormAction.HookSizeMmChanged ->
                 _uiState.update { it.copy(hookSizeMm = action.value) }
-            is PieceFormAction.PhotoAdded ->
-                _uiState.update { it.copy(photos = it.photos + action.uri) }
+            is PieceFormAction.PhotoAdded -> {
+                if (_uiState.value.photos.size < MAX_FREE_PHOTOS)
+                    _uiState.update { it.copy(photos = it.photos + action.uri) }
+                else
+                    _uiState.update { it.copy(error = "Free tier is limited to $MAX_FREE_PHOTOS photos per piece") }
+            }
             is PieceFormAction.PhotoReceived -> {
                 if (_uiState.value.scanMode == ScanMode.HOOK) {
                     scanHook(action.path)
-                } else {
+                } else if (_uiState.value.photos.size < MAX_FREE_PHOTOS) {
                     _uiState.update { it.copy(photos = it.photos + action.path) }
                 }
             }
