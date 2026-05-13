@@ -19,6 +19,7 @@ data class StitchEntity(
     val videoLink: String? = null,
     val photos: String = "[]",       // JSON: List<String>
     val notes: String? = null,
+    val chartPath: String? = null,
     val archived: Boolean = false,
     val archivedDate: String? = null,
     val archivedReason: String? = null,

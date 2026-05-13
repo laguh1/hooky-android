@@ -25,7 +25,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hooky.app.R
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -429,6 +431,9 @@ private fun CrochetBottomBar(
                     Text(
                         text = stringResource(destination.labelRes),
                         style = MaterialTheme.typography.labelSmall,
+                        fontSize = 10.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip,
                         color = if (selected) Slate else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },

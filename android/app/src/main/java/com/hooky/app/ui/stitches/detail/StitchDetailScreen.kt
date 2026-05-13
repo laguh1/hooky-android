@@ -59,6 +59,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import com.hooky.app.R
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -105,7 +107,7 @@ fun StitchDetailScreen(
             }
             uiState.stitch == null -> {
                 Text(
-                    "Stitch not found",
+                    stringResource(R.string.stitch_not_found),
                     modifier = Modifier.align(Alignment.Center),
                     color = TextSecondary
                 )
@@ -249,7 +251,7 @@ private fun StitchDetailContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.action_back),
                     tint = White,
                     modifier = Modifier.size(20.dp)
                 )
@@ -300,9 +302,9 @@ private fun StitchDetailContent(
                 aliases.isNotEmpty() ||
                 stitch.description.isNotBlank()
             if (hasInfoContent) {
-                StitchInfoCard(title = "About This Stitch") {
+                StitchInfoCard(title = stringResource(R.string.stitch_section_about)) {
                     stitch.abbreviation?.let { abbr ->
-                        StitchInfoRow(label = "Abbreviation", value = abbr)
+                        StitchInfoRow(label = stringResource(R.string.stitch_field_abbreviation), value = abbr)
                     }
                     if (aliases.isNotEmpty()) {
                         Row(
@@ -311,7 +313,7 @@ private fun StitchDetailContent(
                             verticalAlignment = Alignment.Top
                         ) {
                             Text(
-                                text = "Also known as",
+                                text = stringResource(R.string.stitch_label_also_known_as),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -339,11 +341,11 @@ private fun StitchDetailContent(
 
             // Tutorial Links card
             if (hasTutorialLinks) {
-                StitchInfoCard(title = "Learn This Stitch") {
+                StitchInfoCard(title = stringResource(R.string.stitch_learn_title)) {
                     stitch.hookfullyLink?.let { link ->
                         TutorialLinkRow(
                             icon = Icons.Filled.Link,
-                            label = "View on Hookfully",
+                            label = stringResource(R.string.stitch_link_hookfully),
                             onClick = {
                                 try { uriHandler.openUri(link) } catch (_: Exception) {}
                             }
@@ -352,7 +354,7 @@ private fun StitchDetailContent(
                     stitch.instructionLink?.let { link ->
                         TutorialLinkRow(
                             icon = Icons.Filled.Link,
-                            label = "View Instructions",
+                            label = stringResource(R.string.stitch_link_instructions),
                             onClick = {
                                 try { uriHandler.openUri(link) } catch (_: Exception) {}
                             }
@@ -361,7 +363,7 @@ private fun StitchDetailContent(
                     stitch.videoLink?.let { link ->
                         TutorialLinkRow(
                             icon = Icons.Filled.PlayCircle,
-                            label = "Watch Video",
+                            label = stringResource(R.string.stitch_link_video),
                             onClick = {
                                 try { uriHandler.openUri(link) } catch (_: Exception) {}
                             }
@@ -372,7 +374,7 @@ private fun StitchDetailContent(
 
             // Notes
             stitch.notes?.let { notes ->
-                StitchInfoCard(title = "Notes") {
+                StitchInfoCard(title = stringResource(R.string.label_notes)) {
                     Text(
                         text = notes,
                         style = MaterialTheme.typography.bodyMedium,
@@ -403,7 +405,7 @@ private fun StitchDetailContent(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Edit")
+                    Text(stringResource(R.string.action_edit))
                 }
 
                 OutlinedButton(
@@ -415,7 +417,7 @@ private fun StitchDetailContent(
                         contentColor = ErrorRed
                     )
                 ) {
-                    Text("Archive")
+                    Text(stringResource(R.string.action_archive))
                 }
             }
 
@@ -431,7 +433,7 @@ private fun StitchInfoCard(
 ) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -521,7 +523,7 @@ private fun StitchArchiveDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Archive this stitch?",
+                text = stringResource(R.string.stitch_archive_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -529,14 +531,14 @@ private fun StitchArchiveDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "The stitch will be archived and hidden from your list. You can still find it in your archive.",
+                    text = stringResource(R.string.stitch_archive_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary
                 )
                 OutlinedTextField(
                     value = reason,
                     onValueChange = { reason = it },
-                    label = { Text("Reason (optional)") },
+                    label = { Text(stringResource(R.string.piece_archive_reason_hint)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -552,7 +554,7 @@ private fun StitchArchiveDialog(
                 onClick = { onConfirm(reason.ifBlank { null }) },
                 colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed)
             ) {
-                Text("Archive")
+                Text(stringResource(R.string.action_archive))
             }
         },
         dismissButton = {
@@ -562,7 +564,7 @@ private fun StitchArchiveDialog(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         containerColor = MaterialTheme.colorScheme.surface

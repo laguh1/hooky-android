@@ -37,6 +37,7 @@ data class StitchFormUiState(
     val instructionLink: String = "",
     val videoLink: String = "",
     val photos: List<String> = emptyList(),
+    val chartPath: String? = null,
     val notes: String = "",
     val nameError: String? = null,
     val descriptionError: String? = null
@@ -55,6 +56,9 @@ sealed interface StitchFormAction {
     data class VideoLinkChanged(val value: String) : StitchFormAction
     data class PhotoAdded(val uri: String) : StitchFormAction
     data class PhotoRemoved(val uri: String) : StitchFormAction
+    data class PhotoReplaced(val oldPath: String, val newPath: String) : StitchFormAction
+    data class ChartAdded(val path: String) : StitchFormAction
+    object ChartRemoved : StitchFormAction
     data class NotesChanged(val value: String) : StitchFormAction
     object SaveStitch : StitchFormAction
     object ClearError : StitchFormAction
@@ -116,6 +120,7 @@ class StitchFormViewModel @Inject constructor(
                             instructionLink = stitch.instructionLink ?: "",
                             videoLink = stitch.videoLink ?: "",
                             photos = photos,
+                            chartPath = stitch.chartPath,
                             notes = stitch.notes ?: ""
                         )
                     }
@@ -154,6 +159,14 @@ class StitchFormViewModel @Inject constructor(
                 _uiState.update { it.copy(photos = it.photos + action.uri) }
             is StitchFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
+            is StitchFormAction.PhotoReplaced ->
+                _uiState.update { state ->
+                    state.copy(photos = state.photos.map { if (it == action.oldPath) action.newPath else it })
+                }
+            is StitchFormAction.ChartAdded ->
+                _uiState.update { it.copy(chartPath = action.path) }
+            StitchFormAction.ChartRemoved ->
+                _uiState.update { it.copy(chartPath = null) }
             is StitchFormAction.NotesChanged ->
                 _uiState.update { it.copy(notes = action.value) }
             StitchFormAction.SaveStitch -> saveStitch()
@@ -207,6 +220,7 @@ class StitchFormViewModel @Inject constructor(
                             instructionLink = current.instructionLink.ifBlank { null },
                             videoLink = current.videoLink.ifBlank { null },
                             photos = photosJson,
+                            chartPath = current.chartPath,
                             notes = current.notes.ifBlank { null },
                             updatedAt = now
                         )
@@ -227,6 +241,7 @@ class StitchFormViewModel @Inject constructor(
                         instructionLink = current.instructionLink.ifBlank { null },
                         videoLink = current.videoLink.ifBlank { null },
                         photos = photosJson,
+                        chartPath = current.chartPath,
                         notes = current.notes.ifBlank { null },
                         createdAt = now,
                         updatedAt = now

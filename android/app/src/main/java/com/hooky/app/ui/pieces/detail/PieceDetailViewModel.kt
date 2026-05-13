@@ -48,6 +48,7 @@ sealed interface PieceDetailAction {
     object PauseTimer : PieceDetailAction
     object ResumeTimer : PieceDetailAction
     object StopTimer : PieceDetailAction
+    data class ApplySuggestedPrice(val price: Float) : PieceDetailAction
 }
 
 @HiltViewModel
@@ -260,6 +261,15 @@ class PieceDetailViewModel @Inject constructor(
                         timerDisplaySeconds = newTotal,
                         timerState = TimerState.IDLE
                     )
+                }
+            }
+            is PieceDetailAction.ApplySuggestedPrice -> {
+                viewModelScope.launch {
+                    try {
+                        pieceRepository.updatePrice(pieceId, action.price)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
                 }
             }
         }

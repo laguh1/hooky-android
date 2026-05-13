@@ -84,7 +84,9 @@ sealed interface PieceFormAction {
     data class PhotoAdded(val uri: String) : PieceFormAction
     data class PhotoReceived(val path: String) : PieceFormAction
     data class PhotoRemoved(val uri: String) : PieceFormAction
+    data class PhotoReplaced(val oldPath: String, val newPath: String) : PieceFormAction
     object ScanHookRequested : PieceFormAction
+    object ScanYarnLabelRequested : PieceFormAction
     object ApplyNeedleScanResult : PieceFormAction
     object DismissNeedleScanResult : PieceFormAction
     data class PriceChanged(val value: String) : PieceFormAction
@@ -246,6 +248,10 @@ class PieceFormViewModel @Inject constructor(
             }
             is PieceFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
+            is PieceFormAction.PhotoReplaced ->
+                _uiState.update { state ->
+                    state.copy(photos = state.photos.map { if (it == action.oldPath) action.newPath else it })
+                }
             is PieceFormAction.PriceChanged ->
                 _uiState.update { it.copy(price = action.value) }
             is PieceFormAction.MaterialCostChanged ->
@@ -277,6 +283,8 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(error = null) }
             PieceFormAction.ScanHookRequested ->
                 _uiState.update { it.copy(scanMode = ScanMode.HOOK) }
+            PieceFormAction.ScanYarnLabelRequested ->
+                _uiState.update { it.copy(scanMode = ScanMode.LABEL) }
             PieceFormAction.ApplyNeedleScanResult -> {
                 val result = _uiState.value.needleScanResult ?: return
                 _uiState.update { it.copy(hookSizeMm = result.sizeMm, needleScanResult = null, scanMode = ScanMode.NONE) }

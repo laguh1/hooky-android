@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +51,7 @@ fun PhotoGallery(
     photos: List<String>,
     height: Dp = 220.dp,
     onDeletePhoto: ((String) -> Unit)? = null,
+    onEditPhoto: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var photoToDelete by remember { mutableStateOf<String?>(null) }
@@ -92,6 +94,26 @@ fun PhotoGallery(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
+
+                    // Edit button — top-left, only when onEditPhoto is provided
+                    if (onEditPhoto != null) {
+                        IconButton(
+                            onClick = { onEditPhoto(path) },
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(8.dp)
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.55f))
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = "Edit photo",
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
 
                     // Delete button — top-right, only when onDeletePhoto is provided
                     if (onDeletePhoto != null) {

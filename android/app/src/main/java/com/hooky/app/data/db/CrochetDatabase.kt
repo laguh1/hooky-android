@@ -25,7 +25,7 @@ import com.hooky.app.data.db.entity.YarnEntity
         NeedleEntity::class,
         IdCounterEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -53,6 +53,12 @@ abstract class CrochetDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE pieces ADD COLUMN timerIsRunning INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE pieces ADD COLUMN timerSessionStartAt INTEGER")
                 database.execSQL("ALTER TABLE pieces ADD COLUMN needlesUsed TEXT NOT NULL DEFAULT '[]'")
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE stitches ADD COLUMN chartPath TEXT")
             }
         }
     }

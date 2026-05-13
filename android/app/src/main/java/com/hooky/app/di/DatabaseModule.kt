@@ -29,7 +29,7 @@ object DatabaseModule {
             CrochetDatabase::class.java,
             CrochetDatabase.DATABASE_NAME
         )
-            .addMigrations(CrochetDatabase.MIGRATION_2_3, CrochetDatabase.MIGRATION_3_4)
+            .addMigrations(CrochetDatabase.MIGRATION_2_3, CrochetDatabase.MIGRATION_3_4, CrochetDatabase.MIGRATION_4_5)
             .fallbackToDestructiveMigration()
             .build()
     }

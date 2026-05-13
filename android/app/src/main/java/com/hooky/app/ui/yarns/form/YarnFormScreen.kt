@@ -65,6 +65,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.hooky.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -74,10 +76,12 @@ import androidx.navigation.NavController
 import com.hooky.app.data.scanner.ScanMode
 import com.hooky.app.domain.model.enums.Material
 import com.hooky.app.domain.model.enums.WeightCategory
+import com.hooky.app.ui.camera.rememberPhotoEditorLauncher
 import com.hooky.app.ui.camera.rememberPhotoPickerLauncher
 import com.hooky.app.ui.components.NeedleScanConfirmDialog
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -108,6 +112,12 @@ fun YarnFormScreen(
     val galleryLauncher = rememberPhotoPickerLauncher { path ->
         viewModel.onAction(YarnFormAction.PhotoAdded(path))
     }
+
+    // Photo editor launcher
+    val editLauncher = rememberPhotoEditorLauncher(
+        onEditDone = { old, new -> viewModel.onAction(YarnFormAction.PhotoReplaced(old, new)) },
+        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
+    )
 
     // Gallery picker — for label scanning
     val scanGalleryLauncher = rememberPhotoPickerLauncher { path ->
@@ -150,7 +160,7 @@ fun YarnFormScreen(
         }
     }
 
-    val title = if (uiState.isEditMode) "Edit Yarn" else "New Yarn"
+    val title = if (uiState.isEditMode) stringResource(R.string.yarn_edit) else stringResource(R.string.yarn_new)
 
     Scaffold(
         topBar = {
@@ -163,7 +173,7 @@ fun YarnFormScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -231,7 +241,7 @@ fun YarnFormScreen(
                             strokeWidth = 2.dp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Scanning label…", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.yarn_scanning), style = MaterialTheme.typography.labelLarge)
                     }
                 } else {
                     Row(
@@ -261,7 +271,7 @@ fun YarnFormScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                "Scan Label",
+                                stringResource(R.string.yarn_scan_label),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -283,20 +293,25 @@ fun YarnFormScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                "From Gallery",
+                                stringResource(R.string.yarn_from_gallery),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
                 }
+                Text(
+                    text = stringResource(R.string.yarn_scan_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextMuted
+                )
 
                 // Section: Basic Info
-                FormSection(title = "Basic Info") {
+                FormSection(title = stringResource(R.string.yarn_section_basic)) {
                     OutlinedTextField(
                         value = uiState.name,
                         onValueChange = { viewModel.onAction(YarnFormAction.NameChanged(it)) },
-                        label = { Text("Name *") },
+                        label = { Text(stringResource(R.string.yarn_field_name) + " *") },
                         isError = uiState.nameError != null,
                         supportingText = uiState.nameError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                         singleLine = true,
@@ -308,7 +323,7 @@ fun YarnFormScreen(
                     OutlinedTextField(
                         value = uiState.brand,
                         onValueChange = { viewModel.onAction(YarnFormAction.BrandChanged(it)) },
-                        label = { Text("Brand") },
+                        label = { Text(stringResource(R.string.yarn_field_brand)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -318,7 +333,7 @@ fun YarnFormScreen(
                     OutlinedTextField(
                         value = uiState.color,
                         onValueChange = { viewModel.onAction(YarnFormAction.ColorChanged(it)) },
-                        label = { Text("Color name") },
+                        label = { Text(stringResource(R.string.yarn_field_color_name)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -339,8 +354,8 @@ fun YarnFormScreen(
                     OutlinedTextField(
                         value = uiState.colorCode,
                         onValueChange = { viewModel.onAction(YarnFormAction.ColorCodeChanged(it)) },
-                        label = { Text("Color code") },
-                        placeholder = { Text("#RRGGBB or manufacturer code", color = TextMuted) },
+                        label = { Text(stringResource(R.string.yarn_field_color_code)) },
+                        placeholder = { Text(stringResource(R.string.yarn_field_color_code_hint), color = TextMuted) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -348,241 +363,15 @@ fun YarnFormScreen(
                     )
                 }
 
-                // Section: Material
-                FormSection(title = "Material") {
-                    EnumDropdown(
-                        label = "Material",
-                        selected = uiState.material.displayName,
-                        options = Material.values().map { it.displayName },
-                        onSelect = { display ->
-                            val mat = Material.values().first { it.displayName == display }
-                            viewModel.onAction(YarnFormAction.MaterialChanged(mat))
-                        }
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.materialComposition,
-                        onValueChange = { viewModel.onAction(YarnFormAction.MaterialCompositionChanged(it)) },
-                        label = { Text("Material composition") },
-                        placeholder = { Text("e.g. 80% Merino, 20% Nylon", color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.materialSpecs,
-                        onValueChange = { viewModel.onAction(YarnFormAction.MaterialSpecsChanged(it)) },
-                        label = { Text("Material specs") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    // Weight category dropdown — nullable, with "Not specified" option
-                    val weightOptions = listOf("Not specified") + WeightCategory.values().map { it.displayName }
-                    val selectedWeight = uiState.weightCategory?.displayName ?: "Not specified"
-                    EnumDropdown(
-                        label = "Weight Category",
-                        selected = selectedWeight,
-                        options = weightOptions,
-                        onSelect = { display ->
-                            val wc = if (display == "Not specified") null
-                            else WeightCategory.values().firstOrNull { it.displayName == display }
-                            viewModel.onAction(YarnFormAction.WeightCategoryChanged(wc))
-                        }
-                    )
-                }
-
-                // Section: Ball Info
-                FormSection(title = "Ball Info") {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            value = uiState.ballWeightG,
-                            onValueChange = { viewModel.onAction(YarnFormAction.BallWeightGChanged(it)) },
-                            label = { Text("Ball weight (g)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = uiState.ballLengthM,
-                            onValueChange = { viewModel.onAction(YarnFormAction.BallLengthMChanged(it)) },
-                            label = { Text("Ball length (m)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = uiState.hookSizeMm,
-                        onValueChange = { viewModel.onAction(YarnFormAction.HookSizeMmChanged(it)) },
-                        label = { Text("Hook size (mm)") },
-                        trailingIcon = {
-                            IconButton(onClick = { launchNeedleScan(ScanMode.HOOK) }) {
-                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan hook", modifier = Modifier.size(20.dp), tint = TextSecondary)
-                            }
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.needleSizeMm,
-                        onValueChange = { viewModel.onAction(YarnFormAction.NeedleSizeMmChanged(it)) },
-                        label = { Text("Needle size (mm)") },
-                        placeholder = { Text("e.g. 4.0-5.0", color = TextMuted) },
-                        trailingIcon = {
-                            IconButton(onClick = { launchNeedleScan(ScanMode.NEEDLE) }) {
-                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan needle", modifier = Modifier.size(20.dp), tint = TextSecondary)
-                            }
-                        },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.gauge,
-                        onValueChange = { viewModel.onAction(YarnFormAction.GaugeChanged(it)) },
-                        label = { Text("Gauge") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Purchase
-                FormSection(title = "Purchase") {
-                    OutlinedTextField(
-                        value = uiState.pricePaid,
-                        onValueChange = { viewModel.onAction(YarnFormAction.PricePaidChanged(it)) },
-                        label = { Text("Price paid (€)") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.purchaseLocation,
-                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseLocationChanged(it)) },
-                        label = { Text("Purchase location") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.purchaseDate,
-                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseDateChanged(it)) },
-                        label = { Text("Purchase date") },
-                        placeholder = { Text("yyyy-MM-dd", color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.purchaseLink,
-                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseLinkChanged(it)) },
-                        label = { Text("Purchase link (URL)") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.quantityOwned,
-                        onValueChange = { viewModel.onAction(YarnFormAction.QuantityOwnedChanged(it)) },
-                        label = { Text("Quantity owned") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Care Instructions
-                FormSection(title = "Care Instructions") {
-                    CareCheckboxRow(
-                        label = "Machine Wash",
-                        checked = uiState.machineWash,
-                        onCheckedChange = { viewModel.onAction(YarnFormAction.MachineWashChanged(it)) }
-                    )
-                    CareCheckboxRow(
-                        label = "Hand Wash",
-                        checked = uiState.handWash,
-                        onCheckedChange = { viewModel.onAction(YarnFormAction.HandWashChanged(it)) }
-                    )
-                    CareCheckboxRow(
-                        label = "Dry Clean",
-                        checked = uiState.dryClean,
-                        onCheckedChange = { viewModel.onAction(YarnFormAction.DryCleanChanged(it)) }
-                    )
-                    CareCheckboxRow(
-                        label = "Bleach",
-                        checked = uiState.bleach,
-                        onCheckedChange = { viewModel.onAction(YarnFormAction.BleachChanged(it)) }
-                    )
-                    CareCheckboxRow(
-                        label = "Tumble Dry",
-                        checked = uiState.tumbleDry,
-                        onCheckedChange = { viewModel.onAction(YarnFormAction.TumbleDryChanged(it)) }
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.ironTemperature,
-                        onValueChange = { viewModel.onAction(YarnFormAction.IronTemperatureChanged(it)) },
-                        label = { Text("Iron temperature") },
-                        placeholder = { Text("e.g. Low, Medium, 110°C", color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.careNotes,
-                        onValueChange = { viewModel.onAction(YarnFormAction.CareNotesChanged(it)) },
-                        label = { Text("Care notes") },
-                        minLines = 2,
-                        maxLines = 4,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Photos
-                FormSection(title = "Photos") {
+                // Section: Photos — early so label scan color suggestion appears right away
+                FormSection(title = stringResource(R.string.yarn_section_photos)) {
                     PhotoGallery(
                         photos = uiState.photos,
                         height = 220.dp,
                         onDeletePhoto = { path ->
                             viewModel.onAction(YarnFormAction.PhotoRemoved(path))
                         },
+                        onEditPhoto = { path -> editLauncher(path) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -606,13 +395,9 @@ fun YarnFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.CameraAlt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Take Photo")
+                            Text(stringResource(R.string.action_take_photo))
                         }
 
                         OutlinedButton(
@@ -622,23 +407,247 @@ fun YarnFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.Image,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Gallery")
+                            Text(stringResource(R.string.action_gallery))
                         }
                     }
                 }
 
+                // Section: Material
+                FormSection(title = stringResource(R.string.yarn_section_material)) {
+                    EnumDropdown(
+                        label = stringResource(R.string.yarn_field_material),
+                        selected = uiState.material.displayName,
+                        options = Material.values().map { it.displayName },
+                        onSelect = { display ->
+                            val mat = Material.values().first { it.displayName == display }
+                            viewModel.onAction(YarnFormAction.MaterialChanged(mat))
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.materialComposition,
+                        onValueChange = { viewModel.onAction(YarnFormAction.MaterialCompositionChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_composition)) },
+                        placeholder = { Text(stringResource(R.string.yarn_field_composition_hint), color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.materialSpecs,
+                        onValueChange = { viewModel.onAction(YarnFormAction.MaterialSpecsChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_specs)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    // Weight category dropdown — nullable, with "Not specified" option
+                    val weightOptions = listOf(stringResource(R.string.not_specified)) + WeightCategory.values().map { it.displayName }
+                    val selectedWeight = uiState.weightCategory?.displayName ?: stringResource(R.string.not_specified)
+                    EnumDropdown(
+                        label = stringResource(R.string.yarn_field_weight_category),
+                        selected = selectedWeight,
+                        options = weightOptions,
+                        onSelect = { display ->
+                            val notSpecified = weightOptions.first()
+                            val wc = if (display == notSpecified) null
+                            else WeightCategory.values().firstOrNull { it.displayName == display }
+                            viewModel.onAction(YarnFormAction.WeightCategoryChanged(wc))
+                        }
+                    )
+                }
+
+                // Section: Ball Info
+                FormSection(title = stringResource(R.string.yarn_section_ball_info)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.ballWeightG,
+                            onValueChange = { viewModel.onAction(YarnFormAction.BallWeightGChanged(it)) },
+                            label = { Text(stringResource(R.string.yarn_field_ball_weight)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = uiState.ballLengthM,
+                            onValueChange = { viewModel.onAction(YarnFormAction.BallLengthMChanged(it)) },
+                            label = { Text(stringResource(R.string.yarn_field_ball_length)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = uiState.hookSizeMm,
+                        onValueChange = { viewModel.onAction(YarnFormAction.HookSizeMmChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_hook_size)) },
+                        trailingIcon = {
+                            IconButton(onClick = { launchNeedleScan(ScanMode.HOOK) }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = stringResource(R.string.yarn_label_hook_size), modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.needleSizeMm,
+                        onValueChange = { viewModel.onAction(YarnFormAction.NeedleSizeMmChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_needle_size)) },
+                        placeholder = { Text(stringResource(R.string.yarn_field_needle_size_hint), color = TextMuted) },
+                        trailingIcon = {
+                            IconButton(onClick = { launchNeedleScan(ScanMode.NEEDLE) }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = stringResource(R.string.yarn_label_needle_size), modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.gauge,
+                        onValueChange = { viewModel.onAction(YarnFormAction.GaugeChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_gauge)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                // Section: Purchase
+                FormSection(title = stringResource(R.string.yarn_section_purchase)) {
+                    OutlinedTextField(
+                        value = uiState.pricePaid,
+                        onValueChange = { viewModel.onAction(YarnFormAction.PricePaidChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_price_paid)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.purchaseLocation,
+                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseLocationChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_purchase_location)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.purchaseDate,
+                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseDateChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_purchase_date)) },
+                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.purchaseLink,
+                        onValueChange = { viewModel.onAction(YarnFormAction.PurchaseLinkChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_purchase_link)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.quantityOwned,
+                        onValueChange = { viewModel.onAction(YarnFormAction.QuantityOwnedChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_field_quantity)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                // Section: Care Instructions
+                FormSection(title = stringResource(R.string.yarn_section_care)) {
+                    CareCheckboxRow(
+                        label = stringResource(R.string.yarn_care_machine_wash),
+                        checked = uiState.machineWash,
+                        onCheckedChange = { viewModel.onAction(YarnFormAction.MachineWashChanged(it)) }
+                    )
+                    CareCheckboxRow(
+                        label = stringResource(R.string.yarn_care_hand_wash),
+                        checked = uiState.handWash,
+                        onCheckedChange = { viewModel.onAction(YarnFormAction.HandWashChanged(it)) }
+                    )
+                    CareCheckboxRow(
+                        label = stringResource(R.string.yarn_care_dry_clean),
+                        checked = uiState.dryClean,
+                        onCheckedChange = { viewModel.onAction(YarnFormAction.DryCleanChanged(it)) }
+                    )
+                    CareCheckboxRow(
+                        label = stringResource(R.string.yarn_care_bleach),
+                        checked = uiState.bleach,
+                        onCheckedChange = { viewModel.onAction(YarnFormAction.BleachChanged(it)) }
+                    )
+                    CareCheckboxRow(
+                        label = stringResource(R.string.yarn_care_tumble_dry),
+                        checked = uiState.tumbleDry,
+                        onCheckedChange = { viewModel.onAction(YarnFormAction.TumbleDryChanged(it)) }
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.ironTemperature,
+                        onValueChange = { viewModel.onAction(YarnFormAction.IronTemperatureChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_care_iron_temp)) },
+                        placeholder = { Text(stringResource(R.string.yarn_field_iron_temp_hint), color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.careNotes,
+                        onValueChange = { viewModel.onAction(YarnFormAction.CareNotesChanged(it)) },
+                        label = { Text(stringResource(R.string.yarn_label_care_notes)) },
+                        minLines = 2,
+                        maxLines = 4,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 // Section: Notes
-                FormSection(title = "Notes") {
+                FormSection(title = stringResource(R.string.yarn_section_notes)) {
                     OutlinedTextField(
                         value = uiState.notes,
                         onValueChange = { viewModel.onAction(YarnFormAction.NotesChanged(it)) },
-                        label = { Text("Notes") },
+                        label = { Text(stringResource(R.string.label_notes)) },
                         minLines = 3,
                         maxLines = 6,
                         shape = RoundedCornerShape(10.dp),
@@ -670,7 +679,7 @@ fun YarnFormScreen(
                         )
                     } else {
                         Text(
-                            text = if (uiState.isEditMode) "Save Changes" else "Add Yarn",
+                            text = if (uiState.isEditMode) stringResource(R.string.action_save_changes) else stringResource(R.string.yarn_add),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -804,7 +813,7 @@ private fun ColorSuggestionChip(
             tint = TextMuted
         )
         Text(
-            text = "Detected:",
+            text = stringResource(R.string.yarn_color_detected),
             style = MaterialTheme.typography.bodySmall,
             color = TextMuted
         )
@@ -827,10 +836,10 @@ private fun ColorSuggestionChip(
             modifier = Modifier.weight(1f)
         )
         IconButton(onClick = onApply, modifier = Modifier.size(28.dp)) {
-            Icon(Icons.Filled.Check, contentDescription = "Apply color", modifier = Modifier.size(16.dp), tint = Slate)
+            Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.yarn_color_apply), modifier = Modifier.size(16.dp), tint = Slate)
         }
         IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
-            Icon(Icons.Filled.Close, contentDescription = "Dismiss", modifier = Modifier.size(16.dp), tint = TextMuted)
+            Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.yarn_color_dismiss), modifier = Modifier.size(16.dp), tint = TextMuted)
         }
     }
 }
