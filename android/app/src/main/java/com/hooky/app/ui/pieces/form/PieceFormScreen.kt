@@ -296,8 +296,8 @@ fun PieceFormScreen(
                     }
                 }
 
-                // Section: Dimensions & Hook
-                FormSection(title = stringResource(R.string.piece_section_dimensions_hook)) {
+                // Section: Dimensions
+                FormSection(title = stringResource(R.string.label_dimensions)) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -323,29 +323,6 @@ fun PieceFormScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
-
-                    OutlinedTextField(
-                        value = uiState.hookSizeMm,
-                        onValueChange = { viewModel.onAction(PieceFormAction.HookSizeMmChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_hook_size_mm)) },
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                viewModel.onAction(PieceFormAction.ScanHookRequested)
-                                val granted = ContextCompat.checkSelfPermission(
-                                    context, Manifest.permission.CAMERA
-                                ) == PackageManager.PERMISSION_GRANTED
-                                if (granted) onNavigateToCamera()
-                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }) {
-                                Icon(Icons.Filled.CameraAlt, contentDescription = stringResource(R.string.action_scan_hook), modifier = Modifier.size(20.dp), tint = TextSecondary)
-                            }
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
 
                 // Section: Dates & Hours

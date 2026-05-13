@@ -147,9 +147,27 @@ fun CrochetNavGraph(
         ) {
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
-                    onNavigateToPieces = { navController.navigate(Screen.PieceList.route) },
-                    onNavigateToYarns = { navController.navigate(Screen.YarnList.route) },
-                    onNavigateToStitches = { navController.navigate(Screen.StitchList.route) },
+                    onNavigateToPieces = {
+                        navController.navigate(Screen.PieceList.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToYarns = {
+                        navController.navigate(Screen.YarnList.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onNavigateToStitches = {
+                        navController.navigate(Screen.StitchList.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     onNavigateToPieceDetail = { id -> navController.navigate(Screen.PieceDetail.createRoute(id)) },
                     onNavigateToSearch = { navController.navigate(Screen.Search.route) },
                     onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
