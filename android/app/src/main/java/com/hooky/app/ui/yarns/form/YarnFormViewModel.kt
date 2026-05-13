@@ -100,6 +100,7 @@ sealed interface YarnFormAction {
     data class PhotoAdded(val uri: String) : YarnFormAction
     data class PhotoReceived(val path: String) : YarnFormAction
     data class PhotoRemoved(val uri: String) : YarnFormAction
+    data class PhotoReplaced(val oldPath: String, val newPath: String) : YarnFormAction
     data class NotesChanged(val value: String) : YarnFormAction
     object SaveYarn : YarnFormAction
     object ClearError : YarnFormAction
@@ -273,6 +274,10 @@ class YarnFormViewModel @Inject constructor(
                 _uiState.update { it.copy(suggestedColor = null, suggestedColorRgb = null) }
             is YarnFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
+            is YarnFormAction.PhotoReplaced ->
+                _uiState.update { state ->
+                    state.copy(photos = state.photos.map { if (it == action.oldPath) action.newPath else it })
+                }
             is YarnFormAction.NotesChanged ->
                 _uiState.update { it.copy(notes = action.value) }
             YarnFormAction.SaveYarn -> saveYarn()

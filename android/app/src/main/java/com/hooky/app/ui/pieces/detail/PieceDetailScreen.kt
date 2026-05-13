@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Texture
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -77,6 +78,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import com.hooky.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -92,6 +96,7 @@ import com.hooky.app.domain.model.enums.PieceType
 import com.hooky.app.domain.model.enums.WorkStatus
 import com.hooky.app.ui.components.BadgeStyle
 import com.hooky.app.ui.components.StatusBadge
+import com.hooky.app.ui.share.ShareCardGenerator
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BorderStrong
@@ -131,7 +136,7 @@ fun PieceDetailScreen(
             }
             uiState.piece == null -> {
                 Text(
-                    "Piece not found",
+                    stringResource(R.string.piece_not_found),
                     modifier = Modifier.align(Alignment.Center),
                     color = TextSecondary
                 )
@@ -156,6 +161,7 @@ fun PieceDetailScreen(
                     onPauseTimer = { viewModel.onAction(PieceDetailAction.PauseTimer) },
                     onResumeTimer = { viewModel.onAction(PieceDetailAction.ResumeTimer) },
                     onStopTimer = { viewModel.onAction(PieceDetailAction.StopTimer) },
+                    onApplySuggestedPrice = { price -> viewModel.onAction(PieceDetailAction.ApplySuggestedPrice(price)) },
                 )
             }
         }
@@ -198,7 +204,13 @@ private fun PieceDetailContent(
     onPauseTimer: () -> Unit,
     onResumeTimer: () -> Unit,
     onStopTimer: () -> Unit,
+    onApplySuggestedPrice: (Float) -> Unit,
 ) {
+    var showPriceSuggestion by remember { mutableStateOf(false) }
+    var isSharing by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val shareScope = rememberCoroutineScope()
+
     val photos = remember(piece.photos) {
         try {
             kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.photos)
@@ -302,7 +314,7 @@ private fun PieceDetailContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.action_back),
                     tint = White,
                     modifier = Modifier.size(20.dp)
                 )
@@ -340,27 +352,44 @@ private fun PieceDetailContent(
                 StatusBadge(text = typeName, style = BadgeStyle.MUTED)
             }
 
-            // Row counter — always shown
-            RowCounterCard(
-                rowCount = piece.rowCount,
-                targetRowCount = piece.targetRowCount,
-                onIncrement = onIncrementRow,
-                onDecrement = onDecrementRow,
-                onIncrementBy = onIncrementRowBy,
-                onSetRowCount = onSetRowCount,
-                onShowSnackbar = onShowSnackbar
-            )
+            // Row counter + timer — only while in progress
+            if (piece.workStatus != "FINISHED") {
+                RowCounterCard(
+                    rowCount = piece.rowCount,
+                    targetRowCount = piece.targetRowCount,
+                    onIncrement = onIncrementRow,
+                    onDecrement = onDecrementRow,
+                    onIncrementBy = onIncrementRowBy,
+                    onSetRowCount = onSetRowCount,
+                    onShowSnackbar = onShowSnackbar
+                )
 
-            // Work Timer
-            WorkTimerCard(
-                timerDisplaySeconds = timerDisplaySeconds,
-                timerState = timerState,
-                workHours = piece.workHours,
-                onStart = onStartTimer,
-                onPause = onPauseTimer,
-                onResume = onResumeTimer,
-                onStop = onStopTimer,
-            )
+                WorkTimerCard(
+                    timerDisplaySeconds = timerDisplaySeconds,
+                    timerState = timerState,
+                    workHours = piece.workHours,
+                    onStart = onStartTimer,
+                    onPause = onPauseTimer,
+                    onResume = onResumeTimer,
+                    onStop = onStopTimer,
+                )
+            }
+
+            // Price suggestion — available whenever there are hours logged
+            if (piece.workHours != null && piece.workHours > 0f) {
+                TextButton(
+                    onClick = { showPriceSuggestion = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Suggest price →",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = BrandPurple,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
 
             // Info card
             val hasInfo = piece.widthCm != null || piece.lengthCm != null ||
@@ -378,7 +407,7 @@ private fun PieceDetailContent(
             // Yarns used
             if (yarnsUsed.isNotEmpty()) {
                 ChipListSection(
-                    title = "Yarns Used",
+                    title = stringResource(R.string.piece_section_yarns_used),
                     items = yarnsUsed.map { id -> yarnNames[id] ?: id }
                 )
             }
@@ -386,7 +415,7 @@ private fun PieceDetailContent(
             // Stitches used
             if (stitchesUsed.isNotEmpty()) {
                 ChipListSection(
-                    title = "Stitches Used",
+                    title = stringResource(R.string.piece_section_stitches_used),
                     items = stitchesUsed.map { id -> stitchNames[id] ?: id }
                 )
             }
@@ -394,22 +423,23 @@ private fun PieceDetailContent(
             // Needles used
             if (needlesUsed.isNotEmpty()) {
                 ChipListSection(
-                    title = "Needles Used",
+                    title = stringResource(R.string.piece_section_needles_used),
                     items = needlesUsed.map { id -> needleNames[id] ?: id }
                 )
             }
 
-            // Pricing section
+            // Pricing section — only for pieces intended for sale or already sold
+            val isSaleDestination = piece.destination == "FOR_SALE" || piece.destination == "SOLD"
             val hasPricing = piece.price != null || piece.materialCost != null ||
                 piece.salePlatform != null || piece.saleLink != null ||
                 piece.soldDate != null || piece.soldPrice != null
-            if (hasPricing) {
+            if (isSaleDestination && hasPricing) {
                 PricingCard(piece = piece)
             }
 
             // Gift section
             piece.giftRecipient?.let { recipient ->
-                InfoRow(label = "Gift for", value = recipient)
+                InfoRow(label = stringResource(R.string.piece_label_gift_for), value = recipient)
             }
 
             // Notes
@@ -419,17 +449,67 @@ private fun PieceDetailContent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Price suggestion dialog
+            if (showPriceSuggestion) {
+                PriceSuggestionDialog(
+                    workHours = piece.workHours ?: 0f,
+                    rowCount = piece.rowCount,
+                    materialCost = piece.materialCost,
+                    onApply = { price ->
+                        onApplySuggestedPrice(price)
+                        showPriceSuggestion = false
+                    },
+                    onDismiss = { showPriceSuggestion = false }
+                )
+            }
+
             // Done button
             Button(
                 onClick = onNavigateBack,
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Slate,
-                    contentColor = White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Done", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.action_done), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+            }
+
+            // Share button
+            OutlinedButton(
+                onClick = {
+                    shareScope.launch {
+                        isSharing = true
+                        val intent = ShareCardGenerator.generateAndShare(
+                            context = context,
+                            pieceName = piece.name,
+                            pieceType = piece.type,
+                            destination = piece.destination,
+                            workHours = piece.workHours,
+                            rowCount = piece.rowCount,
+                            photoPath = photos.firstOrNull()
+                        )
+                        isSharing = false
+                        if (intent != null) {
+                            context.startActivity(Intent.createChooser(intent, null))
+                        }
+                    }
+                },
+                enabled = !isSharing,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, BrandPurple),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = BrandPurple)
+            ) {
+                if (isSharing) {
+                    CircularProgressIndicator(modifier = Modifier.size(18.dp), color = BrandPurple, strokeWidth = 2.dp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                } else {
+                    Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                }
+                Text(stringResource(R.string.action_share_piece), style = MaterialTheme.typography.labelLarge)
             }
 
             // Action buttons
@@ -441,8 +521,8 @@ private fun PieceDetailContent(
                     onClick = onNavigateToEdit,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, BorderStrong),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate)
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
                 ) {
                     Icon(
                         Icons.Filled.Edit,
@@ -450,7 +530,7 @@ private fun PieceDetailContent(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Edit")
+                    Text(stringResource(R.string.action_edit))
                 }
 
                 OutlinedButton(
@@ -462,7 +542,7 @@ private fun PieceDetailContent(
                         contentColor = ErrorRed
                     )
                 ) {
-                    Text("Archive")
+                    Text(stringResource(R.string.action_archive))
                 }
             }
 
@@ -475,7 +555,7 @@ private fun PieceDetailContent(
 private fun InfoCard(piece: PieceEntity) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -488,12 +568,12 @@ private fun InfoCard(piece: PieceEntity) {
                     if (piece.widthCm != null && piece.lengthCm != null) append(" × ")
                     piece.lengthCm?.let { append("${it}cm long") }
                 }
-                InfoRow(label = "Dimensions", value = dims)
+                InfoRow(label = stringResource(R.string.label_dimensions), value = dims)
             }
-            piece.dateStarted?.let { InfoRow(label = "Started", value = it) }
-            piece.dateFinished?.let { InfoRow(label = "Finished", value = it) }
-            piece.hookSizeMm?.let { InfoRow(label = "Hook size", value = "${it}mm") }
-            piece.workHours?.let { InfoRow(label = "Work hours", value = "${it}h") }
+            piece.dateStarted?.let { InfoRow(label = stringResource(R.string.label_started), value = it) }
+            piece.dateFinished?.let { InfoRow(label = stringResource(R.string.label_finished), value = it) }
+            piece.hookSizeMm?.let { InfoRow(label = stringResource(R.string.label_hook_size), value = "${it}mm") }
+            piece.workHours?.let { InfoRow(label = stringResource(R.string.label_hours), value = "${it}h") }
         }
     }
 }
@@ -525,7 +605,7 @@ private fun WorkSessionsSection(workSessions: List<WorkSession>) {
 
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -537,14 +617,14 @@ private fun WorkSessionsSection(workSessions: List<WorkSession>) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Work Sessions (${workSessions.size})",
+                    text = stringResource(R.string.piece_work_sessions_title, workSessions.size),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
                     imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = if (expanded) stringResource(R.string.action_collapse) else stringResource(R.string.action_expand),
                     tint = TextSecondary
                 )
             }
@@ -557,7 +637,7 @@ private fun WorkSessionsSection(workSessions: List<WorkSession>) {
                     workSessions.forEach { session ->
                         WorkSessionItem(session = session)
                         if (session != workSessions.last()) {
-                            Divider(color = BorderLight, thickness = 0.5.dp)
+                            Divider(color = MaterialTheme.colorScheme.outline, thickness = 0.5.dp)
                         }
                     }
                 }
@@ -579,7 +659,7 @@ private fun WorkSessionItem(session: WorkSession) {
                 color = TextSecondary
             )
             Text(
-                text = "${session.durationMinutes} min",
+                text = stringResource(R.string.piece_session_duration, session.durationMinutes),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -620,7 +700,7 @@ private fun ChipListSection(title: String, items: List<String>) {
 private fun PricingCard(piece: PieceEntity) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -628,17 +708,17 @@ private fun PricingCard(piece: PieceEntity) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = "Pricing",
+                text = stringResource(R.string.piece_section_pricing),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            piece.materialCost?.let { InfoRow(label = "Material cost", value = "€$it") }
-            piece.price?.let { InfoRow(label = "Suggested price", value = "€$it") }
-            piece.salePlatform?.let { InfoRow(label = "Sale platform", value = it) }
-            piece.saleLink?.let { InfoRow(label = "Sale link", value = it) }
-            piece.soldDate?.let { InfoRow(label = "Sold on", value = it) }
-            piece.soldPrice?.let { InfoRow(label = "Sold price", value = "€$it") }
+            piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost), value = "€$it") }
+            piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price), value = "€$it") }
+            piece.salePlatform?.let { InfoRow(label = stringResource(R.string.piece_label_sale_platform), value = it) }
+            piece.saleLink?.let { InfoRow(label = stringResource(R.string.piece_label_sale_link), value = it) }
+            piece.soldDate?.let { InfoRow(label = stringResource(R.string.piece_label_sold_on), value = it) }
+            piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = "€$it") }
         }
     }
 }
@@ -647,12 +727,12 @@ private fun PricingCard(piece: PieceEntity) {
 private fun NotesCard(notes: String) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Notes",
+                text = stringResource(R.string.label_notes),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -685,7 +765,7 @@ private fun WorkTimerCard(
 
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -693,7 +773,7 @@ private fun WorkTimerCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Work Timer",
+                text = stringResource(R.string.piece_work_timer),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary,
                 modifier = Modifier.fillMaxWidth()
@@ -703,7 +783,7 @@ private fun WorkTimerCard(
                 text = timeFormatted,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = if (timerState == TimerState.RUNNING) BrandPurple else Slate,
+                color = if (timerState == TimerState.RUNNING) BrandPurple else MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -719,32 +799,32 @@ private fun WorkTimerCard(
                             onClick = onStart,
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Slate,
-                                contentColor = White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         ) {
-                            Text("Start")
+                            Text(stringResource(R.string.action_start))
                         }
                     }
                     TimerState.RUNNING -> {
                         OutlinedButton(
                             onClick = onPause,
                             shape = RoundedCornerShape(10.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                         ) {
-                            Text("Pause")
+                            Text(stringResource(R.string.action_pause))
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Button(
                             onClick = onStop,
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Slate,
-                                contentColor = White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         ) {
-                            Text("Stop")
+                            Text(stringResource(R.string.action_stop))
                         }
                     }
                     TimerState.PAUSED -> {
@@ -752,29 +832,29 @@ private fun WorkTimerCard(
                             onClick = onResume,
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Slate,
-                                contentColor = White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         ) {
-                            Text("Resume")
+                            Text(stringResource(R.string.action_resume))
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         OutlinedButton(
                             onClick = onStop,
                             shape = RoundedCornerShape(10.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                         ) {
-                            Text("Stop")
+                            Text(stringResource(R.string.action_stop))
                         }
                     }
                 }
             }
             if (workHours != null && timerState == TimerState.IDLE) {
                 Spacer(modifier = Modifier.height(8.dp))
-                val displayHours = "%.1f".format(workHours)
+                val displayHours = if (workHours % 1f == 0f) "${workHours.toInt()}" else "%.2f".format(workHours)
                 Text(
-                    text = "Total: ${displayHours}h logged",
+                    text = stringResource(R.string.piece_timer_total, displayHours),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextMuted,
                     modifier = Modifier.fillMaxWidth(),
@@ -800,6 +880,8 @@ private fun RowCounterCard(
     var isListening by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val voiceErrorMsg = stringResource(R.string.piece_voice_error)
+    val voicePermissionMsg = stringResource(R.string.piece_voice_permission)
 
     val speechAvailable = remember(context) { SpeechRecognizer.isRecognitionAvailable(context) }
     val speechRecognizer = remember(context) {
@@ -820,7 +902,7 @@ private fun RowCounterCard(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasAudioPermission = granted
-        if (!granted) scope.launch { onShowSnackbar("Microphone permission required for voice counting") }
+        if (!granted) scope.launch { onShowSnackbar(voicePermissionMsg) }
     }
 
     fun parseSpokenNumber(text: String): Int? {
@@ -855,11 +937,11 @@ private fun RowCounterCard(
                     ?: emptyList()
                 val number = candidates.firstNotNullOfOrNull { parseSpokenNumber(it) }
                 if (number != null && number > 0) onIncrementBy(number)
-                else scope.launch { onShowSnackbar("Didn't catch a number — try again") }
+                else scope.launch { onShowSnackbar(voiceErrorMsg) }
             }
             override fun onError(error: Int) {
                 isListening = false
-                scope.launch { onShowSnackbar("Didn't catch a number — try again") }
+                scope.launch { onShowSnackbar(voiceErrorMsg) }
             }
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
@@ -874,7 +956,7 @@ private fun RowCounterCard(
 
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -885,7 +967,7 @@ private fun RowCounterCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Row Counter",
+                    text = stringResource(R.string.piece_row_counter),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextSecondary
                 )
@@ -895,7 +977,7 @@ private fun RowCounterCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit row count",
+                        contentDescription = stringResource(R.string.piece_edit_row_count),
                         tint = TextMuted,
                         modifier = Modifier.size(16.dp)
                     )
@@ -915,14 +997,14 @@ private fun RowCounterCard(
                     onClick = onDecrement,
                     enabled = rowCount > 0,
                     shape = RoundedCornerShape(10.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, if (rowCount > 0) BorderStrong else BorderLight),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Remove,
-                        contentDescription = "Decrement",
+                        contentDescription = stringResource(R.string.action_decrement),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -932,7 +1014,7 @@ private fun RowCounterCard(
                     text = rowCount.toString(),
                     style = MaterialTheme.typography.headlineLarge.copy(fontSize = 48.sp),
                     fontWeight = FontWeight.Bold,
-                    color = Slate,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1.5f)
                 )
@@ -942,15 +1024,15 @@ private fun RowCounterCard(
                     onClick = onIncrement,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Slate,
-                        contentColor = White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        contentDescription = "Increment",
+                        contentDescription = stringResource(R.string.action_increment),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -972,7 +1054,7 @@ private fun RowCounterCard(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Mic,
-                            contentDescription = if (isListening) "Stop listening" else "Voice count",
+                            contentDescription = if (isListening) stringResource(R.string.action_stop_listening) else stringResource(R.string.action_voice_count),
                             tint = if (isListening) BrandPurple else TextSecondary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -993,12 +1075,12 @@ private fun RowCounterCard(
                         .fillMaxWidth()
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp)),
-                    color = Slate,
-                    trackColor = BorderLight
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.outline
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "$rowCount / $targetRowCount rows",
+                    text = stringResource(R.string.piece_rows_progress, rowCount, targetRowCount),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextMuted,
                     modifier = Modifier.fillMaxWidth(),
@@ -1035,7 +1117,7 @@ private fun SetRowCountDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Set Row Count",
+                stringResource(R.string.piece_row_dialog_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -1045,7 +1127,7 @@ private fun SetRowCountDialog(
                 OutlinedTextField(
                     value = countText,
                     onValueChange = { if (it.all { c -> c.isDigit() }) countText = it },
-                    label = { Text("Current row") },
+                    label = { Text(stringResource(R.string.piece_row_current)) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
@@ -1056,8 +1138,8 @@ private fun SetRowCountDialog(
                 OutlinedTextField(
                     value = targetText,
                     onValueChange = { if (it.all { c -> c.isDigit() }) targetText = it },
-                    label = { Text("Target rows (optional)") },
-                    placeholder = { Text("Leave blank for no target", color = TextMuted) },
+                    label = { Text(stringResource(R.string.piece_row_target)) },
+                    placeholder = { Text(stringResource(R.string.piece_row_target_hint), color = TextMuted) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
@@ -1074,11 +1156,11 @@ private fun SetRowCountDialog(
                     val target = targetText.toIntOrNull()
                     onSave(count, target)
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Slate)
-            ) { Text("Save") }
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) { Text(stringResource(R.string.action_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel", color = TextSecondary) }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel), color = TextSecondary) }
         }
     )
 }
@@ -1094,7 +1176,7 @@ private fun ArchiveDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Archive this piece?",
+                text = stringResource(R.string.piece_archive_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -1102,19 +1184,19 @@ private fun ArchiveDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "The piece will be archived and hidden from your list. You can still find it in your archive.",
+                    text = stringResource(R.string.piece_archive_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary
                 )
                 OutlinedTextField(
                     value = reason,
                     onValueChange = { reason = it },
-                    label = { Text("Reason (optional)") },
+                    label = { Text(stringResource(R.string.piece_archive_reason_hint)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Slate,
-                        cursorColor = Slate
+                        focusedBorderColor = BrandPurple,
+                        cursorColor = BrandPurple
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1125,7 +1207,7 @@ private fun ArchiveDialog(
                 onClick = { onConfirm(reason.ifBlank { null }) },
                 colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed)
             ) {
-                Text("Archive")
+                Text(stringResource(R.string.action_archive))
             }
         },
         dismissButton = {
@@ -1135,9 +1217,131 @@ private fun ArchiveDialog(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
+    )
+}
+
+@Composable
+private fun PriceSuggestionDialog(
+    workHours: Float,
+    rowCount: Int,
+    materialCost: Float?,
+    onApply: (Float) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("hooky_settings", android.content.Context.MODE_PRIVATE) }
+    var hourlyRateText by remember {
+        mutableStateOf(prefs.getFloat("hourly_rate", 12f).let {
+            if (it % 1f == 0f) it.toInt().toString() else "%.2f".format(it)
+        })
+    }
+
+    val hourlyRate = hourlyRateText.toFloatOrNull() ?: 0f
+    val suggested = hourlyRate * workHours + (materialCost ?: 0f)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        title = {
+            Text(
+                "Price Suggestion",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Work hours", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    Text(
+                        "%.2fh".format(workHours),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Rows worked", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    Text(
+                        rowCount.toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                if (materialCost != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Material cost", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                        Text(
+                            "€%.2f".format(materialCost),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                OutlinedTextField(
+                    value = hourlyRateText,
+                    onValueChange = { hourlyRateText = it },
+                    label = { Text("Hourly rate (€/h)") },
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BrandPurple,
+                        cursorColor = BrandPurple,
+                        focusedLabelColor = BrandPurple,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Suggested price",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        "€%.2f".format(suggested),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = BrandPurple
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    prefs.edit().putFloat("hourly_rate", hourlyRate).apply()
+                    onApply(suggested)
+                },
+                enabled = hourlyRate > 0f && suggested > 0f,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) { Text("Apply to Piece") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel), color = TextSecondary)
+            }
+        }
     )
 }

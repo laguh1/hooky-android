@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,16 +56,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.hooky.app.R
+import com.hooky.app.data.scanner.ScanMode
 import com.hooky.app.domain.model.enums.NeedleType
+import com.hooky.app.ui.camera.rememberPhotoEditorLauncher
 import com.hooky.app.ui.camera.rememberPhotoPickerLauncher
+import com.hooky.app.ui.components.NeedleScanConfirmDialog
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -91,9 +98,20 @@ fun NeedleFormScreen(
         if (granted) onNavigateToCamera()
     }
 
-    // Gallery picker
+    // Gallery picker — adds photo to gallery
     val galleryLauncher = rememberPhotoPickerLauncher { path ->
         viewModel.onAction(NeedleFormAction.PhotoAdded(path))
+    }
+
+    // Photo editor launcher
+    val editLauncher = rememberPhotoEditorLauncher(
+        onEditDone = { old, new -> viewModel.onAction(NeedleFormAction.PhotoReplaced(old, new)) },
+        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
+    )
+
+    // Gallery picker — for size scanning
+    val scanGalleryLauncher = rememberPhotoPickerLauncher { path ->
+        viewModel.onAction(NeedleFormAction.PhotoReceived(path))
     }
 
     // Receive photo from CameraScreen
@@ -120,7 +138,7 @@ fun NeedleFormScreen(
         }
     }
 
-    val title = if (uiState.isEditMode) "Edit Needle" else "New Needle"
+    val title = if (uiState.isEditMode) stringResource(R.string.needle_edit) else stringResource(R.string.needle_new)
 
     Scaffold(
         topBar = {
@@ -128,7 +146,7 @@ fun NeedleFormScreen(
                 title = { Text(title, fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -139,6 +157,16 @@ fun NeedleFormScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
+        // Scan result dialog
+        val needleScanResult = uiState.needleScanResult
+        if (needleScanResult != null) {
+            NeedleScanConfirmDialog(
+                result = needleScanResult,
+                onApply = { viewModel.onAction(NeedleFormAction.ApplyScanResult) },
+                onDismiss = { viewModel.onAction(NeedleFormAction.DismissScanResult) }
+            )
+        }
+
         if (uiState.isLoading) {
             Box(
                 Modifier.fillMaxSize().padding(padding),
@@ -155,13 +183,73 @@ fun NeedleFormScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Scan size — top row
+                if (uiState.isScanning) {
+                    Button(
+                        onClick = {},
+                        enabled = false,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            disabledContainerColor = Slate.copy(alpha = 0.5f),
+                            disabledContentColor = White.copy(alpha = 0.7f)
+                        ),
+                        modifier = Modifier.fillMaxWidth().height(52.dp)
+                    ) {
+                        CircularProgressIndicator(color = White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.needle_scanning), style = MaterialTheme.typography.labelLarge)
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = {
+                                viewModel.onAction(NeedleFormAction.ScanSizeRequested)
+                                val granted = ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.CAMERA
+                                ) == PackageManager.PERMISSION_GRANTED
+                                if (granted) onNavigateToCamera()
+                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White),
+                            modifier = Modifier.weight(1f).height(52.dp)
+                        ) {
+                            Icon(Icons.Filled.DocumentScanner, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.needle_scan_size), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.onAction(NeedleFormAction.ScanSizeRequested)
+                                scanGalleryLauncher()
+                            },
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate),
+                            modifier = Modifier.weight(1f).height(52.dp)
+                        ) {
+                            Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.yarn_from_gallery), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.needle_scan_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextMuted
+                )
+
                 // Section: Basic Info
-                FormSection(title = "Basic Info") {
+                FormSection(title = stringResource(R.string.yarn_section_basic)) {
                     OutlinedTextField(
                         value = uiState.name,
                         onValueChange = { viewModel.onAction(NeedleFormAction.NameChanged(it)) },
-                        label = { Text("Name *") },
-                        placeholder = { Text("e.g. Clover Amour 5.0mm", color = TextMuted) },
+                        label = { Text(stringResource(R.string.yarn_field_name) + " *") },
+                        placeholder = { Text(stringResource(R.string.needle_field_name_hint), color = TextMuted) },
                         isError = uiState.nameError != null,
                         supportingText = uiState.nameError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                         singleLine = true,
@@ -172,7 +260,7 @@ fun NeedleFormScreen(
 
                     // Type dropdown
                     EnumDropdown(
-                        label = "Type",
+                        label = stringResource(R.string.piece_field_type),
                         selected = uiState.type.displayName,
                         options = NeedleType.values().map { it.displayName },
                         onSelect = { display ->
@@ -184,7 +272,7 @@ fun NeedleFormScreen(
                     OutlinedTextField(
                         value = uiState.brand,
                         onValueChange = { viewModel.onAction(NeedleFormAction.BrandChanged(it)) },
-                        label = { Text("Brand") },
+                        label = { Text(stringResource(R.string.yarn_field_brand)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -194,8 +282,8 @@ fun NeedleFormScreen(
                     OutlinedTextField(
                         value = uiState.material,
                         onValueChange = { viewModel.onAction(NeedleFormAction.MaterialChanged(it)) },
-                        label = { Text("Material") },
-                        placeholder = { Text("e.g. Aluminum, Bamboo, Wood", color = TextMuted) },
+                        label = { Text(stringResource(R.string.yarn_field_material)) },
+                        placeholder = { Text(stringResource(R.string.needle_field_material_hint), color = TextMuted) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -203,57 +291,15 @@ fun NeedleFormScreen(
                     )
                 }
 
-                // Section: Size
-                FormSection(title = "Size") {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            value = uiState.sizeMm,
-                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeMmChanged(it)) },
-                            label = { Text("Size (mm)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = uiState.sizeLabel,
-                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeLabelChanged(it)) },
-                            label = { Text("Size label") },
-                            placeholder = { Text("US H-8, UK 6…", color = TextMuted) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = uiState.quantity,
-                        onValueChange = { viewModel.onAction(NeedleFormAction.QuantityChanged(it)) },
-                        label = { Text("Quantity owned") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Photos
-                FormSection(title = "Photos") {
+                // Section: Photos — early so color/reference is captured before filling details
+                FormSection(title = stringResource(R.string.label_photos)) {
                     PhotoGallery(
                         photos = uiState.photos,
                         height = 220.dp,
-                        onDeletePhoto = { path ->
-                            viewModel.onAction(NeedleFormAction.PhotoRemoved(path))
-                        },
+                        onDeletePhoto = { path -> viewModel.onAction(NeedleFormAction.PhotoRemoved(path)) },
+                        onEditPhoto = { path -> editLauncher(path) },
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -271,15 +317,10 @@ fun NeedleFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.CameraAlt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Take Photo")
+                            Text(stringResource(R.string.action_take_photo))
                         }
-
                         OutlinedButton(
                             onClick = { galleryLauncher() },
                             shape = RoundedCornerShape(10.dp),
@@ -287,23 +328,59 @@ fun NeedleFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.Image,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Gallery")
+                            Text(stringResource(R.string.action_gallery))
                         }
                     }
                 }
 
+                // Section: Size
+                FormSection(title = stringResource(R.string.needle_section_size)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.sizeMm,
+                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeMmChanged(it)) },
+                            label = { Text(stringResource(R.string.needle_field_size_mm)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = uiState.sizeLabel,
+                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeLabelChanged(it)) },
+                            label = { Text(stringResource(R.string.needle_field_size_label)) },
+                            placeholder = { Text(stringResource(R.string.needle_field_size_label_hint), color = TextMuted) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = uiState.quantity,
+                        onValueChange = { viewModel.onAction(NeedleFormAction.QuantityChanged(it)) },
+                        label = { Text(stringResource(R.string.needle_field_quantity)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 // Section: Notes
-                FormSection(title = "Notes") {
+                FormSection(title = stringResource(R.string.label_notes)) {
                     OutlinedTextField(
                         value = uiState.notes,
                         onValueChange = { viewModel.onAction(NeedleFormAction.NotesChanged(it)) },
-                        label = { Text("Notes") },
+                        label = { Text(stringResource(R.string.label_notes)) },
                         minLines = 3,
                         maxLines = 6,
                         shape = RoundedCornerShape(10.dp),
@@ -335,7 +412,7 @@ fun NeedleFormScreen(
                         )
                     } else {
                         Text(
-                            text = if (uiState.isEditMode) "Save Changes" else "Add Needle",
+                            text = if (uiState.isEditMode) stringResource(R.string.action_save_changes) else stringResource(R.string.needle_add),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
                         )

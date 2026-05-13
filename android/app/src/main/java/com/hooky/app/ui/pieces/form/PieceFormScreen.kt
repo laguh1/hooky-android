@@ -63,19 +63,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.hooky.app.R
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.hooky.app.domain.model.enums.Destination
 import com.hooky.app.domain.model.enums.PieceType
 import com.hooky.app.domain.model.enums.WorkStatus
+import com.hooky.app.ui.camera.rememberPhotoEditorLauncher
 import com.hooky.app.ui.camera.rememberPhotoPickerLauncher
 import com.hooky.app.ui.components.NeedleScanConfirmDialog
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -107,6 +111,12 @@ fun PieceFormScreen(
         viewModel.onAction(PieceFormAction.PhotoAdded(path))
     }
 
+    // Photo editor launcher
+    val editLauncher = rememberPhotoEditorLauncher(
+        onEditDone = { old, new -> viewModel.onAction(PieceFormAction.PhotoReplaced(old, new)) },
+        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
+    )
+
     // Observe photo_path result from CameraScreen — ViewModel decides: add to gallery or scan
     LaunchedEffect(navController) {
         navController?.currentBackStackEntry
@@ -134,7 +144,7 @@ fun PieceFormScreen(
         }
     }
 
-    val title = if (uiState.isEditMode) "Edit Piece" else "New Piece"
+    val title = if (uiState.isEditMode) stringResource(R.string.piece_edit) else stringResource(R.string.piece_new)
 
     Scaffold(
         topBar = {
@@ -147,7 +157,7 @@ fun PieceFormScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -187,12 +197,12 @@ fun PieceFormScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Section: Basic Info
-                FormSection(title = "Basic Info") {
+                FormSection(title = stringResource(R.string.yarn_section_basic)) {
                     // Name
                     OutlinedTextField(
                         value = uiState.name,
                         onValueChange = { viewModel.onAction(PieceFormAction.NameChanged(it)) },
-                        label = { Text("Name *") },
+                        label = { Text(stringResource(R.string.piece_field_name) + " *") },
                         isError = uiState.nameError != null,
                         supportingText = uiState.nameError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                         singleLine = true,
@@ -203,7 +213,7 @@ fun PieceFormScreen(
 
                     // Type dropdown
                     EnumDropdown(
-                        label = "Type",
+                        label = stringResource(R.string.piece_field_type),
                         selected = uiState.type.displayName,
                         options = PieceType.values().map { it.displayName },
                         onSelect = { display ->
@@ -214,7 +224,7 @@ fun PieceFormScreen(
 
                     // Work Status dropdown
                     EnumDropdown(
-                        label = "Work Status",
+                        label = stringResource(R.string.piece_field_status),
                         selected = uiState.workStatus.displayName,
                         options = WorkStatus.values().map { it.displayName },
                         onSelect = { display ->
@@ -225,7 +235,7 @@ fun PieceFormScreen(
 
                     // Destination dropdown
                     EnumDropdown(
-                        label = "Destination",
+                        label = stringResource(R.string.piece_field_destination),
                         selected = uiState.destination.displayName,
                         options = Destination.values().map { it.displayName },
                         onSelect = { display ->
@@ -235,154 +245,15 @@ fun PieceFormScreen(
                     )
                 }
 
-                // Section: Dimensions & Hook
-                FormSection(title = "Dimensions & Hook") {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            value = uiState.widthCm,
-                            onValueChange = { viewModel.onAction(PieceFormAction.WidthCmChanged(it)) },
-                            label = { Text("Width (cm)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = uiState.lengthCm,
-                            onValueChange = { viewModel.onAction(PieceFormAction.LengthCmChanged(it)) },
-                            label = { Text("Length (cm)") },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = uiState.hookSizeMm,
-                        onValueChange = { viewModel.onAction(PieceFormAction.HookSizeMmChanged(it)) },
-                        label = { Text("Hook size (mm)") },
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                viewModel.onAction(PieceFormAction.ScanHookRequested)
-                                val granted = ContextCompat.checkSelfPermission(
-                                    context, Manifest.permission.CAMERA
-                                ) == PackageManager.PERMISSION_GRANTED
-                                if (granted) onNavigateToCamera()
-                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }) {
-                                Icon(Icons.Filled.CameraAlt, contentDescription = "Scan hook", modifier = Modifier.size(20.dp), tint = TextSecondary)
-                            }
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Dates & Hours
-                FormSection(title = "Dates & Hours") {
-                    OutlinedTextField(
-                        value = uiState.dateStarted,
-                        onValueChange = { viewModel.onAction(PieceFormAction.DateStartedChanged(it)) },
-                        label = { Text("Date Started") },
-                        placeholder = { Text("yyyy-MM-dd", color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.dateFinished,
-                        onValueChange = { viewModel.onAction(PieceFormAction.DateFinishedChanged(it)) },
-                        label = { Text("Date Finished") },
-                        placeholder = { Text("yyyy-MM-dd", color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.workHours,
-                        onValueChange = { viewModel.onAction(PieceFormAction.WorkHoursChanged(it)) },
-                        label = { Text("Work Hours") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.rowCount,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.RowCountChanged(it)) },
-                        label = { Text("Starting row") },
-                        placeholder = { Text("0 for a new piece", color = TextMuted) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.targetRowCount,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.TargetRowCountChanged(it)) },
-                        label = { Text("Target rows (optional)") },
-                        placeholder = { Text("e.g. 80", color = TextMuted) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                // Section: Materials & Stitches
-                FormSection(title = "Materials & Stitches") {
-                    LibraryMultiPicker(
-                        label = "Yarn",
-                        selectedIds = uiState.yarnsUsed,
-                        items = uiState.availableYarns.map { yarn ->
-                            yarn.yarnId to "${yarn.name}${yarn.brand?.let { b -> " – $b" } ?: ""}"
-                        },
-                        onSelectionChanged = { viewModel.onAction(PieceFormAction.YarnsUsedChanged(it)) }
-                    )
-                    LibraryMultiPicker(
-                        label = "Needle",
-                        selectedIds = uiState.needlesUsed,
-                        items = uiState.availableNeedles.map { needle ->
-                            needle.needleId to "${needle.name}${needle.sizeMm?.let { s -> " ${s}mm" } ?: ""}"
-                        },
-                        onSelectionChanged = { viewModel.onAction(PieceFormAction.NeedlesUsedChanged(it)) }
-                    )
-                    LibraryMultiPicker(
-                        label = "Stitch",
-                        selectedIds = uiState.stitchesUsed,
-                        items = uiState.availableStitches.map { stitch ->
-                            stitch.stitchId to stitch.name
-                        },
-                        onSelectionChanged = { viewModel.onAction(PieceFormAction.StitchesUsedChanged(it)) }
-                    )
-                }
-
-                // Section: Photos
-                FormSection(title = "Photos") {
+                // Section: Photos — early so color detection runs before filling details
+                FormSection(title = stringResource(R.string.label_photos)) {
                     PhotoGallery(
                         photos = uiState.photos,
                         height = 220.dp,
                         onDeletePhoto = { path ->
                             viewModel.onAction(PieceFormAction.PhotoRemoved(path))
                         },
+                        onEditPhoto = { path -> editLauncher(path) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -390,7 +261,6 @@ fun PieceFormScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Take Photo button
                         OutlinedButton(
                             onClick = {
                                 val granted = ContextCompat.checkSelfPermission(
@@ -407,16 +277,11 @@ fun PieceFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.CameraAlt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Take Photo")
+                            Text(stringResource(R.string.action_take_photo))
                         }
 
-                        // Choose from Gallery button
                         OutlinedButton(
                             onClick = { galleryLauncher() },
                             shape = RoundedCornerShape(10.dp),
@@ -424,23 +289,165 @@ fun PieceFormScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                Icons.Filled.Image,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                            Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Gallery")
+                            Text(stringResource(R.string.action_gallery))
                         }
                     }
                 }
 
-                // Section: Pricing
-                FormSection(title = "Pricing") {
+                // Section: Dimensions & Hook
+                FormSection(title = stringResource(R.string.piece_section_dimensions_hook)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.widthCm,
+                            onValueChange = { viewModel.onAction(PieceFormAction.WidthCmChanged(it)) },
+                            label = { Text(stringResource(R.string.piece_field_width)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = uiState.lengthCm,
+                            onValueChange = { viewModel.onAction(PieceFormAction.LengthCmChanged(it)) },
+                            label = { Text(stringResource(R.string.piece_field_length)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = uiState.hookSizeMm,
+                        onValueChange = { viewModel.onAction(PieceFormAction.HookSizeMmChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_hook_size_mm)) },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                viewModel.onAction(PieceFormAction.ScanHookRequested)
+                                val granted = ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.CAMERA
+                                ) == PackageManager.PERMISSION_GRANTED
+                                if (granted) onNavigateToCamera()
+                                else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                            }) {
+                                Icon(Icons.Filled.CameraAlt, contentDescription = stringResource(R.string.action_scan_hook), modifier = Modifier.size(20.dp), tint = TextSecondary)
+                            }
+                        },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                // Section: Dates & Hours
+                FormSection(title = stringResource(R.string.piece_section_dates_hours)) {
+                    OutlinedTextField(
+                        value = uiState.dateStarted,
+                        onValueChange = { viewModel.onAction(PieceFormAction.DateStartedChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_date_started)) },
+                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.dateFinished,
+                        onValueChange = { viewModel.onAction(PieceFormAction.DateFinishedChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_date_finished)) },
+                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.workHours,
+                        onValueChange = { viewModel.onAction(PieceFormAction.WorkHoursChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_work_hours)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.rowCount,
+                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.RowCountChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_row_start)) },
+                        placeholder = { Text(stringResource(R.string.piece_field_row_start_hint), color = TextMuted) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.targetRowCount,
+                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.TargetRowCountChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_row_target)) },
+                        placeholder = { Text(stringResource(R.string.piece_field_target_rows_hint), color = TextMuted) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                // Section: Materials & Stitches
+                FormSection(title = stringResource(R.string.piece_section_materials_stitches)) {
+                    LibraryMultiPicker(
+                        addLabel = stringResource(R.string.piece_picker_add_yarn),
+                        dialogTitle = stringResource(R.string.piece_picker_select_yarn),
+                        emptyText = stringResource(R.string.piece_picker_empty_yarn),
+                        selectedIds = uiState.yarnsUsed,
+                        items = uiState.availableYarns.map { yarn ->
+                            yarn.yarnId to "${yarn.name}${yarn.brand?.let { b -> " – $b" } ?: ""}"
+                        },
+                        onSelectionChanged = { viewModel.onAction(PieceFormAction.YarnsUsedChanged(it)) }
+                    )
+                    LibraryMultiPicker(
+                        addLabel = stringResource(R.string.piece_picker_add_needle),
+                        dialogTitle = stringResource(R.string.piece_picker_select_needle),
+                        emptyText = stringResource(R.string.piece_picker_empty_needle),
+                        selectedIds = uiState.needlesUsed,
+                        items = uiState.availableNeedles.map { needle ->
+                            needle.needleId to "${needle.name}${needle.sizeMm?.let { s -> " ${s}mm" } ?: ""}"
+                        },
+                        onSelectionChanged = { viewModel.onAction(PieceFormAction.NeedlesUsedChanged(it)) }
+                    )
+                    LibraryMultiPicker(
+                        addLabel = stringResource(R.string.piece_picker_add_stitch),
+                        dialogTitle = stringResource(R.string.piece_picker_select_stitch),
+                        emptyText = stringResource(R.string.piece_picker_empty_stitch),
+                        selectedIds = uiState.stitchesUsed,
+                        items = uiState.availableStitches.map { stitch ->
+                            stitch.stitchId to stitch.name
+                        },
+                        onSelectionChanged = { viewModel.onAction(PieceFormAction.StitchesUsedChanged(it)) }
+                    )
+                }
+
+                // Section: Pricing — only for sale/sold pieces
+                if (uiState.destination == Destination.FOR_SALE || uiState.destination == Destination.SOLD) FormSection(title = stringResource(R.string.piece_section_pricing)) {
                     OutlinedTextField(
                         value = uiState.materialCost,
                         onValueChange = { viewModel.onAction(PieceFormAction.MaterialCostChanged(it)) },
-                        label = { Text("Material cost (€)") },
+                        label = { Text(stringResource(R.string.piece_field_material_cost)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -451,7 +458,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.price,
                         onValueChange = { viewModel.onAction(PieceFormAction.PriceChanged(it)) },
-                        label = { Text("Suggested price (€)") },
+                        label = { Text(stringResource(R.string.piece_field_price)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -462,7 +469,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.salePlatform,
                         onValueChange = { viewModel.onAction(PieceFormAction.SalePlatformChanged(it)) },
-                        label = { Text("Sale platform") },
+                        label = { Text(stringResource(R.string.piece_field_sale_platform)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -472,7 +479,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.saleLink,
                         onValueChange = { viewModel.onAction(PieceFormAction.SaleLinkChanged(it)) },
-                        label = { Text("Sale link") },
+                        label = { Text(stringResource(R.string.piece_field_sale_link)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -482,8 +489,8 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.soldDate,
                         onValueChange = { viewModel.onAction(PieceFormAction.SoldDateChanged(it)) },
-                        label = { Text("Sold date") },
-                        placeholder = { Text("yyyy-MM-dd", color = TextMuted) },
+                        label = { Text(stringResource(R.string.piece_field_sold_date)) },
+                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -493,7 +500,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.soldPrice,
                         onValueChange = { viewModel.onAction(PieceFormAction.SoldPriceChanged(it)) },
-                        label = { Text("Sold price (€)") },
+                        label = { Text(stringResource(R.string.piece_field_sold_price)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -502,12 +509,12 @@ fun PieceFormScreen(
                     )
                 }
 
-                // Section: Gift
-                FormSection(title = "Gift") {
+                // Section: Gift — only for gift/gifted pieces
+                if (uiState.destination == Destination.FOR_GIFT || uiState.destination == Destination.GIFTED) FormSection(title = stringResource(R.string.piece_section_gift)) {
                     OutlinedTextField(
                         value = uiState.giftRecipient,
                         onValueChange = { viewModel.onAction(PieceFormAction.GiftRecipientChanged(it)) },
-                        label = { Text("Gift recipient name") },
+                        label = { Text(stringResource(R.string.piece_field_gift_recipient_name)) },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
@@ -516,11 +523,11 @@ fun PieceFormScreen(
                 }
 
                 // Section: Notes
-                FormSection(title = "Notes") {
+                FormSection(title = stringResource(R.string.label_notes)) {
                     OutlinedTextField(
                         value = uiState.notes,
                         onValueChange = { viewModel.onAction(PieceFormAction.NotesChanged(it)) },
-                        label = { Text("Notes") },
+                        label = { Text(stringResource(R.string.label_notes)) },
                         minLines = 3,
                         maxLines = 6,
                         shape = RoundedCornerShape(10.dp),
@@ -552,7 +559,7 @@ fun PieceFormScreen(
                         )
                     } else {
                         Text(
-                            text = if (uiState.isEditMode) "Save Changes" else "Create Piece",
+                            text = if (uiState.isEditMode) stringResource(R.string.action_save_changes) else stringResource(R.string.piece_create),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -640,7 +647,9 @@ private fun EnumDropdown(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryMultiPicker(
-    label: String,
+    addLabel: String,
+    dialogTitle: String,
+    emptyText: String,
     selectedIds: List<String>,
     items: List<Pair<String, String>>,
     onSelectionChanged: (List<String>) -> Unit
@@ -664,7 +673,7 @@ private fun LibraryMultiPicker(
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Filled.Close,
-                                contentDescription = "Remove $displayLabel",
+                                contentDescription = stringResource(R.string.action_remove_item, displayLabel),
                                 modifier = Modifier.size(14.dp)
                             )
                         },
@@ -690,7 +699,7 @@ private fun LibraryMultiPicker(
             colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Add $label")
+            Text(addLabel)
         }
     }
 
@@ -700,7 +709,7 @@ private fun LibraryMultiPicker(
             onDismissRequest = { showDialog = false },
             title = {
                 Text(
-                    "Select $label",
+                    dialogTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -731,7 +740,7 @@ private fun LibraryMultiPicker(
                     }
                     if (items.isEmpty()) {
                         Text(
-                            text = "No ${label.lowercase()}s in your library yet.",
+                            text = emptyText,
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary
                         )
@@ -746,12 +755,12 @@ private fun LibraryMultiPicker(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Slate)
                 ) {
-                    Text("Confirm")
+                    Text(stringResource(R.string.action_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text(stringResource(R.string.action_cancel), color = TextSecondary)
                 }
             }
         )

@@ -60,6 +60,9 @@ class PieceRepository @Inject constructor(
     suspend fun updateTimer(id: Int, totalSeconds: Long, isRunning: Boolean, sessionStartAt: Long?, workHours: Float?) =
         withContext(ioDispatcher) { pieceDao.updateTimer(id, totalSeconds, isRunning, sessionStartAt, workHours) }
 
+    suspend fun updatePrice(id: Int, price: Float) =
+        withContext(ioDispatcher) { pieceDao.updatePrice(id, price) }
+
     suspend fun generateNextPieceId(): String = withContext(ioDispatcher) {
         val entityType = "PIECE"
         val counter = idCounterDao.getCounter(entityType)

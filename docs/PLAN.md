@@ -2,7 +2,7 @@
 
 **Created:** 2026-03-23
 **Based on:** Desktop app at `/Users/joanasocrates/Local Documents/claude/crochet/`
-**Status:** Phases 1–8 + Phase 10A complete. UI polish (icons, nav restructure) done. i18n partially wired (list screens + dashboard + search). See per-phase detail below.
+**Status:** Phases 1–11 + Phase 10A complete. Feature additions: share card, photo editing, stitch chart upload (DB v5). i18n: nav + list screens + dashboard + search + calculator + camera wired; detail/form/component screens still hardcoded. See per-phase detail below.
 
 ---
 
@@ -392,12 +392,17 @@ Each section:
 - [x] Form button labels: "Create Needle" → "Add Needle", "Create Yarn" → "Add Yarn"
 - [x] Palette API integration for dynamic color extraction from photos
 - [x] Splash screen: full-screen brand purple `#8C015E` + white infinity symbol (`ic_splash_icon.xml` scaled to 55% to avoid circular clip) — `androidx.core:core-splashscreen:1.0.1`
-- [x] Dashboard logo 20% larger (48dp → 58dp)
+- [x] Dashboard logo: 48dp → 75dp (updated across sessions)
 - [x] `WorkStatus.READY` removed — only `IN_PROGRESS` and `FINISHED` remain; `PieceFilter.READY` and `piece_filter_ready` strings removed from all 3 locales
 - [x] Dark mode text field fix: `formTextFieldColors()` in all form screens (Yarn/Piece/Stitch/Needle), Search, Calculator — focused border/label/cursor now use `BrandPurple`; unfocused border uses `MaterialTheme.colorScheme.outline` (adaptive)
 - [x] Dashboard: Settings icon moved to extreme right (after Search + Avatar), matching Pieces list layout
 - [x] Voice recognition fix: `parseSpokenNumber()` helper — tries digit regex first, then word-to-number lookup (EN/ES/PT, 1–10); `EXTRA_MAX_RESULTS` = 5; all errors show snackbar
 - [x] PieceDetailScreen: "Done" button (full-width, Slate) above Edit/Archive to navigate back; Edit demoted to OutlinedButton
+- [x] Dashboard stat boxes (Pieces/Yarns/Stitches) clickable → navigate to respective list screen
+- [x] Dashboard bottom padding: 32dp → 8dp (dead zone above bottom nav)
+- [x] Stitch form cleanup: Abbreviation, Spanish Name, Hookfully Link removed from UI; Photos section moved above Classification
+- [x] Share card: `ui/share/ShareCardGenerator.kt` — 1080×1080 JPEG (photo zone, piece name, stats, wordmark); Share button (OutlinedButton, BrandPurple) on PieceDetailScreen
+- [x] Photo editing: `ui/camera/PhotoEditorLauncher.kt` — `Intent.ACTION_EDIT` via FileProvider; edit icon added to `PhotoGallery`; wired to all 4 form screens via `onEditPhoto`
 
 ### Phase 8 — Internationalisation (i18n) ✅ infrastructure / ⏳ wiring in progress
 Android's built-in string resource system handles language switching automatically — no runtime logic needed.
@@ -426,23 +431,22 @@ Android's built-in string resource system handles language switching automatical
 - [x] `ui/calculator/PriceCalculatorScreen.kt`
 - [x] `ui/camera/CameraScreen.kt`
 
-**Screens still hardcoded (next i18n session):**
+**Screens still hardcoded (next priority):**
 - [ ] `ui/pieces/detail/PieceDetailScreen.kt`
 - [ ] `ui/pieces/form/PieceFormScreen.kt`
 - [ ] `ui/yarns/detail/YarnDetailScreen.kt`
 - [ ] `ui/yarns/form/YarnFormScreen.kt`
 - [ ] `ui/stitches/detail/StitchDetailScreen.kt`
 - [ ] `ui/stitches/form/StitchFormScreen.kt`
-- [ ] `ui/needles/list/NeedleListScreen.kt` (add `needle_*` keys to all 3 strings.xml first)
+- [ ] `ui/needles/list/NeedleListScreen.kt` (add `needle_*` string keys first)
 - [ ] `ui/needles/detail/NeedleDetailScreen.kt`
 - [ ] `ui/needles/form/NeedleFormScreen.kt`
+
+**Components still hardcoded (low priority):**
 - [ ] `ui/components/ConfirmDialog.kt`
 - [ ] `ui/components/StatusBadge.kt`
 - [ ] `ui/yarns/form/YarnLabelScanConfirmDialog.kt`
 - [ ] `ui/components/NeedleScanConfirmDialog.kt`
-
-**Missing string keys to add before wiring needles:**
-`needle_empty_title`, `needle_empty_subtitle`, `needle_search_hint`, `needles_title` — add to all 3 strings.xml files.
 
 **Future: In-app language picker (backlog)**
 Currently follows device system locale. A future Settings option could override it via `AppCompatDelegate.setApplicationLocales()` + DataStore. No architectural changes needed.
@@ -464,7 +468,7 @@ Phase C → gets revenue
 
 ---
 
-#### Phase A — Yarn Label Scanner (ship with v1, ML Kit OCR)
+#### Phase A — Yarn Label Scanner ✅ (ML Kit OCR, complete)
 **Goal:** photo of a yarn label → auto-fill yarn form fields
 **Stack:** ML Kit Text Recognition (on-device, free, offline, no API key)
 **What it extracts:**
@@ -691,7 +695,7 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 
 **Scope:** JPEG and PNG for v1. PDF explicitly deferred (see Phase 12B).
 
-**Data model:** `StitchEntity` already has `photos: String = "[]"` (JSON list of file paths). Chart images reuse the same field — a dedicated `charts` field can be split out in Phase 12B if needed. No DB migration required.
+**Data model:** `StitchEntity` has a dedicated `chartPath: String? = null` field (single file path — image or PDF). Added via DB migration 4→5. Schema export: `app/schemas/.../5.json`.
 
 ---
 
@@ -710,10 +714,10 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 **Reuse:** `PhotoGallery`, `PhotoStorageUtil`, `rememberPhotoPickerLauncher` — no new infrastructure.
 
 **Checklist:**
-- [ ] "Charts" section in `StitchFormScreen` — camera + gallery picker, placeholder when empty, thumbnail strip when filled
+- [x] "Charts" section in `StitchFormScreen` — image picker (camera/gallery via `rememberPhotoPickerLauncher`) + PDF picker (`GetContent("application/pdf")`); preview shows image thumbnail or PDF filename + icon; Remove button
+- [x] Files stored in `filesDir/stitches/charts/`; `chartPath` persisted via `StitchFormViewModel`
 - [ ] Zoomable full-screen chart viewer composable (pinch-to-zoom via `Modifier.transformable` or `accompanist-zoomable`)
-- [ ] Chart thumbnails in `StitchDetailScreen`
-- [ ] PDF viewer (Phase 12B — deferred): `PdfRenderer` + custom composable, separate file picker
+- [ ] Chart thumbnail/preview in `StitchDetailScreen`
 
 ---
 

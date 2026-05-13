@@ -151,6 +151,11 @@
     <string name="stitch_filter_specialty">Especialidade</string>
     <string name="stitch_empty_title">Nenhum ponto ainda</string>
     <string name="stitch_empty_subtitle">Adicione seu primeiro ponto</string>
+    <string name="stitch_tab_library">Meus Pontos</string>
+    <string name="stitch_tab_suggestions">Sugestões</string>
+    <string name="stitch_suggestions_disclaimer">Estes tutoriais são sugestões da comunidade. O Hooky não tem nenhuma afiliação com estes criadores.</string>
+    <string name="stitch_suggestion_watch">Assistir</string>
+    <string name="stitch_suggestion_by">por %s</string>
 
     <!-- Stitches — form fields -->
     <string name="stitch_field_name">Nome</string>
@@ -172,6 +177,11 @@
     <string name="stitch_section_links">Tutoriais</string>
     <string name="stitch_section_photos">Fotos</string>
     <string name="stitch_section_notes">Notas</string>
+    <string name="stitch_section_chart">Gráfico do ponto</string>
+    <string name="stitch_chart_hint">Envie uma foto ou PDF do gráfico</string>
+    <string name="stitch_chart_remove">Remover gráfico</string>
+    <string name="action_upload_pdf">Enviar PDF</string>
+    <string name="action_share_piece">Compartilhar esta peça</string>
 
     <!-- Stitches — detail content -->
     <string name="stitch_learn_title">Aprender Este Ponto</string>
@@ -342,5 +352,161 @@
     <string name="camera_permission_required">Permissão de câmera é necessária para tirar fotos</string>
     <string name="camera_grant_permission">Conceder Permissão</string>
     <string name="camera_capture_error">Falha ao capturar a foto. Por favor, tente novamente.</string>
+
+    <!-- ================================================================ -->
+    <!-- Common — additional actions -->
+    <!-- ================================================================ -->
+    <string name="action_done">Concluído</string>
+    <string name="action_gallery">Galeria</string>
+    <string name="action_save_changes">Salvar alterações</string>
+    <string name="action_start">Iniciar</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_stop">Parar</string>
+    <string name="action_resume">Retomar</string>
+
+    <!-- ================================================================ -->
+    <!-- Pieces — detail & form (additional) -->
+    <!-- ================================================================ -->
+    <string name="piece_not_found">Peça não encontrada</string>
+    <string name="piece_create">Criar peça</string>
+    <string name="piece_section_dimensions_hook">Dimensões e gancho</string>
+    <string name="piece_section_dates_hours">Datas e horas</string>
+    <string name="piece_section_materials_stitches">Materiais e pontos</string>
+    <string name="piece_section_needles_used">Agulhas usadas</string>
+    <string name="piece_work_timer">Temporizador de trabalho</string>
+    <string name="piece_timer_total">Total: %sh registrado</string>
+    <string name="piece_row_counter">Contador de fileiras</string>
+    <string name="piece_work_sessions_title">Sessões de trabalho (%d)</string>
+    <string name="piece_row_dialog_title">Configurar fileiras</string>
+    <string name="piece_row_current">Fileira atual</string>
+    <string name="piece_row_target">Fileiras objetivo (opcional)</string>
+    <string name="piece_row_target_hint">Deixe em branco sem objetivo</string>
+    <string name="piece_rows_progress">%1$d / %2$d fileiras</string>
+    <string name="piece_voice_permission">Permissão de microfone necessária para contar por voz</string>
+    <string name="piece_voice_error">Não detectei um número — tente novamente</string>
+    <string name="piece_field_hook_size_mm">Tamanho do gancho (mm)</string>
+    <string name="piece_field_row_start">Fileira inicial</string>
+    <string name="piece_field_row_start_hint">0 para uma peça nova</string>
+    <string name="piece_field_target_rows_hint">ex: 80</string>
+    <string name="piece_field_gift_recipient_name">Nome do presenteado</string>
+    <string name="piece_label_material_cost">Custo de material</string>
+    <string name="piece_label_suggested_price">Preço sugerido</string>
+    <string name="piece_label_sale_platform">Plataforma de venda</string>
+    <string name="piece_label_sale_link">Link de venda</string>
+    <string name="piece_label_sold_on">Vendido em</string>
+    <string name="piece_label_sold_price">Preço de venda</string>
+    <string name="piece_picker_add_yarn">Adicionar fio</string>
+    <string name="piece_picker_add_needle">Adicionar agulha</string>
+    <string name="piece_picker_add_stitch">Adicionar ponto</string>
+    <string name="piece_picker_select_yarn">Selecionar fio</string>
+    <string name="piece_picker_select_needle">Selecionar agulha</string>
+    <string name="piece_picker_select_stitch">Selecionar ponto</string>
+    <string name="piece_picker_empty_yarn">Nenhum fio na sua biblioteca ainda.</string>
+    <string name="piece_picker_empty_needle">Nenhuma agulha na sua biblioteca ainda.</string>
+    <string name="piece_picker_empty_stitch">Nenhum ponto na sua biblioteca ainda.</string>
+
+    <!-- ================================================================ -->
+    <!-- Yarns — detail & form (additional) -->
+    <!-- ================================================================ -->
+    <string name="yarn_not_found">Fio não encontrado</string>
+    <string name="yarn_add">Adicionar fio</string>
+    <string name="yarn_section_ball_info">Info do novelo</string>
+    <string name="yarn_scanning">Escaneando etiqueta…</string>
+    <string name="yarn_scan_label">Escanear etiqueta</string>
+    <string name="yarn_from_gallery">Da galeria</string>
+    <string name="yarn_scan_hint">Escaneie a etiqueta do fio para preencher automaticamente a marca, cor, material, gramagem e mais.</string>
+    <string name="yarn_color_detected">Detectado:</string>
+    <string name="yarn_field_color_name">Nome da cor</string>
+    <string name="yarn_field_color_code_hint">#RRGGBB ou código do fabricante</string>
+    <string name="yarn_field_composition_hint">ex: 80% Merino, 20% Nylon</string>
+    <string name="yarn_field_needle_size_hint">ex: 4.0-5.0</string>
+    <string name="yarn_field_iron_temp_hint">ex: Baixo, Médio, 110°C</string>
+    <string name="yarn_label_brand">Marca</string>
+    <string name="yarn_label_color">Cor</string>
+    <string name="yarn_label_material">Material</string>
+    <string name="yarn_label_specs">Especif.</string>
+    <string name="yarn_label_ball_weight">Peso do novelo</string>
+    <string name="yarn_label_ball_length">Comprimento do novelo</string>
+    <string name="yarn_label_hook_size">Tamanho gancho</string>
+    <string name="yarn_label_needle_size">Tamanho agulha</string>
+    <string name="yarn_label_gauge">Tensão</string>
+    <string name="yarn_label_price_paid">Preço pago</string>
+    <string name="yarn_label_location">Local</string>
+    <string name="yarn_label_date">Data</string>
+    <string name="yarn_label_link">Link</string>
+    <string name="yarn_label_quantity_owned">Quantidade</string>
+    <string name="yarn_label_iron_temp">Temperatura do ferro</string>
+    <string name="yarn_label_care_notes">Notas de cuidado</string>
+    <string name="yarn_label_no_bleach">Sem alvejante</string>
+
+    <!-- ================================================================ -->
+    <!-- Stitches — detail & form (additional) -->
+    <!-- ================================================================ -->
+    <string name="stitch_not_found">Ponto não encontrado</string>
+    <string name="stitch_create">Criar ponto</string>
+    <string name="stitch_section_about">Sobre este ponto</string>
+    <string name="stitch_label_also_known_as">Também conhecido como</string>
+
+    <!-- ================================================================ -->
+    <!-- Common — accessibility / contentDescriptions -->
+    <!-- ================================================================ -->
+    <string name="action_collapse">Recolher</string>
+    <string name="action_expand">Expandir</string>
+    <string name="action_increment">Incrementar</string>
+    <string name="action_decrement">Decrementar</string>
+    <string name="action_stop_listening">Parar de ouvir</string>
+    <string name="action_voice_count">Contar por voz</string>
+    <string name="action_scan_hook">Escanear agulha</string>
+    <string name="action_remove_item">Remover %s</string>
+
+    <!-- ================================================================ -->
+    <!-- Pieces — detail additions -->
+    <!-- ================================================================ -->
+    <string name="piece_session_duration">%d min</string>
+    <string name="piece_edit_row_count">Editar número de fileiras</string>
+    <string name="piece_label_gift_for">Presente para</string>
+
+    <!-- ================================================================ -->
+    <!-- Needles — list & general -->
+    <!-- ================================================================ -->
+    <string name="needles_title">Agulhas e Ganchos</string>
+    <string name="needle_new">Nova Agulha</string>
+    <string name="needle_edit">Editar Agulha</string>
+    <string name="needle_add">Adicionar Agulha</string>
+    <string name="needle_not_found">Agulha não encontrada</string>
+    <string name="needle_search_hint">Buscar agulhas…</string>
+    <string name="needle_empty_title">Nenhuma agulha ainda</string>
+    <string name="needle_empty_subtitle">Adicione sua primeira agulha ou gancho</string>
+
+    <!-- Needles — form fields -->
+    <string name="needle_field_name_hint">ex: Clover Amour 5.0mm</string>
+    <string name="needle_field_material_hint">ex: Alumínio, Bambu, Madeira</string>
+    <string name="needle_field_size_mm">Tamanho (mm)</string>
+    <string name="needle_field_size_label">Etiqueta de tamanho</string>
+    <string name="needle_field_size_label_hint">US H-8, UK 6…</string>
+    <string name="needle_field_quantity">Quantidade disponível</string>
+    <string name="needle_section_size">Tamanho</string>
+
+    <!-- Needles — detail labels -->
+    <string name="needle_label_quantity">Quantidade</string>
+
+    <!-- Needles — archive dialog -->
+    <string name="needle_archive_title">Arquivar agulha?</string>
+    <string name="needle_archive_message">Esta agulha será arquivada e ocultada da lista.</string>
+
+    <!-- Needles — scanning -->
+    <string name="needle_scan_size">Ler Tamanho</string>
+    <string name="needle_scanning">Lendo tamanho…</string>
+    <string name="needle_scan_hint">Fotografe o tamanho gravado na sua agulha ou gancho para preencher o campo automaticamente.</string>
+
+    <!-- Common — settings -->
+    <string name="action_settings">Configurações</string>
+
+    <!-- Stitches — video link hint -->
+    <string name="stitch_video_link_hint">URL do YouTube</string>
+
+    <!-- Yarns — color suggestion actions -->
+    <string name="yarn_color_apply">Aplicar cor</string>
+    <string name="yarn_color_dismiss">Descartar</string>
 
 </resources>

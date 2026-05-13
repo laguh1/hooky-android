@@ -81,7 +81,7 @@ private fun formatHours(hours: Float): String {
     return if (hours % 1f == 0f) {
         "${hours.toInt()}h"
     } else {
-        "${hours}h"
+        "${"%.2f".format(hours)}h"
     }
 }
 
@@ -149,6 +149,8 @@ fun DashboardScreen(
             DashboardContent(
                 uiState = uiState,
                 onNavigateToPieces = onNavigateToPieces,
+                onNavigateToYarns = onNavigateToYarns,
+                onNavigateToStitches = onNavigateToStitches,
                 onNavigateToPieceDetail = onNavigateToPieceDetail,
                 onNavigateToSearch = onNavigateToSearch,
                 onNavigateToSettings = onNavigateToSettings,
@@ -166,6 +168,8 @@ fun DashboardScreen(
 private fun DashboardContent(
     uiState: DashboardUiState,
     onNavigateToPieces: () -> Unit,
+    onNavigateToYarns: () -> Unit,
+    onNavigateToStitches: () -> Unit,
     onNavigateToPieceDetail: (Int) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToSettings: () -> Unit,
@@ -173,7 +177,7 @@ private fun DashboardContent(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         // ---- Header ----
         item {
@@ -189,7 +193,9 @@ private fun DashboardContent(
                 pieceCount = uiState.pieceCount,
                 yarnCount = uiState.yarnCount,
                 stitchCount = uiState.stitchCount,
-                totalWorkHours = uiState.totalWorkHours,
+                onNavigateToPieces = onNavigateToPieces,
+                onNavigateToYarns = onNavigateToYarns,
+                onNavigateToStitches = onNavigateToStitches,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
             )
         }
@@ -306,7 +312,7 @@ private fun DashboardHeader(
             Image(
                 painter = androidx.compose.ui.res.painterResource(id = R.drawable.hooky_wordmark),
                 contentDescription = "Hooky",
-                modifier = Modifier.height(58.dp),
+                modifier = Modifier.height(75.dp),
                 contentScale = ContentScale.Fit
             )
             Row(
@@ -320,21 +326,6 @@ private fun DashboardHeader(
                         contentDescription = "Search",
                         tint = TextSecondary,
                         modifier = Modifier.size(22.dp)
-                    )
-                }
-                // Avatar
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(Slate),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "J",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = White,
-                        fontWeight = FontWeight.SemiBold
                     )
                 }
                 // Settings icon button (extreme right)
@@ -366,7 +357,9 @@ private fun StatsRow(
     pieceCount: Int,
     yarnCount: Int,
     stitchCount: Int,
-    totalWorkHours: Float,
+    onNavigateToPieces: () -> Unit = {},
+    onNavigateToYarns: () -> Unit = {},
+    onNavigateToStitches: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -376,21 +369,19 @@ private fun StatsRow(
         StatCard(
             number = pieceCount.toString(),
             label = stringResource(R.string.dashboard_stat_pieces),
+            onClick = onNavigateToPieces,
             modifier = Modifier.weight(1f)
         )
         StatCard(
             number = yarnCount.toString(),
             label = stringResource(R.string.dashboard_stat_yarns),
+            onClick = onNavigateToYarns,
             modifier = Modifier.weight(1f)
         )
         StatCard(
             number = stitchCount.toString(),
             label = stringResource(R.string.dashboard_stat_stitches),
-            modifier = Modifier.weight(1f)
-        )
-        StatCard(
-            number = if (totalWorkHours == 0f) "--" else formatHours(totalWorkHours),
-            label = stringResource(R.string.dashboard_stat_worked),
+            onClick = onNavigateToStitches,
             modifier = Modifier.weight(1f)
         )
     }
@@ -400,9 +391,11 @@ private fun StatsRow(
 private fun StatCard(
     number: String,
     label: String,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Surface(
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,

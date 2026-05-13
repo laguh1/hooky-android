@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.data.repository.NeedleRepository
+import com.hooky.app.data.scanner.ScanMode
+import com.hooky.app.data.scanner.YarnLabelScannerService
+import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.enums.NeedleType
 import com.hooky.app.util.PhotoStorageUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +44,11 @@ data class NeedleFormUiState(
     val notes: String = "",
     val photos: List<String> = emptyList(),
     // Validation
-    val nameError: String? = null
+    val nameError: String? = null,
+    // Scan
+    val isScanning: Boolean = false,
+    val scanMode: ScanMode = ScanMode.NONE,
+    val needleScanResult: NeedleScanResult? = null
 )
 
 sealed interface NeedleFormAction {
@@ -53,9 +60,13 @@ sealed interface NeedleFormAction {
     data class BrandChanged(val value: String) : NeedleFormAction
     data class QuantityChanged(val value: String) : NeedleFormAction
     data class NotesChanged(val value: String) : NeedleFormAction
-    data class PhotoAdded(val tempPath: String) : NeedleFormAction    // from gallery picker
-    data class PhotoReceived(val tempPath: String) : NeedleFormAction // from camera
+    data class PhotoAdded(val tempPath: String) : NeedleFormAction
+    data class PhotoReceived(val tempPath: String) : NeedleFormAction
     data class PhotoRemoved(val path: String) : NeedleFormAction
+    data class PhotoReplaced(val oldPath: String, val newPath: String) : NeedleFormAction
+    object ScanSizeRequested : NeedleFormAction
+    object ApplyScanResult : NeedleFormAction
+    object DismissScanResult : NeedleFormAction
     object SaveNeedle : NeedleFormAction
     object ClearError : NeedleFormAction
 }
@@ -63,6 +74,7 @@ sealed interface NeedleFormAction {
 @HiltViewModel
 class NeedleFormViewModel @Inject constructor(
     private val needleRepository: NeedleRepository,
+    private val scannerService: YarnLabelScannerService,
     @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -126,14 +138,46 @@ class NeedleFormViewModel @Inject constructor(
                 viewModelScope.launch { addPhoto(action.tempPath) }
             }
             is NeedleFormAction.PhotoReceived -> {
-                viewModelScope.launch { addPhoto(action.tempPath) }
+                if (_uiState.value.scanMode == ScanMode.HOOK) {
+                    scanSize(action.tempPath)
+                } else {
+                    viewModelScope.launch { addPhoto(action.tempPath) }
+                }
             }
             is NeedleFormAction.PhotoRemoved -> {
                 _uiState.update { it.copy(photos = it.photos - action.path) }
                 PhotoStorageUtil.deletePhoto(action.path)
             }
+            is NeedleFormAction.PhotoReplaced ->
+                _uiState.update { state ->
+                    state.copy(photos = state.photos.map { if (it == action.oldPath) action.newPath else it })
+                }
+            NeedleFormAction.ScanSizeRequested ->
+                _uiState.update { it.copy(scanMode = ScanMode.HOOK) }
+            NeedleFormAction.ApplyScanResult -> {
+                val result = _uiState.value.needleScanResult ?: return
+                _uiState.update { it.copy(sizeMm = result.sizeMm, needleScanResult = null, scanMode = ScanMode.NONE) }
+            }
+            NeedleFormAction.DismissScanResult ->
+                _uiState.update { it.copy(needleScanResult = null, scanMode = ScanMode.NONE) }
             NeedleFormAction.SaveNeedle -> saveNeedle()
             NeedleFormAction.ClearError -> _uiState.update { it.copy(error = null) }
+        }
+    }
+
+    private fun scanSize(path: String) {
+        _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
+        viewModelScope.launch {
+            try {
+                val result = scannerService.scanNeedleFromPath(path)
+                if (result != null) {
+                    _uiState.update { it.copy(isScanning = false, needleScanResult = result) }
+                } else {
+                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size — try a clearer, closer photo.") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+            }
         }
     }
 

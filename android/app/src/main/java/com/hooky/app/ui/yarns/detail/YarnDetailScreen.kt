@@ -55,6 +55,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import com.hooky.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -102,7 +104,7 @@ fun YarnDetailScreen(
             }
             uiState.yarn == null -> {
                 Text(
-                    "Yarn not found",
+                    stringResource(R.string.yarn_not_found),
                     modifier = Modifier.align(Alignment.Center),
                     color = TextSecondary
                 )
@@ -240,7 +242,7 @@ private fun YarnDetailContent(
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.action_back),
                     tint = White,
                     modifier = Modifier.size(20.dp)
                 )
@@ -278,23 +280,23 @@ private fun YarnDetailContent(
             val hasBasicInfo = yarn.brand != null || yarn.colorCode != null ||
                 yarn.materialComposition != null || yarn.materialSpecs != null
             if (hasBasicInfo || yarn.color.isNotBlank()) {
-                YarnInfoCard(title = "Basic Info") {
-                    yarn.brand?.let { InfoRow(label = "Brand", value = it) }
+                YarnInfoCard(title = stringResource(R.string.yarn_section_basic)) {
+                    yarn.brand?.let { InfoRow(label = stringResource(R.string.yarn_label_brand), value = it) }
                     if (yarn.color.isNotBlank()) {
                         val colorValue = if (yarn.colorCode != null) {
                             "${yarn.color} (${yarn.colorCode})"
                         } else {
                             yarn.color
                         }
-                        InfoRow(label = "Color", value = colorValue)
+                        InfoRow(label = stringResource(R.string.yarn_label_color), value = colorValue)
                     }
                     val materialValue = if (yarn.materialComposition != null) {
                         "$materialDisplayName — ${yarn.materialComposition}"
                     } else {
                         materialDisplayName
                     }
-                    InfoRow(label = "Material", value = materialValue)
-                    yarn.materialSpecs?.let { InfoRow(label = "Specs", value = it) }
+                    InfoRow(label = stringResource(R.string.yarn_label_material), value = materialValue)
+                    yarn.materialSpecs?.let { InfoRow(label = stringResource(R.string.yarn_label_specs), value = it) }
                 }
             }
 
@@ -302,22 +304,22 @@ private fun YarnDetailContent(
             val hasMeasurements = yarn.ballWeightG != null || yarn.ballLengthM != null ||
                 yarn.hookSizeMm != null || yarn.needleSizeMm != null || yarn.gauge != null
             if (hasMeasurements) {
-                YarnInfoCard(title = "Measurements") {
-                    yarn.ballWeightG?.let { InfoRow(label = "Ball weight", value = "${it}g") }
-                    yarn.ballLengthM?.let { InfoRow(label = "Ball length", value = "${it}m") }
-                    yarn.hookSizeMm?.let { InfoRow(label = "Hook size", value = "${it}mm") }
-                    yarn.needleSizeMm?.let { InfoRow(label = "Needle size", value = it) }
-                    yarn.gauge?.let { InfoRow(label = "Gauge", value = it) }
+                YarnInfoCard(title = stringResource(R.string.yarn_section_measurements)) {
+                    yarn.ballWeightG?.let { InfoRow(label = stringResource(R.string.yarn_label_ball_weight), value = "${it}g") }
+                    yarn.ballLengthM?.let { InfoRow(label = stringResource(R.string.yarn_label_ball_length), value = "${it}m") }
+                    yarn.hookSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_hook_size), value = "${it}mm") }
+                    yarn.needleSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_needle_size), value = it) }
+                    yarn.gauge?.let { InfoRow(label = stringResource(R.string.yarn_label_gauge), value = it) }
                 }
             }
 
             // Purchase card
             val hasPurchase = yarn.pricePaid != null || yarn.purchaseLocation != null
             if (hasPurchase) {
-                YarnInfoCard(title = "Purchase") {
-                    yarn.pricePaid?.let { InfoRow(label = "Price paid", value = "€$it") }
-                    yarn.purchaseLocation?.let { InfoRow(label = "Location", value = it) }
-                    yarn.purchaseDate?.let { InfoRow(label = "Date", value = it) }
+                YarnInfoCard(title = stringResource(R.string.yarn_section_purchase)) {
+                    yarn.pricePaid?.let { InfoRow(label = stringResource(R.string.yarn_label_price_paid), value = "€$it") }
+                    yarn.purchaseLocation?.let { InfoRow(label = stringResource(R.string.yarn_label_location), value = it) }
+                    yarn.purchaseDate?.let { InfoRow(label = stringResource(R.string.yarn_label_date), value = it) }
                     yarn.purchaseLink?.let { link ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -325,7 +327,7 @@ private fun YarnDetailContent(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Link",
+                                text = stringResource(R.string.yarn_label_link),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -342,7 +344,7 @@ private fun YarnDetailContent(
                             )
                         }
                     }
-                    yarn.quantityOwned?.let { InfoRow(label = "Quantity owned", value = "$it") }
+                    yarn.quantityOwned?.let { InfoRow(label = stringResource(R.string.yarn_label_quantity_owned), value = "$it") }
                 }
             }
 
@@ -381,7 +383,7 @@ private fun YarnDetailContent(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Edit")
+                    Text(stringResource(R.string.action_edit))
                 }
 
                 OutlinedButton(
@@ -393,7 +395,7 @@ private fun YarnDetailContent(
                         contentColor = ErrorRed
                     )
                 ) {
-                    Text("Archive")
+                    Text(stringResource(R.string.action_archive))
                 }
             }
 
@@ -409,7 +411,7 @@ private fun YarnInfoCard(
 ) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -453,7 +455,7 @@ private fun InfoRow(label: String, value: String) {
 private fun CareInstructionsCard(careInstructions: CareInstructions) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -461,19 +463,24 @@ private fun CareInstructionsCard(careInstructions: CareInstructions) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = "Care Instructions",
+                text = stringResource(R.string.yarn_section_care),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             // Care chips
+            val machineWashStr = stringResource(R.string.yarn_care_machine_wash)
+            val handWashStr = stringResource(R.string.yarn_care_hand_wash)
+            val dryCleanStr = stringResource(R.string.yarn_care_dry_clean)
+            val noBleachStr = stringResource(R.string.yarn_label_no_bleach)
+            val tumbleDryStr = stringResource(R.string.yarn_care_tumble_dry)
             val careItems = buildList {
-                if (careInstructions.machineWash) add("Machine Wash")
-                if (careInstructions.handWash) add("Hand Wash")
-                if (careInstructions.dryClean) add("Dry Clean")
-                if (!careInstructions.bleach) add("No Bleach")
-                if (careInstructions.tumbleDry) add("Tumble Dry")
+                if (careInstructions.machineWash) add(machineWashStr)
+                if (careInstructions.handWash) add(handWashStr)
+                if (careInstructions.dryClean) add(dryCleanStr)
+                if (!careInstructions.bleach) add(noBleachStr)
+                if (careInstructions.tumbleDry) add(tumbleDryStr)
             }
 
             if (careItems.isNotEmpty()) {
@@ -488,13 +495,13 @@ private fun CareInstructionsCard(careInstructions: CareInstructions) {
             }
 
             careInstructions.ironTemperature?.let { temp ->
-                InfoRow(label = "Iron temperature", value = temp)
+                InfoRow(label = stringResource(R.string.yarn_label_iron_temp), value = temp)
             }
 
             careInstructions.notes?.let { notes ->
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Care notes",
+                        text = stringResource(R.string.yarn_label_care_notes),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -513,12 +520,12 @@ private fun CareInstructionsCard(careInstructions: CareInstructions) {
 private fun YarnNotesCard(notes: String) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = BackgroundLight,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Notes",
+                text = stringResource(R.string.yarn_section_notes),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -544,7 +551,7 @@ private fun YarnArchiveDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Archive this yarn?",
+                text = stringResource(R.string.yarn_archive_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -552,14 +559,14 @@ private fun YarnArchiveDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text = "The yarn will be archived and hidden from your list. You can still find it in your archive.",
+                    text = stringResource(R.string.yarn_archive_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary
                 )
                 OutlinedTextField(
                     value = reason,
                     onValueChange = { reason = it },
-                    label = { Text("Reason (optional)") },
+                    label = { Text(stringResource(R.string.piece_archive_reason_hint)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -575,7 +582,7 @@ private fun YarnArchiveDialog(
                 onClick = { onConfirm(reason.ifBlank { null }) },
                 colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed)
             ) {
-                Text("Archive")
+                Text(stringResource(R.string.action_archive))
             }
         },
         dismissButton = {
@@ -585,7 +592,7 @@ private fun YarnArchiveDialog(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         containerColor = MaterialTheme.colorScheme.surface

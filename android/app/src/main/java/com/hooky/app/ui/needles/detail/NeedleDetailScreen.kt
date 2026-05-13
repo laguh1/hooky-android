@@ -46,7 +46,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hooky.app.R
 import com.hooky.app.domain.model.enums.NeedleType
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.Slate
@@ -85,19 +87,19 @@ fun NeedleDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        uiState.needle?.name ?: "Needle",
+                        uiState.needle?.name ?: stringResource(R.string.needle_not_found),
                         fontWeight = FontWeight.SemiBold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     uiState.needle?.let { needle ->
                         IconButton(onClick = { onNavigateToEdit(needle.id) }) {
-                            Icon(Icons.Filled.Edit, contentDescription = "Edit")
+                            Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.action_edit))
                         }
                     }
                 },
@@ -123,7 +125,7 @@ fun NeedleDetailScreen(
                     Modifier.fillMaxSize().padding(padding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Needle not found", color = TextMuted)
+                    Text(stringResource(R.string.needle_not_found), color = TextMuted)
                 }
             }
             else -> {
@@ -154,18 +156,24 @@ fun NeedleDetailScreen(
                     }
 
                     // Basic Info
-                    DetailSection(title = "Basic Info") {
-                        DetailRow("Type", typeLabel)
-                        needle.sizeMm?.let { DetailRow("Size (mm)", "${it}mm") }
-                        needle.sizeLabel?.let { DetailRow("Size label", it) }
-                        needle.material?.let { DetailRow("Material", it) }
-                        needle.brand?.let { DetailRow("Brand", it) }
-                        needle.quantity?.let { DetailRow("Quantity", "$it") }
+                    val typeStr = stringResource(R.string.piece_field_type)
+                    val sizeMmStr = stringResource(R.string.needle_field_size_mm)
+                    val sizeLabelStr = stringResource(R.string.needle_field_size_label)
+                    val materialStr = stringResource(R.string.yarn_field_material)
+                    val brandStr = stringResource(R.string.yarn_field_brand)
+                    val quantityStr = stringResource(R.string.needle_label_quantity)
+                    DetailSection(title = stringResource(R.string.yarn_section_basic)) {
+                        DetailRow(typeStr, typeLabel)
+                        needle.sizeMm?.let { DetailRow(sizeMmStr, "${it}mm") }
+                        needle.sizeLabel?.let { DetailRow(sizeLabelStr, it) }
+                        needle.material?.let { DetailRow(materialStr, it) }
+                        needle.brand?.let { DetailRow(brandStr, it) }
+                        needle.quantity?.let { DetailRow(quantityStr, "$it") }
                     }
 
                     // Notes
                     if (!needle.notes.isNullOrBlank()) {
-                        DetailSection(title = "Notes") {
+                        DetailSection(title = stringResource(R.string.label_notes)) {
                             Text(
                                 text = needle.notes,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -184,7 +192,7 @@ fun NeedleDetailScreen(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Archive Needle")
+                        Text(stringResource(R.string.action_archive))
                     }
 
                     Spacer(Modifier.height(16.dp).navigationBarsPadding())
@@ -196,8 +204,8 @@ fun NeedleDetailScreen(
     if (showArchiveDialog) {
         AlertDialog(
             onDismissRequest = { showArchiveDialog = false },
-            title = { Text("Archive needle?") },
-            text = { Text("This needle will be archived and hidden from the list.") },
+            title = { Text(stringResource(R.string.needle_archive_title)) },
+            text = { Text(stringResource(R.string.needle_archive_message)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -205,10 +213,10 @@ fun NeedleDetailScreen(
                         showArchiveDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Archive") }
+                ) { Text(stringResource(R.string.action_archive)) }
             },
             dismissButton = {
-                TextButton(onClick = { showArchiveDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showArchiveDialog = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }

@@ -48,12 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.domain.model.enums.NeedleType
 import androidx.compose.ui.res.painterResource
 import com.hooky.app.R
+import androidx.compose.ui.res.stringResource
 import com.hooky.app.ui.components.EmptyState
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
@@ -84,11 +86,11 @@ fun NeedleListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Needles & Hooks", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.needles_title), fontWeight = FontWeight.SemiBold)
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.action_settings))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -103,7 +105,7 @@ fun NeedleListScreen(
                 contentColor = White,
                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add needle")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.needle_new))
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -118,7 +120,7 @@ fun NeedleListScreen(
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = { viewModel.onAction(NeedleListAction.SearchQueryChanged(it)) },
-                placeholder = { Text("Search needles…", color = TextMuted) },
+                placeholder = { Text(stringResource(R.string.needle_search_hint), color = TextMuted) },
                 leadingIcon = {
                     Icon(Icons.Filled.Search, contentDescription = null, tint = TextSecondary)
                 },
@@ -148,7 +150,9 @@ fun NeedleListScreen(
                         label = {
                             Text(
                                 text = filter.displayName,
-                                style = MaterialTheme.typography.labelMedium
+                                style = MaterialTheme.typography.labelMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
@@ -176,8 +180,8 @@ fun NeedleListScreen(
                 uiState.needles.isEmpty() -> {
                     EmptyState(
                         icon = painterResource(R.drawable.ic_needles),
-                        title = "No needles yet",
-                        subtitle = "Add your first needle or hook",
+                        title = stringResource(R.string.needle_empty_title),
+                        subtitle = stringResource(R.string.needle_empty_subtitle),
                         modifier = Modifier.fillMaxSize()
                     )
                 }
