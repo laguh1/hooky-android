@@ -403,6 +403,8 @@ Each section:
 - [x] Stitch form cleanup: Abbreviation, Spanish Name, Hookfully Link removed from UI; Photos section moved above Classification
 - [x] Share card: `ui/share/ShareCardGenerator.kt` — 1080×1080 JPEG (photo zone, piece name, stats, wordmark); Share button (OutlinedButton, BrandPurple) on PieceDetailScreen
 - [x] Photo editing: `ui/camera/PhotoEditorLauncher.kt` — `Intent.ACTION_EDIT` via FileProvider; edit icon added to `PhotoGallery`; wired to all 4 form screens via `onEditPhoto`
+- [x] Piece form: Dimensions section — hook size mm field and camera scan button removed; section title simplified to "Dimensions"
+- [x] Navigation bug fix: Dashboard top-row shortcuts (Pieces/Yarns/Stitches) now use `popUpTo+saveState+launchSingleTop+restoreState` (same as bottom nav) — fixes back stack poisoning that caused Dashboard navigation to restore wrong tab
 
 ### Phase 8 — Internationalisation (i18n) ✅ infrastructure / ⏳ wiring in progress
 Android's built-in string resource system handles language switching automatically — no runtime logic needed.
@@ -536,6 +538,48 @@ Phase C → gets revenue
 - [ ] Graceful degradation — if offline or free tier, falls back to Phase A/B
 
 **Estimated effort:** 2–4 weeks once decided
+
+---
+
+#### Premium Tester Access — Firebase Remote Config Allowlist ✅
+
+**Goal:** Grant premium functionality to selected beta testers without a login system, app store update, or unlock codes. Add/remove people from the Firebase console in seconds.
+
+**How it works:**
+- Each install has a unique anonymous **Tester ID** (Firebase Installation ID)
+- A JSON array of allowed IDs lives in Firebase Remote Config (`premium_ids`)
+- On app start, the app fetches the list and checks if the current device is in it
+- Result is cached in `SharedPreferences` — works offline with last-known value
+- Fetch interval: 1 hour (Firebase production limit)
+
+**Files:**
+- `data/premium/PremiumManager.kt` — singleton: fetch, check, cache
+- `di/PremiumModule.kt` — Hilt providers for FirebaseRemoteConfig + FirebaseInstallations
+- `ui/settings/SettingsViewModel.kt` — exposes `isPremiumFlow` + `installationIdFlow`
+- Settings screen → **BETA section**: shows Access status + Tester ID with copy button
+- `docs/PREMIUM-TUTORIAL.md` — full setup + usage guide
+
+**Requires before building:**
+- Firebase project created at console.firebase.google.com
+- `google-services.json` downloaded and placed at `android/app/google-services.json`
+- Remote Config parameter `premium_ids` created with default value `[]`
+
+**How to gate a feature:**
+```kotlin
+@HiltViewModel
+class MyViewModel @Inject constructor(
+    private val premiumManager: PremiumManager
+) : ViewModel() {
+    val isPremium: StateFlow<Boolean> = premiumManager.isPremiumFlow
+}
+```
+```kotlin
+// In Composable:
+val isPremium by viewModel.isPremium.collectAsState()
+if (isPremium) { PremiumContent() } else { UpgradePrompt() }
+```
+
+**Full tutorial:** `docs/PREMIUM-TUTORIAL.md`
 
 ---
 
