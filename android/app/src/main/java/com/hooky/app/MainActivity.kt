@@ -6,12 +6,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import com.hooky.app.data.premium.PremiumManager
 import com.hooky.app.ui.navigation.CrochetNavGraph
 import com.hooky.app.ui.theme.CrochetManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject lateinit var premiumManager: PremiumManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val savedMode = getSharedPreferences("hooky_settings", MODE_PRIVATE)
@@ -21,6 +27,9 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        lifecycleScope.launch { premiumManager.initialize() }
+
         setContent {
             CrochetManagerTheme {
                 CrochetNavGraph()

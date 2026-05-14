@@ -227,8 +227,8 @@ fun NeedleFormScreen(
                                 scanGalleryLauncher()
                             },
                             shape = RoundedCornerShape(12.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Slate),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.weight(1f).height(52.dp)
                         ) {
                             Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
