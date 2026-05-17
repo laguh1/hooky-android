@@ -15,6 +15,9 @@ local.properties
 gradle/wrapper/gradle-wrapper.jar
 **/gradle/wrapper/gradle-wrapper.jar
 
+# Firebase — contains API keys, never commit
+google-services.json
+
 # OS files
 .DS_Store
 
