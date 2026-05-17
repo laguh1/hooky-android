@@ -113,6 +113,7 @@ Full plan in `docs/PLAN.md`.
 9. ⬜ AI Vision Phase 10B — TFLite stitch recognition
 10. ✅ Phase 10A — ML Kit OCR yarn label + needle scanner, Palette API
 11. ✅ Phase 11 — Row Counter (−/+/voice/edit dialog) + Work Timer (Start/Pause/Resume/Stop, persists restarts) + Library pickers for Yarn/Needle/Stitch in piece form + splash screen purple background
+12. ✅ UX fixes — hook size field removed from piece form; nav bug fixed (dashboard shortcuts use bottom-nav save/restore pattern)
 
 ---
 
