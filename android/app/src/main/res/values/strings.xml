@@ -384,6 +384,9 @@
     <string name="piece_rows_progress">%1$d / %2$d rows</string>
     <string name="piece_voice_permission">Microphone permission required for voice counting</string>
     <string name="piece_voice_error">Didn\'t catch a number — try again</string>
+    <string name="piece_voice_timeout">Voice counting stopped — tap mic to restart</string>
+    <string name="piece_voice_lang_pack">Speech pack not installed for this language. Go to Settings → Apps → Google → Voice to download it.</string>
+    <string name="settings_voice_lang_tip">For voice row counting, make sure the matching speech pack is installed on your device.</string>
     <string name="piece_field_hook_size_mm">Hook size (mm)</string>
     <string name="piece_field_row_start">Starting row</string>
     <string name="piece_field_row_start_hint">0 for a new piece</string>

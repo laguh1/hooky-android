@@ -206,6 +206,15 @@ fun SettingsScreen(
                 }
             }
 
+            if (selectedTag.isNotEmpty()) {
+                Text(
+                    text = "For voice row counting, make sure the matching speech pack is installed on your device.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextMuted,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             // Beta / Premium section

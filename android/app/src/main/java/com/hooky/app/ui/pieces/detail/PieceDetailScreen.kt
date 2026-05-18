@@ -79,6 +79,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.hooky.app.R
@@ -884,6 +887,9 @@ private fun RowCounterCard(
     val scope = rememberCoroutineScope()
     val voiceErrorMsg = stringResource(R.string.piece_voice_error)
     val voicePermissionMsg = stringResource(R.string.piece_voice_permission)
+    val voiceTimeoutMsg = stringResource(R.string.piece_voice_timeout)
+    val voiceLangPackMsg = stringResource(R.string.piece_voice_lang_pack)
+    val timeoutJob = remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
 
     val speechAvailable = remember(context) { SpeechRecognizer.isRecognitionAvailable(context) }
     val speechRecognizer = remember(context) {
@@ -902,6 +908,20 @@ private fun RowCounterCard(
     }
     DisposableEffect(speechRecognizer) {
         onDispose { speechRecognizer?.destroy() }
+    }
+
+    // Stop mic when app goes to background
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE && isListening) {
+                isListening = false
+                timeoutJob.value?.cancel()
+                speechRecognizer?.cancel()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     var hasAudioPermission by remember {
@@ -936,9 +956,20 @@ private fun RowCounterCard(
         return words.entries.firstOrNull { lower.contains(it.key) }?.value
     }
 
+    fun resetTimeout(sr: SpeechRecognizer) {
+        timeoutJob.value?.cancel()
+        timeoutJob.value = scope.launch {
+            delay(45_000)
+            isListening = false
+            sr.cancel()
+            onShowSnackbar(voiceTimeoutMsg)
+        }
+    }
+
     fun startListening() {
         val sr = speechRecognizer ?: return
         isListening = true
+        resetTimeout(sr)
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, speechLocaleTag)
@@ -950,7 +981,10 @@ private fun RowCounterCard(
                 val candidates = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     ?: emptyList()
                 val number = candidates.firstNotNullOfOrNull { parseSpokenNumber(it) }
-                if (number != null && number > 0) onIncrementBy(number)
+                if (number != null && number > 0) {
+                    onIncrementBy(number)
+                    resetTimeout(sr) // reset inactivity clock on each successful count
+                }
                 if (isListening) scope.launch { delay(150); sr.startListening(intent) }
             }
             override fun onError(error: Int) {
@@ -960,7 +994,16 @@ private fun RowCounterCard(
                     SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
                         if (isListening) scope.launch { delay(150); sr.startListening(intent) }
                     SpeechRecognizer.ERROR_CLIENT -> { /* user cancelled, do nothing */ }
-                    else -> { isListening = false; scope.launch { onShowSnackbar(voiceErrorMsg) } }
+                    12, 13 -> { // ERROR_LANGUAGE_NOT_SUPPORTED / ERROR_LANGUAGE_UNAVAILABLE (API 31+)
+                        isListening = false
+                        timeoutJob.value?.cancel()
+                        scope.launch { onShowSnackbar(voiceLangPackMsg) }
+                    }
+                    else -> {
+                        isListening = false
+                        timeoutJob.value?.cancel()
+                        scope.launch { onShowSnackbar(voiceErrorMsg) }
+                    }
                 }
             }
             override fun onReadyForSpeech(params: Bundle?) {}
@@ -1062,7 +1105,7 @@ private fun RowCounterCard(
                     IconButton(
                         onClick = {
                             when {
-                                isListening -> { isListening = false; speechRecognizer?.cancel() }
+                                isListening -> { isListening = false; timeoutJob.value?.cancel(); speechRecognizer?.cancel() }
                                 !hasAudioPermission -> permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                                 else -> startListening()
                             }
