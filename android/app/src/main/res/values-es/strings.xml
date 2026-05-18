@@ -384,6 +384,9 @@
     <string name="piece_rows_progress">%1$d / %2$d filas</string>
     <string name="piece_voice_permission">Se requiere permiso de micrófono para contar por voz</string>
     <string name="piece_voice_error">No se detectó un número — inténtalo de nuevo</string>
+    <string name="piece_voice_timeout">Conteo por voz detenido — toca el micrófono para reiniciar</string>
+    <string name="piece_voice_lang_pack">Paquete de voz no instalado para este idioma. Ve a Ajustes → Aplicaciones → Google → Voz para descargarlo.</string>
+    <string name="settings_voice_lang_tip">Para el conteo de filas por voz, asegúrate de que el paquete de voz correspondiente esté instalado en tu dispositivo.</string>
     <string name="piece_field_hook_size_mm">Tamaño gancho (mm)</string>
     <string name="piece_field_row_start">Fila inicial</string>
     <string name="piece_field_row_start_hint">0 para una pieza nueva</string>
