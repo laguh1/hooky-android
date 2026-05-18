@@ -289,6 +289,43 @@ fun NeedleFormScreen(
                         colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.sizeMm,
+                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeMmChanged(it)) },
+                            label = { Text(stringResource(R.string.needle_field_size_mm)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = uiState.sizeLabel,
+                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeLabelChanged(it)) },
+                            label = { Text(stringResource(R.string.needle_field_size_label)) },
+                            placeholder = { Text(stringResource(R.string.needle_field_size_label_hint), color = TextMuted) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = uiState.quantity,
+                        onValueChange = { viewModel.onAction(NeedleFormAction.QuantityChanged(it)) },
+                        label = { Text(stringResource(R.string.needle_field_quantity)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
                 // Section: Photos — early so color/reference is captured before filling details
@@ -333,46 +370,6 @@ fun NeedleFormScreen(
                             Text(stringResource(R.string.action_gallery))
                         }
                     }
-                }
-
-                // Section: Size
-                FormSection(title = stringResource(R.string.needle_section_size)) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            value = uiState.sizeMm,
-                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeMmChanged(it)) },
-                            label = { Text(stringResource(R.string.needle_field_size_mm)) },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = uiState.sizeLabel,
-                            onValueChange = { viewModel.onAction(NeedleFormAction.SizeLabelChanged(it)) },
-                            label = { Text(stringResource(R.string.needle_field_size_label)) },
-                            placeholder = { Text(stringResource(R.string.needle_field_size_label_hint), color = TextMuted) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(10.dp),
-                            colors = formTextFieldColors(),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = uiState.quantity,
-                        onValueChange = { viewModel.onAction(NeedleFormAction.QuantityChanged(it)) },
-                        label = { Text(stringResource(R.string.needle_field_quantity)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
 
                 // Section: Notes
