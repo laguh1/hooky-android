@@ -213,6 +213,42 @@ fun StitchFormScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Section: Tutorial Links — first so name auto-fills from URL
+                FormSection(title = stringResource(R.string.stitch_section_links)) {
+                    OutlinedTextField(
+                        value = uiState.instructionLink,
+                        onValueChange = { viewModel.onAction(StitchFormAction.InstructionLinkChanged(it)) },
+                        label = { Text(stringResource(R.string.stitch_field_instruction_link)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { fs ->
+                                if (!fs.isFocused && uiState.instructionLink.isNotBlank())
+                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.instructionLink))
+                            }
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.videoLink,
+                        onValueChange = { viewModel.onAction(StitchFormAction.VideoLinkChanged(it)) },
+                        label = { Text(stringResource(R.string.stitch_field_video_link)) },
+                        placeholder = { Text(stringResource(R.string.stitch_video_link_hint), color = TextMuted) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { fs ->
+                                if (!fs.isFocused && uiState.videoLink.isNotBlank())
+                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.videoLink))
+                            }
+                    )
+                }
+
                 // Section: Basic Info
                 FormSection(title = stringResource(R.string.stitch_section_basic)) {
                     OutlinedTextField(
@@ -432,42 +468,6 @@ fun StitchFormScreen(
                             Text(stringResource(R.string.action_upload_pdf))
                         }
                     }
-                }
-
-                // Section: Tutorial Links
-                FormSection(title = stringResource(R.string.stitch_section_links)) {
-                    OutlinedTextField(
-                        value = uiState.instructionLink,
-                        onValueChange = { viewModel.onAction(StitchFormAction.InstructionLinkChanged(it)) },
-                        label = { Text(stringResource(R.string.stitch_field_instruction_link)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onFocusChanged { fs ->
-                                if (!fs.isFocused && uiState.instructionLink.isNotBlank())
-                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.instructionLink))
-                            }
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.videoLink,
-                        onValueChange = { viewModel.onAction(StitchFormAction.VideoLinkChanged(it)) },
-                        label = { Text(stringResource(R.string.stitch_field_video_link)) },
-                        placeholder = { Text(stringResource(R.string.stitch_video_link_hint), color = TextMuted) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onFocusChanged { fs ->
-                                if (!fs.isFocused && uiState.videoLink.isNotBlank())
-                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.videoLink))
-                            }
-                    )
                 }
 
                 // Section: Notes
