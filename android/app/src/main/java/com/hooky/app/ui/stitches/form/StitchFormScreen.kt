@@ -62,6 +62,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import androidx.compose.ui.res.stringResource
@@ -443,7 +444,12 @@ fun StitchFormScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { fs ->
+                                if (!fs.isFocused && uiState.instructionLink.isNotBlank())
+                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.instructionLink))
+                            }
                     )
 
                     OutlinedTextField(
@@ -455,7 +461,12 @@ fun StitchFormScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { fs ->
+                                if (!fs.isFocused && uiState.videoLink.isNotBlank())
+                                    viewModel.onAction(StitchFormAction.ExtractNameFromUrl(uiState.videoLink))
+                            }
                     )
                 }
 
