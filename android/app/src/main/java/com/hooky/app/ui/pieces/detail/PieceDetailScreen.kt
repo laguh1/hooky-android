@@ -3,6 +3,7 @@ package com.hooky.app.ui.pieces.detail
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatDelegate
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -87,6 +88,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
 import com.hooky.app.data.db.entity.PieceEntity
@@ -887,6 +889,17 @@ private fun RowCounterCard(
     val speechRecognizer = remember(context) {
         if (speechAvailable) SpeechRecognizer.createSpeechRecognizer(context) else null
     }
+    val speechLocaleTag = remember {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        val tag = if (locales.isEmpty) java.util.Locale.getDefault().toLanguageTag()
+        else locales[0]?.toLanguageTag() ?: java.util.Locale.getDefault().toLanguageTag()
+        when {
+            tag.startsWith("pt") -> "pt-BR"
+            tag.startsWith("es") -> "es-ES"
+            tag.startsWith("en") -> "en-US"
+            else -> tag
+        }
+    }
     DisposableEffect(speechRecognizer) {
         onDispose { speechRecognizer?.destroy() }
     }
@@ -928,20 +941,27 @@ private fun RowCounterCard(
         isListening = true
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, speechLocaleTag)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, speechLocaleTag)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
         }
         sr.setRecognitionListener(object : RecognitionListener {
             override fun onResults(results: Bundle?) {
-                isListening = false
                 val candidates = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     ?: emptyList()
                 val number = candidates.firstNotNullOfOrNull { parseSpokenNumber(it) }
                 if (number != null && number > 0) onIncrementBy(number)
-                else scope.launch { onShowSnackbar(voiceErrorMsg) }
+                if (isListening) scope.launch { delay(150); sr.startListening(intent) }
             }
             override fun onError(error: Int) {
-                isListening = false
-                scope.launch { onShowSnackbar(voiceErrorMsg) }
+                when (error) {
+                    SpeechRecognizer.ERROR_NO_MATCH,
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT,
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
+                        if (isListening) scope.launch { delay(150); sr.startListening(intent) }
+                    SpeechRecognizer.ERROR_CLIENT -> { /* user cancelled, do nothing */ }
+                    else -> { isListening = false; scope.launch { onShowSnackbar(voiceErrorMsg) } }
+                }
             }
             override fun onReadyForSpeech(params: Bundle?) {}
             override fun onBeginningOfSpeech() {}
@@ -1042,7 +1062,7 @@ private fun RowCounterCard(
                     IconButton(
                         onClick = {
                             when {
-                                isListening -> { speechRecognizer?.stopListening(); isListening = false }
+                                isListening -> { isListening = false; speechRecognizer?.cancel() }
                                 !hasAudioPermission -> permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                                 else -> startListening()
                             }

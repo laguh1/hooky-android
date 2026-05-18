@@ -655,14 +655,14 @@ private fun LibraryMultiPicker(
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Slate.copy(alpha = 0.1f),
-                            selectedLabelColor = Slate,
-                            selectedTrailingIconColor = Slate
+                            selectedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            selectedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            selectedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = true,
-                            selectedBorderColor = Slate.copy(alpha = 0.4f),
+                            selectedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                             selectedBorderWidth = 1.dp
                         )
                     )
