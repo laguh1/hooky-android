@@ -54,6 +54,7 @@ sealed interface StitchFormAction {
     data class HookfullyLinkChanged(val value: String) : StitchFormAction
     data class InstructionLinkChanged(val value: String) : StitchFormAction
     data class VideoLinkChanged(val value: String) : StitchFormAction
+    data class ExtractNameFromUrl(val url: String) : StitchFormAction
     data class PhotoAdded(val uri: String) : StitchFormAction
     data class PhotoRemoved(val uri: String) : StitchFormAction
     data class PhotoReplaced(val oldPath: String, val newPath: String) : StitchFormAction
@@ -155,6 +156,12 @@ class StitchFormViewModel @Inject constructor(
                 _uiState.update { it.copy(instructionLink = action.value) }
             is StitchFormAction.VideoLinkChanged ->
                 _uiState.update { it.copy(videoLink = action.value) }
+            is StitchFormAction.ExtractNameFromUrl -> {
+                if (_uiState.value.name.isBlank()) {
+                    val extracted = extractNameFromUrl(action.url)
+                    if (extracted != null) _uiState.update { it.copy(name = extracted, nameError = null) }
+                }
+            }
             is StitchFormAction.PhotoAdded ->
                 _uiState.update { it.copy(photos = it.photos + action.uri) }
             is StitchFormAction.PhotoRemoved ->
@@ -173,6 +180,38 @@ class StitchFormViewModel @Inject constructor(
             StitchFormAction.ClearError ->
                 _uiState.update { it.copy(error = null) }
         }
+    }
+
+    private fun extractNameFromUrl(url: String): String? {
+        return try {
+            val uri = java.net.URI(url.trim())
+            val host = uri.host?.lowercase() ?: return null
+
+            // YouTube paths are video IDs, not stitch names
+            if (host.contains("youtube") || host.contains("youtu.be")) return null
+
+            val segments = (uri.path ?: return null)
+                .split("/")
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+
+            val slug = segments.lastOrNull() ?: return null
+
+            // Skip if it looks like a random ID (no word separators, short alphanumeric)
+            if (!slug.contains('-') && !slug.contains('_') && slug.length < 6) return null
+
+            val cleaned = slug
+                .substringBefore(".")           // remove file extension
+                .replace(Regex("[-_]?(tutorial|pattern|how[-_]?to|crochet[-_]stitch|video)$", RegexOption.IGNORE_CASE), "")
+                .replace(Regex("[_-]"), " ")
+                .trim()
+
+            if (cleaned.isBlank()) return null
+
+            cleaned.split(" ")
+                .filter { it.isNotBlank() }
+                .joinToString(" ") { it.lowercase().replaceFirstChar { c -> c.uppercase() } }
+        } catch (_: Exception) { null }
     }
 
     private fun saveStitch() {
