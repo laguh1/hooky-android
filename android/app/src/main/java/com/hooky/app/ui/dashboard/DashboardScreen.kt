@@ -53,10 +53,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.domain.model.enums.Destination
 import com.hooky.app.domain.model.enums.WorkStatus
@@ -94,9 +97,7 @@ private fun formatDate(dateStr: String): String {
     }
 }
 
-private fun formatRevenue(amount: Float): String {
-    return "€%.2f".format(amount)
-}
+// formatRevenue replaced by Float.formatCurrency(symbol) from CurrencyPrefs
 
 private fun parsePhotos(json: String): List<String> {
     return try {
@@ -691,6 +692,7 @@ private fun RevenueCard(
     revenue: Float,
     modifier: Modifier = Modifier
 ) {
+    val currencySymbol = getCurrencySymbol(LocalContext.current)
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -710,7 +712,7 @@ private fun RevenueCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = formatRevenue(revenue),
+                text = revenue.formatCurrency(currencySymbol),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Slate
