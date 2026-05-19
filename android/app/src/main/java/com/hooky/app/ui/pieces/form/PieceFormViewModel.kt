@@ -7,6 +7,7 @@ import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.db.entity.StitchEntity
 import com.hooky.app.data.db.entity.YarnEntity
+import com.hooky.app.data.premium.PremiumManager
 import com.hooky.app.data.repository.NeedleRepository
 import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.repository.StitchRepository
@@ -113,6 +114,7 @@ class PieceFormViewModel @Inject constructor(
     private val stitchRepository: StitchRepository,
     private val needleRepository: NeedleRepository,
     private val labelScannerService: YarnLabelScannerService,
+    private val premiumManager: PremiumManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -234,15 +236,15 @@ class PieceFormViewModel @Inject constructor(
             is PieceFormAction.HookSizeMmChanged ->
                 _uiState.update { it.copy(hookSizeMm = action.value) }
             is PieceFormAction.PhotoAdded -> {
-                if (_uiState.value.photos.size < MAX_FREE_PHOTOS)
+                if (premiumManager.isPremium || _uiState.value.photos.size < MAX_FREE_PHOTOS)
                     _uiState.update { it.copy(photos = it.photos + action.uri) }
                 else
-                    _uiState.update { it.copy(error = "Free tier is limited to $MAX_FREE_PHOTOS photos per piece") }
+                    _uiState.update { it.copy(error = "Free tier is limited to $MAX_FREE_PHOTOS photos per piece. Upgrade to Pro for unlimited photos.") }
             }
             is PieceFormAction.PhotoReceived -> {
                 if (_uiState.value.scanMode == ScanMode.HOOK) {
                     scanHook(action.path)
-                } else if (_uiState.value.photos.size < MAX_FREE_PHOTOS) {
+                } else if (premiumManager.isPremium || _uiState.value.photos.size < MAX_FREE_PHOTOS) {
                     _uiState.update { it.copy(photos = it.photos + action.path) }
                 }
             }

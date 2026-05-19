@@ -387,6 +387,12 @@
     <string name="piece_voice_timeout">Voice counting stopped — tap mic to restart</string>
     <string name="piece_voice_lang_pack">Speech pack not installed for this language. Go to Settings → Apps → Google → Voice to download it.</string>
     <string name="settings_voice_lang_tip">For voice row counting, make sure the matching speech pack is installed on your device.</string>
+    <string name="piece_extra_counters">Extra Counters</string>
+    <string name="piece_counter_add">Add Counter</string>
+    <string name="piece_counter_edit">Edit Counter</string>
+    <string name="piece_counter_empty">No extra counters yet — tap + to add one</string>
+    <string name="piece_counter_name_hint">Counter name</string>
+    <string name="piece_counter_target_hint">Target (optional)</string>
     <string name="piece_field_hook_size_mm">Hook size (mm)</string>
     <string name="piece_field_row_start">Starting row</string>
     <string name="piece_field_row_start_hint">0 for a new piece</string>

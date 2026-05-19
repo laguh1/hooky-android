@@ -8,8 +8,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    premiumManager: PremiumManager
+    private val premiumManager: PremiumManager
 ) : ViewModel() {
     val isPremium: StateFlow<Boolean> = premiumManager.isPremiumFlow
     val installationId: StateFlow<String> = premiumManager.installationIdFlow
+
+    fun setDebugPremium(enabled: Boolean) = premiumManager.forceSetPremium(enabled)
 }

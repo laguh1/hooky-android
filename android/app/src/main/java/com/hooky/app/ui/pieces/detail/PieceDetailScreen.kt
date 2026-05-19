@@ -37,8 +37,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -94,6 +97,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
+import com.hooky.app.data.db.entity.CounterEntity
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.domain.model.WorkSession
 import com.hooky.app.domain.model.enums.Destination
@@ -154,6 +158,8 @@ fun PieceDetailScreen(
                     yarnNames = uiState.yarnNames,
                     stitchNames = uiState.stitchNames,
                     needleNames = uiState.needleNames,
+                    isPremium = uiState.isPremium,
+                    counters = uiState.counters,
                     onNavigateBack = onNavigateBack,
                     onNavigateToEdit = { onNavigateToEdit(pieceId) },
                     onArchiveClick = { viewModel.onAction(PieceDetailAction.ShowArchiveDialog) },
@@ -167,6 +173,12 @@ fun PieceDetailScreen(
                     onResumeTimer = { viewModel.onAction(PieceDetailAction.ResumeTimer) },
                     onStopTimer = { viewModel.onAction(PieceDetailAction.StopTimer) },
                     onApplySuggestedPrice = { price -> viewModel.onAction(PieceDetailAction.ApplySuggestedPrice(price)) },
+                    onAddCounter = { name, target -> viewModel.onAction(PieceDetailAction.AddCounter(name, target)) },
+                    onDeleteCounter = { id -> viewModel.onAction(PieceDetailAction.DeleteCounter(id)) },
+                    onIncrementCounter = { id -> viewModel.onAction(PieceDetailAction.IncrementCounter(id)) },
+                    onDecrementCounter = { id -> viewModel.onAction(PieceDetailAction.DecrementCounter(id)) },
+                    onResetCounter = { id -> viewModel.onAction(PieceDetailAction.ResetCounter(id)) },
+                    onUpdateCounter = { counter -> viewModel.onAction(PieceDetailAction.UpdateCounter(counter)) },
                 )
             }
         }
@@ -197,6 +209,8 @@ private fun PieceDetailContent(
     yarnNames: Map<String, String>,
     stitchNames: Map<String, String>,
     needleNames: Map<String, String>,
+    isPremium: Boolean,
+    counters: List<CounterEntity>,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
     onArchiveClick: () -> Unit,
@@ -210,6 +224,12 @@ private fun PieceDetailContent(
     onResumeTimer: () -> Unit,
     onStopTimer: () -> Unit,
     onApplySuggestedPrice: (Float) -> Unit,
+    onAddCounter: (String, Int?) -> Unit,
+    onDeleteCounter: (Int) -> Unit,
+    onIncrementCounter: (Int) -> Unit,
+    onDecrementCounter: (Int) -> Unit,
+    onResetCounter: (Int) -> Unit,
+    onUpdateCounter: (CounterEntity) -> Unit,
 ) {
     var showPriceSuggestion by remember { mutableStateOf(false) }
     var isSharing by remember { mutableStateOf(false) }
@@ -378,6 +398,18 @@ private fun PieceDetailContent(
                     onResume = onResumeTimer,
                     onStop = onStopTimer,
                 )
+
+                if (isPremium) {
+                    ExtraCountersCard(
+                        counters = counters,
+                        onAdd = onAddCounter,
+                        onDelete = onDeleteCounter,
+                        onIncrement = onIncrementCounter,
+                        onDecrement = onDecrementCounter,
+                        onReset = onResetCounter,
+                        onUpdate = onUpdateCounter,
+                    )
+                }
             }
 
             // Price suggestion — available whenever there are hours logged
@@ -1400,6 +1432,226 @@ private fun PriceSuggestionDialog(
                 enabled = hourlyRate > 0f && suggested > 0f,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) { Text("Apply to Piece") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel), color = TextSecondary)
+            }
+        }
+    )
+}
+
+@Composable
+private fun ExtraCountersCard(
+    counters: List<CounterEntity>,
+    onAdd: (String, Int?) -> Unit,
+    onDelete: (Int) -> Unit,
+    onIncrement: (Int) -> Unit,
+    onDecrement: (Int) -> Unit,
+    onReset: (Int) -> Unit,
+    onUpdate: (CounterEntity) -> Unit,
+) {
+    var showAddDialog by remember { mutableStateOf(false) }
+    var editingCounter by remember { mutableStateOf<CounterEntity?>(null) }
+
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.piece_extra_counters),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextSecondary
+                )
+                IconButton(
+                    onClick = { showAddDialog = true },
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.piece_counter_add),
+                        tint = Slate,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            if (counters.isEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.piece_counter_empty),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextMuted,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                Spacer(modifier = Modifier.height(4.dp))
+                counters.forEach { counter ->
+                    CounterItemRow(
+                        counter = counter,
+                        onIncrement = { onIncrement(counter.id) },
+                        onDecrement = { onDecrement(counter.id) },
+                        onDelete = { onDelete(counter.id) },
+                        onEdit = { editingCounter = counter },
+                    )
+                }
+            }
+        }
+    }
+
+    if (showAddDialog) {
+        CounterFormDialog(
+            title = stringResource(R.string.piece_counter_add),
+            initialName = "",
+            initialTarget = null,
+            onConfirm = { name, target -> onAdd(name, target); showAddDialog = false },
+            onDismiss = { showAddDialog = false }
+        )
+    }
+
+    editingCounter?.let { counter ->
+        CounterFormDialog(
+            title = stringResource(R.string.piece_counter_edit),
+            initialName = counter.name,
+            initialTarget = counter.target,
+            onConfirm = { name, target ->
+                onUpdate(counter.copy(name = name, target = target))
+                editingCounter = null
+            },
+            onDismiss = { editingCounter = null }
+        )
+    }
+}
+
+@Composable
+private fun CounterItemRow(
+    counter: CounterEntity,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        IconButton(
+            onClick = onDecrement,
+            enabled = counter.count > 0,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Remove,
+                contentDescription = stringResource(R.string.action_decrement),
+                modifier = Modifier.size(18.dp)
+            )
+        }
+
+        val countLabel = if (counter.target != null)
+            "${counter.count}/${counter.target}" else counter.count.toString()
+        Text(
+            text = countLabel,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.width(56.dp),
+            textAlign = TextAlign.Center
+        )
+
+        IconButton(
+            onClick = onIncrement,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(R.string.action_increment),
+                modifier = Modifier.size(18.dp)
+            )
+        }
+
+        Text(
+            text = counter.name,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onEdit() }
+        )
+
+        IconButton(
+            onClick = onDelete,
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = null,
+                tint = TextMuted,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CounterFormDialog(
+    title: String,
+    initialName: String,
+    initialTarget: Int?,
+    onConfirm: (String, Int?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(initialName) }
+    var targetText by remember { mutableStateOf(initialTarget?.toString() ?: "") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title, style = MaterialTheme.typography.titleMedium) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(stringResource(R.string.piece_counter_name_hint)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Slate,
+                        focusedLabelColor = Slate
+                    )
+                )
+                OutlinedTextField(
+                    value = targetText,
+                    onValueChange = { targetText = it.filter { c -> c.isDigit() } },
+                    label = { Text(stringResource(R.string.piece_counter_target_hint)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Slate,
+                        focusedLabelColor = Slate
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (name.isNotBlank()) onConfirm(name.trim(), targetText.toIntOrNull())
+                },
+                enabled = name.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(containerColor = Slate)
+            ) { Text(stringResource(R.string.action_save)) }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {

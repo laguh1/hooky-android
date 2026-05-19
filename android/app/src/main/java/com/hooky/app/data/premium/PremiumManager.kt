@@ -37,6 +37,11 @@ class PremiumManager @Inject constructor(
 
     val isPremium: Boolean get() = _isPremium.value
 
+    fun forceSetPremium(premium: Boolean) {
+        _isPremium.value = premium
+        prefs.edit().putBoolean(KEY_IS_PREMIUM, premium).apply()
+    }
+
     suspend fun initialize() {
         try {
             val id = firebaseInstallations.id.await()

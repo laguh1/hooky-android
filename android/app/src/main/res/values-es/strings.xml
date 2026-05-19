@@ -387,6 +387,12 @@
     <string name="piece_voice_timeout">Conteo por voz detenido — toca el micrófono para reiniciar</string>
     <string name="piece_voice_lang_pack">Paquete de voz no instalado para este idioma. Ve a Ajustes → Aplicaciones → Google → Voz para descargarlo.</string>
     <string name="settings_voice_lang_tip">Para el conteo de filas por voz, asegúrate de que el paquete de voz correspondiente esté instalado en tu dispositivo.</string>
+    <string name="piece_extra_counters">Contadores extra</string>
+    <string name="piece_counter_add">Añadir contador</string>
+    <string name="piece_counter_edit">Editar contador</string>
+    <string name="piece_counter_empty">Sin contadores extra — toca + para añadir uno</string>
+    <string name="piece_counter_name_hint">Nombre del contador</string>
+    <string name="piece_counter_target_hint">Objetivo (opcional)</string>
     <string name="piece_field_hook_size_mm">Tamaño gancho (mm)</string>
     <string name="piece_field_row_start">Fila inicial</string>
     <string name="piece_field_row_start_hint">0 para una pieza nueva</string>

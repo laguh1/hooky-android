@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.PieceEntity
+import com.hooky.app.data.db.entity.CounterEntity
+import com.hooky.app.data.premium.PremiumManager
+import com.hooky.app.data.repository.CounterRepository
 import com.hooky.app.data.repository.NeedleRepository
 import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.repository.StitchRepository
@@ -33,6 +36,8 @@ data class PieceDetailUiState(
     val yarnNames: Map<String, String> = emptyMap(),
     val stitchNames: Map<String, String> = emptyMap(),
     val needleNames: Map<String, String> = emptyMap(),
+    val isPremium: Boolean = false,
+    val counters: List<CounterEntity> = emptyList(),
 )
 
 sealed interface PieceDetailAction {
@@ -49,11 +54,19 @@ sealed interface PieceDetailAction {
     object ResumeTimer : PieceDetailAction
     object StopTimer : PieceDetailAction
     data class ApplySuggestedPrice(val price: Float) : PieceDetailAction
+    data class AddCounter(val name: String, val target: Int?) : PieceDetailAction
+    data class DeleteCounter(val id: Int) : PieceDetailAction
+    data class IncrementCounter(val id: Int) : PieceDetailAction
+    data class DecrementCounter(val id: Int) : PieceDetailAction
+    data class ResetCounter(val id: Int) : PieceDetailAction
+    data class UpdateCounter(val counter: CounterEntity) : PieceDetailAction
 }
 
 @HiltViewModel
 class PieceDetailViewModel @Inject constructor(
     private val pieceRepository: PieceRepository,
+    private val counterRepository: CounterRepository,
+    private val premiumManager: PremiumManager,
     private val yarnRepository: YarnRepository,
     private val stitchRepository: StitchRepository,
     private val needleRepository: NeedleRepository,
@@ -127,6 +140,18 @@ class PieceDetailViewModel @Inject constructor(
                     }
                     _uiState.update { it.copy(needleNames = map) }
                 }
+        }
+
+        viewModelScope.launch {
+            counterRepository.getCountersForPiece(pieceId.toString())
+                .catch { }
+                .collect { counters -> _uiState.update { it.copy(counters = counters) } }
+        }
+
+        viewModelScope.launch {
+            premiumManager.isPremiumFlow.collect { isPremium ->
+                _uiState.update { it.copy(isPremium = isPremium) }
+            }
         }
     }
 
@@ -267,6 +292,62 @@ class PieceDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     try {
                         pieceRepository.updatePrice(pieceId, action.price)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.AddCounter -> {
+                viewModelScope.launch {
+                    try {
+                        counterRepository.addCounter(pieceId.toString(), action.name, action.target)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.DeleteCounter -> {
+                viewModelScope.launch {
+                    try {
+                        counterRepository.deleteCounter(action.id)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.IncrementCounter -> {
+                val counter = _uiState.value.counters.find { it.id == action.id } ?: return
+                viewModelScope.launch {
+                    try {
+                        counterRepository.updateCount(action.id, counter.count + 1)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.DecrementCounter -> {
+                val counter = _uiState.value.counters.find { it.id == action.id } ?: return
+                viewModelScope.launch {
+                    try {
+                        counterRepository.updateCount(action.id, maxOf(0, counter.count - 1))
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.ResetCounter -> {
+                viewModelScope.launch {
+                    try {
+                        counterRepository.updateCount(action.id, 0)
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            is PieceDetailAction.UpdateCounter -> {
+                viewModelScope.launch {
+                    try {
+                        counterRepository.updateCounter(action.counter)
                     } catch (e: Exception) {
                         _uiState.update { it.copy(error = e.message) }
                     }
