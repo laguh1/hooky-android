@@ -2,7 +2,7 @@
 
 **Created:** 2026-03-23
 **Based on:** Desktop app at `/Users/joanasocrates/Local Documents/claude/crochet/`
-**Status:** Phases 1–11 + Phase 10A complete. Feature additions: share card, photo editing, stitch chart upload, extra counters (Pro, DB v6), cost & profit report (Pro). i18n: nav + list screens + dashboard + search + calculator + camera wired; detail/form/component screens still hardcoded. See per-phase detail below.
+**Status:** Phases 1–11 + Phase 10A complete. Feature additions: share card, photo editing, stitch chart upload, extra counters (Pro, DB v6), cost & profit report (Pro), multi-currency (EUR/USD/GBP/BRL). i18n: nav + list screens + dashboard + search + calculator + camera wired; detail/form/component screens still hardcoded. See per-phase detail below.
 
 ---
 
@@ -875,6 +875,21 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 - [x] `ExtraCountersCard` in PieceDetailScreen — expandable cards per counter with −/+/reset/delete
 - [x] Add counter dialog (name + optional target); edit dialog to rename/update
 - [x] Pro gate: card only visible to Pro users
+
+---
+
+#### 13F — Multi-Currency Support ✅
+
+**What:** Users choose their currency (EUR/USD/GBP/BRL) independently of app language. All monetary values app-wide format with the selected symbol.
+
+**Design principle:** Currency ≠ Language. A Brazilian in the UK might use PT language + GBP. Both settings live independently in the same `hooky_settings` SharedPreferences file.
+
+**Implementation:**
+- `CurrencyPrefs.kt` — `CurrencyOption` data class, `CURRENCIES` list (€ EUR, $ USD, £ GBP, R$ BRL), `getCurrencySymbol(context)`, `saveCurrency(context, code)`, `Float.formatCurrency(symbol)` extension
+- `SettingsScreen.kt` — CURRENCY section between Language and Beta, same radio-row pattern as Language
+- Currency applied in: `PriceCalculatorScreen` (labels + result card breakdown), `PieceDetailScreen` (pricing info rows + price suggestion dialog), `ReportsScreen` (summary totals + table rows), `DashboardScreen` (revenue card)
+
+**What changes when currency is swapped:** All amount displays update immediately on next recomposition. Amount values stored in DB remain raw floats (no conversion — display-only change).
 
 ---
 
