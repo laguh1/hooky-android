@@ -120,6 +120,7 @@ fun DashboardScreen(
     onNavigateToPieceDetail: (Int) -> Unit,
     onNavigateToSearch: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
+    onNavigateToReports: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -154,6 +155,7 @@ fun DashboardScreen(
                 onNavigateToPieceDetail = onNavigateToPieceDetail,
                 onNavigateToSearch = onNavigateToSearch,
                 onNavigateToSettings = onNavigateToSettings,
+                onNavigateToReports = onNavigateToReports,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -173,6 +175,7 @@ private fun DashboardContent(
     onNavigateToPieceDetail: (Int) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToReports: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -279,6 +282,25 @@ private fun DashboardContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+        // ---- Reports shortcut ----
+        item {
+            Spacer(Modifier.height(16.dp))
+            TextButton(
+                onClick = onNavigateToReports,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(
+                    text = "View cost & profit report →",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Slate,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

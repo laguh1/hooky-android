@@ -2,7 +2,7 @@
 
 **Created:** 2026-03-23
 **Based on:** Desktop app at `/Users/joanasocrates/Local Documents/claude/crochet/`
-**Status:** Phases 1–11 + Phase 10A complete. Feature additions: share card, photo editing, stitch chart upload (DB v5). i18n: nav + list screens + dashboard + search + calculator + camera wired; detail/form/component screens still hardcoded. See per-phase detail below.
+**Status:** Phases 1–11 + Phase 10A complete. Feature additions: share card, photo editing, stitch chart upload, extra counters (Pro, DB v6), cost & profit report (Pro). i18n: nav + list screens + dashboard + search + calculator + camera wired; detail/form/component screens still hardcoded. See per-phase detail below.
 
 ---
 
@@ -553,10 +553,11 @@ Phase C → gets revenue
 - Fetch interval: 1 hour (Firebase production limit)
 
 **Files:**
-- `data/premium/PremiumManager.kt` — singleton: fetch, check, cache
+- `data/premium/PremiumManager.kt` — singleton: fetch, check, cache; also `forceSetPremium()` for dev testing
 - `di/PremiumModule.kt` — Hilt providers for FirebaseRemoteConfig + FirebaseInstallations
-- `ui/settings/SettingsViewModel.kt` — exposes `isPremiumFlow` + `installationIdFlow`
+- `ui/settings/SettingsViewModel.kt` — exposes `isPremiumFlow` + `installationIdFlow` + `setDebugPremium()`
 - Settings screen → **BETA section**: shows Access status + Tester ID with copy button
+- Settings screen → **DEBUG section** (debug builds only): "Simulate Premium" toggle — flip on/off on a single device without Firebase
 - `docs/PREMIUM-TUTORIAL.md` — full setup + usage guide
 
 **Requires before building:**
@@ -851,10 +852,13 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 - Export: PDF (via Android's `PdfDocument` API) or CSV
 
 **Checklist:**
-- [ ] Report screen with date range filter and per-piece table
+- [x] Report screen with per-piece table (`ui/reports/ReportsScreen.kt` + `ReportsViewModel.kt`)
+- [x] Summary card: total revenue, cost, profit at top of screen
+- [x] CSV export via Android share sheet (share icon in toolbar)
+- [x] Pro gate — lock icon + explanation for free users
+- [x] Dashboard shortcut: "View cost & profit report →" link
+- [ ] Date range filter
 - [ ] PDF export (`PdfDocument` API — no library needed)
-- [ ] CSV export (plain text, share via Android share sheet)
-- [ ] Pro gate
 
 ---
 
@@ -867,10 +871,10 @@ The standalone calculator screen keeps its manual entry as-is — pre-population
 **Data model:** new `CounterEntity` table — `pieceId`, `name`, `count`, `target`, `sortOrder`. The existing `rowCount`/`targetRowCount` on `PieceEntity` becomes the default "main" counter for free users.
 
 **Checklist:**
-- [ ] `CounterEntity` Room table + DAO + Repository
-- [ ] Multi-counter UI in PieceDetailScreen: tabs or expandable cards per counter
-- [ ] Add/rename/delete counter actions
-- [ ] Pro gate: free users see one counter; Pro users see "+ Add Counter" button
+- [x] `CounterEntity` Room table + DAO + Repository (DB migration 5→6)
+- [x] `ExtraCountersCard` in PieceDetailScreen — expandable cards per counter with −/+/reset/delete
+- [x] Add counter dialog (name + optional target); edit dialog to rename/update
+- [x] Pro gate: card only visible to Pro users
 
 ---
 

@@ -54,6 +54,7 @@ import com.hooky.app.ui.stitches.list.StitchListScreen
 import com.hooky.app.ui.yarns.detail.YarnDetailScreen
 import com.hooky.app.ui.yarns.form.YarnFormScreen
 import com.hooky.app.ui.yarns.list.YarnListScreen
+import com.hooky.app.ui.reports.ReportsScreen
 import com.hooky.app.ui.settings.SettingsScreen
 import com.hooky.app.ui.theme.Slate
 
@@ -95,6 +96,7 @@ sealed class Screen(val route: String) {
     object Search : Screen("search")
     object PriceCalculator : Screen("calculator")
     object Settings : Screen("settings")
+    object Reports : Screen("reports")
 }
 
 private data class TopLevelDestination(
@@ -170,7 +172,8 @@ fun CrochetNavGraph(
                     },
                     onNavigateToPieceDetail = { id -> navController.navigate(Screen.PieceDetail.createRoute(id)) },
                     onNavigateToSearch = { navController.navigate(Screen.Search.route) },
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
+                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
+                    onNavigateToReports = { navController.navigate(Screen.Reports.route) },
                 )
             }
 
@@ -364,6 +367,12 @@ fun CrochetNavGraph(
             // Price Calculator
             composable(Screen.PriceCalculator.route) {
                 PriceCalculatorScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(Screen.Reports.route) {
+                ReportsScreen(
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

@@ -6,11 +6,13 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hooky.app.data.db.converters.Converters
+import com.hooky.app.data.db.dao.CounterDao
 import com.hooky.app.data.db.dao.IdCounterDao
 import com.hooky.app.data.db.dao.NeedleDao
 import com.hooky.app.data.db.dao.PieceDao
 import com.hooky.app.data.db.dao.StitchDao
 import com.hooky.app.data.db.dao.YarnDao
+import com.hooky.app.data.db.entity.CounterEntity
 import com.hooky.app.data.db.entity.IdCounterEntity
 import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.data.db.entity.PieceEntity
@@ -23,9 +25,10 @@ import com.hooky.app.data.db.entity.YarnEntity
         YarnEntity::class,
         StitchEntity::class,
         NeedleEntity::class,
-        IdCounterEntity::class
+        IdCounterEntity::class,
+        CounterEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -36,6 +39,7 @@ abstract class CrochetDatabase : RoomDatabase() {
     abstract fun stitchDao(): StitchDao
     abstract fun needleDao(): NeedleDao
     abstract fun idCounterDao(): IdCounterDao
+    abstract fun counterDao(): CounterDao
 
     companion object {
         const val DATABASE_NAME = "crochet_database"
@@ -59,6 +63,22 @@ abstract class CrochetDatabase : RoomDatabase() {
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE stitches ADD COLUMN chartPath TEXT")
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS counters (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        pieceId TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        count INTEGER NOT NULL DEFAULT 0,
+                        target INTEGER,
+                        sortOrder INTEGER NOT NULL DEFAULT 0,
+                        createdAt INTEGER NOT NULL
+                    )"""
+                )
             }
         }
     }
