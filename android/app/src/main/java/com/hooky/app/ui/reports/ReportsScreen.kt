@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -193,6 +195,7 @@ private fun SummaryCard(
     totalProfit: Float,
     modifier: Modifier = Modifier,
 ) {
+    val sym = getCurrencySymbol(LocalContext.current)
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -204,11 +207,11 @@ private fun SummaryCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            SummaryCell(label = "Revenue", value = "€%.2f".format(totalRevenue))
-            SummaryCell(label = "Cost", value = "€%.2f".format(totalCost))
+            SummaryCell(label = "Revenue", value = totalRevenue.formatCurrency(sym))
+            SummaryCell(label = "Cost", value = totalCost.formatCurrency(sym))
             SummaryCell(
                 label = "Profit",
-                value = "€%.2f".format(totalProfit),
+                value = totalProfit.formatCurrency(sym),
                 valueColor = if (totalProfit >= 0f) BrandPurple else MaterialTheme.colorScheme.error
             )
         }
@@ -271,6 +274,7 @@ private fun ReportTableHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
+    val sym = getCurrencySymbol(LocalContext.current)
     Row(
         modifier = modifier.padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -290,14 +294,14 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
             )
         }
         Text(
-            text = row.materialCost?.let { "€%.2f".format(it) } ?: "—",
+            text = row.materialCost?.formatCurrency(sym) ?: "—",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.End,
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = (row.soldPrice ?: row.price)?.let { "€%.2f".format(it) } ?: "—",
+            text = (row.soldPrice ?: row.price)?.formatCurrency(sym) ?: "—",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.End,
@@ -309,7 +313,7 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
             else -> MaterialTheme.colorScheme.error
         }
         Text(
-            text = row.profit?.let { "€%.2f".format(it) } ?: "—",
+            text = row.profit?.formatCurrency(sym) ?: "—",
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = profitColor,

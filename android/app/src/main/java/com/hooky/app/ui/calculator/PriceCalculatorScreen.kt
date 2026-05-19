@@ -45,6 +45,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,6 +83,7 @@ fun PriceCalculatorScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val clipboardManager = LocalClipboardManager.current
+    val currencySymbol = getCurrencySymbol(LocalContext.current)
 
     Scaffold(
         topBar = {
@@ -134,7 +138,7 @@ fun PriceCalculatorScreen(
                     )
 
                     // Material cost
-                    LabeledField(label = "Material cost (€)") {
+                    LabeledField(label = "Material cost ($currencySymbol)") {
                         OutlinedTextField(
                             value = uiState.materialCost,
                             onValueChange = { viewModel.onAction(CalculatorAction.MaterialCostChanged(it)) },
@@ -174,7 +178,7 @@ fun PriceCalculatorScreen(
                     }
 
                     // Labor rate
-                    LabeledField(label = "Labor rate (€/hr)") {
+                    LabeledField(label = "Labor rate ($currencySymbol/hr)") {
                         OutlinedTextField(
                             value = uiState.laborRate,
                             onValueChange = { viewModel.onAction(CalculatorAction.LaborRateChanged(it)) },
@@ -286,8 +290,9 @@ fun PriceCalculatorScreen(
                         laborRate = uiState.laborRate.toFloatOrNull() ?: 8f,
                         complexityFactor = uiState.complexityFactor,
                         profitMargin = uiState.profitMargin,
+                        currencySymbol = currencySymbol,
                         onCopyPrice = {
-                            clipboardManager.setText(AnnotatedString("€%.2f".format(price)))
+                            clipboardManager.setText(AnnotatedString(price.formatCurrency(currencySymbol)))
                         }
                     )
                 }
@@ -345,6 +350,7 @@ private fun ResultCard(
     laborRate: Float,
     complexityFactor: Float,
     profitMargin: Float,
+    currencySymbol: String,
     onCopyPrice: () -> Unit
 ) {
     Surface(
@@ -370,7 +376,7 @@ private fun ResultCard(
                         color = White.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "€%.2f".format(suggestedPrice),
+                        text = suggestedPrice.formatCurrency(currencySymbol),
                         style = MaterialTheme.typography.displaySmall,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -409,19 +415,19 @@ private fun ResultCard(
                         Divider(color = White.copy(alpha = 0.2f), thickness = 1.dp)
                         BreakdownRow(
                             label = "Materials",
-                            value = "€%.2f".format(it.materialCost)
+                            value = it.materialCost.formatCurrency(currencySymbol)
                         )
                         BreakdownRow(
-                            label = "Labor (${formatHours(workHours)} × €%.2f)".format(laborRate),
-                            value = "€%.2f".format(it.laborCost)
+                            label = "Labor (${formatHours(workHours)} × ${laborRate.formatCurrency(currencySymbol)})",
+                            value = it.laborCost.formatCurrency(currencySymbol)
                         )
                         BreakdownRow(
                             label = "Complexity (×${"%.1f".format(complexityFactor)})",
-                            value = if (it.complexityAdjustment != 0f) "+€%.2f".format(it.complexityAdjustment) else "—"
+                            value = if (it.complexityAdjustment != 0f) "+${it.complexityAdjustment.formatCurrency(currencySymbol)}" else "—"
                         )
                         BreakdownRow(
                             label = "Profit (${(profitMargin * 100).toInt()}%)",
-                            value = "€%.2f".format(it.profitAmount)
+                            value = it.profitAmount.formatCurrency(currencySymbol)
                         )
                     }
                 }

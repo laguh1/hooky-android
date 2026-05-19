@@ -56,6 +56,7 @@ private const val KEY_NIGHT_MODE = "night_mode"
 
 private data class LanguageOption(val tag: String, val label: String, val sublabel: String)
 private data class ThemeOption(val mode: Int, val label: String, val sublabel: String)
+// CurrencyOption and CURRENCIES defined in CurrencyPrefs.kt
 
 private val LANGUAGES = listOf(
     LanguageOption("", "System default", "Follows device language"),
@@ -99,6 +100,7 @@ fun SettingsScreen(
 
     var selectedTag by remember { mutableStateOf(currentLanguageTag()) }
     var selectedNightMode by remember { mutableStateOf(getSavedNightMode(context)) }
+    var selectedCurrency by remember { mutableStateOf(getCurrentCurrencyCode(context)) }
 
     fun selectLanguage(tag: String) {
         if (tag == selectedTag) return
@@ -115,6 +117,12 @@ fun SettingsScreen(
         if (mode == selectedNightMode) return
         selectedNightMode = mode
         saveAndApplyNightMode(context, mode)
+    }
+
+    fun selectCurrency(code: String) {
+        if (code == selectedCurrency) return
+        selectedCurrency = code
+        saveCurrency(context, code)
     }
 
     Scaffold(
@@ -216,6 +224,37 @@ fun SettingsScreen(
                     color = TextMuted,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
                 )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Currency section
+            SectionHeader("CURRENCY")
+
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Column {
+                    CURRENCIES.forEachIndexed { index, option ->
+                        OptionRow(
+                            label = option.label,
+                            sublabel = option.sublabel,
+                            selected = option.code == selectedCurrency,
+                            onClick = { selectCurrency(option.code) }
+                        )
+                        if (index < CURRENCIES.lastIndex) {
+                            Divider(
+                                color = MaterialTheme.colorScheme.outline,
+                                thickness = 0.5.dp,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

@@ -115,6 +115,8 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -735,6 +737,7 @@ private fun ChipListSection(title: String, items: List<String>) {
 
 @Composable
 private fun PricingCard(piece: PieceEntity) {
+    val sym = getCurrencySymbol(LocalContext.current)
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -750,12 +753,12 @@ private fun PricingCard(piece: PieceEntity) {
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost), value = "€$it") }
-            piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price), value = "€$it") }
+            piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost), value = it.formatCurrency(sym)) }
+            piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price), value = it.formatCurrency(sym)) }
             piece.salePlatform?.let { InfoRow(label = stringResource(R.string.piece_label_sale_platform), value = it) }
             piece.saleLink?.let { InfoRow(label = stringResource(R.string.piece_label_sale_link), value = it) }
             piece.soldDate?.let { InfoRow(label = stringResource(R.string.piece_label_sold_on), value = it) }
-            piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = "€$it") }
+            piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = it.formatCurrency(sym)) }
         }
     }
 }
@@ -1328,6 +1331,7 @@ private fun PriceSuggestionDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val sym = getCurrencySymbol(context)
     val prefs = remember { context.getSharedPreferences("hooky_settings", android.content.Context.MODE_PRIVATE) }
     var hourlyRateText by remember {
         mutableStateOf(prefs.getFloat("hourly_rate", 12f).let {
@@ -1381,7 +1385,7 @@ private fun PriceSuggestionDialog(
                     ) {
                         Text("Material cost", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                         Text(
-                            "€%.2f".format(materialCost),
+                            materialCost.formatCurrency(sym),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
@@ -1391,7 +1395,7 @@ private fun PriceSuggestionDialog(
                 OutlinedTextField(
                     value = hourlyRateText,
                     onValueChange = { hourlyRateText = it },
-                    label = { Text("Hourly rate (€/h)") },
+                    label = { Text("Hourly rate ($sym/h)") },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = RoundedCornerShape(10.dp),
@@ -1415,7 +1419,7 @@ private fun PriceSuggestionDialog(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        "€%.2f".format(suggested),
+                        suggested.formatCurrency(sym),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = BrandPurple
