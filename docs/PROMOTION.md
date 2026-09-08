@@ -22,17 +22,35 @@ To update the page: edit `landing/index.html` → `git commit` → `git push` (G
 - ⬜ Add Play Store link (see step 2)
 - ⬜ Record and embed tutorial video (see step 3)
 - ⬜ Replace HTML phone mockup with real screenshots (see step 4)
-- ⬜ Add favicon (use the app icon export from Android Studio / brand assets)
+- ✅ Add favicon (purple square + white infinity loop SVG)
 
 ---
 
 ## Next steps before promoting
 
-### 1. Set up the iOS waitlist form → Google Sheets (free, unlimited)
+### 1. Form backends — done, using FormSubmit.co (as of 3 Sept 2026)
 
-The form on the landing page needs a backend to save submissions. Use Google Apps Script (free, no limits).
+Both the iOS waitlist form (`index.html`) and the early-access tester request form
+(`get-early-access.html`) submit to **FormSubmit.co**, which emails submissions
+directly to `hooky.crochet.app@gmail.com` — no backend, no account, no dashboard.
 
-**Step-by-step:**
+```
+const FORM_ENDPOINT = 'https://formsubmit.co/ajax/hooky.crochet.app@gmail.com';
+```
+
+**One-time activation:** the very first submission ever sent to a new address
+triggers a confirmation email from FormSubmit to that inbox — someone needs to
+click the confirmation link once before submissions start arriving. After that,
+every submission just shows up as a normal email.
+
+**Note:** this replaces the originally-planned Google Sheets + Apps Script setup
+below, which was written but never actually deployed (the placeholder
+`GOOGLE_SCRIPT_URL` was still live in production, meaning the waitlist form was
+silently broken from launch until this fix). Keeping the old instructions here
+in case a spreadsheet-based approach is wanted later instead of/alongside email.
+
+<details>
+<summary>Original Google Sheets + Apps Script plan (not currently used)</summary>
 
 1. Go to [sheets.google.com](https://sheets.google.com) → create a new sheet named **"Hooky iOS Waitlist"**
 2. Add these headers in row 1:
@@ -64,11 +82,10 @@ function doPost(e) {
 5. Click **Deploy → New deployment**
 6. Type: **Web App** | Execute as: **Me** | Who has access: **Anyone**
 7. Click **Deploy** → copy the Web App URL (looks like `https://script.google.com/macros/s/ABC.../exec`)
-8. In `landing/index.html`, find `const FORM_ENDPOINT = 'GOOGLE_SCRIPT_URL'` and replace `GOOGLE_SCRIPT_URL` with your copied URL
+8. Replace the `FORM_ENDPOINT` value with your copied URL
 9. `git commit -am "feat: wire waitlist form to Google Sheets" && git push`
 
-**Result:** every iOS waitlist submission appears as a new row in your Google Sheet instantly.
-You can filter by country, sort, export CSV for WhatsApp broadcasts, etc.
+</details>
 
 ---
 
@@ -151,9 +168,8 @@ Formspree is a third-party service that collects form submissions. The free tier
 ### Privacy Policy ✅
 - **File:** `landing/privacy.html` — linked from the landing page footer
 - **Covers:** Android app (offline, no data collection), iOS waitlist form (name + contacts → Google Sheet), Google Fonts, localStorage, user rights (access/correct/delete)
-- **Contact email in policy:** hooky.app.privacy@gmail.com — create this Gmail alias or use your own email and update the file
+- **Contact email in policy:** hooky.crochet.app@gmail.com ✅ (already set in privacy.html)
 - **Required by:** Google Play Store (mandatory), GDPR (EU/Spain), LGPD (Brazil)
-- **Action needed:** Update the email address in `privacy.html` if you don't use hooky.app.privacy@gmail.com
 
 ### Trademark / Brand
 - **App name "Hooky"** — not registered. Before scaling promotion, search EUIPO (EU) and INPI (Brazil) for conflicting trademarks. If clear, filing costs ~€850 for EU class 42 (software).

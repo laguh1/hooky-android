@@ -133,7 +133,7 @@ object ShareCardGenerator {
         }
         var statX = textX
         if (workHours != null && workHours > 0f) {
-            val hoursStr = if (workHours % 1f == 0f) "${workHours.toInt()}h" else "${"%.1f".format(workHours)}h"
+            val hoursStr = com.hooky.app.util.formatWorkTime(workHours)
             canvas.drawText(hoursStr, statX, y, statBoldPaint)
             canvas.drawText("Work time", statX, y + 44f, statLabelPaint)
             statX += 280f
@@ -163,7 +163,7 @@ object ShareCardGenerator {
         val shareDir = File(context.filesDir, "share").also { it.mkdirs() }
         val file = File(shareDir, "hooky_piece.jpg")
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
-        FileProvider.getUriForFile(context, "com.hooky.app.fileprovider", file)
+        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     } catch (_: Exception) {
         null
     }

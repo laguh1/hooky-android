@@ -27,10 +27,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.PlayCircleFilled
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -52,20 +58,22 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -73,21 +81,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hooky.app.R
 import coil.compose.AsyncImage
+import com.hooky.app.R
+import com.hooky.app.data.db.entity.IdeaEntity
 import com.hooky.app.data.db.entity.StitchEntity
-import com.hooky.app.data.suggestions.StitchSuggestionsData
-import com.hooky.app.domain.model.StitchSuggestion
 import com.hooky.app.ui.components.BadgeStyle
 import com.hooky.app.ui.components.StatusBadge
-import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.stitches.ideas.IdeasUiState
+import com.hooky.app.ui.stitches.ideas.IdeasViewModel
 import com.hooky.app.ui.theme.BrandPurple
-import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 
-private enum class StitchTab { LIBRARY, SUGGESTIONS }
+private enum class StitchTab { LIBRARY, IDEAS }
+
+private data class PlatformInfo(
+    val icon: ImageVector,
+    val tint: Color,
+    val actionLabel: String
+)
+
+private fun platformInfoFromUrl(url: String): PlatformInfo = when {
+    "youtube.com" in url || "youtu.be" in url ->
+        PlatformInfo(Icons.Filled.PlayCircleFilled, Color(0xFFCC0000), "Watch")
+    "instagram.com" in url ->
+        PlatformInfo(Icons.Filled.CameraAlt, Color(0xFFE1306C), "View")
+    "tiktok.com" in url ->
+        PlatformInfo(Icons.Filled.MusicNote, Color(0xFF010101), "View")
+    else ->
+        PlatformInfo(Icons.Filled.Language, Color(0xFF6B7280), "Open")
+}
+
+private fun sourceFromUrl(url: String): String = when {
+    "youtube.com" in url || "youtu.be" in url -> "YouTube"
+    "instagram.com" in url -> "Instagram"
+    "tiktok.com" in url -> "TikTok"
+    else -> "Web"
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,24 +127,35 @@ fun StitchListScreen(
     onNavigateToDetail: (Int) -> Unit,
     onNavigateToCreate: () -> Unit,
     onNavigateToSettings: () -> Unit = {},
-    viewModel: StitchListViewModel = hiltViewModel()
+    viewModel: StitchListViewModel = hiltViewModel(),
+    ideasViewModel: IdeasViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val ideasUiState by ideasViewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedTab by rememberSaveable { mutableStateOf(StitchTab.LIBRARY) }
 
-    // Detect current locale for suggestions
     val localeTag = remember {
         val locales = AppCompatDelegate.getApplicationLocales()
         if (locales.isEmpty) java.util.Locale.getDefault().toLanguageTag()
         else locales[0]?.toLanguageTag() ?: java.util.Locale.getDefault().toLanguageTag()
     }
-    val suggestions = remember(localeTag) { StitchSuggestionsData.forLocale(localeTag) }
+
+    LaunchedEffect(localeTag) {
+        ideasViewModel.load(localeTag)
+    }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.onAction(StitchListAction.ClearError)
+        }
+    }
+
+    LaunchedEffect(ideasUiState.error) {
+        ideasUiState.error?.let {
+            snackbarHostState.showSnackbar(it)
+            ideasViewModel.clearError()
         }
     }
 
@@ -141,14 +184,22 @@ fun StitchListScreen(
             )
         },
         floatingActionButton = {
-            if (selectedTab == StitchTab.LIBRARY) {
-                FloatingActionButton(
+            when (selectedTab) {
+                StitchTab.LIBRARY -> FloatingActionButton(
                     onClick = onNavigateToCreate,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.stitch_new))
+                }
+                StitchTab.IDEAS -> FloatingActionButton(
+                    onClick = ideasViewModel::showAddDialog,
+                    containerColor = BrandPurple,
+                    contentColor = White,
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.ideas_add_button))
                 }
             }
         },
@@ -160,7 +211,6 @@ fun StitchListScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Tab toggle
             StitchTabRow(
                 selectedTab = selectedTab,
                 onTabSelected = { selectedTab = it }
@@ -172,8 +222,26 @@ fun StitchListScreen(
                     onNavigateToDetail = onNavigateToDetail,
                     onAction = viewModel::onAction
                 )
-                StitchTab.SUGGESTIONS -> SuggestionsContent(suggestions = suggestions)
+                StitchTab.IDEAS -> IdeasContent(
+                    ideasUiState = ideasUiState,
+                    onDelete = ideasViewModel::deleteIdea
+                )
             }
+        }
+
+        if (ideasUiState.showAddDialog) {
+            AddIdeaDialog(
+                onDismiss = ideasViewModel::dismissAddDialog,
+                onSave = { title, url, description ->
+                    ideasViewModel.addIdea(
+                        title = title,
+                        source = sourceFromUrl(url),
+                        url = url,
+                        description = description,
+                        locale = localeTag
+                    )
+                }
+            )
         }
     }
 }
@@ -195,7 +263,7 @@ private fun StitchTabRow(
             Row(modifier = Modifier.fillMaxWidth()) {
                 listOf(
                     StitchTab.LIBRARY to stringResource(R.string.stitch_tab_library),
-                    StitchTab.SUGGESTIONS to stringResource(R.string.stitch_tab_suggestions)
+                    StitchTab.IDEAS to stringResource(R.string.stitch_tab_suggestions)
                 ).forEach { (tab, label) ->
                     val selected = selectedTab == tab
                     Column(
@@ -239,7 +307,6 @@ private fun LibraryContent(
     onAction: (StitchListAction) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        // Search bar
         OutlinedTextField(
             value = uiState.searchQuery,
             onValueChange = { onAction(StitchListAction.SearchQueryChanged(it)) },
@@ -260,10 +327,9 @@ private fun LibraryContent(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
         )
 
-        // Filter chips
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
@@ -277,7 +343,7 @@ private fun LibraryContent(
                     onClick = { onAction(StitchListAction.FilterSelected(filter)) },
                     label = {
                         Text(
-                            text = filter.displayName,
+                            text = stringResource(filter.labelResId),
                             style = MaterialTheme.typography.labelMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -301,7 +367,7 @@ private fun LibraryContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         when {
             uiState.isLoading -> {
@@ -312,15 +378,11 @@ private fun LibraryContent(
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
-
-            uiState.stitches.isEmpty() -> {
-                StitchEmptyState()
-            }
-
+            uiState.stitches.isEmpty() -> StitchEmptyState()
             else -> {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxSize()
@@ -338,39 +400,52 @@ private fun LibraryContent(
 }
 
 // ---------------------------------------------------------------------------
-// Suggestions tab
+// Ideas tab
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun SuggestionsContent(suggestions: List<StitchSuggestion>) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                text = stringResource(R.string.stitch_suggestions_disclaimer),
-                style = MaterialTheme.typography.bodySmall,
-                color = TextMuted,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
+private fun IdeasContent(
+    ideasUiState: IdeasUiState,
+    onDelete: (Int) -> Unit
+) {
+    when {
+        ideasUiState.isLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = BrandPurple)
+            }
         }
-        items(items = suggestions, key = { it.id }) { suggestion ->
-            SuggestionCard(suggestion = suggestion)
+        else -> {
+            LazyColumn(
+                contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    Text(
+                        text = stringResource(R.string.stitch_suggestions_disclaimer),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextMuted,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
+                items(items = ideasUiState.ideas, key = { it.id }) { idea ->
+                    IdeaCard(idea = idea, onDelete = { onDelete(idea.id) })
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun SuggestionCard(suggestion: StitchSuggestion) {
+private fun IdeaCard(
+    idea: IdeaEntity,
+    onDelete: () -> Unit
+) {
     val uriHandler = LocalUriHandler.current
-    val categoryDisplayName = remember(suggestion.category) {
-        suggestion.category?.displayName
-    }
-    val difficultyDisplayName = remember(suggestion.difficulty) {
-        suggestion.difficulty?.displayName
-    }
+    val platform = remember(idea.url) { platformInfoFromUrl(idea.url) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -383,15 +458,23 @@ private fun SuggestionCard(suggestion: StitchSuggestion) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = platform.icon,
+                contentDescription = null,
+                tint = platform.tint,
+                modifier = Modifier.size(28.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
-                    text = suggestion.name,
+                    text = idea.title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -399,13 +482,12 @@ private fun SuggestionCard(suggestion: StitchSuggestion) {
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = stringResource(R.string.stitch_suggestion_by, suggestion.creator),
+                    text = idea.source,
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    maxLines = 1
                 )
-                suggestion.description?.let { desc ->
+                idea.description?.let { desc ->
                     Text(
                         text = desc,
                         style = MaterialTheme.typography.bodySmall,
@@ -414,45 +496,126 @@ private fun SuggestionCard(suggestion: StitchSuggestion) {
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                if (categoryDisplayName != null || difficultyDisplayName != null) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        categoryDisplayName?.let { StatusBadge(text = it, style = BadgeStyle.MUTED) }
-                        difficultyDisplayName?.let { StatusBadge(text = it, style = BadgeStyle.OUTLINE) }
-                    }
-                }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-            Button(
-                onClick = { uriHandler.openUri(suggestion.youtubeUrl) },
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BrandPurple,
-                    contentColor = White
-                ),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = stringResource(R.string.stitch_suggestion_watch),
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Button(
+                    onClick = { uriHandler.openUri(idea.url) },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BrandPurple,
+                        contentColor = White
+                    ),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.OpenInBrowser,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = platform.actionLabel,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = stringResource(R.string.idea_delete),
+                        tint = TextMuted,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             }
         }
     }
 }
 
 // ---------------------------------------------------------------------------
-// Existing composables (library)
+// Add idea dialog
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun AddIdeaDialog(
+    onDismiss: () -> Unit,
+    onSave: (title: String, url: String, description: String?) -> Unit
+) {
+    var title by rememberSaveable { mutableStateOf("") }
+    var url by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+
+    val isSaveEnabled = title.isNotBlank() && url.isNotBlank()
+    val detectedPlatform = remember(url) { sourceFromUrl(url) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.ideas_dialog_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text(stringResource(R.string.ideas_dialog_title_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple)
+                )
+                OutlinedTextField(
+                    value = url,
+                    onValueChange = { url = it },
+                    label = { Text(stringResource(R.string.ideas_dialog_url_label)) },
+                    singleLine = true,
+                    placeholder = { Text("https://", color = TextMuted) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple),
+                    supportingText = if (url.isNotBlank()) {
+                        { Text(detectedPlatform, color = TextMuted) }
+                    } else null
+                )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(stringResource(R.string.ideas_dialog_description_label)) },
+                    maxLines = 3,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onSave(
+                        title.trim(),
+                        url.trim(),
+                        description.trim().takeIf { it.isNotEmpty() }
+                    )
+                },
+                enabled = isSaveEnabled,
+                colors = ButtonDefaults.buttonColors(containerColor = BrandPurple, contentColor = White)
+            ) {
+                Text(stringResource(R.string.ideas_dialog_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.ideas_dialog_cancel))
+            }
+        }
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Library composables
 // ---------------------------------------------------------------------------
 
 @Composable
@@ -469,21 +632,15 @@ private fun StitchGridCard(
         }
     }
 
-    val categoryDisplayName = remember(stitch.category) {
-        stitch.category?.let {
-            try {
-                com.hooky.app.domain.model.enums.StitchCategory.valueOf(it).displayName
-            } catch (_: Exception) { it }
-        }
+    val categoryResId = remember(stitch.category) {
+        stitch.category?.let { try { com.hooky.app.domain.model.enums.StitchCategory.valueOf(it).labelResId } catch (_: Exception) { null } }
     }
+    val categoryDisplayName = categoryResId?.let { stringResource(it) } ?: stitch.category
 
-    val difficultyDisplayName = remember(stitch.difficulty) {
-        stitch.difficulty?.let {
-            try {
-                com.hooky.app.domain.model.enums.Difficulty.valueOf(it).displayName
-            } catch (_: Exception) { it }
-        }
+    val difficultyResId = remember(stitch.difficulty) {
+        stitch.difficulty?.let { try { com.hooky.app.domain.model.enums.Difficulty.valueOf(it).labelResId } catch (_: Exception) { null } }
     }
+    val difficultyDisplayName = difficultyResId?.let { stringResource(it) } ?: stitch.difficulty
 
     Card(
         modifier = Modifier

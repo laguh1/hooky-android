@@ -63,6 +63,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,14 +134,14 @@ fun NeedleListScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
             // Filter chips
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             ) {
                 items(NeedleFilter.values()) { filter ->
                     val selected = uiState.selectedFilter == filter
@@ -149,7 +150,7 @@ fun NeedleListScreen(
                         onClick = { viewModel.onAction(NeedleListAction.FilterSelected(filter)) },
                         label = {
                             Text(
-                                text = filter.displayName,
+                                text = stringResource(filter.labelResId),
                                 style = MaterialTheme.typography.labelMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -197,7 +198,7 @@ fun NeedleListScreen(
                                 onClick = { onNavigateToDetail(needle.id) }
                             )
                         }
-                        item { Spacer(Modifier.height(80.dp)) }
+                        item { Spacer(Modifier.height(64.dp)) }
                     }
                 }
             }
@@ -210,11 +211,8 @@ private fun NeedleListItem(
     needle: NeedleEntity,
     onClick: () -> Unit
 ) {
-    val typeLabel = try {
-        NeedleType.valueOf(needle.type).displayName
-    } catch (_: Exception) {
-        needle.type
-    }
+    val typeResId = try { NeedleType.valueOf(needle.type).labelResId } catch (_: Exception) { null }
+    val typeLabel = typeResId?.let { stringResource(it) } ?: needle.type
 
     val sizeText = buildString {
         needle.sizeMm?.let { append("${it}mm") }

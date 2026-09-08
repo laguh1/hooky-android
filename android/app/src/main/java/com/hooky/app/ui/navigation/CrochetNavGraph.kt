@@ -1,5 +1,6 @@
 package com.hooky.app.ui.navigation
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,11 +20,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,12 +37,14 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import java.net.URLDecoder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hooky.app.ui.calculator.PriceCalculatorScreen
 import com.hooky.app.ui.camera.CameraScreen
+import com.hooky.app.ui.camera.PhotoEditorScreen
 import com.hooky.app.ui.dashboard.DashboardScreen
 import com.hooky.app.ui.needles.detail.NeedleDetailScreen
 import com.hooky.app.ui.needles.form.NeedleFormScreen
@@ -54,6 +59,8 @@ import com.hooky.app.ui.stitches.list.StitchListScreen
 import com.hooky.app.ui.yarns.detail.YarnDetailScreen
 import com.hooky.app.ui.yarns.form.YarnFormScreen
 import com.hooky.app.ui.yarns.list.YarnListScreen
+import com.hooky.app.ui.help.HelpScreen
+import com.hooky.app.ui.onboarding.OnboardingScreen
 import com.hooky.app.ui.reports.ReportsScreen
 import com.hooky.app.ui.settings.SettingsScreen
 import com.hooky.app.ui.theme.Slate
@@ -93,10 +100,15 @@ sealed class Screen(val route: String) {
         fun createRoute(id: Int) = "needles/$id/edit"
     }
     object Camera : Screen("camera")
+    object PhotoEditor : Screen("photo_editor/{photoPath}") {
+        fun createRoute(encodedPath: String) = "photo_editor/$encodedPath"
+    }
     object Search : Screen("search")
     object PriceCalculator : Screen("calculator")
     object Settings : Screen("settings")
     object Reports : Screen("reports")
+    object Help : Screen("help")
+    object Onboarding : Screen("onboarding")
 }
 
 private data class TopLevelDestination(
@@ -126,6 +138,13 @@ private val topLevelRoutes = setOf(
 fun CrochetNavGraph(
     navController: NavHostController = rememberNavController()
 ) {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("hooky_settings", Context.MODE_PRIVATE) }
+    val startDestination = remember {
+        if (prefs.getBoolean("hasSeenOnboarding", false)) Screen.Dashboard.route
+        else Screen.Onboarding.route
+    }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
@@ -144,9 +163,20 @@ fun CrochetNavGraph(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Dashboard.route,
+            startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Onboarding.route) {
+                OnboardingScreen(
+                    onFinish = {
+                        prefs.edit().putBoolean("hasSeenOnboarding", true).apply()
+                        navController.navigate(Screen.Dashboard.route) {
+                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Screen.Dashboard.route) {
                 DashboardScreen(
                     onNavigateToPieces = {
@@ -379,8 +409,13 @@ fun CrochetNavGraph(
 
             composable(Screen.Settings.route) {
                 SettingsScreen(
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToHelp = { navController.navigate(Screen.Help.route) }
                 )
+            }
+
+            composable(Screen.Help.route) {
+                HelpScreen(onNavigateBack = { navController.popBackStack() })
             }
 
             // Camera screen — full-screen, no bottom bar
@@ -393,6 +428,20 @@ fun CrochetNavGraph(
                             ?.set("photo_path", path)
                         navController.popBackStack()
                     },
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
+
+            // Photo editor — full-screen, no bottom bar
+            composable(
+                route = Screen.PhotoEditor.route,
+                arguments = listOf(navArgument("photoPath") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val encoded = backStackEntry.arguments?.getString("photoPath") ?: return@composable
+                val photoPath = URLDecoder.decode(encoded, "UTF-8")
+                PhotoEditorScreen(
+                    photoPath = photoPath,
+                    navController = navController,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }

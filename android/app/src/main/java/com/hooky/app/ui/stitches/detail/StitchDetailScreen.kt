@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -77,6 +78,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -97,7 +99,7 @@ fun StitchDetailScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator(
@@ -157,17 +159,15 @@ private fun StitchDetailContent(
         try { json.decodeFromString<List<String>>(stitch.nameAliases) } catch (_: Exception) { emptyList() }
     }
 
-    val categoryDisplayName = remember(stitch.category) {
-        stitch.category?.let {
-            try { StitchCategory.valueOf(it).displayName } catch (_: Exception) { it }
-        }
+    val categoryResId = remember(stitch.category) {
+        stitch.category?.let { try { StitchCategory.valueOf(it).labelResId } catch (_: Exception) { null } }
     }
+    val categoryDisplayName = categoryResId?.let { stringResource(it) } ?: stitch.category
 
-    val difficultyDisplayName = remember(stitch.difficulty) {
-        stitch.difficulty?.let {
-            try { Difficulty.valueOf(it).displayName } catch (_: Exception) { it }
-        }
+    val difficultyResId = remember(stitch.difficulty) {
+        stitch.difficulty?.let { try { Difficulty.valueOf(it).labelResId } catch (_: Exception) { null } }
     }
+    val difficultyDisplayName = difficultyResId?.let { stringResource(it) } ?: stitch.difficulty
 
     val uriHandler = LocalUriHandler.current
 

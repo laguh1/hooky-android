@@ -2,7 +2,9 @@ package com.hooky.app.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "yarns")
 data class YarnEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

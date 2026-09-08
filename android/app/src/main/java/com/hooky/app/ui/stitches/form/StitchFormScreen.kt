@@ -2,6 +2,7 @@ package com.hooky.app.ui.stitches.form
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -28,9 +29,11 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -88,6 +91,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,6 +106,32 @@ fun StitchFormScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showUnsavedDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = uiState.hasUnsavedChanges) {
+        showUnsavedDialog = true
+    }
+
+    if (showUnsavedDialog) {
+        AlertDialog(
+            onDismissRequest = { showUnsavedDialog = false },
+            title = { Text(stringResource(R.string.unsaved_changes_title)) },
+            text = { Text(stringResource(R.string.unsaved_changes_message)) },
+            confirmButton = {
+                TextButton(onClick = { showUnsavedDialog = false; onNavigateBack() }) {
+                    Text(stringResource(R.string.action_discard), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showUnsavedDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
+                ) {
+                    Text(stringResource(R.string.action_keep_editing))
+                }
+            }
+        )
+    }
 
     // Camera permission launcher
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -116,10 +146,12 @@ fun StitchFormScreen(
     }
 
     // Photo editor launcher
-    val editLauncher = rememberPhotoEditorLauncher(
-        onEditDone = { old, new -> viewModel.onAction(StitchFormAction.PhotoReplaced(old, new)) },
-        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
-    )
+    val editLauncher = navController?.let {
+        rememberPhotoEditorLauncher(
+            navController = it,
+            onEditDone = { old, new -> viewModel.onAction(StitchFormAction.PhotoReplaced(old, new)) }
+        )
+    } ?: { _ -> }
 
     // Chart image picker (gallery)
     val chartImageLauncher = rememberPhotoPickerLauncher { path ->
@@ -183,7 +215,9 @@ fun StitchFormScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        if (uiState.hasUnsavedChanges) showUnsavedDialog = true else onNavigateBack()
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
@@ -336,30 +370,37 @@ fun StitchFormScreen(
 
                 // Section: Classification
                 FormSection(title = stringResource(R.string.stitch_section_classification)) {
-                    val categoryOptions = listOf(stringResource(R.string.not_specified)) + StitchCategory.values().map { it.displayName }
-                    val selectedCategory = uiState.category?.displayName ?: stringResource(R.string.not_specified)
+                    val notSpecifiedStr = stringResource(R.string.not_specified)
+                    val categoryLabels = StitchCategory.values().map { stringResource(it.labelResId) }
+                    val categoryOptions = listOf(notSpecifiedStr) + categoryLabels
+                    val selectedCategory = uiState.category?.let { stringResource(it.labelResId) } ?: notSpecifiedStr
                     EnumDropdown(
                         label = stringResource(R.string.stitch_field_category),
                         selected = selectedCategory,
                         options = categoryOptions,
                         onSelect = { display ->
-                            val notSpecified = categoryOptions.first()
-                            val cat = if (display == notSpecified) null
-                            else StitchCategory.values().firstOrNull { it.displayName == display }
+                            val cat = if (display == notSpecifiedStr) null
+                            else {
+                                val idx = categoryLabels.indexOf(display)
+                                if (idx >= 0) StitchCategory.values()[idx] else null
+                            }
                             viewModel.onAction(StitchFormAction.CategoryChanged(cat))
                         }
                     )
 
-                    val difficultyOptions = listOf(stringResource(R.string.not_specified)) + Difficulty.values().map { it.displayName }
-                    val selectedDifficulty = uiState.difficulty?.displayName ?: stringResource(R.string.not_specified)
+                    val difficultyLabels = Difficulty.values().map { stringResource(it.labelResId) }
+                    val difficultyOptions = listOf(notSpecifiedStr) + difficultyLabels
+                    val selectedDifficulty = uiState.difficulty?.let { stringResource(it.labelResId) } ?: notSpecifiedStr
                     EnumDropdown(
                         label = stringResource(R.string.stitch_field_difficulty),
                         selected = selectedDifficulty,
                         options = difficultyOptions,
                         onSelect = { display ->
-                            val notSpecified = difficultyOptions.first()
-                            val diff = if (display == notSpecified) null
-                            else Difficulty.values().firstOrNull { it.displayName == display }
+                            val diff = if (display == notSpecifiedStr) null
+                            else {
+                                val idx = difficultyLabels.indexOf(display)
+                                if (idx >= 0) Difficulty.values()[idx] else null
+                            }
                             viewModel.onAction(StitchFormAction.DifficultyChanged(diff))
                         }
                     )
@@ -484,15 +525,17 @@ fun StitchFormScreen(
                     )
                 }
 
-                // Save button
+                // Save button — always Slate, regardless of create/edit mode, so the
+                // primary action stays visually consistent across the app
+                val saveColor = Slate
                 Button(
                     onClick = { viewModel.onAction(StitchFormAction.SaveStitch) },
                     enabled = !uiState.isSaving,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Slate,
+                        containerColor = saveColor,
                         contentColor = White,
-                        disabledContainerColor = Slate.copy(alpha = 0.5f),
+                        disabledContainerColor = saveColor.copy(alpha = 0.5f),
                         disabledContentColor = White.copy(alpha = 0.7f)
                     ),
                     modifier = Modifier

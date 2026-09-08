@@ -37,8 +37,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import android.app.Activity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import com.hooky.app.R
@@ -49,13 +53,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.hooky.app.ui.settings.formatCurrency
@@ -70,32 +77,17 @@ import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BorderStrong
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import com.hooky.app.ui.util.labelResId
+import com.hooky.app.util.toDisplayDate
 
 // ---------------------------------------------------------------------------
 // Format helpers
 // ---------------------------------------------------------------------------
 
-private fun formatHours(hours: Float): String {
-    return if (hours % 1f == 0f) {
-        "${hours.toInt()}h"
-    } else {
-        "${"%.2f".format(hours)}h"
-    }
-}
-
-private fun formatDate(dateStr: String): String {
-    return try {
-        val date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE)
-        date.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault()))
-    } catch (_: Exception) {
-        dateStr
-    }
-}
+private fun formatHours(hours: Float): String = com.hooky.app.util.formatWorkTime(hours)
 
 // formatRevenue replaced by Float.formatCurrency(symbol) from CurrencyPrefs
 
@@ -126,6 +118,17 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val view = LocalView.current
+
+    // White status bar icons while on Dashboard (purple background)
+    if (!view.isInEditMode) {
+        DisposableEffect(Unit) {
+            val window = (view.context as Activity).window
+            val controller = WindowCompat.getInsetsController(window, view)
+            controller.isAppearanceLightStatusBars = false
+            onDispose { controller.isAppearanceLightStatusBars = true }
+        }
+    }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
@@ -136,7 +139,8 @@ fun DashboardScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0)
     ) { padding ->
         if (uiState.isLoading) {
             Box(
@@ -200,7 +204,7 @@ private fun DashboardContent(
                 onNavigateToPieces = onNavigateToPieces,
                 onNavigateToYarns = onNavigateToYarns,
                 onNavigateToStitches = onNavigateToStitches,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
             )
         }
 
@@ -238,7 +242,7 @@ private fun DashboardContent(
                     }
                 }
             }
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(14.dp))
         }
 
         // ---- Recently Finished section ----
@@ -321,53 +325,46 @@ private fun DashboardHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(BrandPurple)
+            .statusBarsPadding()
     ) {
-        // Header row: logo + actions
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(top = 20.dp, bottom = 16.dp),
+                .padding(top = 10.dp, bottom = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Image(
                 painter = androidx.compose.ui.res.painterResource(id = R.drawable.hooky_wordmark),
                 contentDescription = "Hooky",
-                modifier = Modifier.height(75.dp),
-                contentScale = ContentScale.Fit
+                modifier = Modifier.height(48.dp),
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(Color.White)
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                // Search icon button
                 IconButton(onClick = onNavigateToSearch) {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = "Search",
-                        tint = TextSecondary,
+                        tint = Color.White,
                         modifier = Modifier.size(22.dp)
                     )
                 }
-                // Settings icon button (extreme right)
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
                         contentDescription = "Settings",
-                        tint = TextSecondary,
+                        tint = Color.White,
                         modifier = Modifier.size(22.dp)
                     )
                 }
             }
         }
-
-        Divider(
-            color = BorderLight,
-            thickness = 1.dp,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 
@@ -493,16 +490,10 @@ private fun InProgressCard(
 ) {
     val photoList = remember(piece.photos) { parsePhotos(piece.photos) }
 
-    val workStatusDisplay = try {
-        WorkStatus.valueOf(piece.workStatus).displayName
-    } catch (_: Exception) {
-        piece.workStatus
-    }
-    val destinationDisplay = try {
-        Destination.valueOf(piece.destination).displayName
-    } catch (_: Exception) {
-        piece.destination
-    }
+    val workStatusResId = try { WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
+    val workStatusDisplay = workStatusResId?.let { stringResource(it) } ?: piece.workStatus
+    val destinationResId = try { Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
+    val destinationDisplay = destinationResId?.let { stringResource(it) } ?: piece.destination
 
     Card(
         modifier = Modifier
@@ -598,16 +589,10 @@ private fun RecentlyFinishedRow(
 ) {
     val photoList = remember(piece.photos) { parsePhotos(piece.photos) }
 
-    val workStatusDisplay = try {
-        WorkStatus.valueOf(piece.workStatus).displayName
-    } catch (_: Exception) {
-        piece.workStatus
-    }
-    val destinationDisplay = try {
-        Destination.valueOf(piece.destination).displayName
-    } catch (_: Exception) {
-        piece.destination
-    }
+    val workStatusResId = try { WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
+    val workStatusDisplay = workStatusResId?.let { stringResource(it) } ?: piece.workStatus
+    val destinationResId = try { Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
+    val destinationDisplay = destinationResId?.let { stringResource(it) } ?: piece.destination
 
     Surface(
         modifier = modifier.clickable(onClick = onClick),
@@ -672,7 +657,7 @@ private fun RecentlyFinishedRow(
                 // Date finished
                 piece.dateFinished?.let { date ->
                     Text(
-                        text = "Finished ${formatDate(date)}",
+                        text = "Finished ${date.toDisplayDate()}",
                         style = MaterialTheme.typography.labelSmall,
                         color = TextMuted
                     )

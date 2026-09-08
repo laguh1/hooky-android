@@ -17,4 +17,10 @@ interface IdCounterDao {
 
     @Query("UPDATE id_counters SET currentCount = currentCount + 1 WHERE entityType = :entityType")
     suspend fun incrementCounter(entityType: String)
+
+    @Query("SELECT * FROM id_counters")
+    suspend fun getAllNow(): List<IdCounterEntity>
+
+    @Query("DELETE FROM id_counters")
+    suspend fun clearAll()
 }

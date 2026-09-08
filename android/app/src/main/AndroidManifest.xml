@@ -32,6 +32,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:localeConfig="@xml/locale_config"
+        android:extractNativeLibs="false"
         android:theme="@style/Theme.CrochetManager">
 
         <activity
@@ -48,7 +49,7 @@
         <!-- FileProvider for camera photos -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.hooky.app.fileprovider"
+            android:authorities="com.laguh.hooky.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

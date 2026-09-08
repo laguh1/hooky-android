@@ -59,6 +59,15 @@ interface PieceDao {
     @Query("UPDATE pieces SET timerTotalSeconds = :totalSeconds, timerIsRunning = :isRunning, timerSessionStartAt = :sessionStartAt, workHours = :workHours, updatedAt = :now WHERE id = :id")
     suspend fun updateTimer(id: Int, totalSeconds: Long, isRunning: Boolean, sessionStartAt: Long?, workHours: Float?, now: Long = System.currentTimeMillis())
 
+    @Query("UPDATE pieces SET workSessions = :sessions, updatedAt = :now WHERE id = :id")
+    suspend fun updateWorkSessions(id: Int, sessions: String, now: Long = System.currentTimeMillis())
+
     @Query("UPDATE pieces SET price = :price, updatedAt = :now WHERE id = :id")
     suspend fun updatePrice(id: Int, price: Float, now: Long = System.currentTimeMillis())
+
+    @Query("SELECT * FROM pieces")
+    suspend fun getAllNow(): List<PieceEntity>
+
+    @Query("DELETE FROM pieces")
+    suspend fun clearAll()
 }

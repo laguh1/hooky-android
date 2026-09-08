@@ -66,15 +66,43 @@ object NeedleParser {
         "000" to "10.0"
     )
 
-    fun parse(ocrText: String): NeedleScanResult? {
-        val text = ocrText.trim()
+    // Crochet hooks never come this large — a bare/mm reading above this is almost
+    // always a decimal point the OCR dropped (e.g. "5.5" misread as "55").
+    private const val MAX_CROCHET_HOOK_MM = 35.0f
+
+    // The only whole-mm hook sizes that actually exist (regular + jumbo/finger hooks).
+    // Any other 2-digit reading with no decimal separator is a dropped-dot misread.
+    private val wholeHookSizesMm = setOf(4, 5, 6, 8, 9, 10, 12, 15, 16, 19, 20, 25)
+
+    // ML Kit sometimes drops punctuation entirely on shallow embossed markings —
+    // "5.5mm" comes back as "55mm" with no dot and no space to normalize.
+    // Reinsert the decimal point when a bare 2-digit reading isn't a real size.
+    private fun fixDroppedDecimal(raw: String, mode: ScanMode): String {
+        if (mode != ScanMode.HOOK) return raw
+        if (raw.contains('.') || raw.contains(',')) return raw
+        if (raw.length != 2) return raw
+        val whole = raw.toIntOrNull() ?: return raw
+        if (whole in wholeHookSizesMm) return raw
+        return "${raw[0]}.${raw[1]}"
+    }
+
+    fun parse(ocrText: String, mode: ScanMode = ScanMode.HOOK): NeedleScanResult? {
+        var text = ocrText.trim()
         if (text.isBlank()) return null
+
+        // OCR sometimes drops the decimal point between two digits and leaves a
+        // stray space instead (e.g. "5 5mm" meant to be "5.5mm"). Treat a lone
+        // space between two digits as the missing decimal point.
+        text = text.replace(Regex("""(\d)\s+(\d)"""), "$1.$2")
 
         // 1. Direct mm value — most reliable (e.g. "4.5mm", "4,5mm", "4.5 mm")
         val mmPattern = Regex("""(\d+[.,]\d+|\d+)\s*mm""", RegexOption.IGNORE_CASE)
         mmPattern.find(text)?.let { match ->
-            val size = match.groupValues[1].replace(',', '.')
-            return NeedleScanResult(sizeMm = size, rawMarking = text)
+            val size = fixDroppedDecimal(match.groupValues[1], mode).replace(',', '.')
+            val num = size.toFloatOrNull()
+            if (mode != ScanMode.HOOK || (num != null && num <= MAX_CROCHET_HOOK_MM)) {
+                return NeedleScanResult(sizeMm = size, rawMarking = text)
+            }
         }
 
         // 2. Slash notation — crochet hook (e.g. "G/6", "H/8", "K/10.5")
@@ -113,9 +141,10 @@ object NeedleParser {
         if (text.length <= 6) {
             val barePattern = Regex("""^(\d+[.,]?\d*)$""")
             barePattern.find(text.trim())?.let { match ->
-                val size = match.groupValues[1].replace(',', '.')
+                val size = fixDroppedDecimal(match.groupValues[1], mode).replace(',', '.')
                 val num = size.toFloatOrNull()
-                if (num != null && num in 1.5f..25.0f) {
+                val maxAllowed = if (mode == ScanMode.HOOK) MAX_CROCHET_HOOK_MM else 25.0f
+                if (num != null && num in 1.5f..maxAllowed) {
                     return NeedleScanResult(sizeMm = size, rawMarking = text)
                 }
             }

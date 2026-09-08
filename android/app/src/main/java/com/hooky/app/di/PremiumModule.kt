@@ -22,7 +22,13 @@ object PremiumModule {
                     minimumFetchIntervalInSeconds = 3600 // 1 hour
                 }
             )
-            setDefaultsAsync(mapOf("premium_ids" to "[]"))
+            setDefaultsAsync(
+                mapOf(
+                    "premium_ids" to "[]",
+                    "early_adopter_cutoff" to "",
+                    "early_adopter_premium_days" to "0"
+                )
+            )
         }
 
     @Provides

@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,7 @@ import com.hooky.app.ui.theme.BorderLight
 fun YarnLabelScanConfirmDialog(
     result: YarnLabelScanResult,
     onApply: () -> Unit,
+    onScanAnother: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
@@ -58,6 +60,7 @@ fun YarnLabelScanConfirmDialog(
                 HorizontalDivider(color = BorderLight)
                 Spacer(modifier = Modifier.height(8.dp))
 
+                result.name?.let { ScanResultRow("Name", it) }
                 result.brand?.let { ScanResultRow("Brand", it) }
                 result.colorName?.let { ScanResultRow("Color", it) }
                 result.colorCode?.let { ScanResultRow("Color code", it) }
@@ -69,6 +72,22 @@ fun YarnLabelScanConfirmDialog(
                 result.hookSizeMm?.let { ScanResultRow("Hook size", "${it}mm") }
                 result.needleSizeMm?.let { ScanResultRow("Needle size", "${it}mm") }
                 result.gauge?.let { ScanResultRow("Gauge", it) }
+                result.washTemp?.let { ScanResultRow("Wash temp", "${it}°C") }
+                result.machineWash?.let { ScanResultRow("Machine wash", if (it) "Yes" else "No") }
+                result.handWash?.let { ScanResultRow("Hand wash", if (it) "Yes" else "No") }
+                result.tumbleDry?.let { ScanResultRow("Tumble dry", if (it) "Yes" else "No") }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(
+                    onClick = onScanAnother,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "+ Scan another side",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Slate
+                    )
+                }
             }
         },
         confirmButton = {

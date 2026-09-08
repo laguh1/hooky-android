@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -117,6 +118,11 @@ import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
 import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
+import com.hooky.app.ui.util.labelResId
+import com.hooky.app.util.formatWorkTime
+import com.hooky.app.util.toDisplayDate
+
+private fun formatDate(iso: String): String = iso.toDisplayDate()
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -137,7 +143,7 @@ fun PieceDetailScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator(
@@ -174,6 +180,7 @@ fun PieceDetailScreen(
                     onPauseTimer = { viewModel.onAction(PieceDetailAction.PauseTimer) },
                     onResumeTimer = { viewModel.onAction(PieceDetailAction.ResumeTimer) },
                     onStopTimer = { viewModel.onAction(PieceDetailAction.StopTimer) },
+                    onEditWorkTime = { seconds -> viewModel.onAction(PieceDetailAction.SetWorkTime(seconds)) },
                     onApplySuggestedPrice = { price -> viewModel.onAction(PieceDetailAction.ApplySuggestedPrice(price)) },
                     onAddCounter = { name, target -> viewModel.onAction(PieceDetailAction.AddCounter(name, target)) },
                     onDeleteCounter = { id -> viewModel.onAction(PieceDetailAction.DeleteCounter(id)) },
@@ -225,6 +232,7 @@ private fun PieceDetailContent(
     onPauseTimer: () -> Unit,
     onResumeTimer: () -> Unit,
     onStopTimer: () -> Unit,
+    onEditWorkTime: (Long) -> Unit,
     onApplySuggestedPrice: (Float) -> Unit,
     onAddCounter: (String, Int?) -> Unit,
     onDeleteCounter: (Int) -> Unit,
@@ -365,9 +373,12 @@ private fun PieceDetailContent(
             )
 
             // Status chips row
-            val statusName = try { WorkStatus.valueOf(piece.workStatus).displayName } catch (_: Exception) { piece.workStatus }
-            val destName = try { Destination.valueOf(piece.destination).displayName } catch (_: Exception) { piece.destination }
-            val typeName = try { PieceType.valueOf(piece.type).displayName } catch (_: Exception) { piece.type }
+            val statusResId = try { WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
+            val statusName = statusResId?.let { stringResource(it) } ?: piece.workStatus
+            val destResId = try { Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
+            val destName = destResId?.let { stringResource(it) } ?: piece.destination
+            val typeResId = try { PieceType.valueOf(piece.type).labelResId } catch (_: Exception) { null }
+            val typeName = typeResId?.let { stringResource(it) } ?: piece.type
             val statusBadgeStyle = if (piece.workStatus == "IN_PROGRESS") BadgeStyle.FILLED_SLATE else BadgeStyle.OUTLINE
 
             FlowRow(
@@ -395,10 +406,13 @@ private fun PieceDetailContent(
                     timerDisplaySeconds = timerDisplaySeconds,
                     timerState = timerState,
                     workHours = piece.workHours,
+                    workSessions = workSessions,
+                    pieceType = piece.type,
                     onStart = onStartTimer,
                     onPause = onPauseTimer,
                     onResume = onResumeTimer,
                     onStop = onStopTimer,
+                    onEditTime = onEditWorkTime,
                 )
 
                 if (isPremium) {
@@ -609,10 +623,10 @@ private fun InfoCard(piece: PieceEntity) {
                 }
                 InfoRow(label = stringResource(R.string.label_dimensions), value = dims)
             }
-            piece.dateStarted?.let { InfoRow(label = stringResource(R.string.label_started), value = it) }
-            piece.dateFinished?.let { InfoRow(label = stringResource(R.string.label_finished), value = it) }
+            piece.dateStarted?.let { InfoRow(label = stringResource(R.string.label_started), value = formatDate(it)) }
+            piece.dateFinished?.let { InfoRow(label = stringResource(R.string.label_finished), value = formatDate(it)) }
             piece.hookSizeMm?.let { InfoRow(label = stringResource(R.string.label_hook_size), value = "${it}mm") }
-            piece.workHours?.let { InfoRow(label = stringResource(R.string.label_hours), value = "${it}h") }
+            piece.workHours?.let { InfoRow(label = stringResource(R.string.label_hours), value = formatWorkTime(it)) }
         }
     }
 }
@@ -693,7 +707,7 @@ private fun WorkSessionItem(session: WorkSession) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = session.date,
+                text = formatDate(session.date),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
@@ -757,8 +771,10 @@ private fun PricingCard(piece: PieceEntity) {
             piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price), value = it.formatCurrency(sym)) }
             piece.salePlatform?.let { InfoRow(label = stringResource(R.string.piece_label_sale_platform), value = it) }
             piece.saleLink?.let { InfoRow(label = stringResource(R.string.piece_label_sale_link), value = it) }
-            piece.soldDate?.let { InfoRow(label = stringResource(R.string.piece_label_sold_on), value = it) }
-            piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = it.formatCurrency(sym)) }
+            if (piece.destination == "SOLD") {
+                piece.soldDate?.let { InfoRow(label = stringResource(R.string.piece_label_sold_on), value = formatDate(it)) }
+                piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = it.formatCurrency(sym)) }
+            }
         }
     }
 }
@@ -792,12 +808,21 @@ private fun WorkTimerCard(
     timerDisplaySeconds: Long,
     timerState: TimerState,
     workHours: Float?,
+    workSessions: List<WorkSession>,
+    pieceType: String,
     onStart: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
     onStop: () -> Unit,
+    onEditTime: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showEditDialog by remember { mutableStateOf(false) }
+    val showPaceEstimate = try {
+        PieceType.valueOf(pieceType) in setOf(
+            PieceType.SCARF, PieceType.BLANKET, PieceType.COWL, PieceType.HEADBAND
+        )
+    } catch (_: Exception) { false }
     val hours = timerDisplaySeconds / 3600
     val minutes = (timerDisplaySeconds % 3600) / 60
     val seconds = timerDisplaySeconds % 60
@@ -812,12 +837,28 @@ private fun WorkTimerCard(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.piece_work_timer),
-                style = MaterialTheme.typography.labelMedium,
-                color = TextSecondary,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.piece_work_timer),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextSecondary
+                )
+                IconButton(
+                    onClick = { showEditDialog = true },
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.piece_edit_work_time),
+                        tint = TextMuted,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = timeFormatted,
@@ -892,7 +933,7 @@ private fun WorkTimerCard(
             }
             if (workHours != null && timerState == TimerState.IDLE) {
                 Spacer(modifier = Modifier.height(8.dp))
-                val displayHours = if (workHours % 1f == 0f) "${workHours.toInt()}" else "%.2f".format(workHours)
+                val displayHours = formatWorkTime(workHours)
                 Text(
                     text = stringResource(R.string.piece_timer_total, displayHours),
                     style = MaterialTheme.typography.labelSmall,
@@ -900,8 +941,35 @@ private fun WorkTimerCard(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
+                if (showPaceEstimate) {
+                    val sessionsWithRows = workSessions.filter { (it.rowsCompleted ?: 0) > 0 && it.durationMinutes > 0 }
+                    if (sessionsWithRows.isNotEmpty()) {
+                        val totalMinutes = sessionsWithRows.sumOf { it.durationMinutes }
+                        val totalRows = sessionsWithRows.sumOf { it.rowsCompleted ?: 0 }
+                        val minutesPer10 = (totalMinutes.toFloat() / totalRows * 10).toInt().coerceAtLeast(1)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "~$minutesPer10 min / 10 rows",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextMuted,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
+    }
+
+    if (showEditDialog) {
+        EditWorkTimeDialog(
+            currentTotalSeconds = timerDisplaySeconds,
+            onDismiss = { showEditDialog = false },
+            onSave = { totalSeconds ->
+                onEditTime(totalSeconds)
+                showEditDialog = false
+            }
+        )
     }
 }
 
@@ -1264,6 +1332,71 @@ private fun SetRowCountDialog(
 }
 
 @Composable
+private fun EditWorkTimeDialog(
+    currentTotalSeconds: Long,
+    onDismiss: () -> Unit,
+    onSave: (Long) -> Unit
+) {
+    val currentHours = currentTotalSeconds / 3600
+    val currentMinutes = (currentTotalSeconds % 3600) / 60
+    var hoursText by remember { mutableStateOf(currentHours.toString()) }
+    var minutesText by remember { mutableStateOf(currentMinutes.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                stringResource(R.string.piece_work_time_dialog_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+        },
+        text = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = hoursText,
+                    onValueChange = { if (it.all { c -> c.isDigit() }) hoursText = it },
+                    label = { Text(stringResource(R.string.piece_work_time_hours)) },
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.weight(1f)
+                )
+                OutlinedTextField(
+                    value = minutesText,
+                    onValueChange = { if (it.all { c -> c.isDigit() }) minutesText = it },
+                    label = { Text(stringResource(R.string.piece_work_time_minutes)) },
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val h = hoursText.toLongOrNull() ?: currentHours
+                    val m = (minutesText.toLongOrNull() ?: currentMinutes).coerceIn(0, 59)
+                    onSave(h * 3600 + m * 60)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) { Text(stringResource(R.string.action_save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel), color = TextSecondary) }
+        }
+    )
+}
+
+@Composable
 private fun ArchiveDialog(
     onConfirm: (String?) -> Unit,
     onDismiss: () -> Unit
@@ -1360,7 +1493,7 @@ private fun PriceSuggestionDialog(
                 ) {
                     Text("Work hours", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                     Text(
-                        "%.2fh".format(workHours),
+                        formatWorkTime(workHours),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
@@ -1654,7 +1787,7 @@ private fun CounterFormDialog(
                     if (name.isNotBlank()) onConfirm(name.trim(), targetText.toIntOrNull())
                 },
                 enabled = name.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = Slate)
+                colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
             ) { Text(stringResource(R.string.action_save)) }
         },
         dismissButton = {

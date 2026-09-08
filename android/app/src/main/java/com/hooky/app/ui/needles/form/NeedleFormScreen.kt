@@ -76,6 +76,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,10 +105,12 @@ fun NeedleFormScreen(
     }
 
     // Photo editor launcher
-    val editLauncher = rememberPhotoEditorLauncher(
-        onEditDone = { old, new -> viewModel.onAction(NeedleFormAction.PhotoReplaced(old, new)) },
-        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
-    )
+    val editLauncher = navController?.let {
+        rememberPhotoEditorLauncher(
+            navController = it,
+            onEditDone = { old, new -> viewModel.onAction(NeedleFormAction.PhotoReplaced(old, new)) }
+        )
+    } ?: { _ -> }
 
     // Gallery picker — for size scanning
     val scanGalleryLauncher = rememberPhotoPickerLauncher { path ->
@@ -259,12 +262,14 @@ fun NeedleFormScreen(
                     )
 
                     // Type dropdown
+                    val needleTypeLabels = NeedleType.values().map { stringResource(it.labelResId) }
                     EnumDropdown(
                         label = stringResource(R.string.piece_field_type),
-                        selected = uiState.type.displayName,
-                        options = NeedleType.values().map { it.displayName },
+                        selected = stringResource(uiState.type.labelResId),
+                        options = needleTypeLabels,
                         onSelect = { display ->
-                            val t = NeedleType.values().first { it.displayName == display }
+                            val idx = needleTypeLabels.indexOf(display)
+                            val t = if (idx >= 0) NeedleType.values()[idx] else NeedleType.values().first()
                             viewModel.onAction(NeedleFormAction.TypeChanged(t))
                         }
                     )

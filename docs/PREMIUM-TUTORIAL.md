@@ -37,7 +37,31 @@ You only do this once.
 
 ---
 
-## Granting premium to a tester
+## Granting premium automatically to anyone who installs in a time window
+
+If you want to reward **everyone** who installs during a promo period (e.g. "anyone
+who installs this month gets a free year") without collecting a single Tester ID,
+use these two Remote Config parameters instead:
+
+- **`early_adopter_cutoff`** — a date (`yyyy-MM-dd`). Anyone whose first app launch
+  is on or before this date automatically qualifies. Leave it blank to turn this off.
+- **`early_adopter_premium_days`** — how many days of premium they get, counted from
+  *their own* install date (so everyone gets a full window, not a shared deadline).
+  Set to `365` for "1 year." Leave blank or `0` for lifetime.
+
+Example: to give a free year to anyone installing before 31 October 2026:
+1. Remote Config → **Add parameter** → key `early_adopter_cutoff`, value `2026-10-31`
+2. **Add parameter** → key `early_adopter_premium_days`, value `365`
+3. **Publish changes**
+
+No tester ever has to find or send you anything — this checks automatically on
+their first app launch, entirely on-device. It runs alongside the manual
+`premium_ids` list below, so you can still hand-gift lifetime access to specific
+people (e.g. someone who installs after the cutoff) on top of this.
+
+---
+
+## Granting premium to a specific tester manually
 
 ### Step 1 — Get the tester's ID
 
@@ -51,15 +75,24 @@ Ask the tester to:
 
 1. Open [Firebase Console](https://console.firebase.google.com) → your Hooky project → **Remote Config**
 2. Click the pencil icon on the `premium_ids` parameter
-3. Edit the value — it's a JSON array of strings:
+3. Edit the value — it's a JSON array of objects, each with an `id` and an optional `expires` date:
    ```json
-   ["fh7k2mXXXXXXXXXXXXXXXX"]
+   [{"id": "fh7k2mXXXXXXXXXXXXXXXX", "expires": null}]
    ```
-4. For multiple testers, add them all:
+   - `"expires": null` (or omit the field entirely) → **lifetime** access
+   - `"expires": "2027-08-31"` → premium through the end of that day, then expires automatically — no need to remember to revoke it
+4. For multiple testers, mix lifetime and time-limited as needed:
    ```json
-   ["fh7k2mXXXXXXXXXX", "a9bQqXXXXXXXXXXX", "zT4rNXXXXXXXXXXX"]
+   [
+     {"id": "fh7k2mXXXXXXXXXX", "expires": null},
+     {"id": "a9bQqXXXXXXXXXXX", "expires": "2027-08-31"},
+     {"id": "zT4rNXXXXXXXXXXX", "expires": "2027-08-31"}
+   ]
    ```
 5. Click **Save** → **Publish changes**
+
+A date format tip: if you type an invalid date by mistake, that tester gets treated as
+lifetime rather than being locked out — the app fails open on unparseable dates.
 
 ### Step 3 — Tester receives premium
 

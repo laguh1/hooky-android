@@ -5,9 +5,12 @@ import com.hooky.app.data.db.dao.PieceDao
 import com.hooky.app.data.db.entity.IdCounterEntity
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.di.IoDispatcher
+import com.hooky.app.domain.model.WorkSession
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,6 +62,15 @@ class PieceRepository @Inject constructor(
 
     suspend fun updateTimer(id: Int, totalSeconds: Long, isRunning: Boolean, sessionStartAt: Long?, workHours: Float?) =
         withContext(ioDispatcher) { pieceDao.updateTimer(id, totalSeconds, isRunning, sessionStartAt, workHours) }
+
+    suspend fun appendWorkSession(id: Int, session: WorkSession, currentSessionsJson: String) =
+        withContext(ioDispatcher) {
+            val sessions = try {
+                Json.decodeFromString<List<WorkSession>>(currentSessionsJson).toMutableList()
+            } catch (_: Exception) { mutableListOf() }
+            sessions.add(session)
+            pieceDao.updateWorkSessions(id, Json.encodeToString(sessions))
+        }
 
     suspend fun updatePrice(id: Int, price: Float) =
         withContext(ioDispatcher) { pieceDao.updatePrice(id, price) }

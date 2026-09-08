@@ -22,9 +22,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.AlertDialog
@@ -32,6 +34,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -52,6 +56,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -84,6 +89,8 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
+import com.hooky.app.util.toDisplayDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +105,32 @@ fun PieceFormScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showUnsavedDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = uiState.hasUnsavedChanges) {
+        showUnsavedDialog = true
+    }
+
+    if (showUnsavedDialog) {
+        AlertDialog(
+            onDismissRequest = { showUnsavedDialog = false },
+            title = { Text(stringResource(R.string.unsaved_changes_title)) },
+            text = { Text(stringResource(R.string.unsaved_changes_message)) },
+            confirmButton = {
+                TextButton(onClick = { showUnsavedDialog = false; onNavigateBack() }) {
+                    Text(stringResource(R.string.action_discard), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showUnsavedDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
+                ) {
+                    Text(stringResource(R.string.action_keep_editing))
+                }
+            }
+        )
+    }
 
     // Camera permission launcher
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -112,10 +145,12 @@ fun PieceFormScreen(
     }
 
     // Photo editor launcher
-    val editLauncher = rememberPhotoEditorLauncher(
-        onEditDone = { old, new -> viewModel.onAction(PieceFormAction.PhotoReplaced(old, new)) },
-        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
-    )
+    val editLauncher = navController?.let {
+        rememberPhotoEditorLauncher(
+            navController = it,
+            onEditDone = { old, new -> viewModel.onAction(PieceFormAction.PhotoReplaced(old, new)) }
+        )
+    } ?: { _ -> }
 
     // Observe photo_path result from CameraScreen — ViewModel decides: add to gallery or scan
     LaunchedEffect(navController) {
@@ -156,7 +191,9 @@ fun PieceFormScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        if (uiState.hasUnsavedChanges) showUnsavedDialog = true else onNavigateBack()
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
@@ -212,34 +249,40 @@ fun PieceFormScreen(
                     )
 
                     // Type dropdown
+                    val pieceTypeLabels = PieceType.values().map { stringResource(it.labelResId) }
                     EnumDropdown(
                         label = stringResource(R.string.piece_field_type),
-                        selected = uiState.type.displayName,
-                        options = PieceType.values().map { it.displayName },
+                        selected = stringResource(uiState.type.labelResId),
+                        options = pieceTypeLabels,
                         onSelect = { display ->
-                            val pieceType = PieceType.values().first { it.displayName == display }
+                            val idx = pieceTypeLabels.indexOf(display)
+                            val pieceType = if (idx >= 0) PieceType.values()[idx] else PieceType.values().first()
                             viewModel.onAction(PieceFormAction.TypeChanged(pieceType))
                         }
                     )
 
                     // Work Status dropdown
+                    val workStatusLabels = WorkStatus.values().map { stringResource(it.labelResId) }
                     EnumDropdown(
                         label = stringResource(R.string.piece_field_status),
-                        selected = uiState.workStatus.displayName,
-                        options = WorkStatus.values().map { it.displayName },
+                        selected = stringResource(uiState.workStatus.labelResId),
+                        options = workStatusLabels,
                         onSelect = { display ->
-                            val ws = WorkStatus.values().first { it.displayName == display }
+                            val idx = workStatusLabels.indexOf(display)
+                            val ws = if (idx >= 0) WorkStatus.values()[idx] else WorkStatus.values().first()
                             viewModel.onAction(PieceFormAction.WorkStatusChanged(ws))
                         }
                     )
 
                     // Destination dropdown
+                    val destinationLabels = Destination.values().map { stringResource(it.labelResId) }
                     EnumDropdown(
                         label = stringResource(R.string.piece_field_destination),
-                        selected = uiState.destination.displayName,
-                        options = Destination.values().map { it.displayName },
+                        selected = stringResource(uiState.destination.labelResId),
+                        options = destinationLabels,
                         onSelect = { display ->
-                            val dest = Destination.values().first { it.displayName == display }
+                            val idx = destinationLabels.indexOf(display)
+                            val dest = if (idx >= 0) Destination.values()[idx] else Destination.values().first()
                             viewModel.onAction(PieceFormAction.DestinationChanged(dest))
                         }
                     )
@@ -327,50 +370,47 @@ fun PieceFormScreen(
 
                 // Section: Dates & Hours
                 FormSection(title = stringResource(R.string.piece_section_dates_hours)) {
-                    OutlinedTextField(
+                    DatePickerField(
+                        label = stringResource(R.string.piece_field_date_started),
                         value = uiState.dateStarted,
                         onValueChange = { viewModel.onAction(PieceFormAction.DateStartedChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_date_started)) },
-                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
+                    DatePickerField(
+                        label = stringResource(R.string.piece_field_date_finished),
                         value = uiState.dateFinished,
                         onValueChange = { viewModel.onAction(PieceFormAction.DateFinishedChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_date_finished)) },
-                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
-                        value = uiState.workHours,
-                        onValueChange = { viewModel.onAction(PieceFormAction.WorkHoursChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_work_hours)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = uiState.rowCount,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.RowCountChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_row_start)) },
-                        placeholder = { Text(stringResource(R.string.piece_field_row_start_hint), color = TextMuted) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedTextField(
+                            value = uiState.workHours,
+                            onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.WorkHoursChanged(it)) },
+                            label = { Text(stringResource(R.string.piece_field_work_hours)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = uiState.workMinutes,
+                            onValueChange = { v ->
+                                if (v.all { c -> c.isDigit() }) {
+                                    val n = v.toIntOrNull() ?: 0
+                                    if (n < 60) viewModel.onAction(PieceFormAction.WorkMinutesChanged(v))
+                                }
+                            },
+                            label = { Text(stringResource(R.string.piece_field_work_minutes)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
 
                     OutlinedTextField(
                         value = uiState.targetRowCount,
@@ -463,27 +503,26 @@ fun PieceFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
-                        value = uiState.soldDate,
-                        onValueChange = { viewModel.onAction(PieceFormAction.SoldDateChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_sold_date)) },
-                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    // Sold date/price only make sense once the piece has actually sold
+                    if (uiState.destination == Destination.SOLD) {
+                        DatePickerField(
+                            label = stringResource(R.string.piece_field_sold_date),
+                            value = uiState.soldDate,
+                            onValueChange = { viewModel.onAction(PieceFormAction.SoldDateChanged(it)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                    OutlinedTextField(
-                        value = uiState.soldPrice,
-                        onValueChange = { viewModel.onAction(PieceFormAction.SoldPriceChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_sold_price)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        OutlinedTextField(
+                            value = uiState.soldPrice,
+                            onValueChange = { viewModel.onAction(PieceFormAction.SoldPriceChanged(it)) },
+                            label = { Text(stringResource(R.string.piece_field_sold_price)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = formTextFieldColors(),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
 
                 // Section: Gift — only for gift/gifted pieces
@@ -513,15 +552,17 @@ fun PieceFormScreen(
                     )
                 }
 
-                // Save button
+                // Save button — always Slate, regardless of create/edit mode, so the
+                // primary action stays visually consistent across the app
+                val saveColor = Slate
                 Button(
                     onClick = { viewModel.onAction(PieceFormAction.SavePiece) },
                     enabled = !uiState.isSaving,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Slate,
+                        containerColor = saveColor,
                         contentColor = White,
-                        disabledContainerColor = Slate.copy(alpha = 0.5f),
+                        disabledContainerColor = saveColor.copy(alpha = 0.5f),
                         disabledContentColor = White.copy(alpha = 0.7f)
                     ),
                     modifier = Modifier
@@ -730,7 +771,7 @@ private fun LibraryMultiPicker(
                         onSelectionChanged(tempSelected.toList())
                         showDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Slate)
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
                 ) {
                     Text(stringResource(R.string.action_confirm))
                 }
@@ -743,6 +784,67 @@ private fun LibraryMultiPicker(
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun DatePickerField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showPicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = value.toEpochMillisOrNull()
+    )
+
+    OutlinedTextField(
+        value = value.toDisplayDate(),
+        onValueChange = {},
+        readOnly = true,
+        label = { Text(label) },
+        trailingIcon = {
+            IconButton(onClick = { showPicker = true }) {
+                Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+            }
+        },
+        shape = RoundedCornerShape(10.dp),
+        colors = formTextFieldColors(),
+        modifier = modifier
+    )
+
+    if (showPicker) {
+        DatePickerDialog(
+            onDismissRequest = { showPicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        onValueChange(millisToIsoDate(millis))
+                    }
+                    showPicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPicker = false }) { Text("Cancel") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
+private fun String.toEpochMillisOrNull(): Long? = try {
+    java.time.LocalDate.parse(this)
+        .atStartOfDay(java.time.ZoneOffset.UTC)
+        .toInstant()
+        .toEpochMilli()
+} catch (_: Exception) { null }
+
+private fun millisToIsoDate(millis: Long): String =
+    java.time.Instant.ofEpochMilli(millis)
+        .atZone(java.time.ZoneOffset.UTC)
+        .toLocalDate()
+        .toString()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

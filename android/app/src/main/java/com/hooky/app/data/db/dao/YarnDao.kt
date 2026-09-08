@@ -20,6 +20,9 @@ interface YarnDao {
     @Query("SELECT * FROM yarns WHERE id = :id")
     fun getYarnById(id: Int): Flow<YarnEntity?>
 
+    @Query("SELECT * FROM yarns WHERE id = :id")
+    suspend fun getYarnByIdOnce(id: Int): YarnEntity?
+
     @Query("SELECT * FROM yarns WHERE yarnId = :yarnId LIMIT 1")
     suspend fun getYarnByYarnId(yarnId: String): YarnEntity?
 
@@ -43,4 +46,10 @@ interface YarnDao {
 
     @Query("SELECT * FROM yarns WHERE archived = 1 ORDER BY archivedDate DESC")
     fun getArchivedYarns(): Flow<List<YarnEntity>>
+
+    @Query("SELECT * FROM yarns")
+    suspend fun getAllNow(): List<YarnEntity>
+
+    @Query("DELETE FROM yarns")
+    suspend fun clearAll()
 }

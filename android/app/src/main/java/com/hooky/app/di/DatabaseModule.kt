@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.hooky.app.data.db.CrochetDatabase
 import com.hooky.app.data.db.dao.CounterDao
+import com.hooky.app.data.db.dao.IdeaDao
 import com.hooky.app.data.db.dao.IdCounterDao
 import com.hooky.app.data.db.dao.NeedleDao
 import com.hooky.app.data.db.dao.PieceDao
@@ -30,7 +31,7 @@ object DatabaseModule {
             CrochetDatabase::class.java,
             CrochetDatabase.DATABASE_NAME
         )
-            .addMigrations(CrochetDatabase.MIGRATION_2_3, CrochetDatabase.MIGRATION_3_4, CrochetDatabase.MIGRATION_4_5, CrochetDatabase.MIGRATION_5_6)
+            .addMigrations(CrochetDatabase.MIGRATION_2_3, CrochetDatabase.MIGRATION_3_4, CrochetDatabase.MIGRATION_4_5, CrochetDatabase.MIGRATION_5_6, CrochetDatabase.MIGRATION_6_7)
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -58,4 +59,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideCounterDao(database: CrochetDatabase): CounterDao = database.counterDao()
+
+    @Provides
+    @Singleton
+    fun provideIdeaDao(database: CrochetDatabase): IdeaDao = database.ideaDao()
 }

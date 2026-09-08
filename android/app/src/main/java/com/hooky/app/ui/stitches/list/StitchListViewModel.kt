@@ -1,5 +1,6 @@
 package com.hooky.app.ui.stitches.list
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.StitchEntity
@@ -11,14 +12,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.hooky.app.R
 import javax.inject.Inject
 
-enum class StitchFilter(val displayName: String) {
-    ALL("All"),
-    BASIC("Basic"),
-    TEXTURED("Textured"),
-    LACE("Lace"),
-    SPECIALTY("Specialty")
+enum class StitchFilter(@StringRes val labelResId: Int) {
+    ALL(R.string.piece_filter_all),
+    BASIC(R.string.stitch_category_basic),
+    TEXTURED(R.string.stitch_category_textured),
+    LACE(R.string.stitch_category_lace),
+    SPECIALTY(R.string.stitch_category_specialty)
 }
 
 data class StitchListUiState(
@@ -130,7 +132,7 @@ class StitchListViewModel @Inject constructor(
         val filtered = when (filter) {
             StitchFilter.ALL -> stitches
             else -> stitches.filter { stitch ->
-                stitch.category?.contains(filter.displayName, ignoreCase = true) == true
+                stitch.category?.equals(filter.name, ignoreCase = true) == true
             }
         }
         return if (query.isBlank()) {

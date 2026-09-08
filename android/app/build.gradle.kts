@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -14,16 +17,21 @@ configurations.all {
     }
 }
 
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) load(FileInputStream(f))
+}
+
 android {
     namespace = "com.hooky.app"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.hooky.app"
+        applicationId = "com.laguh.hooky"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = 12
+        versionName = "1.4.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -36,9 +44,19 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProps.getProperty("HOOKY_STORE_FILE"))
+            storePassword = localProps.getProperty("HOOKY_STORE_PASSWORD")
+            keyAlias = localProps.getProperty("HOOKY_KEY_ALIAS")
+            keyPassword = localProps.getProperty("HOOKY_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -127,7 +145,6 @@ dependencies {
 
     // ML Kit — Yarn Label Scanner (Phase A)
     implementation("com.google.mlkit:text-recognition:16.0.0")
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
 
     // Palette API — Color extraction from photos
     implementation("androidx.palette:palette-ktx:1.0.0")

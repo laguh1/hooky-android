@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,22 +25,27 @@ class YarnLabelScannerService @Inject constructor(
         val bitmap = BitmapFactory.decodeFile(photoPath)
             ?: throw IllegalStateException("Could not decode image at: $photoPath")
         val image = InputImage.fromBitmap(bitmap, 0)
-        val rawText = recognizeText(image)
-        return YarnLabelParser.parse(rawText)
+        val result = recognizeTextResult(image)
+        // Line height (from ML Kit's bounding boxes) tells brand/logo text (largest print)
+        // apart from the product name and small-print details — order alone is unreliable.
+        val ocrLines = result.textBlocks.flatMap { block ->
+            block.lines.map { line -> OcrLine(line.text, line.boundingBox?.height() ?: 0) }
+        }
+        return YarnLabelParser.parse(result.text, ocrLines)
     }
 
-    suspend fun scanNeedleFromPath(photoPath: String): NeedleScanResult? {
+    suspend fun scanNeedleFromPath(photoPath: String, mode: ScanMode = ScanMode.HOOK): NeedleScanResult? {
         val bitmap = BitmapFactory.decodeFile(photoPath)
             ?: throw IllegalStateException("Could not decode image at: $photoPath")
         val image = InputImage.fromBitmap(bitmap, 0)
-        val rawText = recognizeText(image)
-        return NeedleParser.parse(rawText)
+        val rawText = recognizeTextResult(image).text
+        return NeedleParser.parse(rawText, mode)
     }
 
-    private suspend fun recognizeText(image: InputImage): String =
+    private suspend fun recognizeTextResult(image: InputImage): Text =
         suspendCancellableCoroutine { continuation ->
             recognizer.process(image)
-                .addOnSuccessListener { result -> continuation.resume(result.text) }
+                .addOnSuccessListener { result -> continuation.resume(result) }
                 .addOnFailureListener { e -> continuation.resumeWithException(e) }
         }
 }
