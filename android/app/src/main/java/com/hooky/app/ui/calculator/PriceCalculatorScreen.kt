@@ -481,5 +481,4 @@ private fun LabeledField(
 // Helpers
 // ---------------------------------------------------------------------------
 
-private fun formatHours(hours: Float): String =
-    if (hours % 1f == 0f) "${hours.toInt()}h" else "${hours}h"
+private fun formatHours(hours: Float): String = com.hooky.app.util.formatWorkTime(hours)

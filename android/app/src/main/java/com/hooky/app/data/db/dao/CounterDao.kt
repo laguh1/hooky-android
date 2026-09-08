@@ -26,4 +26,10 @@ interface CounterDao {
 
     @Query("DELETE FROM counters WHERE pieceId = :pieceId")
     suspend fun deleteAllForPiece(pieceId: String)
+
+    @Query("SELECT * FROM counters")
+    suspend fun getAllNow(): List<CounterEntity>
+
+    @Query("DELETE FROM counters")
+    suspend fun clearAll()
 }

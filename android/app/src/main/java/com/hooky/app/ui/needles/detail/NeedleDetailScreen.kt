@@ -55,6 +55,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true; isLenient = true }
@@ -134,9 +135,8 @@ fun NeedleDetailScreen(
                     json.decodeFromString<List<String>>(needle.photos)
                 } catch (_: Exception) { emptyList() }
 
-                val typeLabel = try {
-                    NeedleType.valueOf(needle.type).displayName
-                } catch (_: Exception) { needle.type }
+                val typeResId = try { NeedleType.valueOf(needle.type).labelResId } catch (_: Exception) { null }
+                val typeLabel = typeResId?.let { stringResource(it) } ?: needle.type
 
                 Column(
                     modifier = Modifier

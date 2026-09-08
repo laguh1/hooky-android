@@ -18,6 +18,13 @@ gradle/wrapper/gradle-wrapper.jar
 # Firebase — contains API keys, never commit
 google-services.json
 
+# Signing keystore — never commit
+*.jks
+
+# Raw promo recordings/audio — large binaries, some exceed GitHub's 100MB
+# per-file limit; keep these local only
+shared/promo/
+
 # OS files
 .DS_Store
 

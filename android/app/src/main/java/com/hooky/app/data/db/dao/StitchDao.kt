@@ -43,4 +43,10 @@ interface StitchDao {
 
     @Query("SELECT * FROM stitches WHERE archived = 1 ORDER BY archivedDate DESC")
     fun getArchivedStitches(): Flow<List<StitchEntity>>
+
+    @Query("SELECT * FROM stitches")
+    suspend fun getAllNow(): List<StitchEntity>
+
+    @Query("DELETE FROM stitches")
+    suspend fun clearAll()
 }

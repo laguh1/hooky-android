@@ -67,6 +67,7 @@ import coil.compose.AsyncImage
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.ui.components.BadgeStyle
 import com.hooky.app.ui.components.StatusBadge
+import com.hooky.app.ui.util.labelResId
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.Slate
@@ -170,7 +171,7 @@ fun PieceListScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
             // Filter chips
@@ -187,7 +188,7 @@ fun PieceListScreen(
                         onClick = { viewModel.onAction(PieceListAction.FilterSelected(filter)) },
                         label = {
                             Text(
-                                text = filter.displayName,
+                                text = stringResource(filter.labelResId),
                                 style = MaterialTheme.typography.labelMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -211,7 +212,7 @@ fun PieceListScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             when {
                 uiState.isLoading -> {
@@ -233,7 +234,7 @@ fun PieceListScreen(
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
-                            bottom = 88.dp
+                            bottom = 16.dp
                         ),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -321,15 +322,13 @@ private fun PieceGridCard(
                 )
 
                 // Type badge
-                val typeName = try {
-                    com.hooky.app.domain.model.enums.PieceType.valueOf(piece.type).displayName
-                } catch (_: Exception) { piece.type }
+                val typeResId = try { com.hooky.app.domain.model.enums.PieceType.valueOf(piece.type).labelResId } catch (_: Exception) { null }
+                val typeName = typeResId?.let { stringResource(it) } ?: piece.type
                 StatusBadge(text = typeName, style = BadgeStyle.MUTED)
 
                 // WorkStatus badge
-                val statusName = try {
-                    com.hooky.app.domain.model.enums.WorkStatus.valueOf(piece.workStatus).displayName
-                } catch (_: Exception) { piece.workStatus }
+                val statusResId = try { com.hooky.app.domain.model.enums.WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
+                val statusName = statusResId?.let { stringResource(it) } ?: piece.workStatus
                 val statusBadgeStyle = if (piece.workStatus == "IN_PROGRESS") {
                     BadgeStyle.FILLED_SLATE
                 } else {
@@ -338,9 +337,8 @@ private fun PieceGridCard(
                 StatusBadge(text = statusName, style = statusBadgeStyle)
 
                 // Destination badge
-                val destName = try {
-                    com.hooky.app.domain.model.enums.Destination.valueOf(piece.destination).displayName
-                } catch (_: Exception) { piece.destination }
+                val destResId = try { com.hooky.app.domain.model.enums.Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
+                val destName = destResId?.let { stringResource(it) } ?: piece.destination
                 StatusBadge(text = destName, style = BadgeStyle.MUTED)
             }
         }

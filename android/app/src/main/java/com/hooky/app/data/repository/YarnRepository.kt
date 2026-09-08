@@ -47,6 +47,22 @@ class YarnRepository @Inject constructor(
             yarnDao.archiveYarn(id, archivedDate, archivedReason)
         }
 
+    suspend fun cloneYarn(id: Int): Int = withContext(ioDispatcher) {
+        val original = yarnDao.getYarnByIdOnce(id) ?: error("Yarn not found")
+        val newYarnId = generateNextYarnId()
+        val clone = original.copy(
+            id = 0,
+            yarnId = newYarnId,
+            photos = "[]",
+            archived = false,
+            archivedDate = null,
+            archivedReason = null,
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
+        )
+        yarnDao.insert(clone).toInt()
+    }
+
     suspend fun generateNextYarnId(): String = withContext(ioDispatcher) {
         val entityType = "YARN"
         val counter = idCounterDao.getCounter(entityType)

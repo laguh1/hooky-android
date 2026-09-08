@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.form
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,8 @@ import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.hooky.app.domain.model.enums.Material
 import com.hooky.app.domain.model.enums.WeightCategory
+import com.hooky.app.ui.util.movePhotosToStorage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,16 +58,18 @@ data class YarnFormUiState(
     val dryClean: Boolean = false,
     val bleach: Boolean = false,
     val tumbleDry: Boolean = false,
-    val ironTemperature: String = "",
+    val washTemperature: String = "",
     val careNotes: String = "",
     val photos: List<String> = emptyList(),
     val notes: String = "",
+    val hasUnsavedChanges: Boolean = false,
     // Validation
     val nameError: String? = null,
     // Scanning
     val scanMode: ScanMode = ScanMode.NONE,
     val isScanning: Boolean = false,
     val scanResult: YarnLabelScanResult? = null,
+    val accumulatedScanResult: YarnLabelScanResult? = null,
     val needleScanResult: NeedleScanResult? = null,
     // Color suggestion (auto-detected from photo via Palette API)
     val suggestedColor: String? = null,
@@ -95,7 +100,7 @@ sealed interface YarnFormAction {
     data class DryCleanChanged(val value: Boolean) : YarnFormAction
     data class BleachChanged(val value: Boolean) : YarnFormAction
     data class TumbleDryChanged(val value: Boolean) : YarnFormAction
-    data class IronTemperatureChanged(val value: String) : YarnFormAction
+    data class WashTemperatureChanged(val value: String) : YarnFormAction
     data class CareNotesChanged(val value: String) : YarnFormAction
     data class PhotoAdded(val uri: String) : YarnFormAction
     data class PhotoReceived(val path: String) : YarnFormAction
@@ -109,6 +114,7 @@ sealed interface YarnFormAction {
     object DismissSuggestedColor : YarnFormAction
     // Label scanning
     object ScanLabelRequested : YarnFormAction
+    object ScanAnotherSide : YarnFormAction
     object ApplyScanResult : YarnFormAction
     object DismissScanResult : YarnFormAction
     // Needle/hook scanning
@@ -119,6 +125,7 @@ sealed interface YarnFormAction {
 
 @HiltViewModel
 class YarnFormViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val yarnRepository: YarnRepository,
     private val labelScannerService: YarnLabelScannerService,
     private val colorExtractor: PaletteColorExtractor,
@@ -185,7 +192,7 @@ class YarnFormViewModel @Inject constructor(
                             dryClean = care.dryClean,
                             bleach = care.bleach,
                             tumbleDry = care.tumbleDry,
-                            ironTemperature = care.ironTemperature ?: "",
+                            washTemperature = care.washTemperature ?: care.ironTemperature ?: "",
                             careNotes = care.notes ?: "",
                             photos = photos,
                             notes = yarn.notes ?: ""
@@ -201,6 +208,9 @@ class YarnFormViewModel @Inject constructor(
     }
 
     fun onAction(action: YarnFormAction) {
+        if (action !is YarnFormAction.ClearError && action !is YarnFormAction.SaveYarn) {
+            _uiState.update { it.copy(hasUnsavedChanges = true) }
+        }
         when (action) {
             is YarnFormAction.NameChanged ->
                 _uiState.update { it.copy(name = action.value, nameError = null) }
@@ -248,8 +258,8 @@ class YarnFormViewModel @Inject constructor(
                 _uiState.update { it.copy(bleach = action.value) }
             is YarnFormAction.TumbleDryChanged ->
                 _uiState.update { it.copy(tumbleDry = action.value) }
-            is YarnFormAction.IronTemperatureChanged ->
-                _uiState.update { it.copy(ironTemperature = action.value) }
+            is YarnFormAction.WashTemperatureChanged ->
+                _uiState.update { it.copy(washTemperature = action.value) }
             is YarnFormAction.CareNotesChanged ->
                 _uiState.update { it.copy(careNotes = action.value) }
             is YarnFormAction.PhotoAdded -> {
@@ -285,9 +295,11 @@ class YarnFormViewModel @Inject constructor(
                 _uiState.update { it.copy(error = null) }
             YarnFormAction.ScanLabelRequested ->
                 _uiState.update { it.copy(scanMode = ScanMode.LABEL) }
+            YarnFormAction.ScanAnotherSide ->
+                _uiState.update { it.copy(accumulatedScanResult = it.scanResult, scanResult = null, scanMode = ScanMode.LABEL) }
             YarnFormAction.ApplyScanResult -> applyScanResult()
             YarnFormAction.DismissScanResult ->
-                _uiState.update { it.copy(scanResult = null, scanMode = ScanMode.NONE) }
+                _uiState.update { it.copy(scanResult = null, accumulatedScanResult = null, scanMode = ScanMode.NONE) }
             is YarnFormAction.NeedleScanRequested ->
                 _uiState.update { it.copy(scanMode = action.target) }
             YarnFormAction.ApplyNeedleScanResult -> applyNeedleScanResult()
@@ -311,13 +323,15 @@ class YarnFormViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = labelScannerService.scanFromPath(path)
-                if (result.hasAnyData) {
-                    _uiState.update { it.copy(isScanning = false, scanResult = result) }
+                val accumulated = _uiState.value.accumulatedScanResult
+                val merged = if (accumulated != null) result.mergeWith(accumulated) else result
+                if (merged.hasAnyData) {
+                    _uiState.update { it.copy(isScanning = false, scanResult = merged, accumulatedScanResult = null) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read label info. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Couldn't read label info. Try a clearer, closer photo with good lighting.") }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Scan failed: ${e.message}") }
             }
         }
     }
@@ -326,7 +340,7 @@ class YarnFormViewModel @Inject constructor(
         _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
         viewModelScope.launch {
             try {
-                val result = labelScannerService.scanNeedleFromPath(path)
+                val result = labelScannerService.scanNeedleFromPath(path, target)
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = target) }
                 } else {
@@ -355,6 +369,8 @@ class YarnFormViewModel @Inject constructor(
         _uiState.update { current ->
             current.copy(
                 scanResult = null,
+                scanMode = ScanMode.NONE,
+                name = result.name?.takeIf { it.isNotBlank() } ?: current.name,
                 brand = result.brand?.takeIf { it.isNotBlank() } ?: current.brand,
                 color = result.colorName?.takeIf { it.isNotBlank() } ?: current.color,
                 colorCode = result.colorCode?.takeIf { it.isNotBlank() } ?: current.colorCode,
@@ -365,7 +381,10 @@ class YarnFormViewModel @Inject constructor(
                 ballLengthM = result.ballLengthM?.takeIf { it.isNotBlank() } ?: current.ballLengthM,
                 hookSizeMm = result.hookSizeMm?.takeIf { it.isNotBlank() } ?: current.hookSizeMm,
                 needleSizeMm = result.needleSizeMm?.takeIf { it.isNotBlank() } ?: current.needleSizeMm,
-                gauge = result.gauge?.takeIf { it.isNotBlank() } ?: current.gauge
+                gauge = result.gauge?.takeIf { it.isNotBlank() } ?: current.gauge,
+                machineWash = result.machineWash ?: current.machineWash,
+                handWash = result.handWash ?: current.handWash,
+                tumbleDry = result.tumbleDry ?: current.tumbleDry
             )
         }
     }
@@ -385,15 +404,13 @@ class YarnFormViewModel @Inject constructor(
                 val stringListSerializer = kotlinx.serialization.builtins.ListSerializer(
                     kotlinx.serialization.serializer<String>()
                 )
-                val photosJson = json.encodeToString(stringListSerializer, current.photos)
-
                 val careInstructions = CareInstructions(
                     machineWash = current.machineWash,
                     handWash = current.handWash,
                     dryClean = current.dryClean,
                     bleach = current.bleach,
                     tumbleDry = current.tumbleDry,
-                    ironTemperature = current.ironTemperature.ifBlank { null },
+                    washTemperature = current.washTemperature.ifBlank { null },
                     notes = current.careNotes.ifBlank { null }
                 )
                 val careJson = json.encodeToString(CareInstructions.serializer(), careInstructions)
@@ -401,6 +418,8 @@ class YarnFormViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
 
                 if (current.isEditMode && yarnId != null) {
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "yarns", yarnId.toString())
+                    val photosJson = json.encodeToString(stringListSerializer, permanentPhotos)
                     val existing = yarnRepository.getYarnById(yarnId).first()
                     if (existing != null) {
                         val updated = existing.copy(
@@ -431,6 +450,8 @@ class YarnFormViewModel @Inject constructor(
                     }
                 } else {
                     val newYarnId = yarnRepository.generateNextYarnId()
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "yarns", newYarnId.toString())
+                    val photosJson = json.encodeToString(stringListSerializer, permanentPhotos)
                     val entity = YarnEntity(
                         yarnId = newYarnId,
                         name = current.name,

@@ -2,5 +2,6 @@
 <paths>
     <files-path name="internal_photos" path="photos/" />
     <files-path name="share" path="share/" />
+    <files-path name="backup" path="backup/" />
     <external-files-path name="external_photos" path="Pictures/" />
 </paths>

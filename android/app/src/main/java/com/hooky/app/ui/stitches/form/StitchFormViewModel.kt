@@ -1,5 +1,6 @@
 package com.hooky.app.ui.stitches.form
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,9 @@ import com.hooky.app.data.db.entity.StitchEntity
 import com.hooky.app.data.repository.StitchRepository
 import com.hooky.app.domain.model.enums.Difficulty
 import com.hooky.app.domain.model.enums.StitchCategory
+import com.hooky.app.ui.util.movePhotosToStorage
+import com.hooky.app.ui.util.moveSingleFileToStorage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +43,7 @@ data class StitchFormUiState(
     val photos: List<String> = emptyList(),
     val chartPath: String? = null,
     val notes: String = "",
+    val hasUnsavedChanges: Boolean = false,
     val nameError: String? = null,
     val descriptionError: String? = null
 )
@@ -67,6 +72,7 @@ sealed interface StitchFormAction {
 
 @HiltViewModel
 class StitchFormViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val stitchRepository: StitchRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -135,6 +141,9 @@ class StitchFormViewModel @Inject constructor(
     }
 
     fun onAction(action: StitchFormAction) {
+        if (action !is StitchFormAction.ClearError && action !is StitchFormAction.SaveStitch) {
+            _uiState.update { it.copy(hasUnsavedChanges = true) }
+        }
         when (action) {
             is StitchFormAction.NameChanged ->
                 _uiState.update { it.copy(name = action.value, nameError = null) }
@@ -240,11 +249,12 @@ class StitchFormViewModel @Inject constructor(
                     .map { it.trim() }
                     .filter { it.isNotBlank() }
                 val aliasesJson = json.encodeToString(stringListSerializer, aliasesList)
-                val photosJson = json.encodeToString(stringListSerializer, current.photos)
-
                 val now = System.currentTimeMillis()
 
                 if (current.isEditMode && stitchId != null) {
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "stitches", stitchId.toString())
+                    val permanentChart = current.chartPath?.let { moveSingleFileToStorage(context, it, "stitches/charts", stitchId.toString()) }
+                    val finalPhotosJson = json.encodeToString(stringListSerializer, permanentPhotos)
                     val existing = stitchRepository.getStitchById(stitchId).first()
                     if (existing != null) {
                         val updated = existing.copy(
@@ -258,8 +268,8 @@ class StitchFormViewModel @Inject constructor(
                             hookfullyLink = current.hookfullyLink.ifBlank { null },
                             instructionLink = current.instructionLink.ifBlank { null },
                             videoLink = current.videoLink.ifBlank { null },
-                            photos = photosJson,
-                            chartPath = current.chartPath,
+                            photos = finalPhotosJson,
+                            chartPath = permanentChart,
                             notes = current.notes.ifBlank { null },
                             updatedAt = now
                         )
@@ -267,6 +277,9 @@ class StitchFormViewModel @Inject constructor(
                     }
                 } else {
                     val newStitchId = stitchRepository.generateNextStitchId()
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "stitches", newStitchId.toString())
+                    val permanentChart = current.chartPath?.let { moveSingleFileToStorage(context, it, "stitches/charts", newStitchId.toString()) }
+                    val finalPhotosJson = json.encodeToString(stringListSerializer, permanentPhotos)
                     val entity = StitchEntity(
                         stitchId = newStitchId,
                         name = current.name,
@@ -279,8 +292,8 @@ class StitchFormViewModel @Inject constructor(
                         hookfullyLink = current.hookfullyLink.ifBlank { null },
                         instructionLink = current.instructionLink.ifBlank { null },
                         videoLink = current.videoLink.ifBlank { null },
-                        photos = photosJson,
-                        chartPath = current.chartPath,
+                        photos = finalPhotosJson,
+                        chartPath = permanentChart,
                         notes = current.notes.ifBlank { null },
                         createdAt = now,
                         updatedAt = now

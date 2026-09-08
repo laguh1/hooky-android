@@ -65,6 +65,7 @@
     <string name="piece_field_date_started">Fecha de inicio</string>
     <string name="piece_field_date_finished">Fecha de finalización</string>
     <string name="piece_field_work_hours">Horas trabajadas</string>
+    <string name="piece_field_work_minutes">Minutos (0–59)</string>
     <string name="piece_field_price">Precio sugerido (€)</string>
     <string name="piece_field_material_cost">Coste de material (€)</string>
     <string name="piece_field_gift_recipient">Destinatario del regalo</string>
@@ -131,7 +132,14 @@
     <string name="yarn_care_dry_clean">Limpieza en seco</string>
     <string name="yarn_care_bleach">Lejía</string>
     <string name="yarn_care_tumble_dry">Secadora</string>
-    <string name="yarn_care_iron_temp">Temperatura de plancha</string>
+    <string name="yarn_care_iron_temp">Temperatura de lavado</string>
+    <string name="yarn_wash_temp_select">Seleccionar…</string>
+    <string name="yarn_wash_temp_clear">Borrar</string>
+    <string name="yarn_wash_temp_cold">30°C – Frío</string>
+    <string name="yarn_wash_temp_warm">40°C – Templado</string>
+    <string name="yarn_wash_temp_hot">60°C – Caliente</string>
+    <string name="yarn_wash_temp_very_hot">95°C – Muy caliente</string>
+    <string name="yarn_wash_temp_do_not_wash">No lavar</string>
 
     <!-- Yarns — misc -->
     <string name="yarn_archive_title">Archivar lana</string>
@@ -152,10 +160,18 @@
     <string name="stitch_empty_title">Aún no hay puntos</string>
     <string name="stitch_empty_subtitle">Añade tu primer punto</string>
     <string name="stitch_tab_library">Mis puntos</string>
-    <string name="stitch_tab_suggestions">Sugerencias</string>
-    <string name="stitch_suggestions_disclaimer">Estos tutoriales son sugerencias de la comunidad. Hooky no tiene ninguna afiliación con estos creadores.</string>
+    <string name="stitch_tab_suggestions">Ideas</string>
+    <string name="stitch_suggestions_disclaimer">Estas son ideas y tutoriales de la comunidad. Hooky no tiene ninguna afiliación con estos creadores.</string>
     <string name="stitch_suggestion_watch">Ver</string>
     <string name="stitch_suggestion_by">por %s</string>
+    <string name="ideas_add_button">Añadir idea</string>
+    <string name="ideas_dialog_title">Añadir Idea</string>
+    <string name="ideas_dialog_title_label">Título</string>
+    <string name="ideas_dialog_url_label">URL</string>
+    <string name="ideas_dialog_description_label">Descripción (opcional)</string>
+    <string name="ideas_dialog_save">Guardar</string>
+    <string name="ideas_dialog_cancel">Cancelar</string>
+    <string name="idea_delete">Eliminar idea</string>
 
     <!-- Stitches — form fields -->
     <string name="stitch_field_name">Nombre</string>
@@ -282,6 +298,7 @@
     <string name="action_cancel">Cancelar</string>
     <string name="action_edit">Editar</string>
     <string name="action_archive">Archivar</string>
+    <string name="action_clone">Clonar</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_delete">Eliminar</string>
     <string name="action_search">Buscar</string>
@@ -359,6 +376,10 @@
     <string name="action_done">Hecho</string>
     <string name="action_gallery">Galería</string>
     <string name="action_save_changes">Guardar cambios</string>
+    <string name="action_discard">Descartar</string>
+    <string name="action_keep_editing">Seguir editando</string>
+    <string name="unsaved_changes_title">Cambios sin guardar</string>
+    <string name="unsaved_changes_message">Tienes cambios sin guardar. ¿Quieres descartarlos?</string>
     <string name="action_start">Iniciar</string>
     <string name="action_pause">Pausar</string>
     <string name="action_stop">Parar</string>
@@ -374,12 +395,15 @@
     <string name="piece_section_materials_stitches">Materiales y puntos</string>
     <string name="piece_section_needles_used">Agujas usadas</string>
     <string name="piece_work_timer">Temporizador de trabajo</string>
-    <string name="piece_timer_total">Total: %sh registrado</string>
+    <string name="piece_timer_total">Total: %s registrado</string>
     <string name="piece_row_counter">Contador de filas</string>
     <string name="piece_work_sessions_title">Sesiones de trabajo (%d)</string>
     <string name="piece_row_dialog_title">Configurar filas</string>
     <string name="piece_row_current">Fila actual</string>
-    <string name="piece_row_target">Filas objetivo (opcional)</string>
+    <string name="piece_row_target">Filas objetivo</string>
+    <string name="piece_work_time_dialog_title">Editar tiempo de trabajo</string>
+    <string name="piece_work_time_hours">Horas</string>
+    <string name="piece_work_time_minutes">Minutos</string>
     <string name="piece_row_target_hint">Deja vacío sin objetivo</string>
     <string name="piece_rows_progress">%1$d / %2$d filas</string>
     <string name="piece_voice_permission">Se requiere permiso de micrófono para contar por voz</string>
@@ -444,7 +468,7 @@
     <string name="yarn_label_date">Fecha</string>
     <string name="yarn_label_link">Enlace</string>
     <string name="yarn_label_quantity_owned">Cantidad</string>
-    <string name="yarn_label_iron_temp">Temperatura de plancha</string>
+    <string name="yarn_label_iron_temp">Temperatura de lavado</string>
     <string name="yarn_label_care_notes">Notas de cuidado</string>
     <string name="yarn_label_no_bleach">Sin lejía</string>
 
@@ -473,6 +497,7 @@
     <!-- ================================================================ -->
     <string name="piece_session_duration">%d min</string>
     <string name="piece_edit_row_count">Editar número de vueltas</string>
+    <string name="piece_edit_work_time">Editar tiempo de trabajo</string>
     <string name="piece_label_gift_for">Regalo para</string>
 
     <!-- ================================================================ -->
@@ -517,5 +542,28 @@
     <!-- Yarns — color suggestion actions -->
     <string name="yarn_color_apply">Aplicar color</string>
     <string name="yarn_color_dismiss">Descartar</string>
+
+    <!-- Enum display names — NeedleType -->
+    <string name="needle_type_crochet_hook">Ganchillo</string>
+    <string name="needle_type_knitting_needle">Aguja de tricotar</string>
+    <string name="needle_type_tapestry_needle">Aguja tapicera</string>
+    <string name="needle_type_cable_needle">Aguja de cables</string>
+    <string name="needle_type_dpn">Aguja doble punta</string>
+    <string name="needle_type_circular">Aguja circular</string>
+    <string name="needle_type_other">Otro</string>
+    <string name="needle_filter_hooks">Ganchillos</string>
+    <string name="needle_filter_knitting">Tricot</string>
+    <string name="needle_filter_other">Otro</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Omitir</string>
+    <string name="onboarding_next">Siguiente</string>
+    <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_1_title">Registra cada proyecto</string>
+    <string name="onboarding_1_desc">Añade tus piezas de crochet y tejido, registra tus sesiones de trabajo con el temporizador y ve exactamente cuánto vale cada una.</string>
+    <string name="onboarding_2_title">Conoce tu inventario</string>
+    <string name="onboarding_2_desc">Mantén tu colección de lanas organizada. Escanea las etiquetas para rellenar los detalles automáticamente.</string>
+    <string name="onboarding_3_title">Construye tu biblioteca</string>
+    <string name="onboarding_3_desc">Guarda tus puntos favoritos con enlaces a tutoriales y valoración de dificultad. Añade tus agujas y ganchillos para tenerlos siempre a mano.</string>
 
 </resources>

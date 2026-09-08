@@ -19,7 +19,8 @@ data class YarnDetailUiState(
     val yarn: YarnEntity? = null,
     val isLoading: Boolean = true,
     val error: String? = null,
-    val showArchiveDialog: Boolean = false
+    val showArchiveDialog: Boolean = false,
+    val navigateToClone: Int? = null
 )
 
 sealed interface YarnDetailAction {
@@ -27,6 +28,8 @@ sealed interface YarnDetailAction {
     object HideArchiveDialog : YarnDetailAction
     data class ConfirmArchive(val reason: String?) : YarnDetailAction
     object ClearError : YarnDetailAction
+    object CloneYarn : YarnDetailAction
+    object ClearCloneNavigation : YarnDetailAction
 }
 
 @HiltViewModel
@@ -73,6 +76,19 @@ class YarnDetailViewModel @Inject constructor(
             }
             YarnDetailAction.ClearError -> {
                 _uiState.update { it.copy(error = null) }
+            }
+            YarnDetailAction.CloneYarn -> {
+                viewModelScope.launch {
+                    try {
+                        val newId = yarnRepository.cloneYarn(yarnId)
+                        _uiState.update { it.copy(navigateToClone = newId) }
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            YarnDetailAction.ClearCloneNavigation -> {
+                _uiState.update { it.copy(navigateToClone = null) }
             }
         }
     }

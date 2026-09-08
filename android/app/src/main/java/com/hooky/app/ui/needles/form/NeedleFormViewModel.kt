@@ -166,10 +166,11 @@ class NeedleFormViewModel @Inject constructor(
     }
 
     private fun scanSize(path: String) {
+        val mode = if (_uiState.value.type == NeedleType.CROCHET_HOOK) ScanMode.HOOK else ScanMode.NEEDLE
         _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
         viewModelScope.launch {
             try {
-                val result = scannerService.scanNeedleFromPath(path)
+                val result = scannerService.scanNeedleFromPath(path, mode)
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result) }
                 } else {

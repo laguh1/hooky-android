@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.list
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.PieceEntity
@@ -11,12 +12,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.hooky.app.R
 import javax.inject.Inject
 
-enum class PieceFilter(val displayName: String) {
-    ALL("All"),
-    IN_PROGRESS("In Progress"),
-    FINISHED("Finished")
+enum class PieceFilter(@StringRes val labelResId: Int) {
+    ALL(R.string.piece_filter_all),
+    IN_PROGRESS(R.string.piece_filter_in_progress),
+    FINISHED(R.string.piece_filter_finished)
 }
 
 data class PieceListUiState(

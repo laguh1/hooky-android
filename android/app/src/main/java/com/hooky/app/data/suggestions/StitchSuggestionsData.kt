@@ -1,5 +1,6 @@
 package com.hooky.app.data.suggestions
 
+import com.hooky.app.data.db.entity.IdeaEntity
 import com.hooky.app.domain.model.StitchSuggestion
 import com.hooky.app.domain.model.enums.Difficulty
 import com.hooky.app.domain.model.enums.StitchCategory
@@ -14,7 +15,7 @@ object StitchSuggestionsData {
             id = 1,
             name = "Single Crochet",
             creator = "Bella Coco Crochet",
-            youtubeUrl = "https://www.youtube.com/@BellaCoco",
+            youtubeUrl = "https://www.youtube.com/@bellacococrochet",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Foundation stitch for most crochet projects"
@@ -23,7 +24,7 @@ object StitchSuggestionsData {
             id = 2,
             name = "Double Crochet",
             creator = "Bella Coco Crochet",
-            youtubeUrl = "https://www.youtube.com/@BellaCoco",
+            youtubeUrl = "https://www.youtube.com/@bellacococrochet",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Taller stitch, works up quickly"
@@ -32,7 +33,7 @@ object StitchSuggestionsData {
             id = 3,
             name = "Half Double Crochet",
             creator = "HappyBerry Crochet",
-            youtubeUrl = "https://www.youtube.com/@HappyBerryYarncraft",
+            youtubeUrl = "https://www.youtube.com/@HappyBerryCrochet",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Between sc and dc in height"
@@ -50,7 +51,7 @@ object StitchSuggestionsData {
             id = 5,
             name = "Magic Ring",
             creator = "Bella Coco Crochet",
-            youtubeUrl = "https://www.youtube.com/@BellaCoco",
+            youtubeUrl = "https://www.youtube.com/@bellacococrochet",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Adjustable starting ring, no hole in center"
@@ -76,8 +77,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 8,
             name = "V-Stitch",
-            creator = "YarnBirdy",
-            youtubeUrl = "https://www.youtube.com/@YarnBirdy",
+            creator = "Moogly",
+            youtubeUrl = "https://www.youtube.com/@mooglyblog",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Airy stitch with a V shape — great for scarves"
@@ -86,7 +87,7 @@ object StitchSuggestionsData {
             id = 9,
             name = "Bobble Stitch",
             creator = "HappyBerry Crochet",
-            youtubeUrl = "https://www.youtube.com/@HappyBerryYarncraft",
+            youtubeUrl = "https://www.youtube.com/@HappyBerryCrochet",
             category = StitchCategory.TEXTURED,
             difficulty = Difficulty.INTERMEDIATE,
             description = "3D raised bobble cluster"
@@ -95,7 +96,7 @@ object StitchSuggestionsData {
             id = 10,
             name = "Slip Stitch",
             creator = "Bella Coco Crochet",
-            youtubeUrl = "https://www.youtube.com/@BellaCoco",
+            youtubeUrl = "https://www.youtube.com/@bellacococrochet",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Used to join rounds or move yarn across stitches"
@@ -109,8 +110,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 101,
             name = "Punto bajo",
-            creator = "Crochet y Dos Agujas",
-            youtubeUrl = "https://www.youtube.com/@crochetyDosAgujas",
+            creator = "Crochet y Dos Agujas de Pat",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "El punto más básico del ganchillo"
@@ -118,8 +119,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 102,
             name = "Punto alto",
-            creator = "Crochet y Dos Agujas",
-            youtubeUrl = "https://www.youtube.com/@crochetyDosAgujas",
+            creator = "Crochet y Dos Agujas de Pat",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto más alto y rápido de tejer"
@@ -127,8 +128,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 103,
             name = "Medio punto alto",
-            creator = "Tejiendo Peru",
-            youtubeUrl = "https://www.youtube.com/@TejiendoPeru",
+            creator = "Tejiendo Perú",
+            youtubeUrl = "https://www.youtube.com/user/esperosas",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto intermedio entre bajo y alto"
@@ -136,8 +137,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 104,
             name = "Punto doble alto",
-            creator = "Tejiendo Peru",
-            youtubeUrl = "https://www.youtube.com/@TejiendoPeru",
+            creator = "Tejiendo Perú",
+            youtubeUrl = "https://www.youtube.com/user/esperosas",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto largo ideal para encajes"
@@ -145,8 +146,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 105,
             name = "Anillo mágico",
-            creator = "Tejiendo Peru",
-            youtubeUrl = "https://www.youtube.com/@TejiendoPeru",
+            creator = "Tejiendo Perú",
+            youtubeUrl = "https://www.youtube.com/user/esperosas",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Inicio ajustable sin agujero en el centro"
@@ -154,8 +155,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 106,
             name = "Cuadrado de la abuela",
-            creator = "Crochet y Dos Agujas",
-            youtubeUrl = "https://www.youtube.com/@crochetyDosAgujas",
+            creator = "Crochet y Dos Agujas de Pat",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Motivo cuadrado clásico trabajado en vueltas"
@@ -172,8 +173,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 108,
             name = "Punto piña",
-            creator = "Crochet y Dos Agujas",
-            youtubeUrl = "https://www.youtube.com/@crochetyDosAgujas",
+            creator = "Crochet y Dos Agujas de Pat",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
             category = StitchCategory.TEXTURED,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Racimo que forma una textura 3D"
@@ -181,8 +182,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 109,
             name = "Punto enrejado",
-            creator = "Tejiendo Peru",
-            youtubeUrl = "https://www.youtube.com/@TejiendoPeru",
+            creator = "Tejiendo Perú",
+            youtubeUrl = "https://www.youtube.com/user/esperosas",
             category = StitchCategory.LACE,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Punto calado ideal para chal y blusas"
@@ -199,7 +200,7 @@ object StitchSuggestionsData {
     )
 
     // -------------------------------------------------------------------------
-    // Brazilian Portuguese — edit youtubeUrl with specific video links as needed
+    // Brazilian Portuguese inspiration & tutorial links
     // -------------------------------------------------------------------------
     private val portuguese = listOf(
         StitchSuggestion(
@@ -298,5 +299,67 @@ object StitchSuggestionsData {
         languageTag.startsWith("pt") -> portuguese
         languageTag.startsWith("es") -> spanish
         else -> english
+    }
+
+    // -------------------------------------------------------------------------
+    // Seed ideas for Room DB — called once per locale on first launch
+    // -------------------------------------------------------------------------
+    fun seedIdeas(locale: String): List<IdeaEntity> {
+        val suggestions = when {
+            locale.startsWith("pt") -> portuguese
+            locale.startsWith("es") -> spanish
+            else -> english
+        }
+        val base = suggestions.mapIndexed { i, s ->
+            IdeaEntity(
+                title = s.name,
+                source = s.creator,
+                url = s.youtubeUrl,
+                description = s.description,
+                locale = locale,
+                isSeeded = true,
+                sortOrder = i
+            )
+        }
+        return if (locale.startsWith("pt")) {
+            base + listOf(
+                IdeaEntity(
+                    title = "Marie Castro",
+                    source = "Instagram",
+                    url = "https://www.instagram.com/mariecastrodiy/",
+                    description = "Inspiração de crochê brasileiro no Instagram",
+                    locale = locale,
+                    isSeeded = true,
+                    sortOrder = base.size
+                ),
+                IdeaEntity(
+                    title = "Crocheniacs",
+                    source = "Instagram",
+                    url = "https://www.instagram.com/crocheniacs/?hl=en",
+                    description = "Inspiração internacional de crochê",
+                    locale = locale,
+                    isSeeded = true,
+                    sortOrder = base.size + 1
+                ),
+                IdeaEntity(
+                    title = "Canal de Crochê",
+                    source = "YouTube",
+                    url = "https://www.youtube.com/channel/UCC_xabYkCpgk078UZ_aSoiQ",
+                    description = "Canal brasileiro de crochê no YouTube",
+                    locale = locale,
+                    isSeeded = true,
+                    sortOrder = base.size + 2
+                ),
+                IdeaEntity(
+                    title = "@tricodathai",
+                    source = "TikTok",
+                    url = "https://www.tiktok.com/@tricodathai",
+                    description = "Crochê e tricô no TikTok",
+                    locale = locale,
+                    isSeeded = true,
+                    sortOrder = base.size + 3
+                )
+            )
+        } else base
     }
 }

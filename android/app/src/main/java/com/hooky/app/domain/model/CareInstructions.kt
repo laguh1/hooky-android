@@ -10,5 +10,6 @@ data class CareInstructions(
     val bleach: Boolean = false,
     val tumbleDry: Boolean = false,
     val ironTemperature: String? = null,
+    val washTemperature: String? = null,
     val notes: String? = null
 )

@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +63,7 @@ import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
+import com.hooky.app.ui.util.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -359,13 +361,11 @@ private fun PieceResultRow(
         emptyList()
     }
 
-    val typeDisplay = try {
-        com.hooky.app.domain.model.enums.PieceType.valueOf(piece.type).displayName
-    } catch (_: Exception) { piece.type }
+    val typeResId = try { com.hooky.app.domain.model.enums.PieceType.valueOf(piece.type).labelResId } catch (_: Exception) { null }
+    val typeDisplay = typeResId?.let { stringResource(it) } ?: piece.type
 
-    val statusDisplay = try {
-        com.hooky.app.domain.model.enums.WorkStatus.valueOf(piece.workStatus).displayName
-    } catch (_: Exception) { piece.workStatus }
+    val statusResId = try { com.hooky.app.domain.model.enums.WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
+    val statusDisplay = statusResId?.let { stringResource(it) } ?: piece.workStatus
 
     SearchResultRow(
         photoPath = photoList.firstOrNull(),
@@ -420,9 +420,15 @@ private fun StitchResultRow(
         emptyList()
     }
 
-    val category = stitch.category ?: "Uncategorized"
-    val difficulty = stitch.difficulty ?: "Unknown"
-    val subtitle = "$category · $difficulty"
+    val categoryResId = remember(stitch.category) {
+        stitch.category?.let { try { com.hooky.app.domain.model.enums.StitchCategory.valueOf(it).labelResId } catch (_: Exception) { null } }
+    }
+    val categoryText = categoryResId?.let { stringResource(it) } ?: stitch.category ?: ""
+    val difficultyResId = remember(stitch.difficulty) {
+        stitch.difficulty?.let { try { com.hooky.app.domain.model.enums.Difficulty.valueOf(it).labelResId } catch (_: Exception) { null } }
+    }
+    val difficultyText = difficultyResId?.let { stringResource(it) } ?: stitch.difficulty ?: ""
+    val subtitle = listOf(categoryText, difficultyText).filter { it.isNotBlank() }.joinToString(" · ")
 
     SearchResultRow(
         photoPath = photoList.firstOrNull(),

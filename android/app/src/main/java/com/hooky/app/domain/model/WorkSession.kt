@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class WorkSession(
     val date: String,
     val durationMinutes: Int,
-    val notes: String? = null
+    val notes: String? = null,
+    val rowsCompleted: Int? = null
 )

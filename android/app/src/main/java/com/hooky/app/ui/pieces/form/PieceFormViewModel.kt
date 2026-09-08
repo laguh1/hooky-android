@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,8 @@ import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.enums.Destination
 import com.hooky.app.domain.model.enums.PieceType
 import com.hooky.app.domain.model.enums.WorkStatus
+import com.hooky.app.ui.util.movePhotosToStorage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +47,7 @@ data class PieceFormUiState(
     val dateStarted: String = "",
     val dateFinished: String = "",
     val workHours: String = "",
+    val workMinutes: String = "",
     val hookSizeMm: String = "",
     val photos: List<String> = emptyList(),
     val price: String = "",
@@ -59,6 +63,7 @@ data class PieceFormUiState(
     val notes: String = "",
     val rowCount: String = "0",
     val targetRowCount: String = "",
+    val hasUnsavedChanges: Boolean = false,
     // Validation
     val nameError: String? = null,
     // Hook scanning
@@ -81,6 +86,7 @@ sealed interface PieceFormAction {
     data class DateStartedChanged(val value: String) : PieceFormAction
     data class DateFinishedChanged(val value: String) : PieceFormAction
     data class WorkHoursChanged(val value: String) : PieceFormAction
+    data class WorkMinutesChanged(val value: String) : PieceFormAction
     data class HookSizeMmChanged(val value: String) : PieceFormAction
     data class PhotoAdded(val uri: String) : PieceFormAction
     data class PhotoReceived(val path: String) : PieceFormAction
@@ -109,6 +115,7 @@ sealed interface PieceFormAction {
 
 @HiltViewModel
 class PieceFormViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val pieceRepository: PieceRepository,
     private val yarnRepository: YarnRepository,
     private val stitchRepository: StitchRepository,
@@ -186,7 +193,8 @@ class PieceFormViewModel @Inject constructor(
                             lengthCm = piece.lengthCm?.toString() ?: "",
                             dateStarted = piece.dateStarted ?: "",
                             dateFinished = piece.dateFinished ?: "",
-                            workHours = piece.workHours?.toString() ?: "",
+                            workHours = piece.workHours?.let { kotlin.math.floor(it).toInt().toString() } ?: "",
+                            workMinutes = piece.workHours?.let { h -> ((h - kotlin.math.floor(h)) * 60).toInt().let { if (it > 0) it.toString() else "" } } ?: "",
                             hookSizeMm = piece.hookSizeMm?.toString() ?: "",
                             photos = photos,
                             price = piece.price?.toString() ?: "",
@@ -214,6 +222,9 @@ class PieceFormViewModel @Inject constructor(
     }
 
     fun onAction(action: PieceFormAction) {
+        if (action !is PieceFormAction.ClearError && action !is PieceFormAction.SavePiece) {
+            _uiState.update { it.copy(hasUnsavedChanges = true) }
+        }
         when (action) {
             is PieceFormAction.NameChanged ->
                 _uiState.update { it.copy(name = action.value, nameError = null) }
@@ -233,6 +244,8 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(dateFinished = action.value) }
             is PieceFormAction.WorkHoursChanged ->
                 _uiState.update { it.copy(workHours = action.value) }
+            is PieceFormAction.WorkMinutesChanged ->
+                _uiState.update { it.copy(workMinutes = action.value) }
             is PieceFormAction.HookSizeMmChanged ->
                 _uiState.update { it.copy(hookSizeMm = action.value) }
             is PieceFormAction.PhotoAdded -> {
@@ -300,7 +313,7 @@ class PieceFormViewModel @Inject constructor(
         _uiState.update { it.copy(isScanning = true, scanMode = ScanMode.NONE) }
         viewModelScope.launch {
             try {
-                val result = labelScannerService.scanNeedleFromPath(path)
+                val result = labelScannerService.scanNeedleFromPath(path, ScanMode.HOOK)
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = ScanMode.HOOK) }
                 } else {
@@ -329,14 +342,14 @@ class PieceFormViewModel @Inject constructor(
                 val stringListSerializer = kotlinx.serialization.builtins.ListSerializer(
                     kotlinx.serialization.serializer<String>()
                 )
-                val photosJson = jsonEncoder.encodeToString(stringListSerializer, current.photos)
                 val yarnsJson = jsonEncoder.encodeToString(stringListSerializer, current.yarnsUsed)
                 val stitchesJson = jsonEncoder.encodeToString(stringListSerializer, current.stitchesUsed)
                 val needlesJson = jsonEncoder.encodeToString(stringListSerializer, current.needlesUsed)
-
                 val now = System.currentTimeMillis()
 
                 if (current.isEditMode && pieceId != null) {
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "pieces", pieceId.toString())
+                    val photosJson = jsonEncoder.encodeToString(stringListSerializer, permanentPhotos)
                     // Load existing to preserve workSessions, pieceId, createdAt
                     val existing = pieceRepository.getPieceById(pieceId).first()
                     if (existing != null) {
@@ -349,7 +362,7 @@ class PieceFormViewModel @Inject constructor(
                             lengthCm = current.lengthCm.toFloatOrNull(),
                             dateStarted = current.dateStarted.ifBlank { null },
                             dateFinished = current.dateFinished.ifBlank { null },
-                            workHours = current.workHours.toFloatOrNull(),
+                            workHours = run { val h = current.workHours.toFloatOrNull() ?: 0f; val m = current.workMinutes.toFloatOrNull() ?: 0f; if (h > 0 || m > 0) h + m / 60f else null },
                             hookSizeMm = current.hookSizeMm.toFloatOrNull(),
                             photos = photosJson,
                             price = current.price.toFloatOrNull(),
@@ -369,6 +382,8 @@ class PieceFormViewModel @Inject constructor(
                     }
                 } else {
                     val newPieceId = pieceRepository.generateNextPieceId()
+                    val permanentPhotos = movePhotosToStorage(context, current.photos, "pieces", newPieceId.toString())
+                    val photosJson = jsonEncoder.encodeToString(stringListSerializer, permanentPhotos)
                     val entity = PieceEntity(
                         pieceId = newPieceId,
                         name = current.name,

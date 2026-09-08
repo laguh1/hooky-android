@@ -21,9 +21,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.foundation.background
@@ -32,11 +34,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -50,6 +55,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -59,6 +66,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -86,6 +94,7 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +108,33 @@ fun YarnFormScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = androidx.compose.runtime.remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showUnsavedDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = uiState.hasUnsavedChanges) {
+        showUnsavedDialog = true
+    }
+
+    if (showUnsavedDialog) {
+        AlertDialog(
+            onDismissRequest = { showUnsavedDialog = false },
+            title = { Text(stringResource(R.string.unsaved_changes_title)) },
+            text = { Text(stringResource(R.string.unsaved_changes_message)) },
+            confirmButton = {
+                TextButton(onClick = { showUnsavedDialog = false; onNavigateBack() }) {
+                    Text(stringResource(R.string.action_discard), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showUnsavedDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
+                ) {
+                    Text(stringResource(R.string.action_keep_editing))
+                }
+            }
+        )
+    }
 
     // Camera permission launcher
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -114,10 +149,12 @@ fun YarnFormScreen(
     }
 
     // Photo editor launcher
-    val editLauncher = rememberPhotoEditorLauncher(
-        onEditDone = { old, new -> viewModel.onAction(YarnFormAction.PhotoReplaced(old, new)) },
-        onNoEditor = { android.widget.Toast.makeText(context, "No photo editor found", android.widget.Toast.LENGTH_SHORT).show() }
-    )
+    val editLauncher = navController?.let {
+        rememberPhotoEditorLauncher(
+            navController = it,
+            onEditDone = { old, new -> viewModel.onAction(YarnFormAction.PhotoReplaced(old, new)) }
+        )
+    } ?: { _ -> }
 
     // Gallery picker — for label scanning
     val scanGalleryLauncher = rememberPhotoPickerLauncher { path ->
@@ -172,7 +209,9 @@ fun YarnFormScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        if (uiState.hasUnsavedChanges) showUnsavedDialog = true else onNavigateBack()
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
@@ -190,6 +229,14 @@ fun YarnFormScreen(
             YarnLabelScanConfirmDialog(
                 result = scanResult,
                 onApply = { viewModel.onAction(YarnFormAction.ApplyScanResult) },
+                onScanAnother = {
+                    viewModel.onAction(YarnFormAction.ScanAnotherSide)
+                    val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                        context, android.Manifest.permission.CAMERA
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    if (granted) onNavigateToCamera()
+                    else cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                },
                 onDismiss = { viewModel.onAction(YarnFormAction.DismissScanResult) }
             )
         }
@@ -416,12 +463,14 @@ fun YarnFormScreen(
 
                 // Section: Material
                 FormSection(title = stringResource(R.string.yarn_section_material)) {
+                    val materialLabels = Material.values().map { stringResource(it.labelResId) }
                     EnumDropdown(
                         label = stringResource(R.string.yarn_field_material),
-                        selected = uiState.material.displayName,
-                        options = Material.values().map { it.displayName },
+                        selected = stringResource(uiState.material.labelResId),
+                        options = materialLabels,
                         onSelect = { display ->
-                            val mat = Material.values().first { it.displayName == display }
+                            val idx = materialLabels.indexOf(display)
+                            val mat = if (idx >= 0) Material.values()[idx] else Material.values().first()
                             viewModel.onAction(YarnFormAction.MaterialChanged(mat))
                         }
                     )
@@ -448,16 +497,20 @@ fun YarnFormScreen(
                     )
 
                     // Weight category dropdown — nullable, with "Not specified" option
-                    val weightOptions = listOf(stringResource(R.string.not_specified)) + WeightCategory.values().map { it.displayName }
-                    val selectedWeight = uiState.weightCategory?.displayName ?: stringResource(R.string.not_specified)
+                    val notSpecifiedStr = stringResource(R.string.not_specified)
+                    val weightLabels = WeightCategory.values().map { stringResource(it.labelResId) }
+                    val weightOptions = listOf(notSpecifiedStr) + weightLabels
+                    val selectedWeight = uiState.weightCategory?.let { stringResource(it.labelResId) } ?: notSpecifiedStr
                     EnumDropdown(
                         label = stringResource(R.string.yarn_field_weight_category),
                         selected = selectedWeight,
                         options = weightOptions,
                         onSelect = { display ->
-                            val notSpecified = weightOptions.first()
-                            val wc = if (display == notSpecified) null
-                            else WeightCategory.values().firstOrNull { it.displayName == display }
+                            val wc = if (display == notSpecifiedStr) null
+                            else {
+                                val idx = weightLabels.indexOf(display)
+                                if (idx >= 0) WeightCategory.values()[idx] else null
+                            }
                             viewModel.onAction(YarnFormAction.WeightCategoryChanged(wc))
                         }
                     )
@@ -557,14 +610,10 @@ fun YarnFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
+                    com.hooky.app.ui.pieces.form.DatePickerField(
+                        label = stringResource(R.string.yarn_field_purchase_date),
                         value = uiState.purchaseDate,
                         onValueChange = { viewModel.onAction(YarnFormAction.PurchaseDateChanged(it)) },
-                        label = { Text(stringResource(R.string.yarn_field_purchase_date)) },
-                        placeholder = { Text(stringResource(R.string.label_date_hint), color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -619,15 +668,9 @@ fun YarnFormScreen(
                         onCheckedChange = { viewModel.onAction(YarnFormAction.TumbleDryChanged(it)) }
                     )
 
-                    OutlinedTextField(
-                        value = uiState.ironTemperature,
-                        onValueChange = { viewModel.onAction(YarnFormAction.IronTemperatureChanged(it)) },
-                        label = { Text(stringResource(R.string.yarn_care_iron_temp)) },
-                        placeholder = { Text(stringResource(R.string.yarn_field_iron_temp_hint), color = TextMuted) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
+                    WashTemperatureDropdown(
+                        selected = uiState.washTemperature,
+                        onSelected = { viewModel.onAction(YarnFormAction.WashTemperatureChanged(it)) }
                     )
 
                     OutlinedTextField(
@@ -656,15 +699,17 @@ fun YarnFormScreen(
                     )
                 }
 
-                // Save button
+                // Save button — always Slate, regardless of create/edit mode, so the
+                // primary action stays visually consistent across the app
+                val saveColor = Slate
                 Button(
                     onClick = { viewModel.onAction(YarnFormAction.SaveYarn) },
                     enabled = !uiState.isSaving,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Slate,
+                        containerColor = saveColor,
                         contentColor = White,
-                        disabledContainerColor = Slate.copy(alpha = 0.5f),
+                        disabledContainerColor = saveColor.copy(alpha = 0.5f),
                         disabledContentColor = White.copy(alpha = 0.7f)
                     ),
                     modifier = Modifier
@@ -840,6 +885,48 @@ private fun ColorSuggestionChip(
         }
         IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
             Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.yarn_color_dismiss), modifier = Modifier.size(16.dp), tint = TextMuted)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WashTemperatureDropdown(selected: String, onSelected: (String) -> Unit) {
+    val options = listOf(
+        "",
+        stringResource(R.string.yarn_wash_temp_cold),
+        stringResource(R.string.yarn_wash_temp_warm),
+        stringResource(R.string.yarn_wash_temp_hot),
+        stringResource(R.string.yarn_wash_temp_very_hot),
+        stringResource(R.string.yarn_wash_temp_do_not_wash)
+    )
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.yarn_care_iron_temp)) },
+            placeholder = { Text(stringResource(R.string.yarn_wash_temp_select), color = TextMuted) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            singleLine = true,
+            shape = RoundedCornerShape(10.dp),
+            colors = formTextFieldColors(),
+            modifier = Modifier.fillMaxWidth().menuAnchor()
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.drop(1).forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = { onSelected(option); expanded = false }
+                )
+            }
+            if (selected.isNotBlank()) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.yarn_wash_temp_clear), color = TextMuted) },
+                    onClick = { onSelected(""); expanded = false }
+                )
+            }
         }
     }
 }

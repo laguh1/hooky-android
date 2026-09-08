@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material3.AlertDialog
@@ -74,6 +76,8 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
+import com.hooky.app.ui.util.labelResId
+import com.hooky.app.util.toDisplayDate
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -94,7 +98,14 @@ fun YarnDetailScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    LaunchedEffect(uiState.navigateToClone) {
+        uiState.navigateToClone?.let { newId ->
+            viewModel.onAction(YarnDetailAction.ClearCloneNavigation)
+            onNavigateToEdit(newId)
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator(
@@ -114,7 +125,8 @@ fun YarnDetailScreen(
                     yarn = uiState.yarn!!,
                     onNavigateBack = onNavigateBack,
                     onNavigateToEdit = { onNavigateToEdit(yarnId) },
-                    onArchiveClick = { viewModel.onAction(YarnDetailAction.ShowArchiveDialog) }
+                    onArchiveClick = { viewModel.onAction(YarnDetailAction.ShowArchiveDialog) },
+                    onCloneClick = { viewModel.onAction(YarnDetailAction.CloneYarn) }
                 )
             }
         }
@@ -142,7 +154,8 @@ private fun YarnDetailContent(
     yarn: YarnEntity,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
-    onArchiveClick: () -> Unit
+    onArchiveClick: () -> Unit,
+    onCloneClick: () -> Unit
 ) {
     val json = remember { Json { ignoreUnknownKeys = true } }
 
@@ -154,15 +167,15 @@ private fun YarnDetailContent(
         try { json.decodeFromString<CareInstructions>(yarn.careInstructions) } catch (_: Exception) { CareInstructions() }
     }
 
-    val materialDisplayName = remember(yarn.material) {
-        try { Material.valueOf(yarn.material).displayName } catch (_: Exception) { yarn.material }
+    val materialResId = remember(yarn.material) {
+        try { Material.valueOf(yarn.material).labelResId } catch (_: Exception) { null }
     }
+    val materialDisplayName = materialResId?.let { stringResource(it) } ?: yarn.material
 
-    val weightDisplayName = remember(yarn.weightCategory) {
-        yarn.weightCategory?.let {
-            try { WeightCategory.valueOf(it).displayName } catch (_: Exception) { it }
-        }
+    val weightResId = remember(yarn.weightCategory) {
+        yarn.weightCategory?.let { try { WeightCategory.valueOf(it).labelResId } catch (_: Exception) { null } }
     }
+    val weightDisplayName = weightResId?.let { stringResource(it) } ?: yarn.weightCategory
 
     val uriHandler = LocalUriHandler.current
 
@@ -319,7 +332,7 @@ private fun YarnDetailContent(
                 YarnInfoCard(title = stringResource(R.string.yarn_section_purchase)) {
                     yarn.pricePaid?.let { InfoRow(label = stringResource(R.string.yarn_label_price_paid), value = "€$it") }
                     yarn.purchaseLocation?.let { InfoRow(label = stringResource(R.string.yarn_label_location), value = it) }
-                    yarn.purchaseDate?.let { InfoRow(label = stringResource(R.string.yarn_label_date), value = it) }
+                    yarn.purchaseDate?.let { InfoRow(label = stringResource(R.string.yarn_label_date), value = it.toDisplayDate()) }
                     yarn.purchaseLink?.let { link ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -351,7 +364,7 @@ private fun YarnDetailContent(
             // Care Instructions card
             val hasCareInfo = careInstructions.machineWash || careInstructions.handWash ||
                 careInstructions.dryClean || careInstructions.bleach || careInstructions.tumbleDry ||
-                careInstructions.ironTemperature != null || careInstructions.notes != null
+                careInstructions.ironTemperature != null || careInstructions.washTemperature != null || careInstructions.notes != null
             if (hasCareInfo) {
                 CareInstructionsCard(careInstructions = careInstructions)
             }
@@ -366,7 +379,7 @@ private fun YarnDetailContent(
             // Action buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = onNavigateToEdit,
@@ -384,6 +397,23 @@ private fun YarnDetailContent(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(stringResource(R.string.action_edit))
+                }
+
+                OutlinedButton(
+                    onClick = onCloneClick,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Slate
+                    )
+                ) {
+                    Icon(
+                        Icons.Filled.ContentCopy,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(stringResource(R.string.action_clone))
                 }
 
                 OutlinedButton(
@@ -494,7 +524,7 @@ private fun CareInstructionsCard(careInstructions: CareInstructions) {
                 }
             }
 
-            careInstructions.ironTemperature?.let { temp ->
+            (careInstructions.washTemperature ?: careInstructions.ironTemperature)?.let { temp ->
                 InfoRow(label = stringResource(R.string.yarn_label_iron_temp), value = temp)
             }
 

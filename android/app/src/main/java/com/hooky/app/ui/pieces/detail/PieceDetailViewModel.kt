@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.db.entity.CounterEntity
 import com.hooky.app.data.premium.PremiumManager
+import com.hooky.app.domain.model.WorkSession
 import com.hooky.app.data.repository.CounterRepository
 import com.hooky.app.data.repository.NeedleRepository
 import com.hooky.app.data.repository.PieceRepository
@@ -53,6 +54,7 @@ sealed interface PieceDetailAction {
     object PauseTimer : PieceDetailAction
     object ResumeTimer : PieceDetailAction
     object StopTimer : PieceDetailAction
+    data class SetWorkTime(val totalSeconds: Long) : PieceDetailAction
     data class ApplySuggestedPrice(val price: Float) : PieceDetailAction
     data class AddCounter(val name: String, val target: Int?) : PieceDetailAction
     data class DeleteCounter(val id: Int) : PieceDetailAction
@@ -81,6 +83,7 @@ class PieceDetailViewModel @Inject constructor(
     private var timerJob: Job? = null
     private var timerSessionStart: Long? = null
     private var timerInitialized = false
+    private var rowCountAtTimerStart: Int = -1
 
     init {
         viewModelScope.launch {
@@ -191,6 +194,7 @@ class PieceDetailViewModel @Inject constructor(
                 val piece = _uiState.value.piece ?: return
                 val now = System.currentTimeMillis()
                 timerSessionStart = now
+                rowCountAtTimerStart = piece.rowCount
                 viewModelScope.launch {
                     try {
                         pieceRepository.updateTimer(
@@ -268,6 +272,9 @@ class PieceDetailViewModel @Inject constructor(
                 }
                 timerSessionStart = null
                 val workHours = newTotal / 3600f
+                val durationMinutes = ((newTotal - piece.timerTotalSeconds)).toInt() / 60
+                val rowsDone = if (rowCountAtTimerStart >= 0) piece.rowCount - rowCountAtTimerStart else 0
+                rowCountAtTimerStart = -1
                 viewModelScope.launch {
                     try {
                         pieceRepository.updateTimer(
@@ -277,6 +284,14 @@ class PieceDetailViewModel @Inject constructor(
                             sessionStartAt = null,
                             workHours = workHours
                         )
+                        if (durationMinutes > 0) {
+                            val session = WorkSession(
+                                date = java.time.LocalDate.now().toString(),
+                                durationMinutes = durationMinutes,
+                                rowsCompleted = if (rowsDone > 0) rowsDone else null
+                            )
+                            pieceRepository.appendWorkSession(pieceId, session, piece.workSessions)
+                        }
                     } catch (e: Exception) {
                         _uiState.update { it.copy(error = e.message) }
                     }
@@ -287,6 +302,29 @@ class PieceDetailViewModel @Inject constructor(
                         timerState = TimerState.IDLE
                     )
                 }
+            }
+            is PieceDetailAction.SetWorkTime -> {
+                val piece = _uiState.value.piece ?: return
+                val newTotal = action.totalSeconds.coerceAtLeast(0L)
+                val workHours = newTotal / 3600f
+                val isRunning = _uiState.value.timerState == TimerState.RUNNING
+                if (isRunning) {
+                    timerSessionStart = System.currentTimeMillis()
+                }
+                viewModelScope.launch {
+                    try {
+                        pieceRepository.updateTimer(
+                            id = pieceId,
+                            totalSeconds = newTotal,
+                            isRunning = isRunning,
+                            sessionStartAt = timerSessionStart,
+                            workHours = workHours
+                        )
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+                _uiState.update { it.copy(timerDisplaySeconds = newTotal) }
             }
             is PieceDetailAction.ApplySuggestedPrice -> {
                 viewModelScope.launch {

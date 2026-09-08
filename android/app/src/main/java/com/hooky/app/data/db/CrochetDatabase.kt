@@ -7,12 +7,14 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.hooky.app.data.db.converters.Converters
 import com.hooky.app.data.db.dao.CounterDao
+import com.hooky.app.data.db.dao.IdeaDao
 import com.hooky.app.data.db.dao.IdCounterDao
 import com.hooky.app.data.db.dao.NeedleDao
 import com.hooky.app.data.db.dao.PieceDao
 import com.hooky.app.data.db.dao.StitchDao
 import com.hooky.app.data.db.dao.YarnDao
 import com.hooky.app.data.db.entity.CounterEntity
+import com.hooky.app.data.db.entity.IdeaEntity
 import com.hooky.app.data.db.entity.IdCounterEntity
 import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.data.db.entity.PieceEntity
@@ -26,9 +28,10 @@ import com.hooky.app.data.db.entity.YarnEntity
         StitchEntity::class,
         NeedleEntity::class,
         IdCounterEntity::class,
-        CounterEntity::class
+        CounterEntity::class,
+        IdeaEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -40,6 +43,7 @@ abstract class CrochetDatabase : RoomDatabase() {
     abstract fun needleDao(): NeedleDao
     abstract fun idCounterDao(): IdCounterDao
     abstract fun counterDao(): CounterDao
+    abstract fun ideaDao(): IdeaDao
 
     companion object {
         const val DATABASE_NAME = "crochet_database"
@@ -77,6 +81,23 @@ abstract class CrochetDatabase : RoomDatabase() {
                         target INTEGER,
                         sortOrder INTEGER NOT NULL DEFAULT 0,
                         createdAt INTEGER NOT NULL
+                    )"""
+                )
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS ideas (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        title TEXT NOT NULL,
+                        source TEXT NOT NULL,
+                        url TEXT NOT NULL,
+                        description TEXT,
+                        locale TEXT NOT NULL,
+                        isSeeded INTEGER NOT NULL DEFAULT 0,
+                        sortOrder INTEGER NOT NULL DEFAULT 0
                     )"""
                 )
             }

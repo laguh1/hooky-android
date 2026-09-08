@@ -40,4 +40,10 @@ interface NeedleDao {
 
     @Query("SELECT * FROM needles WHERE archived = 1 ORDER BY archivedDate DESC")
     fun getArchivedNeedles(): Flow<List<NeedleEntity>>
+
+    @Query("SELECT * FROM needles")
+    suspend fun getAllNow(): List<NeedleEntity>
+
+    @Query("DELETE FROM needles")
+    suspend fun clearAll()
 }

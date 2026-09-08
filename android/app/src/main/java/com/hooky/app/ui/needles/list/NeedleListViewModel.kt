@@ -1,7 +1,9 @@
 package com.hooky.app.ui.needles.list
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hooky.app.R
 import com.hooky.app.data.db.entity.NeedleEntity
 import com.hooky.app.data.repository.NeedleRepository
 import com.hooky.app.domain.model.enums.NeedleType
@@ -14,11 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class NeedleFilter(val displayName: String) {
-    ALL("All"),
-    CROCHET_HOOK("Hooks"),
-    KNITTING_NEEDLE("Knitting"),
-    OTHER("Other")
+enum class NeedleFilter(@StringRes val labelResId: Int) {
+    ALL(R.string.piece_filter_all),
+    CROCHET_HOOK(R.string.needle_filter_hooks),
+    KNITTING_NEEDLE(R.string.needle_filter_knitting),
+    OTHER(R.string.needle_filter_other)
 }
 
 data class NeedleListUiState(
