@@ -236,9 +236,9 @@
     <!-- ================================================================ -->
     <!-- Enum display names — Destination -->
     <!-- ================================================================ -->
-    <string name="destination_for_sale">Para Venda</string>
+    <string name="destination_for_sale">Venda</string>
     <string name="destination_sold">Vendido</string>
-    <string name="destination_for_gift">Para Presente</string>
+    <string name="destination_for_gift">Presente</string>
     <string name="destination_gifted">Presenteado</string>
     <string name="destination_for_self">Para Mim</string>
     <string name="destination_in_use">Em Uso</string>
@@ -535,6 +535,52 @@
 
     <!-- Common — settings -->
     <string name="action_settings">Configurações</string>
+
+
+    <!-- Settings Screen -->
+    <string name="settings_section_appearance">APARÊNCIA</string>
+    <string name="settings_section_language">IDIOMA</string>
+    <string name="settings_section_currency">MOEDA</string>
+    <string name="settings_section_backup">CÓPIA DE SEGURANÇA</string>
+    <string name="settings_section_help">AJUDA</string>
+    <string name="settings_section_beta">BETA</string>
+    <string name="settings_section_debug">DEBUG</string>
+
+    <string name="settings_theme_system_label">Padrão do sistema</string>
+    <string name="settings_theme_system_sublabel">Segue a configuração do dispositivo</string>
+    <string name="settings_theme_light_label">Claro</string>
+    <string name="settings_theme_light_sublabel">Sempre claro</string>
+    <string name="settings_theme_dark_label">Escuro</string>
+    <string name="settings_theme_dark_sublabel">Sempre escuro</string>
+
+    <string name="settings_language_system_label">Padrão do sistema</string>
+    <string name="settings_lang_english">Inglês</string>
+    <string name="settings_lang_spanish">Espanhol</string>
+    <string name="settings_lang_portuguese">Português (Brasil)</string>
+
+    <string name="settings_currency_eur">Euro</string>
+    <string name="settings_currency_usd">Dólar americano</string>
+    <string name="settings_currency_gbp">Libra esterlina</string>
+    <string name="settings_currency_brl">Real brasileiro</string>
+
+    <string name="settings_backup_export_title">Exportar cópia de segurança</string>
+    <string name="settings_backup_export_subtitle">Salva todos os dados como um arquivo JSON</string>
+    <string name="settings_backup_import_title">Importar cópia de segurança</string>
+    <string name="settings_backup_import_subtitle">Substitui os dados atuais pelo conteúdo do backup</string>
+    <string name="settings_backup_share_title">Salvar cópia de segurança do Hooky</string>
+    <string name="settings_backup_import_done">%d itens restaurados com sucesso</string>
+
+    <string name="settings_help_title">Ajuda e dicas</string>
+    <string name="settings_help_subtitle">Funcionalidades ocultas e atalhos</string>
+
+    <string name="settings_beta_access_label">Acesso</string>
+    <string name="settings_beta_access_premium">Testador premium</string>
+    <string name="settings_beta_access_standard">Padrão</string>
+    <string name="settings_beta_tester_id_label">ID de testador</string>
+    <string name="settings_beta_copy_tester_id_cd">Copiar ID de testador</string>
+
+    <string name="settings_debug_simulate_premium">Simular Premium</string>
+    <string name="settings_debug_simulate_premium_sub">Somente para desenvolvimento — ativa/desativa funcionalidades premium</string>
 
     <!-- Stitches — video link hint -->
     <string name="stitch_video_link_hint">URL do YouTube</string>
