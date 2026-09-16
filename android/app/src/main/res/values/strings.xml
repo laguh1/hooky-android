@@ -538,6 +538,54 @@
     <!-- ================================================================ -->
     <string name="action_settings">Settings</string>
 
+
+    <!-- ================================================================ -->
+    <!-- Settings Screen -->
+    <!-- ================================================================ -->
+    <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_section_language">LANGUAGE</string>
+    <string name="settings_section_currency">CURRENCY</string>
+    <string name="settings_section_backup">BACKUP</string>
+    <string name="settings_section_help">HELP</string>
+    <string name="settings_section_beta">BETA</string>
+    <string name="settings_section_debug">DEBUG</string>
+
+    <string name="settings_theme_system_label">System default</string>
+    <string name="settings_theme_system_sublabel">Follows device setting</string>
+    <string name="settings_theme_light_label">Light</string>
+    <string name="settings_theme_light_sublabel">Always light</string>
+    <string name="settings_theme_dark_label">Dark</string>
+    <string name="settings_theme_dark_sublabel">Always dark</string>
+
+    <string name="settings_language_system_label">System default</string>
+    <string name="settings_lang_english">English</string>
+    <string name="settings_lang_spanish">Spanish</string>
+    <string name="settings_lang_portuguese">Portuguese (Brazil)</string>
+
+    <string name="settings_currency_eur">Euro</string>
+    <string name="settings_currency_usd">US Dollar</string>
+    <string name="settings_currency_gbp">British Pound</string>
+    <string name="settings_currency_brl">Brazilian Real</string>
+
+    <string name="settings_backup_export_title">Export backup</string>
+    <string name="settings_backup_export_subtitle">Save all data as a JSON file</string>
+    <string name="settings_backup_import_title">Import backup</string>
+    <string name="settings_backup_import_subtitle">Replaces current data with backup contents</string>
+    <string name="settings_backup_share_title">Save Hooky backup</string>
+    <string name="settings_backup_import_done">%d items restored successfully</string>
+
+    <string name="settings_help_title">Help &amp; Tips</string>
+    <string name="settings_help_subtitle">Hidden features and shortcuts</string>
+
+    <string name="settings_beta_access_label">Access</string>
+    <string name="settings_beta_access_premium">Premium tester</string>
+    <string name="settings_beta_access_standard">Standard</string>
+    <string name="settings_beta_tester_id_label">Tester ID</string>
+    <string name="settings_beta_copy_tester_id_cd">Copy Tester ID</string>
+
+    <string name="settings_debug_simulate_premium">Simulate Premium</string>
+    <string name="settings_debug_simulate_premium_sub">Dev only — toggle premium features</string>
+
     <!-- ================================================================ -->
     <!-- Stitches — video link hint -->
     <!-- ================================================================ -->
