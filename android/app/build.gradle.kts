@@ -30,8 +30,8 @@ android {
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
-        versionCode = 13
-        versionName = "1.4.6"
+        versionCode = 14
+        versionName = "1.4.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
