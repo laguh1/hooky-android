@@ -3,6 +3,7 @@ package com.hooky.app.data.scanner
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import androidx.core.graphics.ColorUtils
 import androidx.palette.graphics.Palette
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -29,10 +30,30 @@ class PaletteColorExtractor @Inject constructor(
                 val bitmap = BitmapFactory.decodeFile(photoPath) ?: return@withContext null
                 val palette = Palette.from(bitmap).generate()
 
-                // Priority: dominant → vibrant → muted → first swatch
-                val swatch = palette.dominantSwatch
-                    ?: palette.vibrantSwatch
-                    ?: palette.mutedSwatch
+                // Yarn close-ups are fuzzy/textured, so the single biggest pixel cluster
+                // (dominantSwatch) is often a desaturated shadow/highlight blend rather
+                // than the yarn's true color — which is why this used to come back
+                // "Grey" for most yarns. Prefer the most saturated swatch among every
+                // candidate Palette found, and only fall back to dominant/largest when
+                // nothing has meaningful saturation (i.e. the yarn genuinely is neutral).
+                val hsl = FloatArray(3)
+                fun saturationOf(rgb: Int): Float {
+                    ColorUtils.colorToHSL(rgb, hsl)
+                    return hsl[1]
+                }
+
+                val candidates = listOfNotNull(
+                    palette.vibrantSwatch,
+                    palette.lightVibrantSwatch,
+                    palette.darkVibrantSwatch,
+                    palette.mutedSwatch,
+                    palette.lightMutedSwatch,
+                    palette.darkMutedSwatch
+                )
+                val mostSaturated = candidates.maxByOrNull { saturationOf(it.rgb) }
+
+                val swatch = mostSaturated?.takeIf { saturationOf(it.rgb) >= 0.15f }
+                    ?: palette.dominantSwatch
                     ?: palette.swatches.maxByOrNull { it.population }
                     ?: return@withContext null
 

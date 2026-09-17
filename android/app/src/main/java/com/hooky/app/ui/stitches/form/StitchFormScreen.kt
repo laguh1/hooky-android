@@ -411,9 +411,7 @@ fun StitchFormScreen(
                     OutlinedTextField(
                         value = uiState.description,
                         onValueChange = { viewModel.onAction(StitchFormAction.DescriptionChanged(it)) },
-                        label = { Text(stringResource(R.string.stitch_field_description) + " *") },
-                        isError = uiState.descriptionError != null,
-                        supportingText = uiState.descriptionError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
+                        label = { Text(stringResource(R.string.stitch_field_description)) },
                         minLines = 4,
                         maxLines = 8,
                         shape = RoundedCornerShape(10.dp),

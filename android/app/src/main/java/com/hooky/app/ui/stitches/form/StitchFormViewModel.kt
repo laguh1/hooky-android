@@ -44,8 +44,7 @@ data class StitchFormUiState(
     val chartPath: String? = null,
     val notes: String = "",
     val hasUnsavedChanges: Boolean = false,
-    val nameError: String? = null,
-    val descriptionError: String? = null
+    val nameError: String? = null
 )
 
 sealed interface StitchFormAction {
@@ -158,7 +157,7 @@ class StitchFormViewModel @Inject constructor(
             is StitchFormAction.DifficultyChanged ->
                 _uiState.update { it.copy(difficulty = action.value) }
             is StitchFormAction.DescriptionChanged ->
-                _uiState.update { it.copy(description = action.value, descriptionError = null) }
+                _uiState.update { it.copy(description = action.value) }
             is StitchFormAction.HookfullyLinkChanged ->
                 _uiState.update { it.copy(hookfullyLink = action.value) }
             is StitchFormAction.InstructionLinkChanged ->
@@ -231,13 +230,9 @@ class StitchFormViewModel @Inject constructor(
             _uiState.update { it.copy(nameError = "Name is required") }
             hasError = true
         }
-        if (current.description.isBlank()) {
-            _uiState.update { it.copy(descriptionError = "Description is required") }
-            hasError = true
-        }
         if (hasError) return
 
-        _uiState.update { it.copy(isSaving = true, nameError = null, descriptionError = null) }
+        _uiState.update { it.copy(isSaving = true, nameError = null) }
 
         viewModelScope.launch {
             try {
