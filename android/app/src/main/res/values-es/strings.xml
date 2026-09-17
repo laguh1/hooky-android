@@ -239,9 +239,9 @@
     <!-- ================================================================ -->
     <!-- Enum display names — Destination -->
     <!-- ================================================================ -->
-    <string name="destination_for_sale">A la venta</string>
+    <string name="destination_for_sale">Venta</string>
     <string name="destination_sold">Vendido</string>
-    <string name="destination_for_gift">Para regalo</string>
+    <string name="destination_for_gift">Regalo</string>
     <string name="destination_gifted">Regalado</string>
     <string name="destination_for_self">Para mí</string>
     <string name="destination_in_use">En uso</string>

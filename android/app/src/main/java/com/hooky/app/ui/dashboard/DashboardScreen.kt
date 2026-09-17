@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -483,6 +485,7 @@ private fun SectionHeader(
 // In-Progress card (horizontal scroll, 160dp wide)
 // ---------------------------------------------------------------------------
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InProgressCard(
     piece: PieceEntity,
@@ -547,9 +550,13 @@ private fun InProgressCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Status + Destination chips in a row
-                Row(
+                // Status + Destination chips — wraps the destination chip onto its
+                // own line (as a whole chip) when it doesn't fit next to the status
+                // chip in this 160dp card, instead of letting Text hyphenate mid-word
+                // (e.g. "Regalo" splitting into "Regal"/"o")
+                FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     StatusBadge(
