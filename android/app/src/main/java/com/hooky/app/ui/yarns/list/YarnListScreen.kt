@@ -68,6 +68,7 @@ import com.hooky.app.ui.components.BadgeStyle
 import com.hooky.app.ui.components.StatusBadge
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.util.labelResId
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -178,7 +179,7 @@ fun YarnListScreen(
                         onClick = { viewModel.onAction(YarnListAction.FilterSelected(filter)) },
                         label = {
                             Text(
-                                text = filter.displayName,
+                                text = stringResource(filter.labelRes),
                                 style = MaterialTheme.typography.labelMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -260,19 +261,21 @@ private fun YarnGridCard(
         }
     }
 
-    val materialDisplayName = remember(yarn.material) {
+    val materialLabelRes = remember(yarn.material) {
         try {
-            com.hooky.app.domain.model.enums.Material.valueOf(yarn.material).displayName
-        } catch (_: Exception) { yarn.material }
+            com.hooky.app.domain.model.enums.Material.valueOf(yarn.material).labelResId
+        } catch (_: Exception) { null }
     }
+    val materialDisplayName = materialLabelRes?.let { stringResource(it) } ?: yarn.material
 
-    val weightDisplayName = remember(yarn.weightCategory) {
+    val weightLabelRes = remember(yarn.weightCategory) {
         yarn.weightCategory?.let {
             try {
-                com.hooky.app.domain.model.enums.WeightCategory.valueOf(it).displayName
-            } catch (_: Exception) { it }
+                com.hooky.app.domain.model.enums.WeightCategory.valueOf(it).labelResId
+            } catch (_: Exception) { null }
         }
     }
+    val weightDisplayName = weightLabelRes?.let { stringResource(it) }
 
     Card(
         modifier = Modifier
