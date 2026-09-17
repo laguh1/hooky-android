@@ -2,8 +2,10 @@ package com.hooky.app.ui.yarns.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hooky.app.R
 import com.hooky.app.data.db.entity.YarnEntity
 import com.hooky.app.data.repository.YarnRepository
+import com.hooky.app.domain.model.enums.Material
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,12 +15,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class YarnFilter(val displayName: String) {
-    ALL("All"),
-    WOOL("Wool"),
-    COTTON("Cotton"),
-    ACRYLIC("Acrylic"),
-    OTHER("Other")
+// material is null for ALL (no filtering). labelRes drives the UI label — kept
+// separate from the filter key so translating the label can never affect which
+// yarns match, since yarn.material is always stored as the Material enum's
+// language-independent name (e.g. "WOOL").
+enum class YarnFilter(val material: Material?, val labelRes: Int) {
+    ALL(null, R.string.yarn_filter_all),
+    WOOL(Material.WOOL, R.string.yarn_filter_wool),
+    COTTON(Material.COTTON, R.string.yarn_filter_cotton),
+    ACRYLIC(Material.ACRYLIC, R.string.yarn_filter_acrylic),
+    OTHER(Material.OTHER, R.string.yarn_filter_other)
 }
 
 data class YarnListUiState(
@@ -117,10 +123,9 @@ class YarnListViewModel @Inject constructor(
         filter: YarnFilter,
         query: String
     ): List<YarnEntity> {
-        val filtered = when (filter) {
-            YarnFilter.ALL -> yarns
-            // Match if material name contains the filter display name (case-insensitive)
-            else -> yarns.filter { it.material.contains(filter.displayName, ignoreCase = true) }
+        val filtered = when (filter.material) {
+            null -> yarns
+            else -> yarns.filter { it.material == filter.material.name }
         }
         return if (query.isBlank()) {
             filtered

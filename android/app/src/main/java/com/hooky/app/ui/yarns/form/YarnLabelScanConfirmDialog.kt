@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hooky.app.R
 import com.hooky.app.domain.model.YarnLabelScanResult
+import com.hooky.app.ui.util.labelResId
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -68,9 +69,9 @@ fun YarnLabelScanConfirmDialog(
                 result.brand?.let { ScanResultRow(stringResource(R.string.yarn_field_brand), it) }
                 result.colorName?.let { ScanResultRow(stringResource(R.string.yarn_field_color), it) }
                 result.colorCode?.let { ScanResultRow(stringResource(R.string.yarn_field_color_code), it) }
-                result.material?.let { ScanResultRow(stringResource(R.string.yarn_field_material), it.displayName) }
+                result.material?.let { ScanResultRow(stringResource(R.string.yarn_field_material), stringResource(it.labelResId)) }
                 result.materialComposition?.let { ScanResultRow(stringResource(R.string.yarn_field_composition), it) }
-                result.weightCategory?.let { ScanResultRow(stringResource(R.string.yarn_field_weight_category), it.displayName) }
+                result.weightCategory?.let { ScanResultRow(stringResource(R.string.yarn_field_weight_category), stringResource(it.labelResId)) }
                 result.ballWeightG?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_weight), "${it}g") }
                 result.ballLengthM?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_length), "${it}m") }
                 result.hookSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_hook_size), "${it}mm") }
