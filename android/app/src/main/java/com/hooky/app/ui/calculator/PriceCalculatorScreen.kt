@@ -65,14 +65,14 @@ import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
 
 private data class ComplexityOption(
-    val label: String,
+    val labelRes: Int,
     val factor: Float
 )
 
 private val complexityOptions = listOf(
-    ComplexityOption("Normal ×1.0", 1.0f),
-    ComplexityOption("Complex ×1.2", 1.2f),
-    ComplexityOption("Very Complex ×1.5", 1.5f)
+    ComplexityOption(R.string.calculator_complexity_normal, 1.0f),
+    ComplexityOption(R.string.calculator_complexity_complex, 1.2f),
+    ComplexityOption(R.string.calculator_complexity_very, 1.5f)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -131,14 +131,14 @@ fun PriceCalculatorScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Inputs",
+                        text = stringResource(R.string.calculator_inputs),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
                     // Material cost
-                    LabeledField(label = "Material cost ($currencySymbol)") {
+                    LabeledField(label = stringResource(R.string.calculator_material_cost, currencySymbol)) {
                         OutlinedTextField(
                             value = uiState.materialCost,
                             onValueChange = { viewModel.onAction(CalculatorAction.MaterialCostChanged(it)) },
@@ -158,7 +158,7 @@ fun PriceCalculatorScreen(
                     }
 
                     // Work hours
-                    LabeledField(label = "Work hours (h)") {
+                    LabeledField(label = stringResource(R.string.calculator_work_hours)) {
                         OutlinedTextField(
                             value = uiState.workHours,
                             onValueChange = { viewModel.onAction(CalculatorAction.WorkHoursChanged(it)) },
@@ -178,7 +178,7 @@ fun PriceCalculatorScreen(
                     }
 
                     // Labor rate
-                    LabeledField(label = "Labor rate ($currencySymbol/hr)") {
+                    LabeledField(label = stringResource(R.string.calculator_labor_rate, currencySymbol)) {
                         OutlinedTextField(
                             value = uiState.laborRate,
                             onValueChange = { viewModel.onAction(CalculatorAction.LaborRateChanged(it)) },
@@ -217,7 +217,7 @@ fun PriceCalculatorScreen(
                                 onClick = { viewModel.onAction(CalculatorAction.ComplexityFactorChanged(option.factor)) },
                                 label = {
                                     Text(
-                                        text = option.label,
+                                        text = stringResource(option.labelRes),
                                         style = MaterialTheme.typography.labelSmall
                                     )
                                 },
@@ -249,7 +249,7 @@ fun PriceCalculatorScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Profit margin",
+                            text = stringResource(R.string.calculator_profit_margin_label),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = TextSecondary
@@ -325,7 +325,7 @@ fun PriceCalculatorScreen(
                             color = TextMuted
                         )
                         Text(
-                            text = "Fill in cost and hours to see the suggested price",
+                            text = stringResource(R.string.calculator_empty_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextMuted
                         )
@@ -414,19 +414,23 @@ private fun ResultCard(
                     ) {
                         Divider(color = White.copy(alpha = 0.2f), thickness = 1.dp)
                         BreakdownRow(
-                            label = "Materials",
+                            label = stringResource(R.string.calculator_breakdown_materials),
                             value = it.materialCost.formatCurrency(currencySymbol)
                         )
                         BreakdownRow(
-                            label = "Labor (${formatHours(workHours)} × ${laborRate.formatCurrency(currencySymbol)})",
+                            label = stringResource(
+                                R.string.calculator_breakdown_labor,
+                                formatHours(workHours),
+                                laborRate.formatCurrency(currencySymbol)
+                            ),
                             value = it.laborCost.formatCurrency(currencySymbol)
                         )
                         BreakdownRow(
-                            label = "Complexity (×${"%.1f".format(complexityFactor)})",
+                            label = stringResource(R.string.calculator_breakdown_complexity, "%.1f".format(complexityFactor)),
                             value = if (it.complexityAdjustment != 0f) "+${it.complexityAdjustment.formatCurrency(currencySymbol)}" else "—"
                         )
                         BreakdownRow(
-                            label = "Profit (${(profitMargin * 100).toInt()}%)",
+                            label = stringResource(R.string.calculator_breakdown_profit, (profitMargin * 100).toInt()),
                             value = it.profitAmount.formatCurrency(currencySymbol)
                         )
                     }

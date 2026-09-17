@@ -13,7 +13,6 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -218,10 +217,7 @@ fun CameraScreen(
                         .padding(6.dp)
                         .clip(CircleShape)
                         .background(Color.White)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
+                        .clickable {
                             val imageCapture = imageCaptureRef.value ?: return@clickable
                             val tempDir = File(context.filesDir, "photos/temp").also { it.mkdirs() }
                             val photoFile = File(tempDir, "photo_${System.currentTimeMillis()}.jpg")

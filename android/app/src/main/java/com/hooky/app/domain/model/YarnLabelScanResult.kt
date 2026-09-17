@@ -19,13 +19,16 @@ data class YarnLabelScanResult(
     val washTemp: String? = null,
     val machineWash: Boolean? = null,
     val handWash: Boolean? = null,
-    val tumbleDry: Boolean? = null
+    val tumbleDry: Boolean? = null,
+    val bleach: Boolean? = null,
+    val dryClean: Boolean? = null
 ) {
     val hasAnyData: Boolean get() = listOfNotNull(
         name, brand, colorName, colorCode, materialComposition,
         ballWeightG, ballLengthM, hookSizeMm, needleSizeMm, gauge, washTemp
     ).isNotEmpty() || material != null || weightCategory != null ||
-        machineWash != null || handWash != null || tumbleDry != null
+        machineWash != null || handWash != null || tumbleDry != null ||
+        bleach != null || dryClean != null
 
     // Merge two scan results: this takes priority, other fills in nulls
     fun mergeWith(other: YarnLabelScanResult): YarnLabelScanResult = YarnLabelScanResult(
@@ -44,6 +47,8 @@ data class YarnLabelScanResult(
         washTemp = this.washTemp ?: other.washTemp,
         machineWash = this.machineWash ?: other.machineWash,
         handWash = this.handWash ?: other.handWash,
-        tumbleDry = this.tumbleDry ?: other.tumbleDry
+        tumbleDry = this.tumbleDry ?: other.tumbleDry,
+        bleach = this.bleach ?: other.bleach,
+        dryClean = this.dryClean ?: other.dryClean
     )
 }

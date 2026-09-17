@@ -14,6 +14,7 @@ import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.hooky.app.domain.model.enums.Material
 import com.hooky.app.domain.model.enums.WeightCategory
+import com.hooky.app.R
 import com.hooky.app.ui.util.movePhotosToStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -384,8 +385,27 @@ class YarnFormViewModel @Inject constructor(
                 gauge = result.gauge?.takeIf { it.isNotBlank() } ?: current.gauge,
                 machineWash = result.machineWash ?: current.machineWash,
                 handWash = result.handWash ?: current.handWash,
-                tumbleDry = result.tumbleDry ?: current.tumbleDry
+                tumbleDry = result.tumbleDry ?: current.tumbleDry,
+                bleach = result.bleach ?: current.bleach,
+                dryClean = result.dryClean ?: current.dryClean,
+                washTemperature = washTemperatureBucket(result) ?: current.washTemperature
             )
+        }
+    }
+
+    // Maps the raw wash-care signal detected off the label (a numeric temperature,
+    // or an explicit "do not wash" symbol/phrase) onto one of the fixed
+    // WashTemperatureDropdown buckets — those are the only values the field accepts.
+    private fun washTemperatureBucket(result: YarnLabelScanResult): String? {
+        if (result.machineWash == false && result.handWash != true) {
+            return context.getString(R.string.yarn_wash_temp_do_not_wash)
+        }
+        val temp = result.washTemp?.toIntOrNull() ?: return null
+        return when {
+            temp <= 30 -> context.getString(R.string.yarn_wash_temp_cold)
+            temp <= 40 -> context.getString(R.string.yarn_wash_temp_warm)
+            temp <= 60 -> context.getString(R.string.yarn_wash_temp_hot)
+            else -> context.getString(R.string.yarn_wash_temp_very_hot)
         }
     }
 

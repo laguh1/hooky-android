@@ -140,6 +140,9 @@
     <string name="yarn_wash_temp_hot">60°C – Quente</string>
     <string name="yarn_wash_temp_very_hot">95°C – Muito quente</string>
     <string name="yarn_wash_temp_do_not_wash">Não lavar</string>
+    <string name="yarn_scan_dialog_title">Etiqueta detectada</string>
+    <string name="yarn_scan_dialog_hint">Revise os campos detectados. Somente os valores preenchidos serão aplicados.</string>
+    <string name="yarn_scan_another_side">+ Escanear outro lado</string>
 
     <!-- Yarns — misc -->
     <string name="yarn_archive_title">Arquivar Fio</string>
@@ -300,6 +303,7 @@
     <string name="action_archive">Arquivar</string>
     <string name="action_clone">Clonar</string>
     <string name="action_confirm">Confirmar</string>
+    <string name="action_apply">Aplicar</string>
     <string name="action_delete">Excluir</string>
     <string name="action_search">Buscar</string>
     <string name="action_add_photo">Adicionar Foto</string>
@@ -307,6 +311,8 @@
     <string name="action_choose_gallery">Escolher da Galeria</string>
     <string name="action_copy">Copiar</string>
     <string name="action_back">Voltar</string>
+    <string name="common_yes">Sim</string>
+    <string name="common_no">Não</string>
 
     <!-- ================================================================ -->
     <!-- Common / Shared — labels -->
@@ -348,18 +354,21 @@
     <!-- Price Calculator -->
     <!-- ================================================================ -->
     <string name="calculator_title">Calculadora de Preços</string>
-    <string name="calculator_material_cost">Custo do Material (R$)</string>
-    <string name="calculator_work_hours">Horas de Trabalho</string>
-    <string name="calculator_labor_rate">Taxa de Mão de Obra (R$/h)</string>
+    <string name="calculator_inputs">Dados de entrada</string>
+    <string name="calculator_material_cost">Custo do Material (%s)</string>
+    <string name="calculator_work_hours">Horas de Trabalho (h)</string>
+    <string name="calculator_labor_rate">Taxa de Mão de Obra (%s/h)</string>
     <string name="calculator_complexity">Complexidade</string>
     <string name="calculator_complexity_normal">Normal (×1,0)</string>
     <string name="calculator_complexity_complex">Complexo (×1,2)</string>
     <string name="calculator_complexity_very">Muito Complexo (×1,5)</string>
     <string name="calculator_profit_margin">Margem de Lucro: %d%%</string>
+    <string name="calculator_profit_margin_label">Margem de lucro</string>
+    <string name="calculator_empty_hint">Preencha o custo e as horas para ver o preço sugerido</string>
     <string name="calculator_suggested_price">Preço Sugerido</string>
     <string name="calculator_breakdown_materials">Materiais</string>
-    <string name="calculator_breakdown_labor">Mão de Obra (%s h × R$%s)</string>
-    <string name="calculator_breakdown_complexity">Complexidade</string>
+    <string name="calculator_breakdown_labor">Mão de Obra (%s h × %s)</string>
+    <string name="calculator_breakdown_complexity">Complexidade (×%s)</string>
     <string name="calculator_breakdown_profit">Lucro (%d%%)</string>
     <string name="calculator_copy_price">Copiar Preço</string>
 
@@ -424,6 +433,10 @@
     <string name="piece_field_gift_recipient_name">Nome do presenteado</string>
     <string name="piece_label_material_cost">Custo de material</string>
     <string name="piece_label_suggested_price">Preço sugerido</string>
+    <string name="piece_price_dialog_title">Sugestão de Preço</string>
+    <string name="piece_price_dialog_rows_worked">Fileiras trabalhadas</string>
+    <string name="piece_price_dialog_hourly_rate">Taxa por hora (%s/h)</string>
+    <string name="piece_price_dialog_apply">Aplicar à Peça</string>
     <string name="piece_label_sale_platform">Plataforma de venda</string>
     <string name="piece_label_sale_link">Link de venda</string>
     <string name="piece_label_sold_on">Vendido em</string>
@@ -535,6 +548,51 @@
 
     <!-- Common — settings -->
     <string name="action_settings">Configurações</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_section_appearance">APARÊNCIA</string>
+    <string name="settings_section_language">IDIOMA</string>
+    <string name="settings_section_currency">MOEDA</string>
+    <string name="settings_section_backup">CÓPIA DE SEGURANÇA</string>
+    <string name="settings_section_help">AJUDA</string>
+    <string name="settings_section_beta">BETA</string>
+    <string name="settings_section_debug">DEBUG</string>
+
+    <string name="settings_theme_system_label">Padrão do sistema</string>
+    <string name="settings_theme_system_sublabel">Segue a configuração do dispositivo</string>
+    <string name="settings_theme_light_label">Claro</string>
+    <string name="settings_theme_light_sublabel">Sempre claro</string>
+    <string name="settings_theme_dark_label">Escuro</string>
+    <string name="settings_theme_dark_sublabel">Sempre escuro</string>
+
+    <string name="settings_language_system_label">Padrão do sistema</string>
+    <string name="settings_lang_english">Inglês</string>
+    <string name="settings_lang_spanish">Espanhol</string>
+    <string name="settings_lang_portuguese">Português (Brasil)</string>
+
+    <string name="settings_currency_eur">Euro</string>
+    <string name="settings_currency_usd">Dólar americano</string>
+    <string name="settings_currency_gbp">Libra esterlina</string>
+    <string name="settings_currency_brl">Real brasileiro</string>
+
+    <string name="settings_backup_export_title">Exportar cópia de segurança</string>
+    <string name="settings_backup_export_subtitle">Salva todos os dados como um arquivo JSON</string>
+    <string name="settings_backup_import_title">Importar cópia de segurança</string>
+    <string name="settings_backup_import_subtitle">Substitui os dados atuais pelo conteúdo do backup</string>
+    <string name="settings_backup_share_title">Salvar cópia de segurança do Hooky</string>
+    <string name="settings_backup_import_done">%d itens restaurados com sucesso</string>
+
+    <string name="settings_help_title">Ajuda e dicas</string>
+    <string name="settings_help_subtitle">Funcionalidades ocultas e atalhos</string>
+
+    <string name="settings_beta_access_label">Acesso</string>
+    <string name="settings_beta_access_premium">Testador premium</string>
+    <string name="settings_beta_access_standard">Padrão</string>
+    <string name="settings_beta_tester_id_label">ID de testador</string>
+    <string name="settings_beta_copy_tester_id_cd">Copiar ID de testador</string>
+
+    <string name="settings_debug_simulate_premium">Simular Premium</string>
+    <string name="settings_debug_simulate_premium_sub">Somente para desenvolvimento — ativa/desativa funcionalidades premium</string>
 
     <!-- Stitches — video link hint -->
     <string name="stitch_video_link_hint">URL do YouTube</string>

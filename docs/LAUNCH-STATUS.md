@@ -81,6 +81,54 @@ Google requires **12 testers for 14 days** on a Closed Testing track before you 
 
 ---
 
+## Production Access Reapplication — Q&A
+
+First application was rejected for insufficient tester engagement (not headcount) — see `docs/FIXES-2026-08-31.md` for the evidence log of active iteration kept for reapplying.
+
+**Q: How did you recruit users for your closed test? For example, did you ask friends and family or use a paid testing provider?**
+
+> No paid provider. I personally recruited friends, family, and crochet/knitting community members via WhatsApp and social media. I also asked developer colleagues to test specific features, and knitting/couture-industry acquaintances to review vocabulary and translations (EN/ES/PT-BR).
+
+*(284 characters, plain text — no markdown, ready to paste directly into the Play Console field's character limit.)*
+
+**Q: Describe the engagement you received from testers during your closed test. Include whether or not testers utilised all of the features in your app and whether tester usage was consistent with how you would expect a real user to use your app. If not, describe the differences that you would expect to see.**
+
+> Testers added real pieces, yarns and stitches, scanned yarn labels, and used the row counter and timer. They reported bugs (e.g. dark-mode contrast, button inconsistency), fixed in later updates. Engagement matched expected real-user behaviour across most core features.
+
+*(270 characters, plain text.)*
+
+**Q: Provide a summary of the feedback that you received from testers. Include how you collected the feedback.**
+
+> Collected via WhatsApp and direct conversations. Testers reported dark-mode contrast bugs, inconsistent save-button styling, and requested onboarding, translation corrections, and a shorter piece form with clearer save button. All fixed/implemented in subsequent updates.
+
+*(271 characters, plain text.)*
+
+**Q: Who is the intended audience of your app?**
+
+> Crochet and knitting enthusiasts of any gender, background or skill level who want to organise their projects, yarn stash and stitch library, including hobbyists, sellers, and social media crafters who share and spread craft knowledge. Supports EN, ES and PT-BR.
+
+*(262 characters, plain text.)*
+
+**Q: Describe how your app provides value to users. (Ref: [App quality guidelines](https://developer.android.com/quality))**
+
+> Hooky saves crafters time and guesswork: track project progress, yarn stash and stitches in one place, and price work fairly with built-in cost tracking. Clean, intuitive design makes it easy to navigate. Fully offline, no account: data stays on the user's device.
+
+*(265 characters, plain text.)*
+
+**Q: What changes did you make to your app based on what you learned during your closed test?**
+
+> Added onboarding, improved translations, shortened piece form, clarified save button, fixed critical photo storage bug, and enhanced yarn-label and hook-size scanner accuracy. All reported issues resolved; core workflows validated across multiple devices before release.
+
+*(270 characters, plain text.)*
+
+**Q: How did you decide that your app is ready for production?**
+
+> As both a software engineer and daily crochet crafter, I use Hooky myself for my own projects. All tester-reported issues were fixed, Play Console warnings resolved, and core workflows validated across multiple devices. The app runs fully offline with no crashes after the final round of fixes.
+
+*(294 characters, plain text.)*
+
+---
+
 ## Firebase — Premium Gifting
 - See `docs/PREMIUM-GIFTING.md` for how to grant premium manually
 - `premium_ids` parameter live in Remote Config (default value: `[]`)

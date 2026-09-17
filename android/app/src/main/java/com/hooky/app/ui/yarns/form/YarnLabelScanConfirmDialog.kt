@@ -21,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.hooky.app.R
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
@@ -41,18 +43,20 @@ fun YarnLabelScanConfirmDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Label Detected",
+                text = stringResource(R.string.yarn_scan_dialog_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
         },
         text = {
+            val yes = stringResource(R.string.common_yes)
+            val no = stringResource(R.string.common_no)
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
                 Text(
-                    text = "Review the detected fields. Only non-empty values will be applied.",
+                    text = stringResource(R.string.yarn_scan_dialog_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
@@ -60,22 +64,24 @@ fun YarnLabelScanConfirmDialog(
                 HorizontalDivider(color = BorderLight)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                result.name?.let { ScanResultRow("Name", it) }
-                result.brand?.let { ScanResultRow("Brand", it) }
-                result.colorName?.let { ScanResultRow("Color", it) }
-                result.colorCode?.let { ScanResultRow("Color code", it) }
-                result.material?.let { ScanResultRow("Material", it.displayName) }
-                result.materialComposition?.let { ScanResultRow("Composition", it) }
-                result.weightCategory?.let { ScanResultRow("Weight", it.displayName) }
-                result.ballWeightG?.let { ScanResultRow("Ball weight", "${it}g") }
-                result.ballLengthM?.let { ScanResultRow("Ball length", "${it}m") }
-                result.hookSizeMm?.let { ScanResultRow("Hook size", "${it}mm") }
-                result.needleSizeMm?.let { ScanResultRow("Needle size", "${it}mm") }
-                result.gauge?.let { ScanResultRow("Gauge", it) }
-                result.washTemp?.let { ScanResultRow("Wash temp", "${it}°C") }
-                result.machineWash?.let { ScanResultRow("Machine wash", if (it) "Yes" else "No") }
-                result.handWash?.let { ScanResultRow("Hand wash", if (it) "Yes" else "No") }
-                result.tumbleDry?.let { ScanResultRow("Tumble dry", if (it) "Yes" else "No") }
+                result.name?.let { ScanResultRow(stringResource(R.string.yarn_field_name), it) }
+                result.brand?.let { ScanResultRow(stringResource(R.string.yarn_field_brand), it) }
+                result.colorName?.let { ScanResultRow(stringResource(R.string.yarn_field_color), it) }
+                result.colorCode?.let { ScanResultRow(stringResource(R.string.yarn_field_color_code), it) }
+                result.material?.let { ScanResultRow(stringResource(R.string.yarn_field_material), it.displayName) }
+                result.materialComposition?.let { ScanResultRow(stringResource(R.string.yarn_field_composition), it) }
+                result.weightCategory?.let { ScanResultRow(stringResource(R.string.yarn_field_weight_category), it.displayName) }
+                result.ballWeightG?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_weight), "${it}g") }
+                result.ballLengthM?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_length), "${it}m") }
+                result.hookSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_hook_size), "${it}mm") }
+                result.needleSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_needle_size), "${it}mm") }
+                result.gauge?.let { ScanResultRow(stringResource(R.string.yarn_label_gauge), it) }
+                result.washTemp?.let { ScanResultRow(stringResource(R.string.yarn_label_iron_temp), "${it}°C") }
+                result.machineWash?.let { ScanResultRow(stringResource(R.string.yarn_care_machine_wash), if (it) yes else no) }
+                result.handWash?.let { ScanResultRow(stringResource(R.string.yarn_care_hand_wash), if (it) yes else no) }
+                result.tumbleDry?.let { ScanResultRow(stringResource(R.string.yarn_care_tumble_dry), if (it) yes else no) }
+                result.bleach?.let { ScanResultRow(stringResource(R.string.yarn_care_bleach), if (it) yes else no) }
+                result.dryClean?.let { ScanResultRow(stringResource(R.string.yarn_care_dry_clean), if (it) yes else no) }
 
                 Spacer(modifier = Modifier.height(8.dp))
                 TextButton(
@@ -83,7 +89,7 @@ fun YarnLabelScanConfirmDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "+ Scan another side",
+                        text = stringResource(R.string.yarn_scan_another_side),
                         style = MaterialTheme.typography.bodySmall,
                         color = Slate
                     )
@@ -99,7 +105,7 @@ fun YarnLabelScanConfirmDialog(
                     contentColor = White
                 )
             ) {
-                Text("Apply", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.action_apply), fontWeight = FontWeight.SemiBold)
             }
         },
         dismissButton = {
@@ -107,7 +113,7 @@ fun YarnLabelScanConfirmDialog(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         shape = RoundedCornerShape(16.dp)

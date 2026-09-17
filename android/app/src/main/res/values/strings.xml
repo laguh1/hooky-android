@@ -140,6 +140,9 @@
     <string name="yarn_wash_temp_hot">60°C – Hot</string>
     <string name="yarn_wash_temp_very_hot">95°C – Very hot</string>
     <string name="yarn_wash_temp_do_not_wash">Do not wash</string>
+    <string name="yarn_scan_dialog_title">Label Detected</string>
+    <string name="yarn_scan_dialog_hint">Review the detected fields. Only non-empty values will be applied.</string>
+    <string name="yarn_scan_another_side">+ Scan another side</string>
 
     <!-- Yarns — misc -->
     <string name="yarn_archive_title">Archive Yarn</string>
@@ -300,6 +303,7 @@
     <string name="action_archive">Archive</string>
     <string name="action_clone">Clone</string>
     <string name="action_confirm">Confirm</string>
+    <string name="action_apply">Apply</string>
     <string name="action_delete">Delete</string>
     <string name="action_search">Search</string>
     <string name="action_add_photo">Add Photo</string>
@@ -307,6 +311,8 @@
     <string name="action_choose_gallery">Choose from Gallery</string>
     <string name="action_copy">Copy</string>
     <string name="action_back">Back</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
 
     <!-- ================================================================ -->
     <!-- Common / Shared — labels -->
@@ -348,18 +354,21 @@
     <!-- Price Calculator -->
     <!-- ================================================================ -->
     <string name="calculator_title">Price Calculator</string>
-    <string name="calculator_material_cost">Material Cost (€)</string>
-    <string name="calculator_work_hours">Work Hours</string>
-    <string name="calculator_labor_rate">Labor Rate (€/hr)</string>
+    <string name="calculator_inputs">Inputs</string>
+    <string name="calculator_material_cost">Material Cost (%s)</string>
+    <string name="calculator_work_hours">Work Hours (h)</string>
+    <string name="calculator_labor_rate">Labor Rate (%s/hr)</string>
     <string name="calculator_complexity">Complexity</string>
     <string name="calculator_complexity_normal">Normal (×1.0)</string>
     <string name="calculator_complexity_complex">Complex (×1.2)</string>
     <string name="calculator_complexity_very">Very Complex (×1.5)</string>
     <string name="calculator_profit_margin">Profit Margin: %d%%</string>
+    <string name="calculator_profit_margin_label">Profit margin</string>
+    <string name="calculator_empty_hint">Fill in cost and hours to see the suggested price</string>
     <string name="calculator_suggested_price">Suggested Price</string>
     <string name="calculator_breakdown_materials">Materials</string>
-    <string name="calculator_breakdown_labor">Labor (%s h × €%s)</string>
-    <string name="calculator_breakdown_complexity">Complexity</string>
+    <string name="calculator_breakdown_labor">Labor (%s h × %s)</string>
+    <string name="calculator_breakdown_complexity">Complexity (×%s)</string>
     <string name="calculator_breakdown_profit">Profit (%d%%)</string>
     <string name="calculator_copy_price">Copy Price</string>
 
@@ -424,6 +433,10 @@
     <string name="piece_field_gift_recipient_name">Gift recipient name</string>
     <string name="piece_label_material_cost">Material cost</string>
     <string name="piece_label_suggested_price">Suggested price</string>
+    <string name="piece_price_dialog_title">Price Suggestion</string>
+    <string name="piece_price_dialog_rows_worked">Rows worked</string>
+    <string name="piece_price_dialog_hourly_rate">Hourly rate (%s/h)</string>
+    <string name="piece_price_dialog_apply">Apply to Piece</string>
     <string name="piece_label_sale_platform">Sale platform</string>
     <string name="piece_label_sale_link">Sale link</string>
     <string name="piece_label_sold_on">Sold on</string>
@@ -537,6 +550,53 @@
     <!-- Common — settings -->
     <!-- ================================================================ -->
     <string name="action_settings">Settings</string>
+
+    <!-- ================================================================ -->
+    <!-- Settings Screen -->
+    <!-- ================================================================ -->
+    <string name="settings_section_appearance">APPEARANCE</string>
+    <string name="settings_section_language">LANGUAGE</string>
+    <string name="settings_section_currency">CURRENCY</string>
+    <string name="settings_section_backup">BACKUP</string>
+    <string name="settings_section_help">HELP</string>
+    <string name="settings_section_beta">BETA</string>
+    <string name="settings_section_debug">DEBUG</string>
+
+    <string name="settings_theme_system_label">System default</string>
+    <string name="settings_theme_system_sublabel">Follows device setting</string>
+    <string name="settings_theme_light_label">Light</string>
+    <string name="settings_theme_light_sublabel">Always light</string>
+    <string name="settings_theme_dark_label">Dark</string>
+    <string name="settings_theme_dark_sublabel">Always dark</string>
+
+    <string name="settings_language_system_label">System default</string>
+    <string name="settings_lang_english">English</string>
+    <string name="settings_lang_spanish">Spanish</string>
+    <string name="settings_lang_portuguese">Portuguese (Brazil)</string>
+
+    <string name="settings_currency_eur">Euro</string>
+    <string name="settings_currency_usd">US Dollar</string>
+    <string name="settings_currency_gbp">British Pound</string>
+    <string name="settings_currency_brl">Brazilian Real</string>
+
+    <string name="settings_backup_export_title">Export backup</string>
+    <string name="settings_backup_export_subtitle">Save all data as a JSON file</string>
+    <string name="settings_backup_import_title">Import backup</string>
+    <string name="settings_backup_import_subtitle">Replaces current data with backup contents</string>
+    <string name="settings_backup_share_title">Save Hooky backup</string>
+    <string name="settings_backup_import_done">%d items restored successfully</string>
+
+    <string name="settings_help_title">Help &amp; Tips</string>
+    <string name="settings_help_subtitle">Hidden features and shortcuts</string>
+
+    <string name="settings_beta_access_label">Access</string>
+    <string name="settings_beta_access_premium">Premium tester</string>
+    <string name="settings_beta_access_standard">Standard</string>
+    <string name="settings_beta_tester_id_label">Tester ID</string>
+    <string name="settings_beta_copy_tester_id_cd">Copy Tester ID</string>
+
+    <string name="settings_debug_simulate_premium">Simulate Premium</string>
+    <string name="settings_debug_simulate_premium_sub">Dev only — toggle premium features</string>
 
     <!-- ================================================================ -->
     <!-- Stitches — video link hint -->
