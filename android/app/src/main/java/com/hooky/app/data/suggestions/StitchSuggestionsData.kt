@@ -165,7 +165,7 @@ object StitchSuggestionsData {
             id = 107,
             name = "Punto concha",
             creator = "Ganchillo Fácil",
-            youtubeUrl = "https://www.youtube.com/results?search_query=punto+concha+ganchillo+facil",
+            youtubeUrl = "https://www.youtube.com/watch?v=-DQSxPeVrSM",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Grupo en forma de abanico, ideal para chales"
@@ -192,7 +192,7 @@ object StitchSuggestionsData {
             id = 110,
             name = "Punto relleno",
             creator = "Ganchillo Fácil",
-            youtubeUrl = "https://www.youtube.com/results?search_query=punto+relleno+ganchillo",
+            youtubeUrl = "https://www.youtube.com/watch?v=-Fcc3pSwAKw",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto de unión, mueve el hilo sin altura"
@@ -207,7 +207,7 @@ object StitchSuggestionsData {
             id = 201,
             name = "Ponto baixo",
             creator = "Professora Simone Gomes",
-            youtubeUrl = "https://www.youtube.com/results?search_query=ponto+baixo+professora+simone+gomes",
+            youtubeUrl = "https://www.youtube.com/watch?v=JvKZ2MPgFV4",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Ponto base do crochê, fácil de aprender"
@@ -216,7 +216,7 @@ object StitchSuggestionsData {
             id = 202,
             name = "Ponto alto",
             creator = "Viviane Crochê",
-            youtubeUrl = "https://www.youtube.com/results?search_query=ponto+alto+viviane+croche",
+            youtubeUrl = "https://www.youtube.com/watch?v=nfOL3sb7vk8",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Ponto mais alto e rápido de trabalhar"
@@ -225,7 +225,7 @@ object StitchSuggestionsData {
             id = 203,
             name = "Meio ponto",
             creator = "Canal da Rose Crochê",
-            youtubeUrl = "https://www.youtube.com/results?search_query=meio+ponto+croche+canal+da+rose",
+            youtubeUrl = "https://www.youtube.com/shorts/Evc3GazfgIs",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Ponto intermediário entre baixo e alto"
@@ -234,7 +234,7 @@ object StitchSuggestionsData {
             id = 204,
             name = "Anel mágico",
             creator = "Crochê com Arte",
-            youtubeUrl = "https://www.youtube.com/results?search_query=anel+magico+croche+com+arte",
+            youtubeUrl = "https://www.youtube.com/watch?v=EL0ianohaSE",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Início ajustável sem buraco no centro"
@@ -243,7 +243,7 @@ object StitchSuggestionsData {
             id = 205,
             name = "Granny Square",
             creator = "Canal da Rose Crochê",
-            youtubeUrl = "https://www.youtube.com/results?search_query=granny+square+canal+da+rose+croche",
+            youtubeUrl = "https://www.youtube.com/watch?v=fuoL60tsMcs",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Quadradinho clássico trabalhado em voltas"
@@ -252,7 +252,7 @@ object StitchSuggestionsData {
             id = 206,
             name = "Ponto fantasia",
             creator = "Professora Simone Gomes",
-            youtubeUrl = "https://www.youtube.com/results?search_query=ponto+fantasia+croche+professora+simone",
+            youtubeUrl = "https://www.youtube.com/watch?v=Fupn42CvESw",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Ponto decorativo com formato de leque"
@@ -261,7 +261,7 @@ object StitchSuggestionsData {
             id = 207,
             name = "Ponto pipoca",
             creator = "Viviane Crochê",
-            youtubeUrl = "https://www.youtube.com/results?search_query=ponto+pipoca+croche+viviane",
+            youtubeUrl = "https://www.youtube.com/watch?v=cka7kkaHJMU",
             category = StitchCategory.TEXTURED,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Ponto 3D com textura arredondada"
@@ -270,7 +270,7 @@ object StitchSuggestionsData {
             id = 208,
             name = "Ponto filé",
             creator = "Viviane Crochê",
-            youtubeUrl = "https://www.youtube.com/results?search_query=ponto+file+croche+viviane",
+            youtubeUrl = "https://www.youtube.com/watch?v=MoESW6H37jc",
             category = StitchCategory.LACE,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Crochê com malha quadriculada, ideal para toalhas"
@@ -279,7 +279,7 @@ object StitchSuggestionsData {
             id = 209,
             name = "Tapete em crochê",
             creator = "Professora Simone Gomes",
-            youtubeUrl = "https://www.youtube.com/results?search_query=tapete+croche+professora+simone+gomes",
+            youtubeUrl = "https://www.youtube.com/watch?v=IG5Ig6QvVCE",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Técnica para tapetes com fio de malha"
@@ -288,7 +288,7 @@ object StitchSuggestionsData {
             id = 210,
             name = "Corrente",
             creator = "Crochê com Arte",
-            youtubeUrl = "https://www.youtube.com/results?search_query=corrente+croche+com+arte",
+            youtubeUrl = "https://www.youtube.com/shorts/meXoHpmImm8",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Base de todo projeto em crochê"
