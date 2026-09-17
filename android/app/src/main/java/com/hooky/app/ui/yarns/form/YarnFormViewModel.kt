@@ -325,7 +325,9 @@ class YarnFormViewModel @Inject constructor(
             try {
                 val result = labelScannerService.scanFromPath(path)
                 val accumulated = _uiState.value.accumulatedScanResult
-                val merged = if (accumulated != null) result.mergeWith(accumulated) else result
+                // Earlier scans take priority — scanning another side should only fill in
+                // fields still missing, never overwrite what a previous side already found.
+                val merged = if (accumulated != null) accumulated.mergeWith(result) else result
                 if (merged.hasAnyData) {
                     _uiState.update { it.copy(isScanning = false, scanResult = merged, accumulatedScanResult = null) }
                 } else {
