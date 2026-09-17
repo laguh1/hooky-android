@@ -7,16 +7,6 @@
     <!-- Microphone permission for voice row counting -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <!-- Media images: API 33+ -->
-    <uses-permission
-        android:name="android.permission.READ_MEDIA_IMAGES"
-        android:minSdkVersion="33" />
-
-    <!-- External storage: up to API 32 -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
     <!-- Camera feature declaration -->
     <uses-feature
         android:name="android.hardware.camera"
