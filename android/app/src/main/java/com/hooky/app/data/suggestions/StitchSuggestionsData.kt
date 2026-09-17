@@ -110,8 +110,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 101,
             name = "Punto bajo",
-            creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
+            creator = "Ahuyama Crochet",
+            youtubeUrl = "https://www.youtube.com/watch?v=vKX4wyTh3pY",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "El punto más básico del ganchillo"
@@ -119,8 +119,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 102,
             name = "Punto alto",
-            creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
+            creator = "Ahuyama Crochet",
+            youtubeUrl = "https://www.youtube.com/watch?v=fppVmG-oWoE",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto más alto y rápido de tejer"
@@ -128,8 +128,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 103,
             name = "Medio punto alto",
-            creator = "Tejiendo Perú",
-            youtubeUrl = "https://www.youtube.com/user/esperosas",
+            creator = "marcetejeycrea",
+            youtubeUrl = "https://www.youtube.com/watch?v=TwQzSA6xnEM",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto intermedio entre bajo y alto"
@@ -137,8 +137,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 104,
             name = "Punto doble alto",
-            creator = "Tejiendo Perú",
-            youtubeUrl = "https://www.youtube.com/user/esperosas",
+            creator = "Maguilú Escuela de Tejido",
+            youtubeUrl = "https://www.youtube.com/watch?v=3g2489K5z4E",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto largo ideal para encajes"
@@ -146,8 +146,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 105,
             name = "Anillo mágico",
-            creator = "Tejiendo Perú",
-            youtubeUrl = "https://www.youtube.com/user/esperosas",
+            creator = "Patrones Valhalla",
+            youtubeUrl = "https://www.youtube.com/watch?v=jD3BpWuDilk",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Inicio ajustable sin agujero en el centro"
@@ -155,8 +155,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 106,
             name = "Cuadrado de la abuela",
-            creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
+            creator = "Ahuyama Crochet",
+            youtubeUrl = "https://www.youtube.com/watch?v=KMpJVo7efOU",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Motivo cuadrado clásico trabajado en vueltas"
@@ -173,8 +173,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 108,
             name = "Punto piña",
-            creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
+            creator = "Maia Maia Crochet",
+            youtubeUrl = "https://www.youtube.com/watch?v=-KKsstmufk8",
             category = StitchCategory.TEXTURED,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Racimo que forma una textura 3D"
@@ -182,8 +182,8 @@ object StitchSuggestionsData {
         StitchSuggestion(
             id = 109,
             name = "Punto enrejado",
-            creator = "Tejiendo Perú",
-            youtubeUrl = "https://www.youtube.com/user/esperosas",
+            creator = "TejiendodeCorazon",
+            youtubeUrl = "https://www.youtube.com/watch?v=DxARvGXGGCI",
             category = StitchCategory.LACE,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Punto calado ideal para chal y blusas"
