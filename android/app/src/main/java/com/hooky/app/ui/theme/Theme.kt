@@ -2,11 +2,17 @@ package com.hooky.app.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val LightColorScheme = lightColorScheme(
@@ -71,6 +77,25 @@ private val DarkColorScheme = darkColorScheme(
     surfaceTint = DarkSlate,
 )
 
+// Boosted press-state alpha so tapping a button is clearly visible when screen-recording
+// (e.g. mirroring the phone to record tutorial videos) — Material3's default pressed
+// ripple alpha (~10-12%) barely shows up on camera.
+private object HookyRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor() = RippleTheme.defaultRippleColor(
+        contentColor = LocalContentColor.current,
+        lightTheme = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    )
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleAlpha(
+        draggedAlpha = 0.3f,
+        focusedAlpha = 0.4f,
+        hoveredAlpha = 0.2f,
+        pressedAlpha = 0.4f
+    )
+}
+
 @Composable
 fun CrochetManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -81,6 +106,7 @@ fun CrochetManagerTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
-    )
+    ) {
+        CompositionLocalProvider(LocalRippleTheme provides HookyRippleTheme, content = content)
+    }
 }

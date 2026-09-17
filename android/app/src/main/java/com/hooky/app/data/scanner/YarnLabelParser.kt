@@ -34,7 +34,9 @@ object YarnLabelParser {
             washTemp = extractWashTemp(text),
             machineWash = extractMachineWash(text),
             handWash = extractHandWash(text),
-            tumbleDry = extractTumbleDry(text)
+            tumbleDry = extractTumbleDry(text),
+            bleach = extractBleach(text),
+            dryClean = extractDryClean(text)
         )
     }
 
@@ -314,6 +316,28 @@ object YarnLabelParser {
         return when {
             Regex("""(?:do\s+not|no|não|não)\s+tumble|no\s+(?:usar\s+)?secadora|não\s+(?:usar\s+)?secadora|no\s+secar\s+en\s+secadora""").containsMatchIn(lower) -> false
             Regex("""tumble\s+dry""").containsMatchIn(lower) -> true
+            else -> null
+        }
+    }
+
+    // Bleach detection (ISO triangle symbol) — "do not bleach" / "no bleach" vs.
+    // any positive mention of bleach/lejía/alvejante/cloro
+    private fun extractBleach(text: String): Boolean? {
+        val lower = text.lowercase()
+        return when {
+            Regex("""(?:do\s+not|no|não)\s+bleach|no\s+usar\s+lej[ií]a|sin\s+lej[ií]a|não\s+usar\s+alvejante|sem\s+alvejante""").containsMatchIn(lower) -> false
+            Regex("""\bbleach\b|lej[ií]a|alvejante|\bcloro\b""").containsMatchIn(lower) -> true
+            else -> null
+        }
+    }
+
+    // Professional/dry-clean detection (ISO circle symbol) — "do not dry clean" vs.
+    // "dry clean only" / limpieza en seco / lavagem a seco
+    private fun extractDryClean(text: String): Boolean? {
+        val lower = text.lowercase()
+        return when {
+            Regex("""(?:do\s+not|no|não)\s+dry[\s-]?clean|no\s+(?:lavar|limpiar)\s+en\s+seco|não\s+lavar\s+a\s+seco""").containsMatchIn(lower) -> false
+            Regex("""dry[\s-]?clean|limpieza\s+en\s+seco|lavado\s+en\s+seco|lavagem\s+a\s+seco|limpeza\s+a\s+seco""").containsMatchIn(lower) -> true
             else -> null
         }
     }

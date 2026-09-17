@@ -1480,7 +1480,7 @@ private fun PriceSuggestionDialog(
         containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
-                "Price Suggestion",
+                stringResource(R.string.piece_price_dialog_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -1491,7 +1491,7 @@ private fun PriceSuggestionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Work hours", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    Text(stringResource(R.string.calculator_work_hours), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                     Text(
                         formatWorkTime(workHours),
                         style = MaterialTheme.typography.bodySmall,
@@ -1503,7 +1503,7 @@ private fun PriceSuggestionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Rows worked", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    Text(stringResource(R.string.piece_price_dialog_rows_worked), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                     Text(
                         rowCount.toString(),
                         style = MaterialTheme.typography.bodySmall,
@@ -1516,7 +1516,7 @@ private fun PriceSuggestionDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Material cost", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                        Text(stringResource(R.string.piece_label_material_cost), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
                         Text(
                             materialCost.formatCurrency(sym),
                             style = MaterialTheme.typography.bodySmall,
@@ -1528,7 +1528,7 @@ private fun PriceSuggestionDialog(
                 OutlinedTextField(
                     value = hourlyRateText,
                     onValueChange = { hourlyRateText = it },
-                    label = { Text("Hourly rate ($sym/h)") },
+                    label = { Text(stringResource(R.string.piece_price_dialog_hourly_rate, sym)) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = RoundedCornerShape(10.dp),
@@ -1546,7 +1546,7 @@ private fun PriceSuggestionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Suggested price",
+                        stringResource(R.string.piece_label_suggested_price),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -1568,7 +1568,7 @@ private fun PriceSuggestionDialog(
                 },
                 enabled = hourlyRate > 0f && suggested > 0f,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) { Text("Apply to Piece") }
+            ) { Text(stringResource(R.string.piece_price_dialog_apply)) }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {

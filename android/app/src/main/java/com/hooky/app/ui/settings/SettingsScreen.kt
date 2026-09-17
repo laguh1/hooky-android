@@ -54,7 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.Switch
+import androidx.compose.ui.res.stringResource
 import com.hooky.app.BuildConfig
+import com.hooky.app.R
 import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
@@ -64,21 +66,23 @@ import kotlinx.coroutines.delay
 private const val PREFS_NAME = "hooky_settings"
 private const val KEY_NIGHT_MODE = "night_mode"
 
-private data class LanguageOption(val tag: String, val label: String, val sublabel: String)
-private data class ThemeOption(val mode: Int, val label: String, val sublabel: String)
+// endonym is the language's own name for itself (e.g. "Español") — deliberately
+// shown as-is regardless of app language, not translated.
+private data class LanguageOption(val tag: String, val labelRes: Int, val endonym: String)
+private data class ThemeOption(val mode: Int, val labelRes: Int, val sublabelRes: Int)
 // CurrencyOption and CURRENCIES defined in CurrencyPrefs.kt
 
 private val LANGUAGES = listOf(
-    LanguageOption("", "System default", "Follows device language"),
-    LanguageOption("en", "English", "English"),
-    LanguageOption("es", "Spanish", "Español"),
-    LanguageOption("pt-BR", "Portuguese (Brazil)", "Português (BR)"),
+    LanguageOption("", R.string.settings_language_system_label, ""),
+    LanguageOption("en", R.string.settings_lang_english, "English"),
+    LanguageOption("es", R.string.settings_lang_spanish, "Español"),
+    LanguageOption("pt-BR", R.string.settings_lang_portuguese, "Português (BR)"),
 )
 
 private val THEMES = listOf(
-    ThemeOption(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, "System default", "Follows device setting"),
-    ThemeOption(AppCompatDelegate.MODE_NIGHT_NO, "Light", "Always light"),
-    ThemeOption(AppCompatDelegate.MODE_NIGHT_YES, "Dark", "Always dark"),
+    ThemeOption(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM, R.string.settings_theme_system_label, R.string.settings_theme_system_sublabel),
+    ThemeOption(AppCompatDelegate.MODE_NIGHT_NO, R.string.settings_theme_light_label, R.string.settings_theme_light_sublabel),
+    ThemeOption(AppCompatDelegate.MODE_NIGHT_YES, R.string.settings_theme_dark_label, R.string.settings_theme_dark_sublabel),
 )
 
 private fun currentLanguageTag(): String {
@@ -126,7 +130,7 @@ fun SettingsScreen(
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            context.startActivity(Intent.createChooser(intent, "Save Hooky backup"))
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.settings_backup_share_title)))
             viewModel.clearBackupState()
         }
     }
@@ -172,12 +176,12 @@ fun SettingsScreen(
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.action_back),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.action_settings),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -187,7 +191,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Appearance section
-            SectionHeader("APPEARANCE")
+            SectionHeader(stringResource(R.string.settings_section_appearance))
 
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -199,8 +203,8 @@ fun SettingsScreen(
                 Column {
                     THEMES.forEachIndexed { index, option ->
                         OptionRow(
-                            label = option.label,
-                            sublabel = option.sublabel,
+                            label = stringResource(option.labelRes),
+                            sublabel = stringResource(option.sublabelRes),
                             selected = option.mode == selectedNightMode,
                             onClick = { selectTheme(option.mode) }
                         )
@@ -218,7 +222,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Language section
-            SectionHeader("LANGUAGE")
+            SectionHeader(stringResource(R.string.settings_section_language))
 
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -230,8 +234,8 @@ fun SettingsScreen(
                 Column {
                     LANGUAGES.forEachIndexed { index, option ->
                         OptionRow(
-                            label = option.label,
-                            sublabel = if (option.tag.isNotEmpty()) option.sublabel else "",
+                            label = stringResource(option.labelRes),
+                            sublabel = if (option.tag.isNotEmpty()) option.endonym else "",
                             selected = option.tag == selectedTag,
                             onClick = { selectLanguage(option.tag) }
                         )
@@ -248,7 +252,7 @@ fun SettingsScreen(
 
             if (selectedTag.isNotEmpty()) {
                 Text(
-                    text = "For voice row counting, make sure the matching speech pack is installed on your device.",
+                    text = stringResource(R.string.settings_voice_lang_tip),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextMuted,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
@@ -258,7 +262,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Currency section
-            SectionHeader("CURRENCY")
+            SectionHeader(stringResource(R.string.settings_section_currency))
 
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -270,7 +274,7 @@ fun SettingsScreen(
                 Column {
                     CURRENCIES.forEachIndexed { index, option ->
                         OptionRow(
-                            label = option.label,
+                            label = stringResource(option.labelRes),
                             sublabel = option.sublabel,
                             selected = option.code == selectedCurrency,
                             onClick = { selectCurrency(option.code) }
@@ -289,7 +293,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Backup section
-            SectionHeader("BACKUP")
+            SectionHeader(stringResource(R.string.settings_section_backup))
 
             val isBusy = backupState is BackupState.Exporting || backupState is BackupState.Importing
 
@@ -311,12 +315,12 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Export backup",
+                                text = stringResource(R.string.settings_backup_export_title),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Save all data as a JSON file",
+                                text = stringResource(R.string.settings_backup_export_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -352,12 +356,12 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Import backup",
+                                text = stringResource(R.string.settings_backup_import_title),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Replaces current data with backup contents",
+                                text = stringResource(R.string.settings_backup_import_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -386,7 +390,7 @@ fun SettingsScreen(
                         viewModel.clearBackupState()
                     }
                     Text(
-                        text = "${s.count} items restored successfully",
+                        text = stringResource(R.string.settings_backup_import_done, s.count),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
@@ -410,7 +414,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Help section
-            SectionHeader("HELP")
+            SectionHeader(stringResource(R.string.settings_section_help))
 
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -440,12 +444,12 @@ fun SettingsScreen(
                         )
                         Column {
                             Text(
-                                text = "Help & Tips",
+                                text = stringResource(R.string.settings_help_title),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Hidden features and shortcuts",
+                                text = stringResource(R.string.settings_help_subtitle),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary
                             )
@@ -463,7 +467,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Beta / Premium section
-            SectionHeader("BETA")
+            SectionHeader(stringResource(R.string.settings_section_beta))
 
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -483,12 +487,12 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Access",
+                                text = stringResource(R.string.settings_beta_access_label),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = if (isPremium) "Premium tester" else "Standard",
+                                text = if (isPremium) stringResource(R.string.settings_beta_access_premium) else stringResource(R.string.settings_beta_access_standard),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = if (isPremium) BrandPurple else TextSecondary
                             )
@@ -519,7 +523,7 @@ fun SettingsScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Tester ID",
+                                    text = stringResource(R.string.settings_beta_tester_id_label),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
@@ -536,7 +540,7 @@ fun SettingsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.ContentCopy,
-                                    contentDescription = "Copy Tester ID",
+                                    contentDescription = stringResource(R.string.settings_beta_copy_tester_id_cd),
                                     tint = TextSecondary,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -548,7 +552,7 @@ fun SettingsScreen(
 
             if (BuildConfig.DEBUG) {
                 Spacer(modifier = Modifier.height(24.dp))
-                SectionHeader("DEBUG")
+                SectionHeader(stringResource(R.string.settings_section_debug))
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = MaterialTheme.colorScheme.surface,
@@ -565,12 +569,12 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Simulate Premium",
+                                text = stringResource(R.string.settings_debug_simulate_premium),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Dev only — toggle premium features",
+                                text = stringResource(R.string.settings_debug_simulate_premium_sub),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextMuted
                             )
