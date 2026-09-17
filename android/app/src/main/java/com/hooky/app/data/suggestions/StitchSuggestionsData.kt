@@ -111,7 +111,7 @@ object StitchSuggestionsData {
             id = 101,
             name = "Punto bajo",
             creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "El punto más básico del ganchillo"
@@ -120,7 +120,7 @@ object StitchSuggestionsData {
             id = 102,
             name = "Punto alto",
             creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
             category = StitchCategory.BASIC,
             difficulty = Difficulty.BEGINNER,
             description = "Punto más alto y rápido de tejer"
@@ -156,7 +156,7 @@ object StitchSuggestionsData {
             id = 106,
             name = "Cuadrado de la abuela",
             creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
             category = StitchCategory.SPECIALTY,
             difficulty = Difficulty.BEGINNER,
             description = "Motivo cuadrado clásico trabajado en vueltas"
@@ -174,7 +174,7 @@ object StitchSuggestionsData {
             id = 108,
             name = "Punto piña",
             creator = "Crochet y Dos Agujas de Pat",
-            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePatMV",
+            youtubeUrl = "https://www.youtube.com/@CrochetydosagujasdePat",
             category = StitchCategory.TEXTURED,
             difficulty = Difficulty.INTERMEDIATE,
             description = "Racimo que forma una textura 3D"
