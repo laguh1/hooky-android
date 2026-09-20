@@ -30,8 +30,8 @@ android {
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
-        versionName = "1.5.1"
+        versionCode = 19
+        versionName = "1.5.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -126,10 +126,12 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    // CameraX
-    implementation("androidx.camera:camera-camera2:1.3.1")
-    implementation("androidx.camera:camera-lifecycle:1.3.1")
-    implementation("androidx.camera:camera-view:1.3.1")
+    // CameraX — 1.4.0+ required for 16 KB page-size aligned native libs (1.3.x
+    // ships libimage_processing_util_jni.so at 4 KB alignment, which Google
+    // Play hard-blocks updates over since 1 Nov 2025)
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
 
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
@@ -144,7 +146,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // ML Kit — Yarn Label Scanner (Phase A)
-    implementation("com.google.mlkit:text-recognition:16.0.0")
+    // Play Services dynamic module instead of the bundled model: the bundled
+    // com.google.mlkit:text-recognition artifact ships native libs that are not
+    // 16 KB page-size aligned (Google Play hard-blocks updates over this since
+    // 1 Nov 2025, and Google has not shipped an aligned bundled build). This
+    // module ships zero native code of its own — the OCR model is downloaded
+    // and run via Google Play Services on-device — so the alignment issue
+    // can't recur. Same com.google.mlkit.vision.text.* API, no code changes.
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
 
     // Palette API — Color extraction from photos
     implementation("androidx.palette:palette-ktx:1.0.0")
