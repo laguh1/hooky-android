@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,11 +25,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -70,6 +73,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.hooky.app.R
@@ -83,6 +88,10 @@ import com.hooky.app.ui.camera.rememberPhotoEditorLauncher
 import com.hooky.app.ui.camera.rememberPhotoPickerLauncher
 import com.hooky.app.ui.components.NeedleScanConfirmDialog
 import com.hooky.app.ui.components.PhotoGallery
+import com.hooky.app.data.db.entity.YarnEntity
+import com.hooky.app.domain.model.YarnUsage
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
@@ -427,15 +436,14 @@ fun PieceFormScreen(
 
                 // Section: Materials & Stitches
                 FormSection(title = stringResource(R.string.piece_section_materials_stitches)) {
-                    LibraryMultiPicker(
+                    YarnUsagePicker(
                         addLabel = stringResource(R.string.piece_picker_add_yarn),
                         dialogTitle = stringResource(R.string.piece_picker_select_yarn),
                         emptyText = stringResource(R.string.piece_picker_empty_yarn),
-                        selectedIds = uiState.yarnsUsed,
-                        items = uiState.availableYarns.map { yarn ->
-                            yarn.yarnId to "${yarn.name}${yarn.brand?.let { b -> " – $b" } ?: ""}"
-                        },
-                        onSelectionChanged = { viewModel.onAction(PieceFormAction.YarnsUsedChanged(it)) }
+                        yarnsUsed = uiState.yarnsUsed,
+                        availableYarns = uiState.availableYarns,
+                        onSelectionChanged = { viewModel.onAction(PieceFormAction.YarnsUsedChanged(it)) },
+                        onBallsChanged = { yarnId, balls -> viewModel.onAction(PieceFormAction.YarnBallsChanged(yarnId, balls)) }
                     )
                     LibraryMultiPicker(
                         addLabel = stringResource(R.string.piece_picker_add_needle),
@@ -461,6 +469,29 @@ fun PieceFormScreen(
 
                 // Section: Pricing — only for sale/sold pieces
                 if (uiState.destination == Destination.FOR_SALE || uiState.destination == Destination.SOLD) FormSection(title = stringResource(R.string.piece_section_pricing)) {
+                    val yarnCost = remember(uiState.yarnsUsed, uiState.availableYarns) {
+                        yarnMaterialCost(uiState.yarnsUsed, uiState.availableYarns)
+                    }
+                    if (yarnCost > 0f) {
+                        val sym = getCurrencySymbol(LocalContext.current)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.piece_material_cost_suggestion, yarnCost.formatCurrency(sym)),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary,
+                                modifier = Modifier.weight(1f)
+                            )
+                            TextButton(onClick = {
+                                viewModel.onAction(PieceFormAction.ApplyYarnMaterialCost)
+                            }) {
+                                Text(stringResource(R.string.action_apply), color = Slate, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
+                    }
                     OutlinedTextField(
                         value = uiState.materialCost,
                         onValueChange = { viewModel.onAction(PieceFormAction.MaterialCostChanged(it)) },
@@ -659,6 +690,143 @@ private fun EnumDropdown(
                 )
             }
         }
+    }
+}
+
+// Like LibraryMultiPicker, but for yarns specifically: each selected yarn gets an
+// editable "balls used" stepper so material cost (balls × price paid per yarn) can
+// feed the Suggested Price calculation automatically instead of being guessed.
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun YarnUsagePicker(
+    addLabel: String,
+    dialogTitle: String,
+    emptyText: String,
+    yarnsUsed: List<YarnUsage>,
+    availableYarns: List<YarnEntity>,
+    onSelectionChanged: (List<String>) -> Unit,
+    onBallsChanged: (yarnId: String, balls: Float) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val nameById = remember(availableYarns) {
+        availableYarns.associate { it.yarnId to "${it.name}${it.brand?.let { b -> " – $b" } ?: ""}" }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        yarnsUsed.forEach { usage ->
+            val displayLabel = nameById[usage.yarnId] ?: usage.yarnId
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, BorderLight, RoundedCornerShape(10.dp))
+                    .padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = displayLabel,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = { onBallsChanged(usage.yarnId, usage.balls - 1f) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.piece_yarn_decrease_balls_cd), modifier = Modifier.size(18.dp))
+                }
+                Text(
+                    text = if (usage.balls % 1f == 0f) usage.balls.toInt().toString() else usage.balls.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.width(20.dp)
+                )
+                IconButton(
+                    onClick = { onBallsChanged(usage.yarnId, usage.balls + 1f) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.piece_yarn_increase_balls_cd), modifier = Modifier.size(18.dp))
+                }
+                IconButton(
+                    onClick = { onSelectionChanged(yarnsUsed.map { it.yarnId } - usage.yarnId) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.action_remove_item, displayLabel),
+                        modifier = Modifier.size(16.dp),
+                        tint = TextMuted
+                    )
+                }
+            }
+        }
+        OutlinedButton(
+            onClick = { showDialog = true },
+            shape = RoundedCornerShape(10.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, BorderLight),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(addLabel)
+        }
+    }
+
+    if (showDialog) {
+        val selectedIds = yarnsUsed.map { it.yarnId }
+        var tempSelected by remember { mutableStateOf(selectedIds.toSet()) }
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(dialogTitle, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            },
+            text = {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    availableYarns.forEach { yarn ->
+                        val id = yarn.yarnId
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = id in tempSelected,
+                                onCheckedChange = { checked ->
+                                    tempSelected = if (checked) tempSelected + id else tempSelected - id
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = nameById[id] ?: id,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                    if (availableYarns.isEmpty()) {
+                        Text(text = emptyText, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onSelectionChanged(tempSelected.toList())
+                        showDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
+                ) {
+                    Text(stringResource(R.string.action_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.action_cancel), color = TextSecondary)
+                }
+            }
+        )
     }
 }
 

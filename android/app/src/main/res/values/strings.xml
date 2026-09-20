@@ -450,6 +450,9 @@
     <string name="piece_picker_empty_yarn">No yarns in your library yet.</string>
     <string name="piece_picker_empty_needle">No needles in your library yet.</string>
     <string name="piece_picker_empty_stitch">No stitches in your library yet.</string>
+    <string name="piece_yarn_decrease_balls_cd">Decrease balls used</string>
+    <string name="piece_yarn_increase_balls_cd">Increase balls used</string>
+    <string name="piece_material_cost_suggestion">Material cost from yarns: %s</string>
 
     <!-- ================================================================ -->
     <!-- Yarns — detail & form (additional) -->

@@ -16,6 +16,7 @@ import com.hooky.app.data.repository.YarnRepository
 import com.hooky.app.data.scanner.ScanMode
 import com.hooky.app.data.scanner.YarnLabelScannerService
 import com.hooky.app.domain.model.NeedleScanResult
+import com.hooky.app.domain.model.YarnUsage
 import com.hooky.app.domain.model.enums.Destination
 import com.hooky.app.domain.model.enums.PieceType
 import com.hooky.app.domain.model.enums.WorkStatus
@@ -57,7 +58,7 @@ data class PieceFormUiState(
     val saleLink: String = "",
     val soldDate: String = "",
     val soldPrice: String = "",
-    val yarnsUsed: List<String> = emptyList(),
+    val yarnsUsed: List<YarnUsage> = emptyList(),
     val stitchesUsed: List<String> = emptyList(),
     val needlesUsed: List<String> = emptyList(),
     val notes: String = "",
@@ -75,6 +76,13 @@ data class PieceFormUiState(
     val availableStitches: List<StitchEntity> = emptyList(),
     val availableNeedles: List<NeedleEntity> = emptyList(),
 )
+
+// Sum of (yarn's price paid × balls used) across every yarn attached to the piece —
+// the material cost the "Suggested Price" calculation is meant to consider automatically.
+fun yarnMaterialCost(yarnsUsed: List<YarnUsage>, availableYarns: List<YarnEntity>): Float {
+    val priceById = availableYarns.associate { it.yarnId to (it.pricePaid ?: 0f) }
+    return yarnsUsed.sumOf { usage -> ((priceById[usage.yarnId] ?: 0f) * usage.balls).toDouble() }.toFloat()
+}
 
 sealed interface PieceFormAction {
     data class NameChanged(val value: String) : PieceFormAction
@@ -107,6 +115,8 @@ sealed interface PieceFormAction {
     data class RowCountChanged(val value: String) : PieceFormAction
     data class TargetRowCountChanged(val value: String) : PieceFormAction
     data class YarnsUsedChanged(val ids: List<String>) : PieceFormAction
+    data class YarnBallsChanged(val yarnId: String, val balls: Float) : PieceFormAction
+    object ApplyYarnMaterialCost : PieceFormAction
     data class StitchesUsedChanged(val ids: List<String>) : PieceFormAction
     data class NeedlesUsedChanged(val ids: List<String>) : PieceFormAction
     object SavePiece : PieceFormAction
@@ -173,8 +183,15 @@ class PieceFormViewModel @Inject constructor(
                         kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.photos)
                     } catch (_: Exception) { emptyList() }
                     val yarns = try {
-                        kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.yarnsUsed)
-                    } catch (_: Exception) { emptyList() }
+                        kotlinx.serialization.json.Json.decodeFromString<List<YarnUsage>>(piece.yarnsUsed)
+                    } catch (_: Exception) {
+                        // Pieces saved before per-yarn ball counts existed stored a plain
+                        // List<String> of yarn IDs — read those as 1 ball each.
+                        try {
+                            kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.yarnsUsed)
+                                .map { YarnUsage(yarnId = it, balls = 1f) }
+                        } catch (_: Exception) { emptyList() }
+                    }
                     val stitches = try {
                         kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.stitchesUsed)
                     } catch (_: Exception) { emptyList() }
@@ -288,7 +305,23 @@ class PieceFormViewModel @Inject constructor(
             is PieceFormAction.TargetRowCountChanged ->
                 _uiState.update { it.copy(targetRowCount = action.value) }
             is PieceFormAction.YarnsUsedChanged ->
-                _uiState.update { it.copy(yarnsUsed = action.ids) }
+                _uiState.update { current ->
+                    // Keep each still-selected yarn's existing ball count; new yarns
+                    // default to 1 ball; deselected ones are dropped.
+                    val byId = current.yarnsUsed.associateBy { it.yarnId }
+                    current.copy(yarnsUsed = action.ids.map { id -> byId[id] ?: YarnUsage(yarnId = id, balls = 1f) })
+                }
+            is PieceFormAction.YarnBallsChanged ->
+                _uiState.update { current ->
+                    current.copy(yarnsUsed = current.yarnsUsed.map {
+                        if (it.yarnId == action.yarnId) it.copy(balls = action.balls.coerceAtLeast(1f)) else it
+                    })
+                }
+            PieceFormAction.ApplyYarnMaterialCost ->
+                _uiState.update { current ->
+                    val cost = yarnMaterialCost(current.yarnsUsed, current.availableYarns)
+                    current.copy(materialCost = if (cost % 1f == 0f) cost.toInt().toString() else "%.2f".format(cost))
+                }
             is PieceFormAction.StitchesUsedChanged ->
                 _uiState.update { it.copy(stitchesUsed = action.ids) }
             is PieceFormAction.NeedlesUsedChanged ->
@@ -342,7 +375,10 @@ class PieceFormViewModel @Inject constructor(
                 val stringListSerializer = kotlinx.serialization.builtins.ListSerializer(
                     kotlinx.serialization.serializer<String>()
                 )
-                val yarnsJson = jsonEncoder.encodeToString(stringListSerializer, current.yarnsUsed)
+                val yarnsJson = jsonEncoder.encodeToString(
+                    kotlinx.serialization.builtins.ListSerializer(YarnUsage.serializer()),
+                    current.yarnsUsed
+                )
                 val stitchesJson = jsonEncoder.encodeToString(stringListSerializer, current.stitchesUsed)
                 val needlesJson = jsonEncoder.encodeToString(stringListSerializer, current.needlesUsed)
                 val now = System.currentTimeMillis()
