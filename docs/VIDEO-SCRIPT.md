@@ -444,3 +444,26 @@ For Reels / TikTok / YouTube Shorts — cut to just these sections:
 4. Cost & profit (10 sec) — enter values, see margin
 5. Yarn scan (10 sec) — camera → auto-fill
 6. CTA (10 sec) — "Free to download, link in bio"
+
+---
+
+## PUBLISHED — PT-BR Tutorial Chapters (YouTube)
+
+**Video:** https://youtu.be/YT61ukMH2U8 — published live 2026-09-18, no captions (upload kept
+failing to parse the Clipchamp-exported SRT even after fixing it — see troubleshooting notes in
+this session; relying on YouTube auto-captions for now, `Hooky BR (fixed).srt` saved in Downloads
+for a future retry).
+
+Full tutorial video, 3:35, published on YouTube. Paste this block into the video description
+(starting at `0:00`) to enable YouTube's auto-generated chapters:
+
+```
+0:00 Introdução
+0:15 Peças
+1:15 Fileiras e temporizador
+1:54 Calculadora de preços
+2:18 Fios
+2:52 Pontos
+3:18 Agulhas
+3:34 Encerramento
+```

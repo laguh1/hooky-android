@@ -1,0 +1,227 @@
+HOOKY — STORE LISTING TRANSLATIONS
+
+Each language block below is preceded by a clear header naming the language
+and its BCP-47 locale code. The header is for human scanning; Google's
+auto-detection reads the actual text content of each block.
+
+=====================================================
+English (en-US) — United States
+=====================================================
+
+App name: Hooky
+
+Short description:
+Crochet & knitting tracker. Projects, yarn, costs. No ads. No subscription.
+
+Full description:
+Hooky is the all-in-one tracker for crochet and knitting crafters. Keep every project organized, your yarn stash under control, and your time and costs accounted for — completely offline, no account required.
+
+TRACK YOUR PIECES
+Create a project for every piece you make. Log the yarn and stitches used, track your work sessions with the built-in timer, count rows with the row counter, and attach photos as you go. Set a destination (gift, sell, keep) and follow each piece from cast-on to finished.
+
+MANAGE YOUR YARN STASH
+Add your yarns with weight, fiber, color, and care instructions. Scan yarn labels with your camera to fill in details automatically. Know exactly what you have before you buy more.
+
+BUILD YOUR STITCH LIBRARY
+Save your favorite techniques with difficulty ratings, category tags, and links to tutorials. Find any stitch without leaving the app.
+
+KNOW YOUR COSTS
+The built-in price calculator helps you price your work fairly. Track material costs, log your hours, and see what your pieces actually cost to make. Supports EUR, USD, GBP, and BRL.
+
+ROW COUNTER & WORK TIMER
+Count rows with one tap. Time your sessions automatically. Pick up exactly where you left off, every time.
+
+COMPLETELY OFFLINE
+No account. No internet connection needed. Your data lives on your device — we never see it, ever.
+
+NO ADS. NO SUBSCRIPTION. EVER.
+Hooky is completely free. No ads, no in-app purchases, no premium tier. Crafters deserve tools that respect them.
+
+Available in English, Spanish, and Brazilian Portuguese.
+
+
+=====================================================
+English (en-GB) — United Kingdom
+=====================================================
+
+App name: Hooky
+
+Short description:
+Crochet & knitting tracker. Projects, yarn, costs. No ads. No subscription.
+
+Full description:
+Hooky is the all-in-one tracker for crochet and knitting crafters. Keep every project organised, your yarn stash under control, and your time and costs accounted for — completely offline, no account required.
+
+TRACK YOUR PIECES
+Create a project for every piece you make. Log the yarn and stitches used, track your work sessions with the built-in timer, count rows with the row counter, and attach photos as you go. Set a destination (gift, sell, keep) and follow each piece from cast-on to finished.
+
+MANAGE YOUR YARN STASH
+Add your yarns with weight, fibre, colour, and care instructions. Scan yarn labels with your camera to fill in details automatically. Know exactly what you have before you buy more.
+
+BUILD YOUR STITCH LIBRARY
+Save your favourite techniques with difficulty ratings, category tags, and links to tutorials. Find any stitch without leaving the app.
+
+KNOW YOUR COSTS
+The built-in price calculator helps you price your work fairly. Track material costs, log your hours, and see what your pieces actually cost to make. Supports EUR, USD, GBP, and BRL.
+
+ROW COUNTER & WORK TIMER
+Count rows with one tap. Time your sessions automatically. Pick up exactly where you left off, every time.
+
+COMPLETELY OFFLINE
+No account. No internet connection needed. Your data lives on your device — we never see it, ever.
+
+NO ADS. NO SUBSCRIPTION. EVER.
+Hooky is completely free. No ads, no in-app purchases, no premium tier. Crafters deserve tools that respect them.
+
+Available in English, Spanish, and Brazilian Portuguese.
+
+
+
+=====================================================
+Español (es-ES) — España
+=====================================================
+
+Nombre de la app: Hooky
+
+Descripción corta:
+Registra tus proyectos de ganchillo y tejido. Sin anuncios. Sin suscripción.
+
+Descripción completa:
+Hooky es el organizador todo en uno para artesanas del ganchillo y el tejido. Ten todos tus proyectos al día, tu lana controlada y tus costes y horas registrados — sin conexión, sin cuenta, sin complicaciones.
+
+REGISTRA TUS PIEZAS
+Crea un proyecto para cada pieza que hagas. Anota los hilos y puntos usados, registra tus sesiones de trabajo con el temporizador integrado, cuenta filas con el contador y añade fotos a medida que avanzas. Asigna un destino (regalo, venta, para ti) y sigue cada pieza desde el principio hasta el final.
+
+GESTIONA TUS OVILLOS
+Añade tus hilos con peso, fibra, color e instrucciones de lavado. Escanea las etiquetas con la cámara para rellenar los datos automáticamente. Sabe exactamente lo que tienes antes de comprar más.
+
+TU BIBLIOTECA DE PUNTOS
+Guarda tus técnicas favoritas con nivel de dificultad, categorías y enlaces a tutoriales. Encuentra cualquier punto sin salir de la app.
+
+CONOCE TUS COSTES
+La calculadora de precios integrada te ayuda a valorar tu trabajo correctamente. Registra el coste de materiales, tus horas y descubre lo que realmente te cuesta cada pieza. Compatible con EUR, USD, GBP y BRL.
+
+CONTADOR DE VUELTAS Y TEMPORIZADOR
+Cuenta vueltas con un toque. Registra tus sesiones automáticamente. Retoma exactamente donde lo dejaste.
+
+TOTALMENTE SIN CONEXIÓN
+Sin cuenta. Sin internet. Tus datos viven en tu dispositivo — nosotros nunca los vemos.
+
+SIN ANUNCIOS. SIN SUSCRIPCIÓN. JAMÁS.
+Hooky es completamente gratuita. Sin anuncios, sin compras integradas, sin versión premium. Las artesanas merecen herramientas que las respeten.
+
+Disponible en inglés, español y portugués de Brasil.
+
+
+=====================================================
+Español (es-419) — Latinoamérica
+=====================================================
+
+Nombre de la app: Hooky
+
+Descripción corta:
+Registra tus proyectos de crochet y tejido. Sin anuncios. Sin suscripción.
+
+Descripción completa:
+Hooky es el organizador todo en uno para artesanas del crochet y el tejido. Ten todos tus proyectos al día, tu lana controlada y tus costos y horas registrados — sin conexión, sin cuenta, sin complicaciones.
+
+REGISTRA TUS PIEZAS
+Crea un proyecto para cada pieza que hagas. Anota los hilos y puntos usados, registra tus sesiones de trabajo con el temporizador integrado, cuenta filas con el contador y añade fotos a medida que avanzas. Asigna un destino (regalo, venta, para ti) y sigue cada pieza desde el principio hasta el final.
+
+GESTIONA TUS OVILLOS
+Añade tus hilos con peso, fibra, color e instrucciones de lavado. Escanea las etiquetas con la cámara para rellenar los datos automáticamente. Sabe exactamente lo que tienes antes de comprar más.
+
+TU BIBLIOTECA DE PUNTOS
+Guarda tus técnicas favoritas con nivel de dificultad, categorías y enlaces a tutoriales. Encuentra cualquier punto sin salir de la app.
+
+CONOCE TUS COSTOS
+La calculadora de precios integrada te ayuda a valorar tu trabajo correctamente. Registra el costo de materiales, tus horas y descubre lo que realmente te cuesta cada pieza. Compatible con EUR, USD, GBP y BRL.
+
+CONTADOR DE VUELTAS Y TEMPORIZADOR
+Cuenta vueltas con un toque. Registra tus sesiones automáticamente. Retoma exactamente donde lo dejaste.
+
+TOTALMENTE SIN CONEXIÓN
+Sin cuenta. Sin internet. Tus datos viven en tu dispositivo — nosotros nunca los vemos.
+
+SIN ANUNCIOS. SIN SUSCRIPCIÓN. JAMÁS.
+Hooky es completamente gratuita. Sin anuncios, sin compras integradas, sin versión premium. Las artesanas merecen herramientas que las respeten.
+
+Disponible en inglés, español y portugués de Brasil.
+
+NOTE: Adapted from the es-ES block — swapped "ganchillo" for "crochet" and
+"costes" for "costos", the two words most likely to read as distinctly
+Spain-specific to a Latin American audience. Everything else in the draft
+is shared vocabulary across the Spanish-speaking world.
+
+
+=====================================================
+Português (pt-BR) — Brasil
+=====================================================
+
+Nome do app: Hooky
+
+Descrição curta:
+Organize seus projetos de crochê e tricô. Sem anúncios. Sem assinatura. Grátis.
+
+Descrição completa:
+Hooky é o organizador completo para quem faz crochê e tricô. Mantenha seus projetos em dia, seu estoque de fios sob controle e suas horas e custos registrados — tudo offline, sem conta, sem complicação.
+
+ACOMPANHE SUAS PEÇAS
+Crie um projeto para cada peça que você fizer. Registre os fios e pontos usados, acompanhe suas sessões de trabalho com o cronômetro integrado, conte carreiras com o contador de pontos e adicione fotos conforme avança. Defina um destino (presente, venda, uso próprio) e siga cada peça do início ao fim.
+
+GERENCIE SEU ESTOQUE DE FIOS
+Cadastre seus fios com gramatura, fibra, cor e instruções de lavagem. Escaneie as etiquetas com a câmera para preencher os dados automaticamente. Saiba exatamente o que você tem antes de comprar mais.
+
+SUA BIBLIOTECA DE PONTOS
+Salve suas técnicas favoritas com nível de dificuldade, categorias e links para tutoriais. Encontre qualquer ponto sem sair do app.
+
+SAIBA QUANTO CUSTA CADA PEÇA
+A calculadora de preços integrada ajuda você a precificar seu trabalho de forma justa. Registre o custo dos materiais, suas horas trabalhadas e veja o que cada peça realmente custa. Compatível com BRL, EUR, USD e GBP.
+
+CONTADOR DE CARREIRAS E CRONÔMETRO
+Conte carreiras com um toque. Registre suas sessões automaticamente. Retome exatamente de onde parou.
+
+TOTALMENTE OFFLINE
+Sem conta. Sem internet. Seus dados ficam no seu dispositivo — nós nunca os vemos.
+
+SEM ANÚNCIOS. SEM ASSINATURA. NUNCA.
+Hooky é completamente gratuita. Sem anúncios, sem compras no app, sem versão premium. Artesãs merecem ferramentas que as respeitem.
+
+Disponível em inglês, espanhol e português do Brasil.
+
+
+=====================================================
+Português (pt-PT) — Portugal
+=====================================================
+
+Nome do app: Hooky
+
+Descrição curta:
+Organiza os teus projetos de croché e tricô. Sem anúncios. Sem assinatura. Grátis.
+
+Descrição completa:
+Hooky é o organizador completo para quem faz croché e tricô. Mantém os teus projetos em dia, o teu stock de fios sob controlo e as tuas horas e custos registados — tudo offline, sem conta, sem complicações.
+
+ACOMPANHA AS TUAS PEÇAS
+Cria um projeto para cada peça que fizeres. Regista os fios e pontos usados, acompanha as tuas sessões de trabalho com o cronómetro integrado, conta carreiras com o contador de pontos e adiciona fotos à medida que avanças. Define um destino (presente, venda, uso próprio) e segue cada peça do início ao fim.
+
+GERE O TEU STOCK DE FIOS
+Regista os teus fios com gramagem, fibra, cor e instruções de lavagem. Digitaliza as etiquetas com a câmara para preencher os dados automaticamente. Sabe exatamente o que tens antes de comprares mais.
+
+A TUA BIBLIOTECA DE PONTOS
+Guarda as tuas técnicas favoritas com nível de dificuldade, categorias e links para tutoriais. Encontra qualquer ponto sem sair da app.
+
+SABE QUANTO CUSTA CADA PEÇA
+A calculadora de preços integrada ajuda-te a precificar o teu trabalho de forma justa. Regista o custo dos materiais, as tuas horas trabalhadas e vê o que cada peça realmente custa. Compatível com BRL, EUR, USD e GBP.
+
+CONTADOR DE CARREIRAS E CRONÓMETRO
+Conta carreiras com um toque. Regista as tuas sessões automaticamente. Retoma exatamente de onde paraste.
+
+TOTALMENTE OFFLINE
+Sem conta. Sem internet. Os teus dados ficam no teu dispositivo — nós nunca os vemos.
+
+SEM ANÚNCIOS. SEM ASSINATURA. NUNCA.
+Hooky é completamente gratuita. Sem anúncios, sem compras na app, sem versão premium. As artesãs merecem ferramentas que as respeitem.
+
+Disponível em inglês, espanhol e português.
+
