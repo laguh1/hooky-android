@@ -75,7 +75,7 @@ object YarnLabelParser {
         "Novita", "Adriafil", "Anchor", "DMC", "Coats", "Círculo", "Bergère de France", "Regia",
         "West Yorkshire Spinners", "Pingouin", "LindeHobby", "Järbo", "Svarta", "Mondial",
         "Utopia Crafts", "Lana Gatto", "Coopay", "AUAUY", "Manos del Uruguay", "Hjertegarn",
-        "Hoooked"
+        "Hoooked", "EuroRoma", "Linhas Corrente", "Corrente"
     )
 
     private fun levenshtein(a: String, b: String): Int {
