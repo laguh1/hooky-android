@@ -342,9 +342,9 @@ object StitchSuggestionsData {
                     sortOrder = base.size + 1
                 ),
                 IdeaEntity(
-                    title = "Canal de Crochê",
+                    title = "Suzana do Crochê",
                     source = "YouTube",
-                    url = "https://www.youtube.com/channel/UCC_xabYkCpgk078UZ_aSoiQ",
+                    url = "https://www.youtube.com/@suzanadocroche",
                     description = "Canal brasileiro de crochê no YouTube",
                     locale = locale,
                     isSeeded = true,

@@ -39,12 +39,15 @@ data class PieceDetailUiState(
     val needleNames: Map<String, String> = emptyMap(),
     val isPremium: Boolean = false,
     val counters: List<CounterEntity> = emptyList(),
+    val navigateToClone: Int? = null,
 )
 
 sealed interface PieceDetailAction {
     object ShowArchiveDialog : PieceDetailAction
     object HideArchiveDialog : PieceDetailAction
     data class ConfirmArchive(val reason: String?) : PieceDetailAction
+    object ClonePiece : PieceDetailAction
+    object ClearCloneNavigation : PieceDetailAction
     object ClearError : PieceDetailAction
     object IncrementRow : PieceDetailAction
     object DecrementRow : PieceDetailAction
@@ -177,6 +180,18 @@ class PieceDetailViewModel @Inject constructor(
             }
             PieceDetailAction.ClearError ->
                 _uiState.update { it.copy(error = null) }
+            PieceDetailAction.ClonePiece -> {
+                viewModelScope.launch {
+                    try {
+                        val newId = pieceRepository.clonePiece(pieceId)
+                        _uiState.update { it.copy(navigateToClone = newId) }
+                    } catch (e: Exception) {
+                        _uiState.update { it.copy(error = e.message) }
+                    }
+                }
+            }
+            PieceDetailAction.ClearCloneNavigation ->
+                _uiState.update { it.copy(navigateToClone = null) }
             PieceDetailAction.IncrementRow -> updateRow { it + 1 }
             PieceDetailAction.DecrementRow -> updateRow { maxOf(0, it - 1) }
             is PieceDetailAction.IncrementRowBy -> updateRow { it + action.amount }

@@ -69,10 +69,20 @@
     <string name="piece_field_price">Suggested Price (€)</string>
     <string name="piece_field_material_cost">Material Cost (€)</string>
     <string name="piece_field_gift_recipient">Gift Recipient</string>
-    <string name="piece_field_sale_platform">Sale Platform</string>
-    <string name="piece_field_sale_link">Sale Link</string>
+    <string name="piece_field_sale_platform">Customer / Shop / Webpage</string>
+    <string name="piece_field_sale_platform_hint">e.g. Maria Silva, Etsy, Shopify, local craft fair</string>
+    <string name="piece_field_sale_link">Notes / Links</string>
     <string name="piece_field_sold_date">Sold Date</string>
     <string name="piece_field_sold_price">Sold Price (€)</string>
+    <string name="piece_field_quantity_total">Quantity</string>
+    <string name="piece_field_quantity_sold">Sold</string>
+    <string name="piece_suffix_per_unit">" (per unit)"</string>
+    <string name="piece_potential_revenue_remaining">Potential revenue remaining: %s</string>
+    <string name="reports_tab_pieces">By Piece</string>
+    <string name="reports_tab_customers">By Customer</string>
+    <string name="reports_unassigned">Unassigned</string>
+    <string name="piece_quantity_decrease_sold_cd">Decrease quantity sold</string>
+    <string name="piece_quantity_increase_sold_cd">Increase quantity sold</string>
     <string name="piece_field_notes">Notes</string>
 
     <!-- Pieces — misc -->
@@ -437,8 +447,8 @@
     <string name="piece_price_dialog_rows_worked">Rows worked</string>
     <string name="piece_price_dialog_hourly_rate">Hourly rate (%s/h)</string>
     <string name="piece_price_dialog_apply">Apply to Piece</string>
-    <string name="piece_label_sale_platform">Sale platform</string>
-    <string name="piece_label_sale_link">Sale link</string>
+    <string name="piece_label_sale_platform">Customer / Shop / Webpage</string>
+    <string name="piece_label_sale_link">Notes / Links</string>
     <string name="piece_label_sold_on">Sold on</string>
     <string name="piece_label_sold_price">Sold price</string>
     <string name="piece_picker_add_yarn">Add Yarn</string>

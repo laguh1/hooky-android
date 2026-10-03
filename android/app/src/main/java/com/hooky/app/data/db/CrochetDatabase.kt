@@ -31,7 +31,7 @@ import com.hooky.app.data.db.entity.YarnEntity
         CounterEntity::class,
         IdeaEntity::class
     ],
-    version = 7,
+    version = 9,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -99,6 +99,28 @@ abstract class CrochetDatabase : RoomDatabase() {
                         isSeeded INTEGER NOT NULL DEFAULT 0,
                         sortOrder INTEGER NOT NULL DEFAULT 0
                     )"""
+                )
+            }
+        }
+
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE pieces ADD COLUMN quantityTotal INTEGER NOT NULL DEFAULT 1")
+                database.execSQL("ALTER TABLE pieces ADD COLUMN quantitySold INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        // Swaps the seeded Brazil "Ideas" link that pointed at a generic,
+        // unnamed YouTube channel for Suzana do Crochê's channel. Only touches
+        // installs that already seeded the ideas table (countByLocale > 0) —
+        // fresh seeds pick up the new list straight from StitchSuggestionsData.
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DELETE FROM ideas WHERE isSeeded = 1 AND locale LIKE 'pt%' AND title = 'Canal de Crochê'")
+                database.execSQL(
+                    """INSERT INTO ideas (title, source, url, description, locale, isSeeded, sortOrder)
+                       SELECT 'Suzana do Crochê', 'YouTube', 'https://www.youtube.com/@suzanadocroche', 'Canal brasileiro de crochê no YouTube', locale, 1, 50
+                       FROM (SELECT DISTINCT locale FROM ideas WHERE locale LIKE 'pt%')"""
                 )
             }
         }

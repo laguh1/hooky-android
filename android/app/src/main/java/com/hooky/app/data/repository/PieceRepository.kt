@@ -75,6 +75,9 @@ class PieceRepository @Inject constructor(
     suspend fun updatePrice(id: Int, price: Float) =
         withContext(ioDispatcher) { pieceDao.updatePrice(id, price) }
 
+    suspend fun getDistinctSalePlatforms(): List<String> =
+        withContext(ioDispatcher) { pieceDao.getDistinctSalePlatforms() }
+
     suspend fun generateNextPieceId(): String = withContext(ioDispatcher) {
         val entityType = "PIECE"
         val counter = idCounterDao.getCounter(entityType)
@@ -86,5 +89,37 @@ class PieceRepository @Inject constructor(
             idCounterDao.upsertCounter(counter.copy(currentCount = nextCount))
             "PIECE-${nextCount.toString().padStart(3, '0')}"
         }
+    }
+
+    suspend fun clonePiece(id: Int): Int = withContext(ioDispatcher) {
+        val original = pieceDao.getPieceByIdOnce(id) ?: error("Piece not found")
+        val newPieceId = generateNextPieceId()
+        val clone = original.copy(
+            id = 0,
+            pieceId = newPieceId,
+            photos = "[]",
+            workStatus = com.hooky.app.domain.model.enums.WorkStatus.IN_PROGRESS.name,
+            destination = if (original.destination == com.hooky.app.domain.model.enums.Destination.SOLD.name)
+                com.hooky.app.domain.model.enums.Destination.FOR_SALE.name
+            else original.destination,
+            dateStarted = null,
+            dateFinished = null,
+            soldDate = null,
+            soldPrice = null,
+            quantityTotal = 1,
+            quantitySold = 0,
+            rowCount = 0,
+            timerTotalSeconds = 0,
+            timerIsRunning = false,
+            timerSessionStartAt = null,
+            workHours = null,
+            workSessions = "[]",
+            archived = false,
+            archivedDate = null,
+            archivedReason = null,
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
+        )
+        pieceDao.insert(clone).toInt()
     }
 }

@@ -20,6 +20,9 @@ interface PieceDao {
     @Query("SELECT * FROM pieces WHERE id = :id")
     fun getPieceById(id: Int): Flow<PieceEntity?>
 
+    @Query("SELECT * FROM pieces WHERE id = :id")
+    suspend fun getPieceByIdOnce(id: Int): PieceEntity?
+
     @Query("SELECT * FROM pieces WHERE pieceId = :pieceId LIMIT 1")
     suspend fun getPieceByPieceId(pieceId: String): PieceEntity?
 
@@ -67,6 +70,9 @@ interface PieceDao {
 
     @Query("SELECT * FROM pieces")
     suspend fun getAllNow(): List<PieceEntity>
+
+    @Query("SELECT DISTINCT salePlatform FROM pieces WHERE salePlatform IS NOT NULL AND salePlatform != '' ORDER BY salePlatform COLLATE NOCASE ASC")
+    suspend fun getDistinctSalePlatforms(): List<String>
 
     @Query("DELETE FROM pieces")
     suspend fun clearAll()

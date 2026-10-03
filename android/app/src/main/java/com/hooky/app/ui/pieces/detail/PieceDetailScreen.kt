@@ -42,6 +42,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
@@ -143,6 +144,13 @@ fun PieceDetailScreen(
         }
     }
 
+    LaunchedEffect(uiState.navigateToClone) {
+        uiState.navigateToClone?.let { newId ->
+            viewModel.onAction(PieceDetailAction.ClearCloneNavigation)
+            onNavigateToEdit(newId)
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         when {
             uiState.isLoading -> {
@@ -170,6 +178,7 @@ fun PieceDetailScreen(
                     counters = uiState.counters,
                     onNavigateBack = onNavigateBack,
                     onNavigateToEdit = { onNavigateToEdit(pieceId) },
+                    onCloneClick = { viewModel.onAction(PieceDetailAction.ClonePiece) },
                     onArchiveClick = { viewModel.onAction(PieceDetailAction.ShowArchiveDialog) },
                     onIncrementRow = { viewModel.onAction(PieceDetailAction.IncrementRow) },
                     onDecrementRow = { viewModel.onAction(PieceDetailAction.DecrementRow) },
@@ -222,6 +231,7 @@ private fun PieceDetailContent(
     counters: List<CounterEntity>,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
+    onCloneClick: () -> Unit,
     onArchiveClick: () -> Unit,
     onIncrementRow: () -> Unit,
     onDecrementRow: () -> Unit,
@@ -376,7 +386,8 @@ private fun PieceDetailContent(
             val statusResId = try { WorkStatus.valueOf(piece.workStatus).labelResId } catch (_: Exception) { null }
             val statusName = statusResId?.let { stringResource(it) } ?: piece.workStatus
             val destResId = try { Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
-            val destName = destResId?.let { stringResource(it) } ?: piece.destination
+            val destBaseName = destResId?.let { stringResource(it) } ?: piece.destination
+            val destName = if (piece.quantityTotal > 1) "$destBaseName ${piece.quantitySold}/${piece.quantityTotal}" else destBaseName
             val typeResId = try { PieceType.valueOf(piece.type).labelResId } catch (_: Exception) { null }
             val typeName = typeResId?.let { stringResource(it) } ?: piece.type
             val statusBadgeStyle = if (piece.workStatus == "IN_PROGRESS") BadgeStyle.FILLED_SLATE else BadgeStyle.OUTLINE
@@ -587,6 +598,21 @@ private fun PieceDetailContent(
                 }
 
                 OutlinedButton(
+                    onClick = onCloneClick,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+                ) {
+                    Icon(
+                        Icons.Filled.ContentCopy,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(stringResource(R.string.action_clone))
+                }
+
+                OutlinedButton(
                     onClick = onArchiveClick,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
@@ -767,13 +793,34 @@ private fun PricingCard(piece: PieceEntity) {
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost), value = it.formatCurrency(sym)) }
-            piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price), value = it.formatCurrency(sym)) }
+            val perUnitSuffix = if (piece.quantityTotal > 1) stringResource(R.string.piece_suffix_per_unit) else ""
+            if (piece.quantityTotal > 1) {
+                InfoRow(
+                    label = stringResource(R.string.piece_field_quantity_total),
+                    value = "${piece.quantitySold}/${piece.quantityTotal}"
+                )
+            }
+            piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost) + perUnitSuffix, value = it.formatCurrency(sym)) }
+            piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price) + perUnitSuffix, value = it.formatCurrency(sym)) }
             piece.salePlatform?.let { InfoRow(label = stringResource(R.string.piece_label_sale_platform), value = it) }
             piece.saleLink?.let { InfoRow(label = stringResource(R.string.piece_label_sale_link), value = it) }
             if (piece.destination == "SOLD") {
                 piece.soldDate?.let { InfoRow(label = stringResource(R.string.piece_label_sold_on), value = formatDate(it)) }
                 piece.soldPrice?.let { InfoRow(label = stringResource(R.string.piece_label_sold_price), value = it.formatCurrency(sym)) }
+            }
+            if (piece.quantityTotal > 1) {
+                val remainingUnits = (piece.quantityTotal - piece.quantitySold).coerceAtLeast(0)
+                val unitPrice = piece.price ?: 0f
+                if (unitPrice > 0f) {
+                    Text(
+                        text = stringResource(
+                            R.string.piece_potential_revenue_remaining,
+                            (unitPrice * remainingUnits).formatCurrency(sym)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary
+                    )
+                }
             }
         }
     }
