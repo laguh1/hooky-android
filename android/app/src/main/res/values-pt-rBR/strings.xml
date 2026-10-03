@@ -69,10 +69,20 @@
     <string name="piece_field_price">Preço Sugerido (R$)</string>
     <string name="piece_field_material_cost">Custo do Material (R$)</string>
     <string name="piece_field_gift_recipient">Destinatário do Presente</string>
-    <string name="piece_field_sale_platform">Plataforma de Venda</string>
-    <string name="piece_field_sale_link">Link da Venda</string>
+    <string name="piece_field_sale_platform">Cliente / Loja / Site</string>
+    <string name="piece_field_sale_platform_hint">ex. Maria Silva, Etsy, Shopify, feira de artesanato</string>
+    <string name="piece_field_sale_link">Notas / Links</string>
     <string name="piece_field_sold_date">Data de Venda</string>
     <string name="piece_field_sold_price">Preço Vendido (R$)</string>
+    <string name="piece_field_quantity_total">Quantidade</string>
+    <string name="piece_field_quantity_sold">Vendidas</string>
+    <string name="piece_suffix_per_unit">" (por unidade)"</string>
+    <string name="piece_potential_revenue_remaining">Receita potencial restante: %s</string>
+    <string name="reports_tab_pieces">Por peça</string>
+    <string name="reports_tab_customers">Por cliente</string>
+    <string name="reports_unassigned">Não atribuído</string>
+    <string name="piece_quantity_decrease_sold_cd">Diminuir quantidade vendida</string>
+    <string name="piece_quantity_increase_sold_cd">Aumentar quantidade vendida</string>
     <string name="piece_field_notes">Notas</string>
 
     <!-- Pieces — misc -->
@@ -437,8 +447,8 @@
     <string name="piece_price_dialog_rows_worked">Fileiras trabalhadas</string>
     <string name="piece_price_dialog_hourly_rate">Taxa por hora (%s/h)</string>
     <string name="piece_price_dialog_apply">Aplicar à Peça</string>
-    <string name="piece_label_sale_platform">Plataforma de venda</string>
-    <string name="piece_label_sale_link">Link de venda</string>
+    <string name="piece_label_sale_platform">Cliente / Loja / Site</string>
+    <string name="piece_label_sale_link">Notas / Links</string>
     <string name="piece_label_sold_on">Vendido em</string>
     <string name="piece_label_sold_price">Preço de venda</string>
     <string name="piece_picker_add_yarn">Adicionar fio</string>

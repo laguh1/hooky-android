@@ -492,10 +492,59 @@ fun PieceFormScreen(
                             }
                         }
                     }
+                    val quantityTotal = uiState.quantityTotal.toIntOrNull() ?: 1
+                    val perUnitSuffix = if (quantityTotal > 1) stringResource(R.string.piece_suffix_per_unit) else ""
+
+                    OutlinedTextField(
+                        value = uiState.quantityTotal,
+                        onValueChange = { viewModel.onAction(PieceFormAction.QuantityTotalChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_quantity_total)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (quantityTotal > 1) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(1.dp, BorderLight, RoundedCornerShape(10.dp))
+                                .padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.piece_field_quantity_sold),
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+                            )
+                            IconButton(
+                                onClick = { viewModel.onAction(PieceFormAction.DecrementQuantitySold) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.piece_quantity_decrease_sold_cd), modifier = Modifier.size(18.dp))
+                            }
+                            Text(
+                                text = "${uiState.quantitySold}/$quantityTotal",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.width(40.dp)
+                            )
+                            IconButton(
+                                onClick = { viewModel.onAction(PieceFormAction.IncrementQuantitySold) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.piece_quantity_increase_sold_cd), modifier = Modifier.size(18.dp))
+                            }
+                        }
+                    }
+
                     OutlinedTextField(
                         value = uiState.materialCost,
                         onValueChange = { viewModel.onAction(PieceFormAction.MaterialCostChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_material_cost)) },
+                        label = { Text(stringResource(R.string.piece_field_material_cost) + perUnitSuffix) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -506,7 +555,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.price,
                         onValueChange = { viewModel.onAction(PieceFormAction.PriceChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_price)) },
+                        label = { Text(stringResource(R.string.piece_field_price) + perUnitSuffix) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -514,14 +563,28 @@ fun PieceFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    OutlinedTextField(
+                    if (quantityTotal > 1) {
+                        val remainingUnits = (quantityTotal - uiState.quantitySold).coerceAtLeast(0)
+                        val unitPrice = uiState.price.toFloatOrNull() ?: 0f
+                        if (unitPrice > 0f) {
+                            val sym = getCurrencySymbol(LocalContext.current)
+                            Text(
+                                text = stringResource(
+                                    R.string.piece_potential_revenue_remaining,
+                                    (unitPrice * remainingUnits).formatCurrency(sym)
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
+                            )
+                        }
+                    }
+
+                    AutocompleteTextField(
                         value = uiState.salePlatform,
                         onValueChange = { viewModel.onAction(PieceFormAction.SalePlatformChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_sale_platform)) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = formTextFieldColors(),
-                        modifier = Modifier.fillMaxWidth()
+                        label = stringResource(R.string.piece_field_sale_platform),
+                        supportingText = stringResource(R.string.piece_field_sale_platform_hint),
+                        suggestions = uiState.salePlatformSuggestions
                     )
 
                     OutlinedTextField(
@@ -685,6 +748,65 @@ private fun EnumDropdown(
                     text = { Text(option, style = MaterialTheme.typography.bodyMedium) },
                     onClick = {
                         onSelect(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+// Free-text field that suggests values the user has typed here before (on other
+// pieces), so "Maria Silva" or "Etsy" gets reused instead of re-typed slightly
+// differently each time — the only practical fix for grouping sales by customer
+// when there's no canonical list of real customer names to fuzzy-match against.
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AutocompleteTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    supportingText: String,
+    suggestions: List<String>,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val filtered = remember(value, suggestions) {
+        if (value.isBlank()) suggestions
+        else suggestions.filter { it.contains(value, ignoreCase = true) && !it.equals(value, ignoreCase = true) }
+    }
+    val showMenu = expanded && filtered.isNotEmpty()
+
+    ExposedDropdownMenuBox(
+        expanded = showMenu,
+        onExpandedChange = { expanded = it },
+        modifier = modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+                expanded = true
+            },
+            label = { Text(label) },
+            supportingText = { Text(supportingText) },
+            singleLine = true,
+            shape = RoundedCornerShape(10.dp),
+            colors = formTextFieldColors(),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { expanded = false }
+        ) {
+            filtered.forEach { suggestion ->
+                DropdownMenuItem(
+                    text = { Text(suggestion, style = MaterialTheme.typography.bodyMedium) },
+                    onClick = {
+                        onValueChange(suggestion)
                         expanded = false
                     }
                 )

@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,10 +31,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.hooky.app.R
 import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +50,8 @@ import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 
+private enum class ReportTab { PIECES, CUSTOMERS }
+
 @Composable
 fun ReportsScreen(
     onNavigateBack: () -> Unit,
@@ -50,6 +59,7 @@ fun ReportsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    var selectedTab by rememberSaveable { mutableStateOf(ReportTab.PIECES) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
@@ -81,13 +91,15 @@ fun ReportsScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                if (uiState.isPremium && uiState.rows.isNotEmpty()) {
+                val hasData = if (selectedTab == ReportTab.PIECES) uiState.rows.isNotEmpty() else uiState.customerRows.isNotEmpty()
+                if (uiState.isPremium && hasData) {
                     IconButton(onClick = {
-                        val csv = viewModel.buildCsv()
+                        val csv = if (selectedTab == ReportTab.PIECES) viewModel.buildCsv() else viewModel.buildCustomerCsv()
+                        val subject = if (selectedTab == ReportTab.PIECES) "Hooky Cost & Profit Report" else "Hooky Revenue by Customer Report"
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/csv"
                             putExtra(Intent.EXTRA_TEXT, csv)
-                            putExtra(Intent.EXTRA_SUBJECT, "Hooky Cost & Profit Report")
+                            putExtra(Intent.EXTRA_SUBJECT, subject)
                         }
                         context.startActivity(Intent.createChooser(intent, "Export CSV"))
                     }) {
@@ -100,6 +112,16 @@ fun ReportsScreen(
                 }
             }
 
+            if (uiState.isPremium && !uiState.isLoading) {
+                ReportTabRow(
+                    selectedTab = selectedTab,
+                    onTabSelected = { selectedTab = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+            }
+
             when {
                 uiState.isLoading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -109,11 +131,45 @@ fun ReportsScreen(
                 !uiState.isPremium -> {
                     PremiumGate()
                 }
+                selectedTab == ReportTab.CUSTOMERS -> {
+                    CustomerReportsContent(uiState = uiState)
+                }
                 else -> {
                     ReportsContent(uiState = uiState)
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ReportTabRow(
+    selectedTab: ReportTab,
+    onTabSelected: (ReportTab) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        FilterChip(
+            selected = selectedTab == ReportTab.PIECES,
+            onClick = { onTabSelected(ReportTab.PIECES) },
+            label = { Text(stringResource(R.string.reports_tab_pieces)) },
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = Slate,
+                selectedLabelColor = androidx.compose.ui.graphics.Color.White
+            )
+        )
+        FilterChip(
+            selected = selectedTab == ReportTab.CUSTOMERS,
+            onClick = { onTabSelected(ReportTab.CUSTOMERS) },
+            label = { Text(stringResource(R.string.reports_tab_customers)) },
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = Slate,
+                selectedLabelColor = androidx.compose.ui.graphics.Color.White
+            )
+        )
     }
 }
 
@@ -281,7 +337,7 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.weight(2f)) {
             Text(
-                text = row.name,
+                text = if (row.quantityTotal > 1) "${row.name} ×${row.quantityTotal}" else row.name,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -314,6 +370,116 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
         }
         Text(
             text = row.profit?.formatCurrency(sym) ?: "—",
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+            color = profitColor,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun CustomerReportsContent(uiState: ReportsUiState) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            SummaryCard(
+                totalRevenue = uiState.totalRevenue,
+                totalCost = uiState.totalCost,
+                totalProfit = uiState.totalProfit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+
+        item {
+            CustomerTableHeader(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+        }
+
+        items(items = uiState.customerRows) { row ->
+            CustomerTableRow(
+                row = row,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+            Divider(
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                thickness = 0.5.dp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+
+        item { Spacer(Modifier.height(16.dp)) }
+    }
+}
+
+@Composable
+private fun CustomerTableHeader(modifier: Modifier = Modifier) {
+    Row(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.piece_field_sale_platform),
+            style = MaterialTheme.typography.labelSmall,
+            color = TextMuted,
+            modifier = Modifier.weight(2f)
+        )
+        Text(
+            text = "Revenue",
+            style = MaterialTheme.typography.labelSmall,
+            color = TextMuted,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = "Profit",
+            style = MaterialTheme.typography.labelSmall,
+            color = TextMuted,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun CustomerTableRow(row: CustomerReportRow, modifier: Modifier = Modifier) {
+    val sym = getCurrencySymbol(LocalContext.current)
+    Row(
+        modifier = modifier.padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(2f)) {
+            Text(
+                text = row.name,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1
+            )
+            Text(
+                text = if (row.pieceCount == 1) "1 piece" else "${row.pieceCount} pieces",
+                style = MaterialTheme.typography.labelSmall,
+                color = TextMuted
+            )
+        }
+        Text(
+            text = row.revenue.formatCurrency(sym),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f)
+        )
+        val profitColor = when {
+            row.profit >= 0f -> BrandPurple
+            else -> MaterialTheme.colorScheme.error
+        }
+        Text(
+            text = row.profit.formatCurrency(sym),
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = profitColor,

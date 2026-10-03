@@ -85,6 +85,18 @@ private val CONTENT_EN = HelpContent(
                 "Share card",
                 "Tap the Share button on a piece to generate a clean image card you can post to Instagram, WhatsApp, or anywhere."
             ),
+            HelpTip(
+                "Duplicate a piece",
+                "Tap Clone on a piece's detail screen to create a copy instantly — handy for similar items that only differ in size or color."
+            ),
+            HelpTip(
+                "Selling several of the same piece",
+                "When a piece is for sale or sold, set a Quantity greater than 1 and track how many you've sold. The app shows per-unit cost and price, plus the revenue you still have left to earn."
+            ),
+            HelpTip(
+                "Where did the money come from?",
+                "The Customer / Shop / Webpage field takes a buyer's name, a shop name, or a platform like Etsy or Shopify — as you type, the app suggests names you've used before so the same customer or shop stays consistent. Use Notes / Links for the actual listing link or any extra detail."
+            ),
         )),
         HelpSection("Yarns", SectionIcon.Drawable(R.drawable.ic_yarns), listOf(
             HelpTip(
@@ -155,6 +167,18 @@ private val CONTENT_PT = HelpContent(
                 "Cartão para compartilhar",
                 "Toque em Compartilhar em uma peça para gerar uma imagem que você pode postar no Instagram, WhatsApp ou onde quiser."
             ),
+            HelpTip(
+                "Duplicar uma peça",
+                "Toque em Clonar na tela de detalhes de uma peça para criar uma cópia instantânea — útil para itens parecidos que só mudam de tamanho ou cor."
+            ),
+            HelpTip(
+                "Vendendo várias unidades da mesma peça",
+                "Quando uma peça está à venda ou vendida, defina uma Quantidade maior que 1 e acompanhe quantas você já vendeu. O app mostra o custo e o preço por unidade, além da receita que ainda falta ganhar."
+            ),
+            HelpTip(
+                "De onde veio o dinheiro?",
+                "O campo Cliente / Loja / Site aceita o nome de um cliente, de uma loja, ou uma plataforma como Etsy ou Shopify — ao digitar, o app sugere nomes que você já usou antes, para manter o mesmo cliente ou loja sempre consistente. Use Notas / Links para o link do anúncio ou qualquer outro detalhe."
+            ),
         )),
         HelpSection("Fios", SectionIcon.Drawable(R.drawable.ic_yarns), listOf(
             HelpTip(
@@ -224,6 +248,18 @@ private val CONTENT_ES = HelpContent(
             HelpTip(
                 "Tarjeta para compartir",
                 "Toca Compartir en una pieza para generar una imagen que puedes publicar en Instagram, WhatsApp o donde quieras."
+            ),
+            HelpTip(
+                "Duplicar una pieza",
+                "Toca Clonar en la pantalla de detalle de una pieza para crear una copia al instante — ideal para artículos parecidos que solo cambian de talla o color."
+            ),
+            HelpTip(
+                "Vender varias unidades de la misma pieza",
+                "Cuando una pieza está en venta o vendida, pon una Cantidad mayor que 1 y controla cuántas has vendido. La app muestra el coste y precio por unidad, además de los ingresos que aún te quedan por ganar."
+            ),
+            HelpTip(
+                "¿De dónde vino el dinero?",
+                "El campo Cliente / Tienda / Página web acepta el nombre de un cliente, de una tienda, o una plataforma como Etsy o Shopify — mientras escribes, la app sugiere nombres que ya usaste antes para mantener el mismo cliente o tienda siempre igual. Usa Notas / Enlaces para el enlace del anuncio o cualquier otro detalle."
             ),
         )),
         HelpSection("Lanas", SectionIcon.Drawable(R.drawable.ic_yarns), listOf(

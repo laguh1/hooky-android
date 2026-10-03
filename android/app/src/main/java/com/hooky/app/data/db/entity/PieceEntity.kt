@@ -42,4 +42,6 @@ data class PieceEntity(
     val timerIsRunning: Boolean = false,
     val timerSessionStartAt: Long? = null,
     val needlesUsed: String = "[]",      // JSON: List<String> (NEEDLE-IDs)
+    val quantityTotal: Int = 1,
+    val quantitySold: Int = 0,
 )

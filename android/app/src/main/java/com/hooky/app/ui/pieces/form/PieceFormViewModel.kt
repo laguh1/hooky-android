@@ -58,6 +58,8 @@ data class PieceFormUiState(
     val saleLink: String = "",
     val soldDate: String = "",
     val soldPrice: String = "",
+    val quantityTotal: String = "1",
+    val quantitySold: Int = 0,
     val yarnsUsed: List<YarnUsage> = emptyList(),
     val stitchesUsed: List<String> = emptyList(),
     val needlesUsed: List<String> = emptyList(),
@@ -75,6 +77,7 @@ data class PieceFormUiState(
     val availableYarns: List<YarnEntity> = emptyList(),
     val availableStitches: List<StitchEntity> = emptyList(),
     val availableNeedles: List<NeedleEntity> = emptyList(),
+    val salePlatformSuggestions: List<String> = emptyList(),
 )
 
 // Sum of (yarn's price paid × balls used) across every yarn attached to the piece —
@@ -111,6 +114,9 @@ sealed interface PieceFormAction {
     data class SaleLinkChanged(val value: String) : PieceFormAction
     data class SoldDateChanged(val value: String) : PieceFormAction
     data class SoldPriceChanged(val value: String) : PieceFormAction
+    data class QuantityTotalChanged(val value: String) : PieceFormAction
+    object IncrementQuantitySold : PieceFormAction
+    object DecrementQuantitySold : PieceFormAction
     data class NotesChanged(val value: String) : PieceFormAction
     data class RowCountChanged(val value: String) : PieceFormAction
     data class TargetRowCountChanged(val value: String) : PieceFormAction
@@ -168,6 +174,13 @@ class PieceFormViewModel @Inject constructor(
                 .catch { }
                 .collect { needles -> _uiState.update { it.copy(availableNeedles = needles) } }
         }
+
+        viewModelScope.launch {
+            try {
+                val suggestions = pieceRepository.getDistinctSalePlatforms()
+                _uiState.update { it.copy(salePlatformSuggestions = suggestions) }
+            } catch (_: Exception) { }
+        }
     }
 
     private fun loadExistingPiece(id: Int) {
@@ -221,6 +234,8 @@ class PieceFormViewModel @Inject constructor(
                             saleLink = piece.saleLink ?: "",
                             soldDate = piece.soldDate ?: "",
                             soldPrice = piece.soldPrice?.toString() ?: "",
+                            quantityTotal = piece.quantityTotal.toString(),
+                            quantitySold = piece.quantitySold,
                             yarnsUsed = yarns,
                             stitchesUsed = stitches,
                             needlesUsed = needles,
@@ -298,6 +313,21 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(soldDate = action.value) }
             is PieceFormAction.SoldPriceChanged ->
                 _uiState.update { it.copy(soldPrice = action.value) }
+            is PieceFormAction.QuantityTotalChanged ->
+                _uiState.update { current ->
+                    val newTotal = action.value.toIntOrNull() ?: 1
+                    current.copy(
+                        quantityTotal = action.value,
+                        quantitySold = current.quantitySold.coerceIn(0, maxOf(newTotal, 0))
+                    )
+                }
+            PieceFormAction.IncrementQuantitySold ->
+                _uiState.update { current ->
+                    val total = current.quantityTotal.toIntOrNull() ?: 1
+                    current.copy(quantitySold = (current.quantitySold + 1).coerceAtMost(maxOf(total, 0)))
+                }
+            PieceFormAction.DecrementQuantitySold ->
+                _uiState.update { it.copy(quantitySold = (it.quantitySold - 1).coerceAtLeast(0)) }
             is PieceFormAction.NotesChanged ->
                 _uiState.update { it.copy(notes = action.value) }
             is PieceFormAction.RowCountChanged ->
@@ -382,6 +412,8 @@ class PieceFormViewModel @Inject constructor(
                 val stitchesJson = jsonEncoder.encodeToString(stringListSerializer, current.stitchesUsed)
                 val needlesJson = jsonEncoder.encodeToString(stringListSerializer, current.needlesUsed)
                 val now = System.currentTimeMillis()
+                val resolvedQuantityTotal = (current.quantityTotal.toIntOrNull() ?: 1).coerceAtLeast(1)
+                val resolvedQuantitySold = current.quantitySold.coerceIn(0, resolvedQuantityTotal)
 
                 if (current.isEditMode && pieceId != null) {
                     val permanentPhotos = movePhotosToStorage(context, current.photos, "pieces", pieceId.toString())
@@ -412,6 +444,8 @@ class PieceFormViewModel @Inject constructor(
                             stitchesUsed = stitchesJson,
                             needlesUsed = needlesJson,
                             notes = current.notes.ifBlank { null },
+                            quantityTotal = resolvedQuantityTotal,
+                            quantitySold = resolvedQuantitySold,
                             updatedAt = now
                         )
                         pieceRepository.updatePiece(updated)
@@ -448,7 +482,9 @@ class PieceFormViewModel @Inject constructor(
                         createdAt = now,
                         updatedAt = now,
                         rowCount = current.rowCount.toIntOrNull() ?: 0,
-                        targetRowCount = current.targetRowCount.toIntOrNull()
+                        targetRowCount = current.targetRowCount.toIntOrNull(),
+                        quantityTotal = resolvedQuantityTotal,
+                        quantitySold = resolvedQuantitySold
                     )
                     pieceRepository.insertPiece(entity)
                 }
