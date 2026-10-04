@@ -2,7 +2,6 @@ package com.hooky.app.ui.camera
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.hooky.app.util.decodeSampledBitmapFromFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -168,7 +168,10 @@ private suspend fun applyEditsAndSave(
     flipH: Boolean
 ): String? = withContext(Dispatchers.IO) {
     try {
-        val src = BitmapFactory.decodeFile(originalPath) ?: return@withContext null
+        // Camera photos can be well above 4000px on one side — cap the decode at a size
+        // still far sharper than anything this app displays (full-screen detail photos,
+        // the 1080px share card) rather than holding a 40MB+ raw bitmap in memory.
+        val src = decodeSampledBitmapFromFile(originalPath, maxDimension = 2048) ?: return@withContext null
         val matrix = Matrix().apply {
             if (flipH) postScale(-1f, 1f, src.width / 2f, src.height / 2f)
             if (rotation != 0) postRotate(rotation.toFloat())

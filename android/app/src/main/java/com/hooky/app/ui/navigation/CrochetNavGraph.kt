@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -159,12 +161,17 @@ fun CrochetNavGraph(
                     currentRoute = currentRoute
                 )
             }
-        }
+        },
+        // Every screen handles the system bars itself (own Scaffold/TopAppBar or
+        // statusBarsPadding), so this root Scaffold must not add them a second time.
+        contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
         ) {
             composable(Screen.Onboarding.route) {
                 OnboardingScreen(

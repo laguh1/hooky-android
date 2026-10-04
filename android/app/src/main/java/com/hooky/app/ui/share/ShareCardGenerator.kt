@@ -3,7 +3,6 @@ package com.hooky.app.ui.share
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.LinearGradient
@@ -14,6 +13,8 @@ import android.graphics.Typeface
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.hooky.app.R
+import com.hooky.app.util.decodeSampledBitmapFromFile
+import com.hooky.app.util.decodeSampledBitmapFromResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -62,7 +63,7 @@ object ShareCardGenerator {
         canvas.drawColor(bgColor)
 
         if (photoPath != null) {
-            val photo = BitmapFactory.decodeFile(photoPath)
+            val photo = decodeSampledBitmapFromFile(photoPath, maxDimension = 1200)
             if (photo != null) {
                 val srcAspect = photo.width.toFloat() / photo.height
                 val dstAspect = size.toFloat() / photoZoneH
@@ -145,7 +146,7 @@ object ShareCardGenerator {
 
         // Hooky wordmark (bottom right)
         try {
-            val wm = BitmapFactory.decodeResource(context.resources, R.drawable.hooky_wordmark)
+            val wm = decodeSampledBitmapFromResource(context.resources, R.drawable.hooky_wordmark, maxDimension = 128)
             if (wm != null) {
                 val wmH = 64
                 val wmW = (wm.width * wmH.toFloat() / wm.height).toInt()
