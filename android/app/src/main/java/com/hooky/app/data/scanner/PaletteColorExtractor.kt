@@ -1,10 +1,10 @@
 package com.hooky.app.data.scanner
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 import androidx.palette.graphics.Palette
+import com.hooky.app.util.decodeSampledBitmapFromFile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +27,9 @@ class PaletteColorExtractor @Inject constructor(
     suspend fun extractFromPath(photoPath: String): ExtractedColor? =
         withContext(Dispatchers.Default) {
             try {
-                val bitmap = BitmapFactory.decodeFile(photoPath) ?: return@withContext null
+                // Palette only needs a representative sample of pixels, not full resolution —
+                // decoding small avoids the costly full-size decode entirely.
+                val bitmap = decodeSampledBitmapFromFile(photoPath, maxDimension = 400) ?: return@withContext null
                 val palette = Palette.from(bitmap).generate()
 
                 // Yarn close-ups are fuzzy/textured, so the single biggest pixel cluster

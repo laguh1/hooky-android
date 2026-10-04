@@ -1,9 +1,9 @@
 package com.hooky.app.data.scanner
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnLabelScanResult
+import com.hooky.app.util.decodeSampledBitmapFromFile
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -22,7 +22,9 @@ class YarnLabelScannerService @Inject constructor(
     private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     suspend fun scanFromPath(photoPath: String): YarnLabelScanResult {
-        val bitmap = BitmapFactory.decodeFile(photoPath)
+        // Capped well above what OCR needs for legible label text, but far below raw
+        // camera resolution — avoids decoding a 40MB+ bitmap just to read a label.
+        val bitmap = decodeSampledBitmapFromFile(photoPath, maxDimension = 2048)
             ?: throw IllegalStateException("Could not decode image at: $photoPath")
         val image = InputImage.fromBitmap(bitmap, 0)
         val result = recognizeTextResult(image)
@@ -35,7 +37,7 @@ class YarnLabelScannerService @Inject constructor(
     }
 
     suspend fun scanNeedleFromPath(photoPath: String, mode: ScanMode = ScanMode.HOOK): NeedleScanResult? {
-        val bitmap = BitmapFactory.decodeFile(photoPath)
+        val bitmap = decodeSampledBitmapFromFile(photoPath, maxDimension = 2048)
             ?: throw IllegalStateException("Could not decode image at: $photoPath")
         val image = InputImage.fromBitmap(bitmap, 0)
         val rawText = recognizeTextResult(image).text
