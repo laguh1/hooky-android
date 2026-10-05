@@ -3,7 +3,7 @@
 Record of what was actually posted where and when. For the caption/description *text* itself, see
 `docs/SOCIAL-CAPTIONS.md` (referenced by name below rather than duplicated here). Final media files
 live in `shared/promo/BRASIL/PUBLISHED/` — move a file there once it's confirmed posted, so that
-folder always reflects "what's actually live," separate from drafts/screengrabs elsewhere in
+folder always reflects "what's actually live," separate from the not-yet-posted finals in `images/` and `videos/` under
 `shared/promo/BRASIL/`.
 
 **Scope note (Sept 2026):** all current social content targets Brazil (PT-BR) only, so this log

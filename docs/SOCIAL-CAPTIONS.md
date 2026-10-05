@@ -20,9 +20,44 @@ only (PT-BR). EN/ES entries below are kept for reference, not being actively exp
 
 ## 🇧🇷 Português (Brasil)
 
-### Escaneamento de etiqueta do fio (Reel/Short, 23s)
+### Contador de fileiras (feed post)
 
-**Content:** `shared/promo/BRASIL/fb_post_yarn_scan_animation.mp4` — yarn label photo crossfading into the auto-filled "Editar Fio" screen, over zoomed crochet-texture background
+**Content:** `shared/promo/BRASIL/images/20261004_contador-de-fileiras_post.png` (also `_square.png`, `_story.png`) — "Quantas fileiras faltam?" headline, "Conte com um toque ou com a voz" sub, over blurred crochet-texture background
+
+**Status:** drafted, not yet confirmed posted
+
+**Instagram:**
+> 🧶 Quantas fileiras faltam? 🤔
+>
+> Com o Hooky, você conta suas fileiras com um toque ou até com a voz — sem precisar soltar a agulha!
+>
+> App grátis, sem anúncios. 💜
+>
+> 📲 Baixe grátis, link na bio.
+>
+> #crochê #tricô #hookyapp #contadordefileiras #croche #dicasdecroche
+
+**Facebook:**
+> 🧶 Quantas fileiras faltam? 🤔
+>
+> Com o Hooky, você conta suas fileiras com um toque ou até com a voz — sem precisar soltar a agulha ou o gancho!
+>
+> App grátis, sem anúncios. 💜
+>
+> 📲 Baixe grátis: [link direto da Play Store]
+
+**Facebook tags (comma-separated):**
+```
+crochê, tricô, hookyapp, contadordefileiras, croche, dicasdecroche, fios
+```
+
+---
+
+### Escaneamento de etiqueta do fio (reused across assets)
+
+**Content:** reused for both —
+- `shared/promo/BRASIL/videos/fb_post_yarn_scan_animation.mp4` — yarn label photo crossfading into the auto-filled "Editar Fio" screen, over zoomed crochet-texture background
+- `shared/promo/BRASIL/images/20261004_screen_escaneie-a-etiqueta-e-tenha-todos-os-dad_post.png` — dark-tinted hooky-design render, full filled-in "Detalhes do Fio" screen
 
 **Status:** drafted, not yet confirmed posted
 
@@ -62,7 +97,7 @@ only (PT-BR). EN/ES entries below are kept for reference, not being actively exp
 
 ### Minhas Peças screenshot (feed post)
 
-**Content:** `shared/promo/BRASIL/ig_post_20260918.png` — "Minhas Peças" screen in a phone frame, headline "Organize suas peças, fios e pontos"
+**Content:** `shared/promo/BRASIL/images/ig_post_20260918.png` — "Minhas Peças" screen in a phone frame, headline "Organize suas peças, fios e pontos"
 
 **Status:** drafted, not yet confirmed posted
 
@@ -100,7 +135,7 @@ only (PT-BR). EN/ES entries below are kept for reference, not being actively exp
 
 ### Calculadora de preços — testimonial post (image)
 
-**Content:** `shared/promo/BRASIL/ig_post_calculadora_testimonial.png` — real Calculadora de Preços screenshot in a phone frame, crochet-texture background, testimonial quote baked into the image
+**Content:** `shared/promo/BRASIL/images/ig_post_calculadora_testimonial.png` — real Calculadora de Preços screenshot in a phone frame, crochet-texture background, testimonial quote baked into the image
 
 **Status:** ⚠️ image made, caption NOT yet drafted — needs one before posting
 
