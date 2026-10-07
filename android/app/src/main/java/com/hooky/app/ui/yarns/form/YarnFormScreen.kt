@@ -1,5 +1,9 @@
 package com.hooky.app.ui.yarns.form
 
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.IntrinsicSize
+import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -293,7 +297,7 @@ fun YarnFormScreen(
                 } else {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
                     ) {
                         Button(
                             onClick = {
@@ -309,7 +313,7 @@ fun YarnFormScreen(
                                 containerColor = Slate,
                                 contentColor = White
                             ),
-                            modifier = Modifier.weight(1f).height(52.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 52.dp).fillMaxHeight()
                         ) {
                             Icon(
                                 Icons.Filled.DocumentScanner,
@@ -331,7 +335,7 @@ fun YarnFormScreen(
                             shape = RoundedCornerShape(12.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.weight(1f).height(52.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 52.dp).fillMaxHeight()
                         ) {
                             Icon(
                                 Icons.Filled.Image,
@@ -525,7 +529,7 @@ fun YarnFormScreen(
                         OutlinedTextField(
                             value = uiState.ballWeightG,
                             onValueChange = { viewModel.onAction(YarnFormAction.BallWeightGChanged(it)) },
-                            label = { Text(stringResource(R.string.yarn_field_ball_weight)) },
+                            label = { WordSafeText(stringResource(R.string.yarn_field_ball_weight)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -535,7 +539,7 @@ fun YarnFormScreen(
                         OutlinedTextField(
                             value = uiState.ballLengthM,
                             onValueChange = { viewModel.onAction(YarnFormAction.BallLengthMChanged(it)) },
-                            label = { Text(stringResource(R.string.yarn_field_ball_length)) },
+                            label = { WordSafeText(stringResource(R.string.yarn_field_ball_length)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),

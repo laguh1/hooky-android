@@ -31,6 +31,7 @@
     <string name="dashboard_see_all">See all</string>
     <string name="dashboard_total_revenue">Total Revenue</string>
     <string name="dashboard_calculator_shortcut">Price Calculator</string>
+    <string name="dashboard_report_link">View cost &amp; profit report →</string>
 
     <!-- ================================================================ -->
     <!-- Pieces — list & general -->
@@ -328,6 +329,8 @@
     <!-- Common / Shared — labels -->
     <!-- ================================================================ -->
     <string name="label_dimensions">Dimensions</string>
+    <string name="piece_dimension_wide">%scm wide</string>
+    <string name="piece_dimension_long">%scm long</string>
     <string name="label_started">Started</string>
     <string name="label_finished">Finished</string>
     <string name="label_hours">Work Hours</string>
@@ -377,7 +380,7 @@
     <string name="calculator_empty_hint">Fill in cost and hours to see the suggested price</string>
     <string name="calculator_suggested_price">Suggested Price</string>
     <string name="calculator_breakdown_materials">Materials</string>
-    <string name="calculator_breakdown_labor">Labor (%s h × %s)</string>
+    <string name="calculator_breakdown_labor">Labor (%s × %s)</string>
     <string name="calculator_breakdown_complexity">Complexity (×%s)</string>
     <string name="calculator_breakdown_profit">Profit (%d%%)</string>
     <string name="calculator_copy_price">Copy Price</string>
@@ -482,6 +485,8 @@
     <string name="yarn_field_iron_temp_hint">e.g. Low, Medium, 110°C</string>
     <string name="yarn_label_brand">Brand</string>
     <string name="yarn_label_color">Color</string>
+    <string name="yarn_color_unknown">Not specified</string>
+    <string name="yarn_brand_unknown">Unknown brand</string>
     <string name="yarn_label_material">Material</string>
     <string name="yarn_label_specs">Specs</string>
     <string name="yarn_label_ball_weight">Ball weight</string>

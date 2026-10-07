@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.form
 
+import com.hooky.app.ui.yarns.UNKNOWN_YARN_COLOR
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -170,7 +171,7 @@ class YarnFormViewModel @Inject constructor(
                             isLoading = false,
                             name = yarn.name,
                             brand = yarn.brand ?: "",
-                            color = yarn.color,
+                            color = yarn.color.takeUnless { it == UNKNOWN_YARN_COLOR }.orEmpty(),
                             colorCode = yarn.colorCode ?: "",
                             material = try { Material.valueOf(yarn.material) } catch (_: Exception) { Material.OTHER },
                             materialComposition = yarn.materialComposition ?: "",
@@ -447,7 +448,7 @@ class YarnFormViewModel @Inject constructor(
                         val updated = existing.copy(
                             name = current.name,
                             brand = current.brand.ifBlank { null },
-                            color = current.color.ifBlank { "Unknown" },
+                            color = current.color.ifBlank { UNKNOWN_YARN_COLOR },
                             colorCode = current.colorCode.ifBlank { null },
                             material = current.material.name,
                             materialComposition = current.materialComposition.ifBlank { null },
@@ -478,7 +479,7 @@ class YarnFormViewModel @Inject constructor(
                         yarnId = newYarnId,
                         name = current.name,
                         brand = current.brand.ifBlank { null },
-                        color = current.color.ifBlank { "Unknown" },
+                        color = current.color.ifBlank { UNKNOWN_YARN_COLOR },
                         colorCode = current.colorCode.ifBlank { null },
                         material = current.material.name,
                         materialComposition = current.materialComposition.ifBlank { null },

@@ -303,7 +303,7 @@ private fun DashboardContent(
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "View cost & profit report →",
+                    text = stringResource(R.string.dashboard_report_link),
                     style = MaterialTheme.typography.labelMedium,
                     color = Slate,
                     textAlign = TextAlign.Center,

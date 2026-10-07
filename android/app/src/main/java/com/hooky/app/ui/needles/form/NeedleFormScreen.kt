@@ -1,5 +1,9 @@
 package com.hooky.app.ui.needles.form
 
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.IntrinsicSize
+import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -205,7 +209,7 @@ fun NeedleFormScreen(
                 } else {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
                     ) {
                         Button(
                             onClick = {
@@ -218,7 +222,7 @@ fun NeedleFormScreen(
                             },
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White),
-                            modifier = Modifier.weight(1f).height(52.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 52.dp).fillMaxHeight()
                         ) {
                             Icon(Icons.Filled.DocumentScanner, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
@@ -232,7 +236,7 @@ fun NeedleFormScreen(
                             shape = RoundedCornerShape(12.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.weight(1f).height(52.dp)
+                            modifier = Modifier.weight(1f).heightIn(min = 52.dp).fillMaxHeight()
                         ) {
                             Icon(Icons.Filled.Image, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
@@ -302,7 +306,7 @@ fun NeedleFormScreen(
                         OutlinedTextField(
                             value = uiState.sizeMm,
                             onValueChange = { viewModel.onAction(NeedleFormAction.SizeMmChanged(it)) },
-                            label = { Text(stringResource(R.string.needle_field_size_mm)) },
+                            label = { WordSafeText(stringResource(R.string.needle_field_size_mm)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -312,7 +316,7 @@ fun NeedleFormScreen(
                         OutlinedTextField(
                             value = uiState.sizeLabel,
                             onValueChange = { viewModel.onAction(NeedleFormAction.SizeLabelChanged(it)) },
-                            label = { Text(stringResource(R.string.needle_field_size_label)) },
+                            label = { WordSafeText(stringResource(R.string.needle_field_size_label)) },
                             placeholder = { Text(stringResource(R.string.needle_field_size_label_hint), color = TextMuted) },
                             singleLine = true,
                             shape = RoundedCornerShape(10.dp),

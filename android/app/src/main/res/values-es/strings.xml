@@ -31,6 +31,7 @@
     <string name="dashboard_see_all">Ver todo</string>
     <string name="dashboard_total_revenue">Ingresos totales</string>
     <string name="dashboard_calculator_shortcut">Calculadora de precio</string>
+    <string name="dashboard_report_link">Ver informe de costes y beneficios →</string>
 
     <!-- ================================================================ -->
     <!-- Pieces — list & general -->
@@ -328,6 +329,8 @@
     <!-- Common / Shared — labels -->
     <!-- ================================================================ -->
     <string name="label_dimensions">Dimensiones</string>
+    <string name="piece_dimension_wide">%scm de ancho</string>
+    <string name="piece_dimension_long">%scm de largo</string>
     <string name="label_started">Inicio</string>
     <string name="label_finished">Finalización</string>
     <string name="label_hours">Horas trabajadas</string>
@@ -377,7 +380,7 @@
     <string name="calculator_empty_hint">Completa el coste y las horas para ver el precio sugerido</string>
     <string name="calculator_suggested_price">Precio sugerido</string>
     <string name="calculator_breakdown_materials">Materiales</string>
-    <string name="calculator_breakdown_labor">Mano de obra (%s h × %s)</string>
+    <string name="calculator_breakdown_labor">Mano de obra (%s × %s)</string>
     <string name="calculator_breakdown_complexity">Complejidad (×%s)</string>
     <string name="calculator_breakdown_profit">Beneficio (%d%%)</string>
     <string name="calculator_copy_price">Copiar precio</string>
@@ -482,6 +485,8 @@
     <string name="yarn_field_iron_temp_hint">p. ej. Bajo, Medio, 110°C</string>
     <string name="yarn_label_brand">Marca</string>
     <string name="yarn_label_color">Color</string>
+    <string name="yarn_color_unknown">Sin especificar</string>
+    <string name="yarn_brand_unknown">Marca desconocida</string>
     <string name="yarn_label_material">Material</string>
     <string name="yarn_label_specs">Especif.</string>
     <string name="yarn_label_ball_weight">Peso del ovillo</string>

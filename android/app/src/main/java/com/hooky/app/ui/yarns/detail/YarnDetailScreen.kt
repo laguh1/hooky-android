@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.detail
 
+import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -298,10 +299,11 @@ private fun YarnDetailContent(
                 YarnInfoCard(title = stringResource(R.string.yarn_section_basic)) {
                     yarn.brand?.let { InfoRow(label = stringResource(R.string.yarn_label_brand), value = it) }
                     if (yarn.color.isNotBlank()) {
+                        val colorName = yarnColorLabel(yarn.color)
                         val colorValue = if (yarn.colorCode != null) {
-                            "${yarn.color} (${yarn.colorCode})"
+                            "$colorName (${yarn.colorCode})"
                         } else {
-                            yarn.color
+                            colorName
                         }
                         InfoRow(label = stringResource(R.string.yarn_label_color), value = colorValue)
                     }

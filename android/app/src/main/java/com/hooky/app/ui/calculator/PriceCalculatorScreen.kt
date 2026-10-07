@@ -1,5 +1,6 @@
 package com.hooky.app.ui.calculator
 
+import com.hooky.app.ui.components.WordSafeText
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -216,7 +217,7 @@ fun PriceCalculatorScreen(
                                 selected = selected,
                                 onClick = { viewModel.onAction(CalculatorAction.ComplexityFactorChanged(option.factor)) },
                                 label = {
-                                    Text(
+                                    WordSafeText(
                                         text = stringResource(option.labelRes),
                                         style = MaterialTheme.typography.labelSmall
                                     )

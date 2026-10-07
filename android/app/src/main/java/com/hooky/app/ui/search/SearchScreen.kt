@@ -1,5 +1,6 @@
 package com.hooky.app.ui.search
 
+import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -392,8 +393,8 @@ private fun YarnResultRow(
         emptyList()
     }
 
-    val brand = yarn.brand ?: "Unknown brand"
-    val subtitle = "$brand · ${yarn.color}"
+    val brand = yarn.brand ?: stringResource(R.string.yarn_brand_unknown)
+    val subtitle = "$brand · ${yarnColorLabel(yarn.color)}"
 
     SearchResultRow(
         photoPath = photoList.firstOrNull(),
