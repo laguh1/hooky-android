@@ -81,6 +81,17 @@ crochê, tricô, hookyapp, contadordefileiras, croche, dicasdecroche, fios
 >
 > 📲 Baixe grátis: [link direto da Play Store]
 
+**Facebook — post em grupo (tom pessoal, para grupos de crochê/tricô):**
+> Mais alguém aqui perde as informações do fio? 🧶
+>
+> Eu sempre jogava a etiqueta fora e depois não lembrava a marca, a cor nem quantos metros tinha o novelo quando precisava comprar mais. Então criei um app para resolver isso para mim.
+>
+> No Hooky App, você aponta a câmera para a etiqueta do fio e ele preenche marca, cor, material e gramagem automaticamente. Sem digitar nada.
+>
+> É grátis no Google Play, para quem quiser testar: laguh1.github.io/hooky-landing/fb
+>
+> Vou adorar saber o que vocês acham, e o que mais gostariam que o app lesse da etiqueta. 💜
+
 **YouTube Shorts title:**
 > Escaneie a etiqueta do fio automaticamente 📸 #Shorts
 
@@ -269,7 +280,70 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 
 ## 🇬🇧 English (reference — not actively expanded right now)
 
-*(none yet)*
+### Your crochet & knitting companion (YouTube Short, collage intro)
+
+**Content:** English version of `shared/promo/BRASIL/videos/Seu companheiro de Crochê & Tricô.mp4` — collage of finished pieces + Edit Yarn, yarn detail and Price Calculator screens, wordmark, tagline, Google Play badge
+
+**Status:** drafted, not yet confirmed posted
+
+**YouTube title:**
+> Your crochet & knitting companion 🧶 | Hooky App #Shorts
+
+**Alternative titles:**
+> One app for your yarn, pieces and prices 🧶 | Hooky App
+> The free app every crocheter and knitter needs | Hooky App
+
+**YouTube description:**
+> Meet Hooky App, your crochet and knitting companion. 🧶
+>
+> Keep your pieces, yarn stash, stitches, hooks and needles in one place. Scan yarn labels with your camera, calculate a fair price for your work, and track your progress with the row counter and work timer.
+>
+> It's free, works offline, and needs no account.
+>
+> 📲 Free on Google Play: laguh1.github.io/hooky-landing/yt
+>
+> #crochet #knitting #hookyapp #crochetapp #Shorts
+
+**YouTube tags (keyword field):**
+> Hooky App, crochet app, knitting app, crochet row counter, row counter app, yarn stash organizer, yarn inventory app, crochet price calculator, how to price crochet, yarn label scanner, crochet project tracker, knitting project tracker, crochet, knitting, yarn
+
+---
+
+### Yarn label scanner (YouTube Short / feature video)
+
+**Status:** drafted, not yet confirmed posted
+
+**YouTube title:**
+> Scan your yarn label, skip the typing 📸 | Hooky App #Shorts
+
+**Alternative titles:**
+> This app reads your yarn label for you 🧶 | Hooky App
+> Never lose a yarn label again | Hooky App
+
+**YouTube description:**
+> Bought a yarn and can't remember the details later? 🧶
+>
+> With Hooky App, you scan the yarn label with your camera and the app fills in brand, colour, material and weight for you. No typing needed.
+>
+> Hooky App is your crochet and knitting companion: keep track of your pieces, your yarn stash and your stitches in one place.
+>
+> 📲 Free on Google Play: laguh1.github.io/hooky-landing/yt
+>
+> #crochet #knitting #hookyapp #yarnstash #Shorts
+
+**Facebook group post (personal tone, for crochet/knitting groups):**
+> Does anyone else lose track of their yarn details? 🧶
+>
+> I kept throwing away the label and then couldn't remember the brand, the colour or how many metres were in a ball when I needed more. So I built a small app to fix it for myself.
+>
+> In Hooky App you point your camera at the yarn label and it fills in brand, colour, material and weight for you. No typing.
+>
+> It's free on Google Play, if anyone wants to try it: laguh1.github.io/hooky-landing/fb
+>
+> I'd love to hear what you think, and what else you'd want it to read from the label. 💜
+
+**YouTube tags (keyword field):**
+> Hooky App, crochet app, knitting app, yarn label scanner, scan yarn label, yarn stash organizer, yarn inventory app, yarn stash, crochet organizer, knitting organizer, crochet tips, knitting tips, crochet, knitting, yarn
 
 ---
 
