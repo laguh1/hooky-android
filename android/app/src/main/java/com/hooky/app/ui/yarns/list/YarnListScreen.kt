@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.list
 
+import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -348,7 +349,7 @@ private fun YarnGridCard(
                         drawCircle(color = Color(0xFF9CA3AF))
                     }
                     Text(
-                        text = yarn.color,
+                        text = yarnColorLabel(yarn.color),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         maxLines = 1

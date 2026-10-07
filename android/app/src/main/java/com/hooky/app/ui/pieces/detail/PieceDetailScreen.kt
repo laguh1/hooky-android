@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -92,6 +94,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.hooky.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -585,6 +588,7 @@ private fun PieceDetailContent(
                     onClick = onNavigateToEdit,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
                 ) {
@@ -594,13 +598,18 @@ private fun PieceDetailContent(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(stringResource(R.string.action_edit))
+                    Text(
+                        stringResource(R.string.action_edit),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 OutlinedButton(
                     onClick = onCloneClick,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
                 ) {
                     Icon(
@@ -609,19 +618,28 @@ private fun PieceDetailContent(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(stringResource(R.string.action_clone))
+                    Text(
+                        stringResource(R.string.action_clone),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 OutlinedButton(
                     onClick = onArchiveClick,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, ErrorRed),
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = ErrorRed
                     )
                 ) {
-                    Text(stringResource(R.string.action_archive))
+                    Text(
+                        stringResource(R.string.action_archive),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
 
@@ -642,11 +660,9 @@ private fun InfoCard(piece: PieceEntity) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             if (piece.widthCm != null || piece.lengthCm != null) {
-                val dims = buildString {
-                    piece.widthCm?.let { append("${it}cm wide") }
-                    if (piece.widthCm != null && piece.lengthCm != null) append(" × ")
-                    piece.lengthCm?.let { append("${it}cm long") }
-                }
+                val widthText = piece.widthCm?.let { stringResource(R.string.piece_dimension_wide, it.toString()) }
+                val lengthText = piece.lengthCm?.let { stringResource(R.string.piece_dimension_long, it.toString()) }
+                val dims = listOfNotNull(widthText, lengthText).joinToString(" × ")
                 InfoRow(label = stringResource(R.string.label_dimensions), value = dims)
             }
             piece.dateStarted?.let { InfoRow(label = stringResource(R.string.label_started), value = formatDate(it)) }
@@ -1406,7 +1422,7 @@ private fun EditWorkTimeDialog(
                 OutlinedTextField(
                     value = hoursText,
                     onValueChange = { if (it.all { c -> c.isDigit() }) hoursText = it },
-                    label = { Text(stringResource(R.string.piece_work_time_hours)) },
+                    label = { WordSafeText(stringResource(R.string.piece_work_time_hours)) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
@@ -1417,7 +1433,7 @@ private fun EditWorkTimeDialog(
                 OutlinedTextField(
                     value = minutesText,
                     onValueChange = { if (it.all { c -> c.isDigit() }) minutesText = it },
-                    label = { Text(stringResource(R.string.piece_work_time_minutes)) },
+                    label = { WordSafeText(stringResource(R.string.piece_work_time_minutes)) },
                     singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Number

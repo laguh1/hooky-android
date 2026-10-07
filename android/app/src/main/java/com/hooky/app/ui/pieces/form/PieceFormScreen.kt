@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -357,7 +358,7 @@ fun PieceFormScreen(
                         OutlinedTextField(
                             value = uiState.widthCm,
                             onValueChange = { viewModel.onAction(PieceFormAction.WidthCmChanged(it)) },
-                            label = { Text(stringResource(R.string.piece_field_width)) },
+                            label = { WordSafeText(stringResource(R.string.piece_field_width)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -367,7 +368,7 @@ fun PieceFormScreen(
                         OutlinedTextField(
                             value = uiState.lengthCm,
                             onValueChange = { viewModel.onAction(PieceFormAction.LengthCmChanged(it)) },
-                            label = { Text(stringResource(R.string.piece_field_length)) },
+                            label = { WordSafeText(stringResource(R.string.piece_field_length)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -397,7 +398,7 @@ fun PieceFormScreen(
                         OutlinedTextField(
                             value = uiState.workHours,
                             onValueChange = { if (it.all { c -> c.isDigit() }) viewModel.onAction(PieceFormAction.WorkHoursChanged(it)) },
-                            label = { Text(stringResource(R.string.piece_field_work_hours)) },
+                            label = { WordSafeText(stringResource(R.string.piece_field_work_hours)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             shape = RoundedCornerShape(10.dp),
@@ -412,7 +413,7 @@ fun PieceFormScreen(
                                     if (n < 60) viewModel.onAction(PieceFormAction.WorkMinutesChanged(v))
                                 }
                             },
-                            label = { Text(stringResource(R.string.piece_field_work_minutes)) },
+                            label = { WordSafeText(stringResource(R.string.piece_field_work_minutes)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             shape = RoundedCornerShape(10.dp),

@@ -31,6 +31,7 @@
     <string name="dashboard_see_all">Ver tudo</string>
     <string name="dashboard_total_revenue">Receita Total</string>
     <string name="dashboard_calculator_shortcut">Calculadora de Preços</string>
+    <string name="dashboard_report_link">Ver relatório de custos e lucro →</string>
 
     <!-- ================================================================ -->
     <!-- Pieces — list & general -->
@@ -328,6 +329,8 @@
     <!-- Common / Shared — labels -->
     <!-- ================================================================ -->
     <string name="label_dimensions">Dimensões</string>
+    <string name="piece_dimension_wide">%scm de largura</string>
+    <string name="piece_dimension_long">%scm de comprimento</string>
     <string name="label_started">Iniciado</string>
     <string name="label_finished">Concluído</string>
     <string name="label_hours">Horas de Trabalho</string>
@@ -377,7 +380,7 @@
     <string name="calculator_empty_hint">Preencha o custo e as horas para ver o preço sugerido</string>
     <string name="calculator_suggested_price">Preço Sugerido</string>
     <string name="calculator_breakdown_materials">Materiais</string>
-    <string name="calculator_breakdown_labor">Mão de Obra (%s h × %s)</string>
+    <string name="calculator_breakdown_labor">Mão de Obra (%s × %s)</string>
     <string name="calculator_breakdown_complexity">Complexidade (×%s)</string>
     <string name="calculator_breakdown_profit">Lucro (%d%%)</string>
     <string name="calculator_copy_price">Copiar Preço</string>
@@ -482,6 +485,8 @@
     <string name="yarn_field_iron_temp_hint">ex: Baixo, Médio, 110°C</string>
     <string name="yarn_label_brand">Marca</string>
     <string name="yarn_label_color">Cor</string>
+    <string name="yarn_color_unknown">Não informada</string>
+    <string name="yarn_brand_unknown">Marca desconhecida</string>
     <string name="yarn_label_material">Material</string>
     <string name="yarn_label_specs">Especif.</string>
     <string name="yarn_label_ball_weight">Peso do novelo</string>
