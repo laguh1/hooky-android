@@ -653,4 +653,32 @@
     <string name="onboarding_3_title">Build your library</string>
     <string name="onboarding_3_desc">Save your favourite stitches with tutorial links and difficulty ratings. Add your needles and hooks for quick reference.</string>
 
+    <!-- ================================================================ -->
+    <!-- Hooky Pro (paid yearly plan, trial, status) -->
+    <!-- ================================================================ -->
+    <string name="pro_title">Hooky Pro</string>
+    <string name="pro_tagline">Tools for makers who sell their work.</string>
+    <string name="pro_feature_reports">Cost &amp; profit reports</string>
+    <string name="pro_feature_customers">Revenue by customer</string>
+    <string name="pro_feature_counters">Extra counters on every piece</string>
+    <string name="pro_feature_photos">More than 5 photos per piece</string>
+    <string name="pro_buy_button">Get Pro · %s</string>
+    <string name="pro_extend_button">Add 12 more months · %s</string>
+    <string name="pro_payment_note">One payment for 12 months. No automatic renewal.</string>
+    <string name="pro_unavailable">Pro can\'t be purchased right now. Check your connection and try again.</string>
+    <string name="pro_retry">Try again</string>
+    <string name="pro_status_purchased">Pro is active. Thank you for supporting Hooky!</string>
+    <string name="pro_status_trial">Free trial: Pro is unlocked until %s.</string>
+    <string name="pro_status_early">Launch gift: Pro is free until %s.</string>
+    <string name="pro_status_early_lifetime">Launch gift: Pro is free on this device.</string>
+    <string name="pro_status_gifted">Pro was gifted to this device.</string>
+    <string name="pro_event_purchased">Pro unlocked. Enjoy!</string>
+    <string name="pro_event_pending">Your payment is pending. Pro unlocks as soon as it\'s confirmed.</string>
+    <string name="pro_event_failed">The purchase didn\'t go through. Please try again.</string>
+    <string name="pro_gate_title">Pro feature</string>
+    <string name="pro_gate_reports">Cost &amp; profit reports are part of Hooky Pro.</string>
+    <string name="pro_gate_button">See Hooky Pro</string>
+    <string name="settings_section_pro">HOOKY PRO</string>
+    <string name="settings_pro_subtitle_active">Active</string>
+    <string name="settings_pro_subtitle_inactive">Tools for sellers</string>
 </resources>

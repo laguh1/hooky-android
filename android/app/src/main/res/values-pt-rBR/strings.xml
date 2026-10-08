@@ -642,4 +642,32 @@
     <string name="onboarding_3_title">Monte sua biblioteca</string>
     <string name="onboarding_3_desc">Salve seus pontos favoritos com links de tutoriais e avaliação de dificuldade. Adicione seus ganchos e agulhas para ter tudo à mão.</string>
 
+    <!-- ================================================================ -->
+    <!-- Hooky Pro (paid yearly plan, trial, status) -->
+    <!-- ================================================================ -->
+    <string name="pro_title">Hooky Pro</string>
+    <string name="pro_tagline">Ferramentas para quem vende suas peças.</string>
+    <string name="pro_feature_reports">Relatórios de custos e lucro</string>
+    <string name="pro_feature_customers">Receita por cliente</string>
+    <string name="pro_feature_counters">Contadores extras em cada peça</string>
+    <string name="pro_feature_photos">Mais de 5 fotos por peça</string>
+    <string name="pro_buy_button">Obter o Pro · %s</string>
+    <string name="pro_extend_button">Adicionar mais 12 meses · %s</string>
+    <string name="pro_payment_note">Um único pagamento por 12 meses. Sem renovação automática.</string>
+    <string name="pro_unavailable">Não é possível comprar o Pro agora. Verifique sua conexão e tente novamente.</string>
+    <string name="pro_retry">Tentar novamente</string>
+    <string name="pro_status_purchased">O Pro está ativo. Agradecemos por apoiar o Hooky!</string>
+    <string name="pro_status_trial">Teste grátis: o Pro está liberado até %s.</string>
+    <string name="pro_status_early">Presente de lançamento: o Pro é grátis até %s.</string>
+    <string name="pro_status_early_lifetime">Presente de lançamento: o Pro é grátis neste aparelho.</string>
+    <string name="pro_status_gifted">O Pro foi um presente para este aparelho.</string>
+    <string name="pro_event_purchased">Pro liberado. Aproveite!</string>
+    <string name="pro_event_pending">Seu pagamento está pendente. O Pro é liberado assim que for confirmado.</string>
+    <string name="pro_event_failed">A compra não foi concluída. Tente novamente.</string>
+    <string name="pro_gate_title">Recurso Pro</string>
+    <string name="pro_gate_reports">Os relatórios de custos e lucro fazem parte do Hooky Pro.</string>
+    <string name="pro_gate_button">Ver o Hooky Pro</string>
+    <string name="settings_section_pro">HOOKY PRO</string>
+    <string name="settings_pro_subtitle_active">Ativo</string>
+    <string name="settings_pro_subtitle_inactive">Ferramentas para vender</string>
 </resources>

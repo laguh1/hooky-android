@@ -36,4 +36,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private var resumedOnce = false
+
+    override fun onResume() {
+        super.onResume()
+        // onCreate already checks purchases via initialize(); this covers coming back to
+        // the app later (purchase finished in Play, or the paid year ran out meanwhile).
+        if (resumedOnce) lifecycleScope.launch { premiumManager.refreshPurchases() }
+        resumedOnce = true
+    }
 }
