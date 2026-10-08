@@ -183,3 +183,40 @@ If the device has no internet on launch:
 | Tester ID shows blank | Firebase Installations hasn't responded yet | Wait a few seconds, or check internet connection |
 | Premium not updating after publishing | Fetch interval (1 hour) not elapsed | Force-close and reopen app, OR temporarily set interval to 0 |
 | Multiple people with same ID | Impossible — IDs are unique per app install | — |
+
+---
+
+## Hooky Pro: paid yearly plan and free trial (added Oct 2026)
+
+Pro can now also be **bought** in the app through Google Play. A device has Pro if any
+one of these is true: it bought Pro, it is on the `premium_ids` list, it qualified as an
+early adopter, or it is inside the free trial. The app shows which one applies on
+**Settings → Hooky Pro**.
+
+### What to create in Play Console (once)
+
+Monetise with Play → **Subscriptions** → Create subscription:
+
+- **Product ID:** `hooky_pro` (must match exactly; the app looks for this ID)
+- **Base plan ID:** `yearly`, type **Prepaid**, duration **1 year** (pay once, no
+  automatic renewal; buying again while active adds another year)
+- **Price:** €9.99 base, with manual overrides Brazil R$29.90 and Mexico MX$149
+- Activate the base plan
+
+Play Console only lets you create the product after a build that contains the billing
+library has been uploaded to a track (internal testing is enough). Until the product
+exists and is active, the Pro screen shows "Pro can't be purchased right now".
+
+To test a purchase without being charged, add your Google account under
+**Settings → Licence testing** in Play Console and install the app from the internal
+testing track.
+
+### Free trial for new installs
+
+Remote Config parameter **`pro_trial_days`**: number of days of Pro, counted from the
+device's own first launch, for devices that did **not** qualify as early adopters. No
+payment method is needed. The app's built-in default is `7`; set it to `0` to turn the
+trial off. It is deliberately separate from `early_adopter_premium_days`: that one is
+read live, so lowering it would shorten the early adopters' free year.
+
+The trial is stored on the device, so reinstalling the app starts a new one.

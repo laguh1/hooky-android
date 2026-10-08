@@ -30,8 +30,8 @@ android {
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
-        versionCode = 22
-        versionName = "1.7.1"
+        versionCode = 23
+        versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -145,6 +145,10 @@ dependencies {
     implementation("com.google.firebase:firebase-config-ktx")
     implementation("com.google.firebase:firebase-installations-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+    // Google Play Billing — Pro yearly prepaid plan. Java artifact on purpose: billing-ktx 8.x
+    // is built with a newer Kotlin than this project compiles with.
+    implementation("com.android.billingclient:billing:8.3.0")
 
     // ML Kit — Yarn Label Scanner (Phase A)
     // Play Services dynamic module instead of the bundled model: the bundled

@@ -26,7 +26,8 @@ object PremiumModule {
                 mapOf(
                     "premium_ids" to "[]",
                     "early_adopter_cutoff" to "",
-                    "early_adopter_premium_days" to "0"
+                    "early_adopter_premium_days" to "0",
+                    "pro_trial_days" to "7"
                 )
             )
         }

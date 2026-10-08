@@ -1,5 +1,7 @@
 package com.hooky.app.ui.reports
 
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Button
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,6 +57,7 @@ private enum class ReportTab { PIECES, CUSTOMERS }
 @Composable
 fun ReportsScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToPro: () -> Unit = {},
     viewModel: ReportsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -129,7 +132,7 @@ fun ReportsScreen(
                     }
                 }
                 !uiState.isPremium -> {
-                    PremiumGate()
+                    PremiumGate(onSeePro = onNavigateToPro)
                 }
                 selectedTab == ReportTab.CUSTOMERS -> {
                     CustomerReportsContent(uiState = uiState)
@@ -174,7 +177,7 @@ private fun ReportTabRow(
 }
 
 @Composable
-private fun PremiumGate() {
+private fun PremiumGate(onSeePro: () -> Unit) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -188,17 +191,27 @@ private fun PremiumGate() {
                 modifier = Modifier.size(48.dp)
             )
             Text(
-                text = "Premium Feature",
+                text = stringResource(R.string.pro_gate_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "Cost & profit reports are available for premium testers. Contact us to get early access.",
+                text = stringResource(R.string.pro_gate_reports),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
             )
+            Button(
+                onClick = onSeePro,
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Slate,
+                    contentColor = androidx.compose.ui.graphics.Color.White
+                )
+            ) {
+                Text(stringResource(R.string.pro_gate_button))
+            }
         }
     }
 }

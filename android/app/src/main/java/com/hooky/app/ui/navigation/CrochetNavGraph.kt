@@ -1,5 +1,6 @@
 package com.hooky.app.ui.navigation
 
+import com.hooky.app.ui.pro.ProScreen
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -110,6 +111,7 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object Reports : Screen("reports")
     object Help : Screen("help")
+    object Pro : Screen("pro")
     object Onboarding : Screen("onboarding")
 }
 
@@ -410,15 +412,21 @@ fun CrochetNavGraph(
 
             composable(Screen.Reports.route) {
                 ReportsScreen(
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToPro = { navController.navigate(Screen.Pro.route) }
                 )
             }
 
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     onNavigateBack = { navController.popBackStack() },
-                    onNavigateToHelp = { navController.navigate(Screen.Help.route) }
+                    onNavigateToHelp = { navController.navigate(Screen.Help.route) },
+                    onNavigateToPro = { navController.navigate(Screen.Pro.route) }
                 )
+            }
+
+            composable(Screen.Pro.route) {
+                ProScreen(onNavigateBack = { navController.popBackStack() })
             }
 
             composable(Screen.Help.route) {
