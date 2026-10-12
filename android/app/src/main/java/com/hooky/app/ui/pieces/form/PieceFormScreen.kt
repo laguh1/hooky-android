@@ -1,5 +1,7 @@
 package com.hooky.app.ui.pieces.form
 
+import androidx.compose.foundation.layout.PaddingValues
+import com.hooky.app.ui.navigation.Screen
 import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.pm.PackageManager
@@ -501,11 +503,30 @@ fun PieceFormScreen(
                         onValueChange = { viewModel.onAction(PieceFormAction.QuantityTotalChanged(it)) },
                         label = { Text(stringResource(R.string.piece_field_quantity_total)) },
                         singleLine = true,
+                        enabled = uiState.isPro,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    if (!uiState.isPro) {
+                        Text(
+                            text = stringResource(R.string.pro_gate_quantity),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextSecondary
+                        )
+                        TextButton(
+                            onClick = { navController?.navigate(Screen.Pro.route) },
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.pro_gate_button),
+                                color = BrandPurple,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
 
                     if (quantityTotal > 1) {
                         Row(

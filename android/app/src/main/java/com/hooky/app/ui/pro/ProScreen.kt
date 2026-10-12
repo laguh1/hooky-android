@@ -133,6 +133,7 @@ fun ProScreen(
                     ) {
                         FeatureRow(stringResource(R.string.pro_feature_reports))
                         FeatureRow(stringResource(R.string.pro_feature_customers))
+                        FeatureRow(stringResource(R.string.pro_feature_batches))
                         FeatureRow(stringResource(R.string.pro_feature_counters))
                         FeatureRow(stringResource(R.string.pro_feature_photos))
                     }

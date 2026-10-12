@@ -107,12 +107,13 @@ class ReportsViewModel @Inject constructor(
             .sortedByDescending { it.revenue }
     }
 
-    fun buildCsv(): String {
+    // Header and status labels come from the screen so the export follows the app language.
+    fun buildCsv(header: String, statusLabels: Map<String, String>): String {
         val sb = StringBuilder()
-        sb.appendLine("Name,Status,Quantity,Material Cost,Price,Sold Price,Work Hours,Total Cost,Total Revenue,Profit")
+        sb.appendLine(header)
         _uiState.value.rows.forEach { row ->
             sb.appendLine(
-                "${row.name.escapeCsv()},${row.status},${row.quantityTotal}," +
+                "${row.name.escapeCsv()},${(statusLabels[row.status] ?: row.status).escapeCsv()},${row.quantityTotal}," +
                     "${row.materialCost ?: ""}," +
                     "${row.price ?: ""}," +
                     "${row.soldPrice ?: ""}," +
@@ -125,9 +126,9 @@ class ReportsViewModel @Inject constructor(
         return sb.toString()
     }
 
-    fun buildCustomerCsv(): String {
+    fun buildCustomerCsv(header: String): String {
         val sb = StringBuilder()
-        sb.appendLine("Customer / Shop / Webpage,Pieces,Revenue,Cost,Profit")
+        sb.appendLine(header)
         _uiState.value.customerRows.forEach { row ->
             sb.appendLine(
                 "${row.name.escapeCsv()},${row.pieceCount},${row.revenue},${row.cost},${row.profit}"

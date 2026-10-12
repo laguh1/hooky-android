@@ -59,6 +59,8 @@ data class PieceFormUiState(
     val soldDate: String = "",
     val soldPrice: String = "",
     val quantityTotal: String = "1",
+    // Batches (quantity above 1) are a Pro feature; without Pro the field is read-only.
+    val isPro: Boolean = false,
     val quantitySold: Int = 0,
     val yarnsUsed: List<YarnUsage> = emptyList(),
     val stitchesUsed: List<String> = emptyList(),
@@ -155,6 +157,10 @@ class PieceFormViewModel @Inject constructor(
     init {
         if (pieceId != null) {
             loadExistingPiece(pieceId)
+        }
+
+        viewModelScope.launch {
+            premiumManager.isPremiumFlow.collect { pro -> _uiState.update { it.copy(isPro = pro) } }
         }
 
         viewModelScope.launch {
@@ -313,14 +319,19 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(soldDate = action.value) }
             is PieceFormAction.SoldPriceChanged ->
                 _uiState.update { it.copy(soldPrice = action.value) }
-            is PieceFormAction.QuantityTotalChanged ->
-                _uiState.update { current ->
-                    val newTotal = action.value.toIntOrNull() ?: 1
-                    current.copy(
-                        quantityTotal = action.value,
-                        quantitySold = current.quantitySold.coerceIn(0, maxOf(newTotal, 0))
-                    )
+            is PieceFormAction.QuantityTotalChanged -> {
+                // Without Pro the quantity can't be changed. A batch saved while Pro was
+                // active keeps its quantity and its sold counter still works.
+                if (premiumManager.isPremium) {
+                    _uiState.update { current ->
+                        val newTotal = action.value.toIntOrNull() ?: 1
+                        current.copy(
+                            quantityTotal = action.value,
+                            quantitySold = current.quantitySold.coerceIn(0, maxOf(newTotal, 0))
+                        )
+                    }
                 }
+            }
             PieceFormAction.IncrementQuantitySold ->
                 _uiState.update { current ->
                     val total = current.quantityTotal.toIntOrNull() ?: 1
