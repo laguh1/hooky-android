@@ -1,5 +1,9 @@
 package com.hooky.app.ui.reports
 
+import com.hooky.app.ui.components.WordSafeText
+import com.hooky.app.ui.util.labelResId
+import com.hooky.app.domain.model.enums.WorkStatus
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Button
 import android.content.Intent
@@ -79,16 +83,17 @@ fun ReportsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                // weight(1f) so a long translated title wraps instead of squeezing the export icon
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     Text(
-                        text = "Cost & Profit Report",
+                        text = stringResource(R.string.reports_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -96,19 +101,29 @@ fun ReportsScreen(
                 }
                 val hasData = if (selectedTab == ReportTab.PIECES) uiState.rows.isNotEmpty() else uiState.customerRows.isNotEmpty()
                 if (uiState.isPremium && hasData) {
+                    val exportLabel = stringResource(R.string.reports_export_csv)
+                    val piecesHeader = stringResource(R.string.reports_csv_header_pieces)
+                    val customersHeader = stringResource(R.string.reports_csv_header_customers)
+                    val piecesSubject = stringResource(R.string.reports_share_subject_pieces)
+                    val customersSubject = stringResource(R.string.reports_share_subject_customers)
+                    val statusLabels = WorkStatus.values().associate { it.name to stringResource(it.labelResId) }
                     IconButton(onClick = {
-                        val csv = if (selectedTab == ReportTab.PIECES) viewModel.buildCsv() else viewModel.buildCustomerCsv()
-                        val subject = if (selectedTab == ReportTab.PIECES) "Hooky Cost & Profit Report" else "Hooky Revenue by Customer Report"
+                        val csv = if (selectedTab == ReportTab.PIECES) {
+                            viewModel.buildCsv(piecesHeader, statusLabels)
+                        } else {
+                            viewModel.buildCustomerCsv(customersHeader)
+                        }
+                        val subject = if (selectedTab == ReportTab.PIECES) piecesSubject else customersSubject
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/csv"
                             putExtra(Intent.EXTRA_TEXT, csv)
                             putExtra(Intent.EXTRA_SUBJECT, subject)
                         }
-                        context.startActivity(Intent.createChooser(intent, "Export CSV"))
+                        context.startActivity(Intent.createChooser(intent, exportLabel))
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Share,
-                            contentDescription = "Export CSV",
+                            contentDescription = exportLabel,
                             tint = Slate
                         )
                     }
@@ -276,10 +291,10 @@ private fun SummaryCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            SummaryCell(label = "Revenue", value = totalRevenue.formatCurrency(sym))
-            SummaryCell(label = "Cost", value = totalCost.formatCurrency(sym))
+            SummaryCell(label = stringResource(R.string.reports_revenue), value = totalRevenue.formatCurrency(sym))
+            SummaryCell(label = stringResource(R.string.reports_cost), value = totalCost.formatCurrency(sym))
             SummaryCell(
-                label = "Profit",
+                label = stringResource(R.string.reports_profit),
                 value = totalProfit.formatCurrency(sym),
                 valueColor = if (totalProfit >= 0f) BrandPurple else MaterialTheme.colorScheme.error
             )
@@ -310,33 +325,30 @@ private fun SummaryCell(
 
 @Composable
 private fun ReportTableHeader(modifier: Modifier = Modifier) {
+    // Start padding + WordSafeText: long headers (ES "Beneficio") keep a gap and shrink
+    // rather than touching the next column or breaking mid-word.
+    val numberHeaderStyle = MaterialTheme.typography.labelSmall.copy(color = TextMuted, textAlign = TextAlign.End)
     Row(modifier = modifier) {
         Text(
-            text = "Piece",
+            text = stringResource(R.string.reports_col_piece),
             style = MaterialTheme.typography.labelSmall,
             color = TextMuted,
             modifier = Modifier.weight(2f)
         )
-        Text(
-            text = "Cost",
-            style = MaterialTheme.typography.labelSmall,
-            color = TextMuted,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f)
+        WordSafeText(
+            text = stringResource(R.string.reports_cost),
+            style = numberHeaderStyle,
+            modifier = Modifier.weight(1f).padding(start = 6.dp)
         )
-        Text(
-            text = "Price",
-            style = MaterialTheme.typography.labelSmall,
-            color = TextMuted,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f)
+        WordSafeText(
+            text = stringResource(R.string.reports_col_price),
+            style = numberHeaderStyle,
+            modifier = Modifier.weight(1f).padding(start = 6.dp)
         )
-        Text(
-            text = "Profit",
-            style = MaterialTheme.typography.labelSmall,
-            color = TextMuted,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f)
+        WordSafeText(
+            text = stringResource(R.string.reports_profit),
+            style = numberHeaderStyle,
+            modifier = Modifier.weight(1f).padding(start = 6.dp)
         )
     }
 }
@@ -357,7 +369,8 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
                 maxLines = 1
             )
             Text(
-                text = row.status.lowercase().replace('_', ' '),
+                text = runCatching { WorkStatus.valueOf(row.status) }.getOrNull()
+                    ?.let { stringResource(it.labelResId) } ?: row.status,
                 style = MaterialTheme.typography.labelSmall,
                 color = TextMuted
             )
@@ -443,14 +456,14 @@ private fun CustomerTableHeader(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(2f)
         )
         Text(
-            text = "Revenue",
+            text = stringResource(R.string.reports_revenue),
             style = MaterialTheme.typography.labelSmall,
             color = TextMuted,
             textAlign = TextAlign.End,
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Profit",
+            text = stringResource(R.string.reports_profit),
             style = MaterialTheme.typography.labelSmall,
             color = TextMuted,
             textAlign = TextAlign.End,
@@ -475,7 +488,7 @@ private fun CustomerTableRow(row: CustomerReportRow, modifier: Modifier = Modifi
                 maxLines = 1
             )
             Text(
-                text = if (row.pieceCount == 1) "1 piece" else "${row.pieceCount} pieces",
+                text = pluralStringResource(R.plurals.reports_piece_count, row.pieceCount, row.pieceCount),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextMuted
             )

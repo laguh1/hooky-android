@@ -82,6 +82,21 @@
     <string name="reports_tab_pieces">Por peça</string>
     <string name="reports_tab_customers">Por cliente</string>
     <string name="reports_unassigned">Não atribuído</string>
+    <string name="reports_title">Relatório de custos e lucro</string>
+    <string name="reports_revenue">Receita</string>
+    <string name="reports_cost">Custo</string>
+    <string name="reports_profit">Lucro</string>
+    <string name="reports_col_piece">Peça</string>
+    <string name="reports_col_price">Preço</string>
+    <string name="reports_export_csv">Exportar CSV</string>
+    <string name="reports_share_subject_pieces">Relatório de custos e lucro do Hooky</string>
+    <string name="reports_share_subject_customers">Relatório de receita por cliente do Hooky</string>
+    <string name="reports_csv_header_pieces">Nome,Status,Quantidade,Custo do material,Preço,Preço de venda,Horas de trabalho,Custo total,Receita total,Lucro</string>
+    <string name="reports_csv_header_customers">Cliente / Loja / Site,Peças,Receita,Custo,Lucro</string>
+    <plurals name="reports_piece_count">
+        <item quantity="one">%d peça</item>
+        <item quantity="other">%d peças</item>
+    </plurals>
     <string name="piece_quantity_decrease_sold_cd">Diminuir quantidade vendida</string>
     <string name="piece_quantity_increase_sold_cd">Aumentar quantidade vendida</string>
     <string name="piece_field_notes">Notas</string>
@@ -649,6 +664,7 @@
     <string name="pro_tagline">Ferramentas para quem vende suas peças.</string>
     <string name="pro_feature_reports">Relatórios de custos e lucro</string>
     <string name="pro_feature_customers">Receita por cliente</string>
+    <string name="pro_feature_batches">Lotes: mais de 1 da mesma peça</string>
     <string name="pro_feature_counters">Contadores extras em cada peça</string>
     <string name="pro_feature_photos">Mais de 5 fotos por peça</string>
     <string name="pro_buy_button">Obter o Pro · %s</string>
@@ -667,6 +683,7 @@
     <string name="pro_gate_title">Recurso Pro</string>
     <string name="pro_gate_reports">Os relatórios de custos e lucro fazem parte do Hooky Pro.</string>
     <string name="pro_gate_button">Ver o Hooky Pro</string>
+    <string name="pro_gate_quantity">Vai fazer mais de 1 da mesma peça? Os lotes fazem parte do Hooky Pro.</string>
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Ativo</string>
     <string name="settings_pro_subtitle_inactive">Ferramentas para vender</string>

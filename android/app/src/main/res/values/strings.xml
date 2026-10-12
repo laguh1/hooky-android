@@ -82,6 +82,21 @@
     <string name="reports_tab_pieces">By Piece</string>
     <string name="reports_tab_customers">By Customer</string>
     <string name="reports_unassigned">Unassigned</string>
+    <string name="reports_title">Cost &amp; Profit Report</string>
+    <string name="reports_revenue">Revenue</string>
+    <string name="reports_cost">Cost</string>
+    <string name="reports_profit">Profit</string>
+    <string name="reports_col_piece">Piece</string>
+    <string name="reports_col_price">Price</string>
+    <string name="reports_export_csv">Export CSV</string>
+    <string name="reports_share_subject_pieces">Hooky cost &amp; profit report</string>
+    <string name="reports_share_subject_customers">Hooky revenue by customer report</string>
+    <string name="reports_csv_header_pieces">Name,Status,Quantity,Material Cost,Price,Sold Price,Work Hours,Total Cost,Total Revenue,Profit</string>
+    <string name="reports_csv_header_customers">Customer / Shop / Webpage,Pieces,Revenue,Cost,Profit</string>
+    <plurals name="reports_piece_count">
+        <item quantity="one">%d piece</item>
+        <item quantity="other">%d pieces</item>
+    </plurals>
     <string name="piece_quantity_decrease_sold_cd">Decrease quantity sold</string>
     <string name="piece_quantity_increase_sold_cd">Increase quantity sold</string>
     <string name="piece_field_notes">Notes</string>
@@ -660,6 +675,7 @@
     <string name="pro_tagline">Tools for makers who sell their work.</string>
     <string name="pro_feature_reports">Cost &amp; profit reports</string>
     <string name="pro_feature_customers">Revenue by customer</string>
+    <string name="pro_feature_batches">Batches: more than 1 of the same piece</string>
     <string name="pro_feature_counters">Extra counters on every piece</string>
     <string name="pro_feature_photos">More than 5 photos per piece</string>
     <string name="pro_buy_button">Get Pro · %s</string>
@@ -678,6 +694,7 @@
     <string name="pro_gate_title">Pro feature</string>
     <string name="pro_gate_reports">Cost &amp; profit reports are part of Hooky Pro.</string>
     <string name="pro_gate_button">See Hooky Pro</string>
+    <string name="pro_gate_quantity">Making more than 1 of the same piece? Batches are part of Hooky Pro.</string>
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Active</string>
     <string name="settings_pro_subtitle_inactive">Tools for sellers</string>
