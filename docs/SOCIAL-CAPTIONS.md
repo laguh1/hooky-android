@@ -66,7 +66,7 @@ crochê, tricô, hookyapp, contadordefileiras, croche, dicasdecroche, fios
 >
 > Com o Hooky, você escaneia a etiqueta do fio com a câmera e o app preenche marca, cor, material e gramagem automaticamente!
 >
-> O Hooky é 100% grátis, sem anúncios. 💜
+> O Hooky App é grátis para usar e sem anúncios. 💜
 >
 > 📲 Baixe grátis, link na bio.
 >
@@ -77,7 +77,7 @@ crochê, tricô, hookyapp, contadordefileiras, croche, dicasdecroche, fios
 >
 > Com o Hooky, você escaneia a etiqueta do fio direto pela câmera e o app preenche marca, cor, material e gramagem automaticamente — sem precisar digitar nada!
 >
-> O app é 100% grátis, sem anúncios. 💜
+> O app é grátis para usar e sem anúncios. 💜
 >
 > 📲 Baixe grátis: [link direto da Play Store]
 
@@ -98,7 +98,7 @@ crochê, tricô, hookyapp, contadordefileiras, croche, dicasdecroche, fios
 **YouTube Shorts description:**
 > Com o Hooky, você escaneia a etiqueta do fio direto pela câmera e o app preenche marca, cor, material e gramagem automaticamente — sem precisar digitar nada!
 >
-> App 100% grátis, sem anúncios. 💜
+> App grátis para usar e sem anúncios. 💜
 >
 > 📲 Baixe grátis: [link direto da Play Store]
 >
@@ -224,15 +224,50 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 >
 > #crochê #tricô #hookyapp #calculadoradepreços #croche
 
+**Instagram / Facebook Reel:**
+> Quanto cobrar pela sua peça de crochê? 💰🧶
+>
+> Com a Calculadora de Preços do Hooky App, você informa o custo do material, as horas trabalhadas e o valor da sua hora, e o app sugere o preço justo na hora.
+>
+> Chega de cobrar no chute!
+>
+> 📲 Baixe grátis, link na bio.
+>
+> #crochê #tricô #hookyapp #calculadoradepreços #croche #dicasdecroche
+
+---
+
+### Anúncios pagos — Facebook / Instagram (drafted 2026-10-08)
+
+**Images:** `shared/promo/BRASIL/images/20261008_anuncio_organizado_{post,story}.png` and `20261008_anuncio_preco_{post,story}.png`
+
+**Status:** drafted, not running
+
+**Anúncio A — organização (público: quem faz crochê/tricô por hobby)**
+- **Texto principal:** Fio num canto, anotação em outro, e a conta das fileiras perdida de novo? 🧶 O Hooky App guarda suas peças, fios, pontos e agulhas num só lugar. Conte fileiras com um toque e escaneie a etiqueta do fio com a câmera. Grátis para usar e sem anúncios.
+- **Título:** Seu crochê organizado num só app
+- **Descrição:** Grátis no Google Play
+- **Botão:** Instalar agora
+
+**Anúncio B — preço (público: quem vende suas peças)**
+- **Texto principal:** Quanto vale a sua peça? 💰 Pare de cobrar no chute. No Hooky App você informa o material, as horas e o valor da sua hora, e a calculadora sugere o preço justo. Feito por uma artesã, para quem vende crochê e tricô.
+- **Título:** Cobre o preço justo pelo seu crochê
+- **Descrição:** Calculadora de preços incluída
+- **Botão:** Instalar agora
+
+Link de destino: Play Store, com `utm_source=meta_ads` (criar pasta `/ads` no landing, como `/fb`).
+
 ---
 
 ## Bios & profile text (not posts — reused across the account)
 
-**Instagram bio (150-char limit):**
+*Reworded 2026-10-08 ahead of Hooky App Pro: no more "100% grátis"; say "grátis para usar" and describe Pro as "um único pagamento por 12 meses, sem renovação automática" (never "assinatura"). The Pro sentences in the About texts should go live only once Pro is announced.*
+
+**Instagram bio (150-char limit) — live as of 2026-10-08, no change needed for Pro:**
 > 🧶 App grátis para crochê e tricô
-> 📋 Peças, fios e pontos
+> 📋 Peças, fios e pontos em um só lugar
 > 📸 Escaneia etiqueta do fio
-> 💰 Calculadora de preços
+> 💰 Calculadora de preços incluída
 > 👇 Baixe grátis
 
 **Instagram Name field** (searchable, separate from @handle): `Hooky App | Crochê e Tricô`
@@ -245,7 +280,7 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 >
 > Com o Hooky você acompanha suas peças, seu estoque de fios e sua biblioteca de pontos, tudo em um só lugar. Escaneie etiquetas de fio com a câmera, calcule o preço justo do seu trabalho e registre seu progresso com o contador de fileiras e o cronômetro.
 >
-> É grátis, funciona offline e não precisa de conta.
+> É grátis para usar, funciona offline e não precisa de conta. Para quem vende suas peças, o Hooky App Pro traz relatórios de custos e lucro e outras ferramentas, com um único pagamento por 12 meses e sem renovação automática.
 >
 > 📲 Baixe grátis, link na bio.
 
@@ -254,9 +289,9 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 >
 > Com o Hooky você acompanha suas peças, seu estoque de fios e sua biblioteca de pontos — tudo em um só lugar. Escaneie etiquetas de fio com a câmera, calcule o preço justo do seu trabalho e acompanhe seu progresso com o contador de fileiras e o cronômetro de trabalho.
 >
-> É grátis, funciona offline e não precisa de conta.
+> É grátis para usar, funciona offline e não precisa de conta. Para quem vende suas peças, o Hooky App Pro traz relatórios de custos e lucro e outras ferramentas, com um único pagamento por 12 meses e sem renovação automática.
 >
-> Baixe grátis no Google Play: [link]
+> Baixe grátis no Google Play: laguh1.github.io/hooky-landing/yt
 
 ---
 
@@ -280,6 +315,26 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 
 ## 🇬🇧 English (reference — not actively expanded right now)
 
+### Paid ads — Facebook / Instagram (drafted 2026-10-08)
+
+**Images:** `shared/promo/ENGLISH/images/20261008_ad_organised_{post,story}.png` and `20261008_ad_price_{post,story}.png`
+
+**Status:** drafted, not running
+
+**Ad A — organising (audience: hobby crocheters and knitters)**
+- **Primary text:** Yarn in one place, notes in another, and the row count lost again? 🧶 Hooky App keeps your pieces, yarn, stitches and hooks together. Count rows with a tap and scan yarn labels with your camera. Free to use, no ads.
+- **Headline:** Your crochet, organised in one app
+- **Description:** Free on Google Play
+- **Button:** Install now
+
+**Ad B — pricing (audience: people who sell their pieces)**
+- **Primary text:** What is your piece worth? 💰 Stop guessing. In Hooky App you enter the materials, the hours and your hourly rate, and the calculator suggests a fair price. Made by a maker, for people who sell crochet and knitting.
+- **Headline:** Charge a fair price for your crochet
+- **Description:** Price calculator included
+- **Button:** Install now
+
+---
+
 ### Your crochet & knitting companion (YouTube Short, collage intro)
 
 **Content:** English version of `shared/promo/BRASIL/videos/Seu companheiro de Crochê & Tricô.mp4` — collage of finished pieces + Edit Yarn, yarn detail and Price Calculator screens, wordmark, tagline, Google Play badge
@@ -298,7 +353,7 @@ crochê, tricô, hookyapp, croche, dicasdecroche, novelos, fios, artesanato, fei
 >
 > Keep your pieces, yarn stash, stitches, hooks and needles in one place. Scan yarn labels with your camera, calculate a fair price for your work, and track your progress with the row counter and work timer.
 >
-> It's free, works offline, and needs no account.
+> It's free to use, works offline, and needs no account.
 >
 > 📲 Free on Google Play: laguh1.github.io/hooky-landing/yt
 >

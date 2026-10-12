@@ -467,3 +467,40 @@ Full tutorial video, 3:35, published on YouTube. Paste this block into the video
 3:18 Agulhas
 3:34 Encerramento
 ```
+
+---
+
+# PLAY STORE PROMO — 30-second version (added 2026-10-08)
+
+Replaces the 9-minute tutorial as the store listing video. Every beat has on-screen text so
+it works with the sound off. Voiceover is optional (ElevenLabs). End on the logo card.
+
+| Time | On screen | Text on screen (PT-BR) | Text on screen (EN) |
+|---|---|---|---|
+| 0–3 s | Hands crocheting / finished piece (b-roll) | Seu crochê merece mais do que um caderninho. | Your crochet deserves more than a notebook. |
+| 3–8 s | Pieces list → open a piece | Todas as suas peças num só lugar | All your pieces in one place |
+| 8–13 s | Row counter: tap +, timer running | Conte fileiras com um toque ou com a voz | Count rows with a tap or your voice |
+| 13–18 s | Camera on yarn label → form filled in | Aponte a câmera: o fio se cadastra sozinho | Point the camera: the yarn fills itself in |
+| 18–24 s | Price calculator → suggested price | E saiba quanto cobrar pelo seu trabalho | And know what to charge for your work |
+| 24–30 s | Logo card (hooky-design `cta`) | Hooky App. Seu companheiro de crochê e tricô. Baixe grátis no Google Play. | Hooky App. Your crochet & knitting companion. Free on Google Play. |
+
+**Voiceover (PT-BR, ~28 s):**
+> Seu crochê merece mais do que um caderninho. Com o Hooky App, todas as suas peças ficam num só lugar. Conte fileiras com um toque, ou com a voz. Aponte a câmera para a etiqueta e o fio se cadastra sozinho. E saiba exatamente quanto cobrar pelo seu trabalho. Hooky App: seu companheiro de crochê e tricô. Baixe grátis no Google Play.
+
+**Voiceover (EN, ~28 s):**
+> Your crochet deserves more than a notebook. With Hooky App, all your pieces live in one place. Count rows with a tap, or with your voice. Point the camera at the label and the yarn fills itself in. And know exactly what to charge for your work. Hooky App: your crochet and knitting companion. Free on Google Play.
+
+# FEATURE SHORTS — one function each, 15–20 seconds
+
+Same four beats for every feature: the problem in one line (3 s) → the feature in two or three
+slow taps (8–10 s) → the result held on screen (3 s) → logo card (2 s). Covers/static versions
+are the `20261008_funcao_*` cards in `shared/promo/BRASIL/images/`.
+
+| Feature | Opening line (PT-BR) | Demo | Footage |
+|---|---|---|---|
+| Contador de fileiras | Perdeu a conta de novo? | Tap +, say a number, counter jumps | to record |
+| Cronômetro | Quanto tempo leva uma peça? | Start timer, close app, reopen, still running | to record |
+| Scanner de etiqueta | Jogou a etiqueta fora e esqueceu o fio? | Camera on label → fields filled | `BRASIL/videos/Scanear etqueta.mp4` |
+| Calculadora de preços | Quanto cobrar pela sua peça? | Enter cost, hours, rate → suggested price | `BRASIL/videos/calculadora de preço.mp4` |
+| Duplicar fio | Mesmo fio, outra cor? | Clone yarn, change colour | `BRASIL/videos/Comprou muito novelo igual de cor diferente_ (2).mp4` |
+| Biblioteca de pontos | Onde estava aquele ponto mesmo? | Open stitch, photo, tutorial link | to record |

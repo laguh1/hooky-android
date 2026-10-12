@@ -1,0 +1,133 @@
+HOOKY — STORE LISTING, version for 1.8.0 (written 2026-10-12)
+
+Replaces the texts in store-listing-translations.txt once Hooky Pro is live.
+Do not publish before then: the last section mentions Pro.
+
+=====================================================
+English
+=====================================================
+App name: Hooky Crochet & Knitting
+
+Short description:
+Crochet & knitting tracker: row counter, yarn stash, price calculator. No ads.
+
+Full description:
+Hooky is the all-in-one crochet and knitting companion: a project tracker, row counter, yarn stash organizer and price calculator in one app. It works completely offline and needs no account.
+
+SCAN YARN LABELS WITH YOUR CAMERA
+Point your camera at a yarn label and Hooky fills in the brand, colour, material and weight for you. No typing. Add a photo and the care instructions, and never wonder again which yarn that was.
+
+ROW COUNTER YOU CAN USE WITH YOUR VOICE
+Count rows with one tap, or say the number out loud and keep your hands on your work. Set a target and see how far along you are.
+
+WORK TIMER
+Start the timer when you pick up your hook or needles. It keeps running in the background, so you always know how many hours a piece really took.
+
+PRICE CALCULATOR FOR HANDMADE WORK
+Stop guessing what to charge. Enter your material cost, your hours and your hourly rate, choose the complexity and your profit margin, and Hooky suggests a fair price. Works in EUR, USD, GBP and BRL.
+
+YARN STASH AND INVENTORY
+Keep your whole yarn inventory in one place: brand, colour, fibre, weight, length, quantity, price paid and care instructions. Bought the same yarn in another colour? Clone it in two taps. Know what you have before you buy more.
+
+PROJECT TRACKER FOR EVERY PIECE
+Create a project for each piece, with photos, yarn, stitches, hook or needle, dimensions, dates and notes. Mark it as for you, a gift or for sale, and follow it from the first row to the finished piece.
+
+STITCH LIBRARY
+Save the stitches you love with photos, difficulty, category, tutorial links and charts. Find any stitch again in seconds.
+
+HOOKS AND NEEDLES
+List your crochet hooks and knitting needles by type and size. Scan the size on a hook with your camera.
+
+PRIVATE AND OFFLINE
+No account, no sign-up, no internet needed. Your data stays on your phone, and you can export a backup whenever you want.
+
+FREE TO USE, NO ADS
+Everything you need to track your projects is free, with no ads. Hooky Pro adds tools for makers who sell their work: cost and profit reports, revenue by customer, batches of the same piece, extra counters and more photos per piece. One payment for 12 months, no automatic renewal.
+
+Available in English, Spanish and Brazilian Portuguese.
+
+=====================================================
+Português (Brasil)
+=====================================================
+App name: Hooky Crochê e Tricô
+
+Short description:
+Crochê e tricô: contador de fileiras, estoque de fios e preços. Sem anúncios.
+
+Full description:
+Hooky é o companheiro completo para crochê e tricô: organizador de peças, contador de fileiras, estoque de fios e calculadora de preços num só app. Funciona totalmente offline e não precisa de conta.
+
+ESCANEIE A ETIQUETA DO FIO COM A CÂMERA
+Aponte a câmera para a etiqueta e o Hooky preenche marca, cor, material e gramagem para você. Sem digitar nada. Adicione uma foto e as instruções de lavagem e nunca mais fique sem saber que fio era aquele.
+
+CONTADOR DE FILEIRAS QUE FUNCIONA COM A VOZ
+Conte fileiras com um toque, ou diga o número em voz alta e continue com as mãos no trabalho. Defina uma meta e veja quanto falta.
+
+CRONÔMETRO DE TRABALHO
+Inicie o cronômetro quando pegar a agulha. Ele continua contando em segundo plano, e você sempre sabe quantas horas cada peça levou de verdade.
+
+CALCULADORA DE PREÇOS PARA ARTESANATO
+Chega de cobrar no chute. Informe o custo do material, as horas trabalhadas e o valor da sua hora, escolha a complexidade e a margem de lucro, e o Hooky sugere um preço justo. Funciona em BRL, EUR, USD e GBP.
+
+ESTOQUE DE FIOS
+Tenha todos os seus fios num só lugar: marca, cor, fibra, peso, metragem, quantidade, preço pago e instruções de lavagem. Comprou o mesmo fio em outra cor? Clone em dois toques. Saiba o que você tem antes de comprar mais.
+
+UM PROJETO PARA CADA PEÇA
+Crie um projeto para cada peça, com fotos, fios, pontos, agulha, dimensões, datas e notas. Marque se é para você, para presente ou para venda, e acompanhe da primeira fileira até a peça pronta.
+
+BIBLIOTECA DE PONTOS
+Salve os pontos de que você gosta com fotos, dificuldade, categoria, links de tutoriais e gráficos. Encontre qualquer ponto em segundos.
+
+AGULHAS DE CROCHÊ E TRICÔ
+Liste suas agulhas de crochê e de tricô por tipo e tamanho. Escaneie o tamanho gravado na agulha com a câmera.
+
+PRIVADO E OFFLINE
+Sem conta, sem cadastro, sem internet. Seus dados ficam no seu celular, e você pode exportar uma cópia de segurança quando quiser.
+
+GRÁTIS PARA USAR, SEM ANÚNCIOS
+Tudo o que você precisa para organizar seus projetos é grátis e sem anúncios. O Hooky Pro traz ferramentas para quem vende suas peças: relatórios de custos e lucro, receita por cliente, lotes da mesma peça, contadores extras e mais fotos por peça. Um único pagamento por 12 meses, sem renovação automática.
+
+Disponível em português do Brasil, inglês e espanhol.
+
+=====================================================
+Español
+=====================================================
+App name: Hooky Ganchillo y Tejido
+
+Short description:
+Ganchillo y tejido: contador de filas, lanas y precios. Sin anuncios.
+
+Full description:
+Hooky es el compañero todo en uno para ganchillo y tejido: organizador de piezas, contador de filas, inventario de lanas y calculadora de precios en una sola app. Funciona sin conexión y no necesita cuenta.
+
+ESCANEA LA ETIQUETA DE LA LANA CON LA CÁMARA
+Apunta la cámara a la etiqueta y Hooky rellena la marca, el color, el material y el peso por ti. Sin escribir nada. Añade una foto y las instrucciones de lavado y no vuelvas a preguntarte qué lana era.
+
+CONTADOR DE FILAS QUE FUNCIONA CON LA VOZ
+Cuenta filas con un toque, o di el número en voz alta y sigue con las manos en la labor. Fija un objetivo y mira cuánto te falta.
+
+TEMPORIZADOR DE TRABAJO
+Inicia el temporizador cuando cojas el ganchillo o las agujas. Sigue contando en segundo plano, así sabes siempre cuántas horas te llevó de verdad cada pieza.
+
+CALCULADORA DE PRECIOS PARA TRABAJO ARTESANAL
+Deja de poner precios a ojo. Introduce el coste del material, tus horas y tu precio por hora, elige la complejidad y el margen de beneficio, y Hooky te sugiere un precio justo. Funciona en EUR, USD, GBP y BRL.
+
+INVENTARIO DE LANAS
+Ten todas tus lanas en un solo lugar: marca, color, fibra, peso, longitud, cantidad, precio pagado e instrucciones de lavado. ¿Has comprado la misma lana en otro color? Clónala en dos toques. Sabe lo que tienes antes de comprar más.
+
+UN PROYECTO PARA CADA PIEZA
+Crea un proyecto para cada pieza, con fotos, lanas, puntos, ganchillo o aguja, medidas, fechas y notas. Marca si es para ti, para regalar o para vender, y síguela desde la primera fila hasta la pieza terminada.
+
+BIBLIOTECA DE PUNTOS
+Guarda los puntos que te gustan con fotos, dificultad, categoría, enlaces a tutoriales y diagramas. Encuentra cualquier punto en segundos.
+
+GANCHILLOS Y AGUJAS
+Anota tus ganchillos y agujas de tejer por tipo y talla. Escanea la talla grabada en el ganchillo con la cámara.
+
+PRIVADO Y SIN CONEXIÓN
+Sin cuenta, sin registro, sin internet. Tus datos se quedan en tu móvil, y puedes exportar una copia de seguridad cuando quieras.
+
+GRATIS Y SIN ANUNCIOS
+Todo lo que necesitas para organizar tus proyectos es gratis y sin anuncios. Hooky Pro añade herramientas para quienes venden sus piezas: informes de costes y beneficios, ingresos por cliente, lotes de la misma pieza, contadores extra y más fotos por pieza. Un solo pago por 12 meses, sin renovación automática.
+
+Disponible en español, inglés y portugués de Brasil.
