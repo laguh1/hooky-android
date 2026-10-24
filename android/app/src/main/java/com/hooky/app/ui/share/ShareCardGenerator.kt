@@ -135,13 +135,15 @@ object ShareCardGenerator {
         var statX = textX
         if (workHours != null && workHours > 0f) {
             val hoursStr = com.hooky.app.util.formatWorkTime(workHours)
+            val label = context.getString(R.string.share_card_work_time)
             canvas.drawText(hoursStr, statX, y, statBoldPaint)
-            canvas.drawText("Work time", statX, y + 44f, statLabelPaint)
-            statX += 280f
+            canvas.drawText(label, statX, y + 44f, statLabelPaint)
+            // ES/PT labels are wider than "Work time", so space by the text
+            statX += maxOf(280f, statBoldPaint.measureText(hoursStr) + 60f, statLabelPaint.measureText(label) + 60f)
         }
         if (rowCount > 0) {
             canvas.drawText("$rowCount", statX, y, statBoldPaint)
-            canvas.drawText("Rows", statX, y + 44f, statLabelPaint)
+            canvas.drawText(context.getString(R.string.share_card_rows), statX, y + 44f, statLabelPaint)
         }
 
         // Hooky wordmark (bottom right)

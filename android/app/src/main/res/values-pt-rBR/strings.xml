@@ -701,4 +701,12 @@
     <string name="needle_scan_dialog_label">Tamanho detectado:</string>
     <string name="photo_delete_title">Excluir foto?</string>
     <string name="photo_delete_message">Esta foto será removida. Esta ação não pode ser desfeita.</string>
+
+    <!-- Share card labels and scan/limit errors (were English-only until 2026-10-24) -->
+    <string name="share_card_work_time">Tempo de trabalho</string>
+    <string name="share_card_rows">Carreiras</string>
+    <string name="error_free_photo_limit">A versão gratuita permite %d fotos por peça. Desbloqueie o Pro para ter fotos ilimitadas.</string>
+    <string name="error_scan_size">Não foi possível ler o tamanho. Tente uma foto mais nítida, de perto e com boa luz.</string>
+    <string name="error_scan_label">Não foi possível ler a etiqueta. Tente uma foto mais nítida, de perto e com boa luz.</string>
+    <string name="error_scan_failed">Não foi possível escanear. Tente novamente.</string>
 </resources>

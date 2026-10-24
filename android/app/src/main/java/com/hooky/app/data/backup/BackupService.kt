@@ -16,6 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
+import com.hooky.app.data.db.reversePhotosJson
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.text.SimpleDateFormat
@@ -44,6 +45,7 @@ class BackupService @Inject constructor(
 
     suspend fun export(): Uri = withContext(ioDispatcher) {
         val data = BackupData(
+            version = BACKUP_CURRENT_VERSION,
             pieces = pieceDao.getAllNow(),
             yarns = yarnDao.getAllNow(),
             stitches = stitchDao.getAllNow(),
@@ -64,7 +66,14 @@ class BackupService @Inject constructor(
             val jsonString = context.contentResolver.openInputStream(uri)
                 ?.use { it.readBytes().toString(Charsets.UTF_8) }
                 ?: error("Cannot read backup file")
-            val data = json.decodeFromString<BackupData>(jsonString)
+            val decoded = json.decodeFromString<BackupData>(jsonString)
+            // Backups made before photos went newest first: flip them
+            val data = if (decoded.version >= 2) decoded else decoded.copy(
+                pieces = decoded.pieces.map { it.copy(photos = reversePhotosJson(it.photos)) },
+                yarns = decoded.yarns.map { it.copy(photos = reversePhotosJson(it.photos)) },
+                stitches = decoded.stitches.map { it.copy(photos = reversePhotosJson(it.photos)) },
+                needles = decoded.needles.map { it.copy(photos = reversePhotosJson(it.photos)) }
+            )
             database.withTransaction {
                 pieceDao.clearAll()
                 yarnDao.clearAll()
