@@ -1,7 +1,7 @@
 HOOKY — STORE LISTING, version for 1.8.0 (written 2026-10-12)
 
-Replaces the texts in store-listing-translations.txt once Hooky Pro is live.
-Do not publish before then: the last section mentions Pro.
+PUBLISHED on Google Play with 1.8.0 (Hooky Pro live; confirmed 2026-10-24).
+This is the current listing and replaces store-listing-translations.txt.
 
 =====================================================
 English
@@ -52,16 +52,16 @@ Português (Brasil)
 App name: Hooky Crochê e Tricô
 
 Short description:
-Crochê e tricô: contador de fileiras, estoque de fios e preços. Sem anúncios.
+Crochê e tricô: contador de carreiras, estoque de fios e preços. Sem anúncios.
 
 Full description:
-Hooky é o companheiro completo para crochê e tricô: organizador de peças, contador de fileiras, estoque de fios e calculadora de preços num só app. Funciona totalmente offline e não precisa de conta.
+Hooky é o companheiro completo para crochê e tricô: organizador de peças, contador de carreiras, estoque de fios e calculadora de preços num só app. Funciona totalmente offline e não precisa de conta.
 
 ESCANEIE A ETIQUETA DO FIO COM A CÂMERA
 Aponte a câmera para a etiqueta e o Hooky preenche marca, cor, material e gramagem para você. Sem digitar nada. Adicione uma foto e as instruções de lavagem e nunca mais fique sem saber que fio era aquele.
 
-CONTADOR DE FILEIRAS QUE FUNCIONA COM A VOZ
-Conte fileiras com um toque, ou diga o número em voz alta e continue com as mãos no trabalho. Defina uma meta e veja quanto falta.
+CONTADOR DE CARREIRAS QUE FUNCIONA COM A VOZ
+Conte carreiras com um toque, ou diga o número em voz alta e continue com as mãos no trabalho. Defina uma meta e veja quanto falta.
 
 CRONÔMETRO DE TRABALHO
 Inicie o cronômetro quando pegar a agulha. Ele continua contando em segundo plano, e você sempre sabe quantas horas cada peça levou de verdade.
@@ -73,7 +73,7 @@ ESTOQUE DE FIOS
 Tenha todos os seus fios num só lugar: marca, cor, fibra, peso, metragem, quantidade, preço pago e instruções de lavagem. Comprou o mesmo fio em outra cor? Clone em dois toques. Saiba o que você tem antes de comprar mais.
 
 UM PROJETO PARA CADA PEÇA
-Crie um projeto para cada peça, com fotos, fios, pontos, agulha, dimensões, datas e notas. Marque se é para você, para presente ou para venda, e acompanhe da primeira fileira até a peça pronta.
+Crie um projeto para cada peça, com fotos, fios, pontos, agulha, dimensões, datas e notas. Marque se é para você, para presente ou para venda, e acompanhe da primeira carreira até a peça pronta.
 
 BIBLIOTECA DE PONTOS
 Salve os pontos de que você gosta com fotos, dificuldade, categoria, links de tutoriais e gráficos. Encontre qualquer ponto em segundos.

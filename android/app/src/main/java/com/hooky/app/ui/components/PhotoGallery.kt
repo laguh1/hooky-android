@@ -1,5 +1,7 @@
 package com.hooky.app.ui.components
 
+import com.hooky.app.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -167,8 +169,8 @@ fun PhotoGallery(
     photoToDelete?.let { path ->
         AlertDialog(
             onDismissRequest = { photoToDelete = null },
-            title = { Text("Delete photo?") },
-            text = { Text("This photo will be removed. This action cannot be undone.") },
+            title = { Text(stringResource(R.string.photo_delete_title)) },
+            text = { Text(stringResource(R.string.photo_delete_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -176,12 +178,12 @@ fun PhotoGallery(
                         photoToDelete = null
                     }
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.action_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { photoToDelete = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )

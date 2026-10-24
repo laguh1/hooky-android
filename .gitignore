@@ -30,3 +30,6 @@ shared/promo/
 
 # Unrelated files
 FACEBOOK-GROUPS.md
+
+# Landing page is its own git repo (laguh1/hooky-landing)
+landing/

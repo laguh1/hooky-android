@@ -409,3 +409,71 @@ Link de destino: Play Store, com `utm_source=meta_ads` (criar pasta `/ads` no la
 - **Core hashtags (EN):** #crochet #knitting #hookyapp #crochetapp
 - **Core hashtags (PT-BR):** #crochê #tricô #hookyapp #appdecrochê
 - **Extended PT-BR hashtag pool:** #croche #trico #artesanato #feitoamao #euquefiz #trabalhosmanuais #artesanatobrasil #trabalhomanual #crocheteiras #amocroche #viciadaemcroche #amantesdocroche #croche_e_trico #pontosdecroche #receitadecroche #croche_moderno #dicasdecroche #croche_facil
+
+---
+
+## Hooky App Pro announcement + launch gift until 31 Oct (written 2026-10-13)
+
+*Post only once 1.8.0 is in Production and the store listing text is updated. Images: `BRASIL/images/20261013_anuncio_pro_{post,story}.png`, `ENGLISH/images/20261013_pro_announcement_{post,story}.png`.*
+
+### PT-BR — Facebook
+
+> Novidade: chegou o Hooky App Pro 🧶
+>
+> O Hooky App continua grátis para usar. Peças, fios, pontos, agulhas, contador de fileiras, leitor de etiquetas e calculadora de preço seguem liberados para todo mundo.
+>
+> O Pro é para quem vende suas peças:
+> • Relatórios de custos e lucro
+> • Receita por cliente
+> • Lotes: mais de 1 da mesma peça
+> • Contadores extras em cada peça
+> • Mais de 5 fotos por peça
+>
+> 🎁 Presente de lançamento: quem instalar o app até 31 de outubro ganha 12 meses de Pro grátis. Sem cadastro. Quem já tem o app instalado também ganha.
+>
+> Baixe no Google Play: https://laguh1.github.io/hooky-landing/fb
+
+### PT-BR — Instagram
+
+> Chegou o Hooky App Pro 🧶 e ele é grátis por 12 meses para quem instalar o app até 31 de outubro.
+>
+> O Pro é para quem vende suas peças: relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais fotos por peça.
+>
+> O Hooky App continua grátis para usar, com peças, fios, pontos, agulhas, contador de fileiras, leitor de etiquetas e calculadora de preço.
+>
+> 🎁 Sem cadastro. Quem já tem o app também ganha.
+>
+> Link na bio.
+>
+> #hookyapp #croche #crochê #trico #tricô #crocheteira #crochetbrasil #vendercroche #artesanato #feitoamao #precificacao #appdecroche
+
+### EN — Facebook
+
+> New: Hooky App Pro is here 🧶
+>
+> Hooky App stays free to use. Pieces, yarns, stitches, needles, the row counter, the label scanner and the price calculator remain open to everyone.
+>
+> Pro is for people who sell their work:
+> • Cost and profit reports
+> • Revenue by customer
+> • Batches: more than 1 of the same piece
+> • Extra counters on each piece
+> • More than 5 photos per piece
+>
+> 🎁 Launch gift: install the app by 31 October and get 12 months of Pro free. No account needed. If you already have the app, you get it too.
+>
+> Get it on Google Play: https://laguh1.github.io/hooky-landing/fb
+
+### EN — Instagram
+
+> Hooky App Pro is here 🧶 and it is free for 12 months if you install the app by 31 October.
+>
+> Pro is for people who sell their work: cost and profit reports, revenue by customer, batches, extra counters and more photos per piece.
+>
+> Hooky App stays free to use, with pieces, yarns, stitches, needles, row counter, label scanner and price calculator.
+>
+> 🎁 No account needed. Already have the app? You get it too.
+>
+> Link in bio.
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #crochetbusiness #handmadebusiness #sellhandmade #crochetapp #knittingapp #yarnlove #makersgonnamake

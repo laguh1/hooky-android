@@ -1,25 +1,6 @@
 # Hooky — Claude Instructions
 
 ## Project Structure
-```
-hooky/                        ← project root
-├── android/                  ← Android app (Kotlin/Jetpack Compose)
-├── ios/                      ← iOS app (future, Swift/SwiftUI)
-├── shared/
-│   ├── branding/             ← logos, icons (final/ and raw/)
-│   ├── translations/         ← strings reference
-│   ├── design/                ← design preview HTML files
-│   └── promo/                 ← promo video assets, organized by language (see docs/VIDEO-SCRIPT.md)
-├── docs/
-│   ├── PLAN.md               ← full feature spec + AI roadmap
-│   ├── PLAYSTORE.md          ← Play Store listing/publishing guide
-│   ├── LAUNCH-STATUS.md      ← Play Console setup/testing status
-│   ├── FIXES-2026-08-31.md   ← running log of bug fixes found via testing/feedback (evidence for Google review)
-│   ├── PREMIUM-TUTORIAL.md / PREMIUM-GIFTING.md ← Firebase Remote Config premium system
-│   ├── MARKETING.md
-│   └── FACEBOOK-GROUPS.md
-└── CLAUDE.md                 ← this file
-```
 
 **Project root:** `/Users/joanasocrates/Documents/claude/hooky/`
 **Android project:** `android/` — open this folder in Android Studio
@@ -40,37 +21,12 @@ Full plan in `docs/PLAN.md`.
 
 ---
 
-## Tech Stack
-| Layer | Technology |
-|---|---|
-| Language | Kotlin |
-| UI | Jetpack Compose + Material Design 3 |
-| Architecture | MVVM + Clean Architecture (data / domain / ui) |
-| Database | Room (SQLite) |
-| DI | Hilt |
-| Navigation | Navigation Compose |
-| Images | Coil (display) + CameraX (capture) |
-| State | StateFlow + ViewModel |
-| Async | Coroutines + Flow |
-| ML | ML Kit text recognition (on-device OCR for yarn labels + hook/needle size scanning, no API key) |
-| Premium | Firebase Remote Config (tester allowlist + early-adopter auto-premium promo) |
-
----
-
 ## Architecture Rules
 - **Layer dependency:** UI → Domain → Data (one-way only)
 - **Domain layer:** no Android imports
 - **Data layer:** Room entities, DAOs, repositories
 - **ViewModels:** business logic + StateFlow UiState
 - **Use cases:** one per operation (GetPiecesUseCase, CreatePieceUseCase, etc.)
-
-## Code Conventions
-- Follow Kotlin coding conventions
-- Prefer `val` over `var`
-- Composables: PascalCase
-- ViewModels: `<Screen>ViewModel`
-- Constants: UPPER_SNAKE_CASE
-- UiState pattern: `data class <Screen>UiState(val isLoading, val error, val data)`
 
 ---
 
@@ -96,6 +52,13 @@ Full plan in `docs/PLAN.md`.
 - Bottom navigation: 5 tabs (Dashboard, Pieces, Yarns, Stitches, Needles)
 - **Custom `Button`/`AlertDialog` colors:** when setting a non-theme-role `containerColor` (e.g. `Slate`, `BrandPurple`) via `ButtonDefaults.buttonColors()`, always pass an explicit `contentColor` too — Compose's automatic contrast computation only works for registered `MaterialTheme.colorScheme` roles (`primary`, `error`, etc.), not custom colors, and silently falls back to a low-contrast default otherwise (caused an invisible-button bug in dark mode)
 
+## Labels Must Never Break Mid-Word
+ES and PT-BR labels are longer than English, and many phones are only 360dp wide. A word split across lines ("Edit-ar", "Comprime-nto") is a bug; wrapping between words is fine. This has regressed twice (Sept 2026 Yarn detail, Oct 2026 Piece detail after a third button was added), so treat it as part of every UI change:
+- **Text in a narrow slot** (two or more buttons/chips/fields side by side, anything with `Modifier.weight`): use `ui/components/WordSafeText.kt`, or for rows of three buttons the tight-padding + `maxLines = 1` pattern from `YarnDetailScreen` / `PieceDetailScreen` action rows.
+- **Never give a text container a fixed height** (`.height(52.dp)`) when its label can wrap; use `heightIn(min = …)`.
+- **Adding a button/chip/field to an existing row** means re-checking the whole row, and the same row on the sibling screens (Piece/Yarn/Stitch/Needle detail and forms are separate code — a fix in one is not shared).
+- **Before calling a UI change done:** check it in PT-BR and ES at 360dp width (`adb shell wm density 480` on the Pixel_6 AVD, which is 411dp by default and hides the problem) and once with font scale 1.3. Reset both afterwards.
+
 ## Brand (Hooky)
 - App icon: purple `#8C015E` background + white infinity "oo" symbol
 - Wordmark: hand-drawn brush style, purple `#8C015E` (`shared/branding/final/hooky.svg` / `.png`)
@@ -109,27 +72,6 @@ Full plan in `docs/PLAN.md`.
 - i18n: EN + ES (Spain) + PT-BR (Brazilian Portuguese) — when adding user-facing text, always update all 3 `strings.xml` files, including any hardcoded option/dropdown values in Kotlin (don't leave values as English literals while only the field label gets a string resource)
 - AI vision: A) ML Kit OCR yarn label scanner ✅, B) TFLite stitch recognition (not yet built)
 - Premium: Firebase Remote Config-driven, not a backend server — manual per-tester allowlist (`premium_ids`, supports optional expiry) plus an automatic early-adopter promo (`early_adopter_cutoff` / `early_adopter_premium_days`) for anyone installing before a given date
-
----
-
-## Implementation Status
-1. ✅ Foundation — project, Room, Hilt, nav, theme
-2. ✅ Pieces module
-3. ✅ Yarns module
-4. ✅ Stitches module (+ inspiration/Ideas tab with curated tutorial links)
-5. ✅ Needles module
-6. ✅ Dashboard
-7. ✅ Camera & Photos (CameraX) + in-app photo editing
-8. ✅ Polish — search, filters, price calculator, empty/loading states
-9. ✅ ML Kit OCR — yarn label scanning (brand/material/care detection) + hook/needle size scanning
-10. ✅ Row Counter (−/+/voice/edit dialog) + editable Work Timer (Start/Pause/Resume/Stop, persists restarts, manually correctable)
-11. ✅ Library pickers for Yarn/Needle/Stitch in piece form
-12. ✅ Onboarding flow + in-app Help screen
-13. ✅ Export/Import backup (JSON, shareable via FileProvider)
-14. ✅ Premium tier — Firebase Remote Config allowlist + early-adopter auto-promo; gated features: unlimited photos, extra counters, Cost & Profit reports with CSV export
-15. ⬜ TFLite on-device stitch recognition (AI vision Phase B)
-16. ⬜ Cloud backup / pattern import / billing (full Pro tier beyond current gated features)
-17. 🔵 Closed testing on Google Play — see `docs/LAUNCH-STATUS.md` for current tester count and status
 
 ---
 

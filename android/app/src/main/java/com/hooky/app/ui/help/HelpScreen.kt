@@ -144,8 +144,8 @@ private val CONTENT_PT = HelpContent(
     sections = listOf(
         HelpSection("Peças", SectionIcon.Drawable(R.drawable.ic_pieces), listOf(
             HelpTip(
-                "Contar fileiras sem usar as mãos",
-                "Toque no microfone no contador de fileiras e diga um número em voz alta — o app adiciona essa quantidade sem você tocar na tela."
+                "Contar carreiras sem usar as mãos",
+                "Toque no microfone no contador de carreiras e diga um número em voz alta — o app adiciona essa quantidade sem você tocar na tela."
             ),
             HelpTip(
                 "O cronômetro continua em segundo plano",
@@ -153,7 +153,7 @@ private val CONTENT_PT = HelpContent(
             ),
             HelpTip(
                 "Estimativa de ritmo",
-                "Após algumas sessões cronometradas, o app mostra seu ritmo médio em minutos por 10 fileiras para você estimar quanto tempo uma peça vai levar."
+                "Após algumas sessões cronometradas, o app mostra seu ritmo médio em minutos por 10 carreiras para você estimar quanto tempo uma peça vai levar."
             ),
             HelpTip(
                 "Contadores extras",
