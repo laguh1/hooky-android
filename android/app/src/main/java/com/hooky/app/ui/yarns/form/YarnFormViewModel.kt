@@ -265,7 +265,7 @@ class YarnFormViewModel @Inject constructor(
             is YarnFormAction.CareNotesChanged ->
                 _uiState.update { it.copy(careNotes = action.value) }
             is YarnFormAction.PhotoAdded -> {
-                _uiState.update { it.copy(photos = it.photos + action.uri) }
+                _uiState.update { it.copy(photos = listOf(action.uri) + it.photos) }
                 if (_uiState.value.color.isBlank()) detectColor(action.uri)
             }
             is YarnFormAction.PhotoReceived -> {
@@ -273,7 +273,7 @@ class YarnFormViewModel @Inject constructor(
                     ScanMode.LABEL -> scanPhoto(action.path)
                     ScanMode.HOOK, ScanMode.NEEDLE -> scanNeedle(action.path, _uiState.value.scanMode)
                     ScanMode.NONE -> {
-                        _uiState.update { it.copy(photos = it.photos + action.path) }
+                        _uiState.update { it.copy(photos = listOf(action.path) + it.photos) }
                         if (_uiState.value.color.isBlank()) detectColor(action.path)
                     }
                 }

@@ -171,7 +171,7 @@ class StitchFormViewModel @Inject constructor(
                 }
             }
             is StitchFormAction.PhotoAdded ->
-                _uiState.update { it.copy(photos = it.photos + action.uri) }
+                _uiState.update { it.copy(photos = listOf(action.uri) + it.photos) }
             is StitchFormAction.PhotoRemoved ->
                 _uiState.update { it.copy(photos = it.photos - action.uri) }
             is StitchFormAction.PhotoReplaced ->

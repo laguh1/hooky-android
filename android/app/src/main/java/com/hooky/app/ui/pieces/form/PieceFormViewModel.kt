@@ -288,7 +288,7 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(hookSizeMm = action.value) }
             is PieceFormAction.PhotoAdded -> {
                 if (premiumManager.isPremium || _uiState.value.photos.size < MAX_FREE_PHOTOS)
-                    _uiState.update { it.copy(photos = it.photos + action.uri) }
+                    _uiState.update { it.copy(photos = listOf(action.uri) + it.photos) }
                 else
                     _uiState.update { it.copy(error = "Free tier is limited to $MAX_FREE_PHOTOS photos per piece. Upgrade to Pro for unlimited photos.") }
             }
@@ -296,7 +296,7 @@ class PieceFormViewModel @Inject constructor(
                 if (_uiState.value.scanMode == ScanMode.HOOK) {
                     scanHook(action.path)
                 } else if (premiumManager.isPremium || _uiState.value.photos.size < MAX_FREE_PHOTOS) {
-                    _uiState.update { it.copy(photos = it.photos + action.path) }
+                    _uiState.update { it.copy(photos = listOf(action.path) + it.photos) }
                 }
             }
             is PieceFormAction.PhotoRemoved ->
