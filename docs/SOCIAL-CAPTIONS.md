@@ -477,3 +477,79 @@ Link de destino: Play Store, com `utm_source=meta_ads` (criar pasta `/ads` no la
 > Link in bio.
 >
 > #hookyapp #crochet #knitting #crochetersofinstagram #crochetbusiness #handmadebusiness #sellhandmade #crochetapp #knittingapp #yarnlove #makersgonnamake
+
+## Hooky App Pro — last days reminder reel (written 2026-10-24)
+
+Reel: `shared/promo/<BRASIL|ENGLISH>/videos/hooky-pro-reminder-<pt|en>.mp4` (14s, 4 slides, silent: add music in the app). Post 26–29 Oct; the gift ends 31 Oct. Links go through the Netlify site.
+
+### PT-BR — Instagram (Reel)
+
+> Últimos dias! ⏳ Instale o Hooky App até 31 de outubro e ganhe 12 meses de Hooky App Pro grátis.
+>
+> O Pro é para quem vende suas peças: relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais de 5 fotos por peça.
+>
+> 🎁 Sem cadastro e sem cartão. Quem já tem o app também ganha.
+>
+> Link na bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #croche #crochê #trico #tricô #crocheteira #crochetbrasil #vendercroche #artesanato #feitoamao #precificacao #appdecroche
+
+### PT-BR — Facebook (Reel)
+
+> Últimos dias! ⏳ Quem instalar o Hooky App até 31 de outubro ganha 12 meses de Hooky App Pro grátis.
+>
+> O Pro é para quem vende suas peças:
+> • Relatórios de custos e lucro
+> • Receita por cliente
+> • Lotes: mais de 1 da mesma peça
+> • Contadores extras e mais de 5 fotos por peça
+>
+> 🎁 Sem cadastro e sem cartão. Quem já tem o app também ganha.
+>
+> Baixe no Google Play: hookyapp.netlify.app/fb
+
+### PT-BR — YouTube (Short)
+
+Title: `Hooky App Pro grátis por 12 meses: últimos dias! #shorts`
+
+> Instale o Hooky App até 31 de outubro e ganhe 12 meses de Hooky App Pro grátis. Relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais fotos por peça, para quem vende crochê e tricô.
+>
+> Baixe no Google Play: hookyapp.netlify.app/yt
+>
+> #hookyapp #croche #trico #vendercroche #artesanato
+
+### EN — Instagram (Reel)
+
+> Last days! ⏳ Install Hooky App by 31 October and get 12 months of Hooky App Pro free.
+>
+> Pro is for people who sell their work: cost and profit reports, revenue by customer, batches, extra counters and more than 5 photos per piece.
+>
+> 🎁 No account, no card. Already have the app? You get it too.
+>
+> Link in bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #crochetbusiness #handmadebusiness #sellhandmade #crochetapp #knittingapp #makersgonnamake
+
+### EN — Facebook (Reel)
+
+> Last days! ⏳ Install Hooky App by 31 October and get 12 months of Hooky App Pro free.
+>
+> Pro is for people who sell their work:
+> • Cost and profit reports
+> • Revenue by customer
+> • Batches: more than 1 of the same piece
+> • Extra counters and more than 5 photos per piece
+>
+> 🎁 No account, no card. Already have the app? You get it too.
+>
+> Get it on Google Play: hookyapp.netlify.app/fb
+
+### EN — YouTube (Short)
+
+Title: `Hooky App Pro free for 12 months: last days! #shorts`
+
+> Install Hooky App by 31 October and get 12 months of Hooky App Pro free. Cost and profit reports, revenue by customer, batches, extra counters and more photos per piece, for makers who sell their crochet and knitting.
+>
+> Get it on Google Play: hookyapp.netlify.app/yt
+>
+> #hookyapp #crochet #knitting #crochetbusiness #handmade
