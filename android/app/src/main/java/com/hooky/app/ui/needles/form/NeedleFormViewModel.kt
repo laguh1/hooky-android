@@ -192,7 +192,7 @@ class NeedleFormViewModel @Inject constructor(
         } catch (_: Exception) {
             tempPath
         }
-        _uiState.update { it.copy(photos = it.photos + finalPath) }
+        _uiState.update { it.copy(photos = listOf(finalPath) + it.photos) }
     }
 
     private fun saveNeedle() {
