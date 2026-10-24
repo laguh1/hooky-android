@@ -190,7 +190,7 @@ fun SearchScreen(
                                     color = TextMuted
                                 )
                                 Text(
-                                    text = "Enter at least 2 characters",
+                                    text = stringResource(R.string.search_min_chars),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = TextMuted
                                 )
@@ -223,7 +223,7 @@ fun SearchScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Nothing matched \"${uiState.query}\"",
+                                    text = stringResource(R.string.search_nothing_matched, uiState.query),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = TextSecondary
                                 )
@@ -268,7 +268,7 @@ private fun SearchResultList(
         if (pieceResults.isNotEmpty()) {
             item {
                 SearchSectionHeader(
-                    label = "Pieces",
+                    label = stringResource(R.string.nav_pieces),
                     count = pieceResults.size
                 )
             }
@@ -285,7 +285,7 @@ private fun SearchResultList(
         if (yarnResults.isNotEmpty()) {
             item {
                 SearchSectionHeader(
-                    label = "Yarns",
+                    label = stringResource(R.string.nav_yarns),
                     count = yarnResults.size
                 )
             }
@@ -302,7 +302,7 @@ private fun SearchResultList(
         if (stitchResults.isNotEmpty()) {
             item {
                 SearchSectionHeader(
-                    label = "Stitches",
+                    label = stringResource(R.string.nav_stitches),
                     count = stitchResults.size
                 )
             }

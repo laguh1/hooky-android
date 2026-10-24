@@ -461,6 +461,8 @@
     <string name="piece_field_gift_recipient_name">Nombre del destinatario</string>
     <string name="piece_label_material_cost">Coste de material</string>
     <string name="piece_label_suggested_price">Precio sugerido</string>
+    <string name="piece_suggest_price">Sugerir precio →</string>
+    <string name="piece_photo_cd">Foto %d</string>
     <string name="piece_price_dialog_title">Sugerencia de precio</string>
     <string name="piece_price_dialog_rows_worked">Filas trabajadas</string>
     <string name="piece_price_dialog_hourly_rate">Tarifa por hora (%s/h)</string>
@@ -687,4 +689,16 @@
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Activo</string>
     <string name="settings_pro_subtitle_inactive">Herramientas para vender</string>
+
+    <!-- Texts that were hardcoded in English until 2026-10-12 -->
+    <string name="search_min_chars">Escribe al menos 2 caracteres</string>
+    <string name="search_nothing_matched">Nada coincide con \"%s\"</string>
+    <string name="dashboard_finished_on">Terminada el %s</string>
+    <string name="photo_rotate_left">Izquierda</string>
+    <string name="photo_flip">Voltear</string>
+    <string name="photo_rotate_right">Derecha</string>
+    <string name="needle_scan_dialog_title">Talla detectada</string>
+    <string name="needle_scan_dialog_label">Talla detectada:</string>
+    <string name="photo_delete_title">¿Eliminar foto?</string>
+    <string name="photo_delete_message">Esta foto se eliminará. Esta acción no se puede deshacer.</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.hooky.app.ui.camera
 
+import com.hooky.app.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -118,7 +120,7 @@ fun PhotoEditorScreen(
                 if (isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.Black, strokeWidth = 2.dp)
                 } else {
-                    Text("Save", color = Color.Black, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.action_save), color = Color.Black, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -135,17 +137,17 @@ fun PhotoEditorScreen(
         ) {
             EditorButton(
                 icon = { Icon(Icons.Filled.RotateLeft, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp)) },
-                label = "Rotate left",
+                label = stringResource(R.string.photo_rotate_left),
                 onClick = { rotationDegrees = (rotationDegrees - 90 + 360) % 360 }
             )
             EditorButton(
                 icon = { Icon(Icons.Filled.Flip, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp)) },
-                label = "Flip",
+                label = stringResource(R.string.photo_flip),
                 onClick = { flipHorizontal = !flipHorizontal }
             )
             EditorButton(
                 icon = { Icon(Icons.Filled.RotateRight, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp)) },
-                label = "Rotate right",
+                label = stringResource(R.string.photo_rotate_right),
                 onClick = { rotationDegrees = (rotationDegrees + 90) % 360 }
             )
         }
