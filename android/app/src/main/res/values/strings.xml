@@ -712,4 +712,12 @@
     <string name="needle_scan_dialog_label">Detected size:</string>
     <string name="photo_delete_title">Delete photo?</string>
     <string name="photo_delete_message">This photo will be removed. This action cannot be undone.</string>
+
+    <!-- Share card labels and scan/limit errors (were English-only until 2026-10-24) -->
+    <string name="share_card_work_time">Work time</string>
+    <string name="share_card_rows">Rows</string>
+    <string name="error_free_photo_limit">The free version allows %d photos per piece. Unlock Pro for unlimited photos.</string>
+    <string name="error_scan_size">Couldn\'t read the size. Try a clearer, closer photo with good lighting.</string>
+    <string name="error_scan_label">Couldn\'t read the label. Try a clearer, closer photo with good lighting.</string>
+    <string name="error_scan_failed">Scan failed. Please try again.</string>
 </resources>

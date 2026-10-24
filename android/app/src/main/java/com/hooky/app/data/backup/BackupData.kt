@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BackupData(
+    // 1 = photos oldest first (or missing in old files), 2 = newest first.
+    // Export writes CURRENT_VERSION; the default stays 1 so old files decode as 1.
     val version: Int = 1,
     val exportedAt: Long = System.currentTimeMillis(),
     val pieces: List<PieceEntity> = emptyList(),
@@ -19,3 +21,5 @@ data class BackupData(
     val counters: List<CounterEntity> = emptyList(),
     val idCounters: List<IdCounterEntity> = emptyList()
 )
+
+const val BACKUP_CURRENT_VERSION = 2

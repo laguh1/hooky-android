@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.R
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -290,7 +291,7 @@ class PieceFormViewModel @Inject constructor(
                 if (premiumManager.isPremium || _uiState.value.photos.size < MAX_FREE_PHOTOS)
                     _uiState.update { it.copy(photos = listOf(action.uri) + it.photos) }
                 else
-                    _uiState.update { it.copy(error = "Free tier is limited to $MAX_FREE_PHOTOS photos per piece. Upgrade to Pro for unlimited photos.") }
+                    _uiState.update { it.copy(error = context.getString(R.string.error_free_photo_limit, MAX_FREE_PHOTOS)) }
             }
             is PieceFormAction.PhotoReceived -> {
                 if (_uiState.value.scanMode == ScanMode.HOOK) {
@@ -391,10 +392,10 @@ class PieceFormViewModel @Inject constructor(
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = ScanMode.HOOK) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_size)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }

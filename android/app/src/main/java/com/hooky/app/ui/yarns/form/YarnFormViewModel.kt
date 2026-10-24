@@ -332,10 +332,10 @@ class YarnFormViewModel @Inject constructor(
                 if (merged.hasAnyData) {
                     _uiState.update { it.copy(isScanning = false, scanResult = merged, accumulatedScanResult = null) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Couldn't read label info. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = context.getString(R.string.error_scan_label)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }
@@ -348,10 +348,10 @@ class YarnFormViewModel @Inject constructor(
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = target) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_size)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }

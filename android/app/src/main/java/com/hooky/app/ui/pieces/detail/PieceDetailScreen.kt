@@ -551,8 +551,8 @@ private fun PieceDetailContent(
                         val intent = ShareCardGenerator.generateAndShare(
                             context = context,
                             pieceName = piece.name,
-                            pieceType = piece.type,
-                            destination = piece.destination,
+                            pieceType = typeName,
+                            destination = destBaseName,
                             workHours = piece.workHours,
                             rowCount = piece.rowCount,
                             photoPath = photos.firstOrNull()
