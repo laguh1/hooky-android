@@ -504,9 +504,10 @@ are the `20261008_funcao_*` cards in `shared/promo/BRASIL/images/`.
 | Calculadora de preços | Quanto cobrar pela sua peça? | Enter cost, hours, rate → suggested price | `BRASIL/videos/calculadora de preço.mp4` |
 | Duplicar fio | Mesmo fio, outra cor? | Clone yarn, change colour | `BRASIL/videos/Comprou muito novelo igual de cor diferente_ (2).mp4` |
 | Biblioteca de pontos | Onde estava aquele ponto mesmo? | Open stitch, photo, tutorial link | to record |
+| Fotos: câmera ou galeria | Duas formas de adicionar fotos | App camera vs. gallery picker | to record (Short 2 below) |
 
 **Shared layout (built 2026-10-19), in `shared/promo/design-assets/video-elements/feature-shorts/`:**
-`short_moldura_pt.png` / `short_frame_en.png` is a 1080×1920 frame (dark lace photo, wordmark at the bottom)
+`short_moldura_pt.png` / `short_frame_en.png` is a 1080×1920 frame (dark lace photo, wordmark at the bottom, tagline under it since 2026-10-24)
 with a transparent rounded window at **x 40, y 600, 1000×780**. In Canva: video at the bottom layer,
 frame above it, then the beat headline (`<feature>_<lang>_tN.png`, full-frame, text sits at y 255–580).
 Footage is **cropped** to the part of the screen that matters (about 1080×842 of the phone recording),
@@ -531,6 +532,40 @@ not the whole phone, so the UI is readable. End on `short_final_pt.png` / `short
 **To record (phone, light mode, app in PT-BR, then again in EN):** open a piece with a nice photo
 (Nuvem), set the counter to 12, tap + three times slowly, tap the mic and say the number, go back
 to the list and reopen the piece. Keep fingers slow; pause 1 s between actions.
+
+---
+
+## Short 2: Fotos, câmera ou galeria / Photos, camera or gallery (~30 s, written 2026-10-24)
+
+Facts checked in the code: photos taken with the app camera are saved only in the app's private
+storage (not in the phone gallery) and are deleted if the app is uninstalled; the backup does not
+include photo files. Photos picked from the gallery are copied into the app and the original stays
+on the phone.
+
+| Seconds | Headline overlay | Footage |
+|---|---|---|
+| 0–4 | t1 "Duas formas de adicionar *fotos*" (kicker "Fotos das peças") / "Two ways to add *photos*" (kicker "Piece photos") | Piece form, finger on the photo area |
+| 4–12 | t2 "Câmera do app: fica *só no Hooky*" / "App camera: stays *in Hooky*" | Tap camera icon, take a photo of a piece, it appears in the piece |
+| 12–20 | t3 "Galeria: fica *no seu celular*" / "Gallery: stays *on your phone*" | Same piece in the phone gallery, then gallery icon in the app, pick it |
+| 20–27 | t4 "Para guardar ou postar: *galeria*" / "To keep or post: use the *gallery*" | The photo in the phone gallery / Instagram open with it |
+| 27–30 | end card | |
+
+Overlays: `feature-shorts/fotos_pt_t1..t4.png`, `feature-shorts/photos_en_t1..t4.png`; frame and
+end card are the shared ones.
+
+**Voiceover PT-BR:**
+> Sabia que existem duas formas de colocar fotos nas suas peças no Hooky App? Pela câmera do app: é rápido, e a foto fica só no Hooky. Sua galeria não fica cheia de fotos de crochê. Pela galeria: tire a foto com a câmera do celular e escolha no app. A foto continua no seu celular, pronta para postar nas redes. Fotos que você quer guardar para sempre? Use a galeria: elas continuam no celular mesmo se você apagar o app. Simples assim! Hooky App, grátis no Google Play.
+
+**Voiceover EN:**
+> Did you know there are two ways to add photos to your pieces in Hooky App? With the app camera, it's quick, and the photo stays only in Hooky, so your gallery doesn't fill up with crochet pics. With the gallery, take the photo with your phone's camera and pick it in the app. It stays on your phone, ready to post. Photos you want to keep for good? Use the gallery: they stay on your phone even if you delete the app. Simple as that! Hooky App, free on Google Play.
+
+**To record (phone, light mode, app in PT-BR, then again in EN):** before recording, take one photo
+of a finished piece with the phone camera so it is in the gallery. Open that piece in edit mode,
+tap the camera icon and take a photo; save. Then open the phone gallery to show the earlier photo,
+go back to the app, tap the gallery icon and pick it. Last shot: the photo in the phone gallery or
+in Instagram's post picker. Keep fingers slow; pause 1 s between actions.
+
+**Title:** "Câmera ou galeria? Onde ficam suas fotos no Hooky App" / "Camera or gallery? Where your photos go in Hooky App"
 
 ---
 
