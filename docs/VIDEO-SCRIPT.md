@@ -553,6 +553,14 @@ on the phone.
 Overlays: `feature-shorts/fotos_pt_t1..t4.png`, `feature-shorts/photos_en_t1..t4.png`; frame and
 end card are the shared ones.
 
+**Cut (2026-10-25):** silent drafts ready for voiceover and music:
+`BRASIL/videos/short-fotos-camera-galeria-pt.mp4` and `ENGLISH/videos/short-photos-camera-gallery-en.mp4`
+(30 s: 27 s footage with frame and headlines + 3 s end card). Footage only, full phone screen:
+`source/clips/short-fotos-pt-footage.mp4` / `short-photos-en-footage.mp4`. Raw takes in
+`source/recordings/BRASIL|ENGLISH/scrcpy_recording_20261025_*.mp4`. The EN take has no phone-gallery
+shot, so beat 4 reuses the PT gallery footage (no text in it). Cuts skip the parts of the takes that show
+faces, private album names and message screenshots.
+
 **Voiceover PT-BR:**
 > Sabia que existem duas formas de colocar fotos nas suas peças no Hooky App? Pela câmera do app: é rápido, e a foto fica só no Hooky. Sua galeria não fica cheia de fotos de crochê. Pela galeria: tire a foto com a câmera do celular e escolha no app. A foto continua no seu celular, pronta para postar nas redes. Fotos que você quer guardar para sempre? Use a galeria: elas continuam no celular mesmo se você apagar o app. Simples assim! Hooky App, grátis no Google Play.
 

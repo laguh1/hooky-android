@@ -553,3 +553,95 @@ Title: `Hooky App Pro free for 12 months: last days! #shorts`
 > Get it on Google Play: hookyapp.netlify.app/yt
 >
 > #hookyapp #crochet #knitting #crochetbusiness #handmade
+
+## Fotos: câmera ou galeria / Photos: camera or gallery — Short 2 (written 2026-10-25)
+
+Videos: `BRASIL/videos/short-fotos-camera-galeria-pt.mp4`, `ENGLISH/videos/short-photos-camera-gallery-en.mp4`.
+Evergreen (no Pro dates). Fact behind the tip: app-camera photos live only inside the app and are
+deleted if the app is uninstalled; gallery photos stay on the phone.
+
+### PT-BR — Instagram (Reel)
+
+> 📸 Câmera do app ou galeria? Onde ficam as fotos das suas peças no Hooky App:
+>
+> • Câmera do app: rápido, e a foto fica só no Hooky. Sua galeria não enche de fotos de crochê.
+> • Galeria: a foto continua no seu celular, pronta para postar.
+>
+> 💡 Aquela foto da peça pronta que você quer guardar para sempre? Use a galeria: ela fica no celular mesmo se você apagar o app.
+>
+> Salve este vídeo para lembrar 📌
+>
+> Hooky App é grátis, link na bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #croche #crochê #trico #tricô #crochebrasil #crocheteiras #artesanato #feitoamao #dicasdecroche
+
+### PT-BR — Facebook (Reel)
+
+> 📸 Você sabia que existem duas formas de colocar fotos nas suas peças no Hooky App?
+>
+> 👉 Pela câmera do app: rápido, e a foto fica só no Hooky. Sua galeria não fica cheia de fotos de crochê.
+> 👉 Pela galeria: tire a foto com a câmera do celular e escolha no app. A foto continua no celular, pronta para postar.
+>
+> 💡 Dica: fotos que você quer guardar para sempre, use a galeria. Elas continuam no celular mesmo se você apagar o app.
+>
+> E você, qual usa mais? Conta aqui nos comentários 👇
+>
+> Hooky App é grátis no Google Play: hookyapp.netlify.app/fb
+
+### PT-BR — YouTube (Short)
+
+Title: `Câmera ou galeria? Onde ficam suas fotos no Hooky App #shorts`
+
+> Duas formas de adicionar fotos às suas peças de crochê e tricô no Hooky App. Pela câmera do app, a foto fica só no Hooky e sua galeria não enche. Pela galeria, a foto continua no seu celular, pronta para postar. Fotos para guardar para sempre? Use a galeria: elas ficam no celular mesmo se você apagar o app.
+>
+> 📲 Hooky App grátis no Google Play: hookyapp.netlify.app/yt
+> 🌐 Guia completo: hookyapp.netlify.app/guide.html
+> 📸 Instagram: instagram.com/hooky.app
+> 👍 Facebook: facebook.com/hookyapp
+>
+> #hookyapp #croche #trico #crochebrasil #dicasdecroche
+
+Tags: `Hooky App, app de crochê, app de tricô, crochê, tricô, fotos de crochê, organizar crochê, dicas de crochê, crochê para iniciantes, aplicativo de crochê, contador de carreiras, artesanato`
+
+### EN — Instagram (Reel)
+
+> 📸 App camera or gallery? Where your piece photos go in Hooky App:
+>
+> • App camera: quick, and the photo stays only in Hooky. No more gallery full of crochet pics.
+> • Gallery: the photo stays on your phone, ready to post.
+>
+> 💡 That finished-piece photo you want to keep for good? Use the gallery: it stays on your phone even if you delete the app.
+>
+> Save this for later 📌
+>
+> Hooky App is free, link in bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #knittersofinstagram #crochettips #handmade #crochetapp #knittingapp #makersgonnamake
+
+### EN — Facebook (Reel)
+
+> 📸 Did you know there are two ways to add photos to your pieces in Hooky App?
+>
+> 👉 With the app camera: quick, and the photo stays only in Hooky, so your gallery doesn't fill up with crochet pics.
+> 👉 With the gallery: take the photo with your phone's camera and pick it in the app. It stays on your phone, ready to post.
+>
+> 💡 Tip: for photos you want to keep for good, use the gallery. They stay on your phone even if you delete the app.
+>
+> Which one do you use? Tell us in the comments 👇
+>
+> Hooky App is free on Google Play: hookyapp.netlify.app/fb
+
+### EN — YouTube (Short)
+
+Title: `Camera or gallery? Where your photos go in Hooky App #shorts`
+
+> Two ways to add photos to your crochet and knitting pieces in Hooky App. With the app camera, the photo stays only in Hooky and your gallery stays tidy. With the gallery, the photo stays on your phone, ready to post. Photos you want to keep for good? Use the gallery: they stay on your phone even if you delete the app.
+>
+> 📲 Get Hooky App free on Google Play: hookyapp.netlify.app/yt
+> 🌐 Full guide: hookyapp.netlify.app/guide.html
+> 📸 Instagram: instagram.com/hooky.app
+> 👍 Facebook: facebook.com/hookyapp
+>
+> #hookyapp #crochet #knitting #crochettips #handmade
+
+Tags: `Hooky App, crochet app, knitting app, crochet, knitting, crochet photos, crochet organizer, crochet tips, crochet for beginners, knitting tips, row counter app, yarn stash app`
