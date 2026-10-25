@@ -305,7 +305,7 @@ private fun PieceDetailContent(
                 ) { page ->
                     AsyncImage(
                         model = photos[page],
-                        contentDescription = "Photo ${page + 1}",
+                        contentDescription = stringResource(R.string.piece_photo_cd, page + 1),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -449,7 +449,7 @@ private fun PieceDetailContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Suggest price →",
+                        text = stringResource(R.string.piece_suggest_price),
                         style = MaterialTheme.typography.labelMedium,
                         color = BrandPurple,
                         textAlign = TextAlign.End,
@@ -551,8 +551,8 @@ private fun PieceDetailContent(
                         val intent = ShareCardGenerator.generateAndShare(
                             context = context,
                             pieceName = piece.name,
-                            pieceType = piece.type,
-                            destination = piece.destination,
+                            pieceType = typeName,
+                            destination = destBaseName,
                             workHours = piece.workHours,
                             rowCount = piece.rowCount,
                             photoPath = photos.firstOrNull()

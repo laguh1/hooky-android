@@ -24,6 +24,13 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.hooky.app.ui.help.guideUrl
+import com.hooky.app.ui.help.feedbackUrl
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Share
@@ -473,6 +480,9 @@ fun SettingsScreen(
             // Help section
             SectionHeader(stringResource(R.string.settings_section_help))
 
+            val uriHandler = LocalUriHandler.current
+            val guideLink = guideUrl()
+            val feedbackLink = feedbackUrl()
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = MaterialTheme.colorScheme.surface,
@@ -480,43 +490,36 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onNavigateToHelp() }
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.HelpOutline,
-                            contentDescription = null,
-                            tint = Slate,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Column {
-                            Text(
-                                text = stringResource(R.string.settings_help_title),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = stringResource(R.string.settings_help_subtitle),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.Filled.ChevronRight,
-                        contentDescription = null,
-                        tint = TextMuted,
-                        modifier = Modifier.size(20.dp)
+                Column {
+                    HelpRow(
+                        icon = Icons.Filled.HelpOutline,
+                        title = stringResource(R.string.settings_help_title),
+                        subtitle = stringResource(R.string.settings_help_subtitle),
+                        onClick = onNavigateToHelp
+                    )
+                    Divider(
+                        color = MaterialTheme.colorScheme.outline,
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    HelpRow(
+                        icon = Icons.Filled.MenuBook,
+                        title = stringResource(R.string.settings_guide_title),
+                        subtitle = stringResource(R.string.settings_guide_subtitle),
+                        external = true,
+                        onClick = { uriHandler.openUri(guideLink) }
+                    )
+                    Divider(
+                        color = MaterialTheme.colorScheme.outline,
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    HelpRow(
+                        icon = Icons.Filled.Lightbulb,
+                        title = stringResource(R.string.settings_feedback_title),
+                        subtitle = stringResource(R.string.settings_feedback_subtitle),
+                        external = true,
+                        onClick = { uriHandler.openUri(feedbackLink) }
                     )
                 }
             }
@@ -646,6 +649,57 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+// One row of the Help card. external = opens a web page, so it gets an "open in
+// browser" arrow instead of the chevron used for screens inside the app.
+@Composable
+private fun HelpRow(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    external: Boolean = false,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Slate,
+                modifier = Modifier.size(20.dp)
+            )
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+            }
+        }
+        Icon(
+            imageVector = if (external) Icons.Filled.OpenInNew else Icons.Filled.ChevronRight,
+            contentDescription = null,
+            tint = TextMuted,
+            modifier = Modifier.size(if (external) 18.dp else 20.dp)
+        )
     }
 }
 

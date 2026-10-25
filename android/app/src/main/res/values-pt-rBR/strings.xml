@@ -433,21 +433,21 @@
     <string name="piece_section_needles_used">Agulhas usadas</string>
     <string name="piece_work_timer">Temporizador de trabalho</string>
     <string name="piece_timer_total">Total: %s registrado</string>
-    <string name="piece_row_counter">Contador de fileiras</string>
+    <string name="piece_row_counter">Contador de carreiras</string>
     <string name="piece_work_sessions_title">Sessões de trabalho (%d)</string>
-    <string name="piece_row_dialog_title">Configurar fileiras</string>
-    <string name="piece_row_current">Fileira atual</string>
-    <string name="piece_row_target">Fileiras objetivo</string>
+    <string name="piece_row_dialog_title">Configurar carreiras</string>
+    <string name="piece_row_current">Carreira atual</string>
+    <string name="piece_row_target">Carreiras objetivo</string>
     <string name="piece_work_time_dialog_title">Editar tempo de trabalho</string>
     <string name="piece_work_time_hours">Horas</string>
     <string name="piece_work_time_minutes">Minutos</string>
     <string name="piece_row_target_hint">Deixe em branco sem objetivo</string>
-    <string name="piece_rows_progress">%1$d / %2$d fileiras</string>
+    <string name="piece_rows_progress">%1$d / %2$d carreiras</string>
     <string name="piece_voice_permission">Permissão de microfone necessária para contar por voz</string>
     <string name="piece_voice_error">Não detectei um número — tente novamente</string>
     <string name="piece_voice_timeout">Contagem por voz parada — toque no microfone para reiniciar</string>
     <string name="piece_voice_lang_pack">Pacote de voz não instalado para este idioma. Vá em Configurações → Apps → Google → Assistente de voz para baixá-lo.</string>
-    <string name="settings_voice_lang_tip">Para a contagem de fileiras por voz, certifique-se de que o pacote de voz correspondente está instalado no seu dispositivo.</string>
+    <string name="settings_voice_lang_tip">Para a contagem de carreiras por voz, certifique-se de que o pacote de voz correspondente está instalado no seu dispositivo.</string>
     <string name="piece_extra_counters">Contadores extras</string>
     <string name="piece_counter_add">Adicionar contador</string>
     <string name="piece_counter_edit">Editar contador</string>
@@ -455,14 +455,16 @@
     <string name="piece_counter_name_hint">Nome do contador</string>
     <string name="piece_counter_target_hint">Meta (opcional)</string>
     <string name="piece_field_hook_size_mm">Tamanho do gancho (mm)</string>
-    <string name="piece_field_row_start">Fileira inicial</string>
+    <string name="piece_field_row_start">Carreira inicial</string>
     <string name="piece_field_row_start_hint">0 para uma peça nova</string>
     <string name="piece_field_target_rows_hint">ex: 80</string>
     <string name="piece_field_gift_recipient_name">Nome do presenteado</string>
     <string name="piece_label_material_cost">Custo de material</string>
     <string name="piece_label_suggested_price">Preço sugerido</string>
+    <string name="piece_suggest_price">Sugerir preço →</string>
+    <string name="piece_photo_cd">Foto %d</string>
     <string name="piece_price_dialog_title">Sugestão de Preço</string>
-    <string name="piece_price_dialog_rows_worked">Fileiras trabalhadas</string>
+    <string name="piece_price_dialog_rows_worked">Carreiras trabalhadas</string>
     <string name="piece_price_dialog_hourly_rate">Taxa por hora (%s/h)</string>
     <string name="piece_price_dialog_apply">Aplicar à Peça</string>
     <string name="piece_label_sale_platform">Cliente / Loja / Site</string>
@@ -542,7 +544,7 @@
     <!-- Pieces — detail additions -->
     <!-- ================================================================ -->
     <string name="piece_session_duration">%d min</string>
-    <string name="piece_edit_row_count">Editar número de fileiras</string>
+    <string name="piece_edit_row_count">Editar número de carreiras</string>
     <string name="piece_edit_work_time">Editar tempo de trabalho</string>
     <string name="piece_label_gift_for">Presente para</string>
 
@@ -617,6 +619,10 @@
 
     <string name="settings_help_title">Ajuda e dicas</string>
     <string name="settings_help_subtitle">Funcionalidades ocultas e atalhos</string>
+    <string name="settings_guide_title">Guia completo com vídeos</string>
+    <string name="settings_guide_subtitle">Todas as funções passo a passo, no site</string>
+    <string name="settings_feedback_title">Sugestões e feedback</string>
+    <string name="settings_feedback_subtitle">Sentiu falta de algo ou achou um problema? Conte pra gente</string>
 
     <string name="settings_beta_access_label">Acesso</string>
     <string name="settings_beta_access_premium">Testador premium</string>
@@ -687,4 +693,24 @@
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Ativo</string>
     <string name="settings_pro_subtitle_inactive">Ferramentas para vender</string>
+
+    <!-- Texts that were hardcoded in English until 2026-10-12 -->
+    <string name="search_min_chars">Digite pelo menos 2 caracteres</string>
+    <string name="search_nothing_matched">Nada corresponde a \"%s\"</string>
+    <string name="dashboard_finished_on">Concluída em %s</string>
+    <string name="photo_rotate_left">Esquerda</string>
+    <string name="photo_flip">Espelhar</string>
+    <string name="photo_rotate_right">Direita</string>
+    <string name="needle_scan_dialog_title">Tamanho detectado</string>
+    <string name="needle_scan_dialog_label">Tamanho detectado:</string>
+    <string name="photo_delete_title">Excluir foto?</string>
+    <string name="photo_delete_message">Esta foto será removida. Esta ação não pode ser desfeita.</string>
+
+    <!-- Share card labels and scan/limit errors (were English-only until 2026-10-24) -->
+    <string name="share_card_work_time">Tempo de trabalho</string>
+    <string name="share_card_rows">Carreiras</string>
+    <string name="error_free_photo_limit">A versão gratuita permite %d fotos por peça. Desbloqueie o Pro para ter fotos ilimitadas.</string>
+    <string name="error_scan_size">Não foi possível ler o tamanho. Tente uma foto mais nítida, de perto e com boa luz.</string>
+    <string name="error_scan_label">Não foi possível ler a etiqueta. Tente uma foto mais nítida, de perto e com boa luz.</string>
+    <string name="error_scan_failed">Não foi possível escanear. Tente novamente.</string>
 </resources>
