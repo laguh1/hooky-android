@@ -27,10 +27,17 @@ Build: versionCode 26. versionName is still "1.8.0" and must be bumped
 4. **Share card fixes**: piece type and destination now show in your language
    (they showed raw codes like "SHAWL · FOR_SALE"), and longer ES/PT labels no
    longer overlap.
+5. **Photo editor fix**: rotating or flipping a photo now saves the first time.
+   Before, the first save came out turned the wrong way and you had to edit
+   twice. Photos on the share card and in the label scanner are upright too.
+6. **Guide and suggestions links**: Settings → Help and the Help & Tips screen
+   now link to the full guide with videos and to the new suggestions page on
+   the website (hookyapp.netlify.app/feedback), both opening in the app's
+   language.
 
 ### Internal (not in the release notes)
 - Photo description for accessibility ("Photo 1"…) translated.
-- Logged as fix #13 in `docs/FIXES-2026-08-31.md`.
+- Logged as fix #14 (photo editor) and fix #13 in `docs/FIXES-2026-08-31.md`.
 
 - Tests added: `PhotoOrderTest` (unit) and `MigrationTest` (instrumented,
   Room 9 → 10). Both pass (2026-10-24).
@@ -40,6 +47,8 @@ Build: versionCode 26. versionName is still "1.8.0" and must be bumped
 - [ ] Try adding photos on a piece and a yarn on the emulator (newest first)
 - [ ] Real upgrade test: install build 25 from Play, add a piece with 3 photos, update to the new build, check order
 - [ ] Look at a share card in PT and ES
+- [ ] On the phone: rotate a camera photo and a gallery photo once, save, check it stays as shown
+- [ ] Settings → Help and Help & Tips: the two new link rows in PT-BR and ES at 360dp + font 1.3, and both links open the right page and language
 - [ ] Trigger a scan error and the 5-photo limit in ES/PT
 - [ ] Bump versionName
 - [ ] Write release notes in EN / PT-BR / ES (max 500 characters each)
@@ -49,6 +58,8 @@ Build: versionCode 26. versionName is still "1.8.0" and must be bumped
 <en-US>
 • Newest photo first: your most recent photo now shows first
 • Share card now fully in your language
+• Photo editor: rotating a photo now saves correctly the first time
+• New: send us suggestions from Settings → Help
 • More screens translated into Spanish and Portuguese
 • Small fixes and improvements
 </en-US>
@@ -56,12 +67,16 @@ Build: versionCode 26. versionName is still "1.8.0" and must be bumped
 • Foto mais recente primeiro: sua última foto agora aparece na frente
 • Contador agora fala em "carreiras"
 • Cartão de compartilhamento todo em português
+• Editor de fotos: girar a foto agora salva certo na primeira vez
+• Novo: envie sugestões em Configurações → Ajuda
 • Mais telas traduzidas para o português
 • Pequenas correções e melhorias
 </pt-BR>
 <es-ES>
 • La foto más reciente primero: tu última foto ahora aparece delante
 • La tarjeta para compartir, ya toda en español
+• Editor de fotos: girar una foto ahora se guarda bien a la primera
+• Nuevo: envía sugerencias desde Ajustes → Ayuda
 • Más pantallas traducidas al español
 • Pequeñas correcciones y mejoras
 </es-ES>
