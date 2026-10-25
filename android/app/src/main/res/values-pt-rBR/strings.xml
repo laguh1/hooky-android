@@ -619,6 +619,10 @@
 
     <string name="settings_help_title">Ajuda e dicas</string>
     <string name="settings_help_subtitle">Funcionalidades ocultas e atalhos</string>
+    <string name="settings_guide_title">Guia completo com vídeos</string>
+    <string name="settings_guide_subtitle">Todas as funções passo a passo, no site</string>
+    <string name="settings_feedback_title">Sugestões e feedback</string>
+    <string name="settings_feedback_subtitle">Sentiu falta de algo ou achou um problema? Conte pra gente</string>
 
     <string name="settings_beta_access_label">Acesso</string>
     <string name="settings_beta_access_premium">Testador premium</string>

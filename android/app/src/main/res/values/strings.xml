@@ -624,6 +624,10 @@
 
     <string name="settings_help_title">Help &amp; Tips</string>
     <string name="settings_help_subtitle">Hidden features and shortcuts</string>
+    <string name="settings_guide_title">Full guide with videos</string>
+    <string name="settings_guide_subtitle">Every feature step by step, on the website</string>
+    <string name="settings_feedback_title">Suggestions and feedback</string>
+    <string name="settings_feedback_subtitle">Missing something or found a problem? Tell us</string>
 
     <string name="settings_beta_access_label">Access</string>
     <string name="settings_beta_access_premium">Premium tester</string>
