@@ -3,7 +3,7 @@
 Started 2026-10-24. Branch `fix/suggest-price-i18n`. Last release on Play: build 25 / 1.8.0.
 Add each new change here as it lands; draft the Play release notes from this list at the end.
 
-Build: versionCode 26 / versionName **1.9.0** (bumped 2026-10-25; the suggestions links are a
+Build: versionCode **27** (26 was already used in Play Console) / versionName **1.9.0** (bumped 2026-10-25; the suggestions links are a
 small new feature). Bundle: `android/app/build/outputs/bundle/release/app-release.aab`.
 
 ## Changes so far
