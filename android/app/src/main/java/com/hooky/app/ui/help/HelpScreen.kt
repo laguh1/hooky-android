@@ -17,6 +17,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Divider
@@ -346,12 +351,72 @@ fun HelpScreen(onNavigateBack: () -> Unit) {
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            WebLinksCard()
+            Spacer(modifier = Modifier.height(12.dp))
             content.sections.forEach { section ->
                 HelpSectionCard(section)
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+// Links to the website: the full guide (with feature videos) and the suggestions page
+@Composable
+private fun WebLinksCard() {
+    val uriHandler = LocalUriHandler.current
+    val guideLink = guideUrl()
+    val feedbackLink = feedbackUrl()
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surface,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column {
+            WebLinkRow(
+                icon = Icons.Filled.MenuBook,
+                title = stringResource(R.string.settings_guide_title),
+                subtitle = stringResource(R.string.settings_guide_subtitle),
+                onClick = { uriHandler.openUri(guideLink) }
+            )
+            Divider(
+                color = MaterialTheme.colorScheme.outline,
+                thickness = 0.5.dp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            WebLinkRow(
+                icon = Icons.Filled.Lightbulb,
+                title = stringResource(R.string.settings_feedback_title),
+                subtitle = stringResource(R.string.settings_feedback_subtitle),
+                onClick = { uriHandler.openUri(feedbackLink) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun WebLinkRow(icon: ImageVector, title: String, subtitle: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(imageVector = icon, contentDescription = null, tint = Slate, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = Slate
+            )
+            Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+        }
+        Spacer(Modifier.width(8.dp))
+        Icon(Icons.Filled.OpenInNew, contentDescription = null, tint = TextMuted, modifier = Modifier.size(18.dp))
     }
 }
 
