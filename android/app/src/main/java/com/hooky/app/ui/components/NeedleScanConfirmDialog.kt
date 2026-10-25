@@ -1,5 +1,7 @@
 package com.hooky.app.ui.components
 
+import com.hooky.app.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -29,7 +31,7 @@ fun NeedleScanConfirmDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Size Detected",
+                text = stringResource(R.string.needle_scan_dialog_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -37,7 +39,7 @@ fun NeedleScanConfirmDialog(
         text = {
             Column {
                 Text(
-                    text = "Detected size:",
+                    text = stringResource(R.string.needle_scan_dialog_label),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
@@ -68,7 +70,7 @@ fun NeedleScanConfirmDialog(
                     contentColor = White
                 )
             ) {
-                Text("Apply", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.action_apply), fontWeight = FontWeight.SemiBold)
             }
         },
         dismissButton = {
@@ -76,7 +78,7 @@ fun NeedleScanConfirmDialog(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         },
         shape = RoundedCornerShape(16.dp)

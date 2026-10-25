@@ -1,5 +1,6 @@
 package com.hooky.app.ui.needles.form
 
+import com.hooky.app.R
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -174,10 +175,10 @@ class NeedleFormViewModel @Inject constructor(
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size — try a clearer, closer photo.") }
+                    _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_size)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }
@@ -192,7 +193,7 @@ class NeedleFormViewModel @Inject constructor(
         } catch (_: Exception) {
             tempPath
         }
-        _uiState.update { it.copy(photos = it.photos + finalPath) }
+        _uiState.update { it.copy(photos = listOf(finalPath) + it.photos) }
     }
 
     private fun saveNeedle() {

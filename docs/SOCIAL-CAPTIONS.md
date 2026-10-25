@@ -409,3 +409,239 @@ Link de destino: Play Store, com `utm_source=meta_ads` (criar pasta `/ads` no la
 - **Core hashtags (EN):** #crochet #knitting #hookyapp #crochetapp
 - **Core hashtags (PT-BR):** #crochê #tricô #hookyapp #appdecrochê
 - **Extended PT-BR hashtag pool:** #croche #trico #artesanato #feitoamao #euquefiz #trabalhosmanuais #artesanatobrasil #trabalhomanual #crocheteiras #amocroche #viciadaemcroche #amantesdocroche #croche_e_trico #pontosdecroche #receitadecroche #croche_moderno #dicasdecroche #croche_facil
+
+---
+
+## Hooky App Pro announcement + launch gift until 31 Oct (written 2026-10-13)
+
+*Post only once 1.8.0 is in Production and the store listing text is updated. Images: `BRASIL/images/20261013_anuncio_pro_{post,story}.png`, `ENGLISH/images/20261013_pro_announcement_{post,story}.png`.*
+
+### PT-BR — Facebook
+
+> Novidade: chegou o Hooky App Pro 🧶
+>
+> O Hooky App continua grátis para usar. Peças, fios, pontos, agulhas, contador de fileiras, leitor de etiquetas e calculadora de preço seguem liberados para todo mundo.
+>
+> O Pro é para quem vende suas peças:
+> • Relatórios de custos e lucro
+> • Receita por cliente
+> • Lotes: mais de 1 da mesma peça
+> • Contadores extras em cada peça
+> • Mais de 5 fotos por peça
+>
+> 🎁 Presente de lançamento: quem instalar o app até 31 de outubro ganha 12 meses de Pro grátis. Sem cadastro. Quem já tem o app instalado também ganha.
+>
+> Baixe no Google Play: https://laguh1.github.io/hooky-landing/fb
+
+### PT-BR — Instagram
+
+> Chegou o Hooky App Pro 🧶 e ele é grátis por 12 meses para quem instalar o app até 31 de outubro.
+>
+> O Pro é para quem vende suas peças: relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais fotos por peça.
+>
+> O Hooky App continua grátis para usar, com peças, fios, pontos, agulhas, contador de fileiras, leitor de etiquetas e calculadora de preço.
+>
+> 🎁 Sem cadastro. Quem já tem o app também ganha.
+>
+> Link na bio.
+>
+> #hookyapp #croche #crochê #trico #tricô #crocheteira #crochetbrasil #vendercroche #artesanato #feitoamao #precificacao #appdecroche
+
+### EN — Facebook
+
+> New: Hooky App Pro is here 🧶
+>
+> Hooky App stays free to use. Pieces, yarns, stitches, needles, the row counter, the label scanner and the price calculator remain open to everyone.
+>
+> Pro is for people who sell their work:
+> • Cost and profit reports
+> • Revenue by customer
+> • Batches: more than 1 of the same piece
+> • Extra counters on each piece
+> • More than 5 photos per piece
+>
+> 🎁 Launch gift: install the app by 31 October and get 12 months of Pro free. No account needed. If you already have the app, you get it too.
+>
+> Get it on Google Play: https://laguh1.github.io/hooky-landing/fb
+
+### EN — Instagram
+
+> Hooky App Pro is here 🧶 and it is free for 12 months if you install the app by 31 October.
+>
+> Pro is for people who sell their work: cost and profit reports, revenue by customer, batches, extra counters and more photos per piece.
+>
+> Hooky App stays free to use, with pieces, yarns, stitches, needles, row counter, label scanner and price calculator.
+>
+> 🎁 No account needed. Already have the app? You get it too.
+>
+> Link in bio.
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #crochetbusiness #handmadebusiness #sellhandmade #crochetapp #knittingapp #yarnlove #makersgonnamake
+
+## Hooky App Pro — last days reminder reel (written 2026-10-24)
+
+Reel: `shared/promo/<BRASIL|ENGLISH>/videos/hooky-pro-reminder-<pt|en>.mp4` (14s, 4 slides, silent: add music in the app). Post 26–29 Oct; the gift ends 31 Oct. Links go through the Netlify site.
+
+### PT-BR — Instagram (Reel)
+
+> Últimos dias! ⏳ Instale o Hooky App até 31 de outubro e ganhe 12 meses de Hooky App Pro grátis.
+>
+> O Pro é para quem vende suas peças: relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais de 5 fotos por peça.
+>
+> 🎁 Sem cadastro e sem cartão. Quem já tem o app também ganha.
+>
+> Link na bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #croche #crochê #trico #tricô #crocheteira #crochetbrasil #vendercroche #artesanato #feitoamao #precificacao #appdecroche
+
+### PT-BR — Facebook (Reel)
+
+> Últimos dias! ⏳ Quem instalar o Hooky App até 31 de outubro ganha 12 meses de Hooky App Pro grátis.
+>
+> O Pro é para quem vende suas peças:
+> • Relatórios de custos e lucro
+> • Receita por cliente
+> • Lotes: mais de 1 da mesma peça
+> • Contadores extras e mais de 5 fotos por peça
+>
+> 🎁 Sem cadastro e sem cartão. Quem já tem o app também ganha.
+>
+> Baixe no Google Play: hookyapp.netlify.app/fb
+
+### PT-BR — YouTube (Short)
+
+Title: `Hooky App Pro grátis por 12 meses: últimos dias! #shorts`
+
+> Instale o Hooky App até 31 de outubro e ganhe 12 meses de Hooky App Pro grátis. Relatórios de custos e lucro, receita por cliente, lotes, contadores extras e mais fotos por peça, para quem vende crochê e tricô.
+>
+> Baixe no Google Play: hookyapp.netlify.app/yt
+>
+> #hookyapp #croche #trico #vendercroche #artesanato
+
+### EN — Instagram (Reel)
+
+> Last days! ⏳ Install Hooky App by 31 October and get 12 months of Hooky App Pro free.
+>
+> Pro is for people who sell their work: cost and profit reports, revenue by customer, batches, extra counters and more than 5 photos per piece.
+>
+> 🎁 No account, no card. Already have the app? You get it too.
+>
+> Link in bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #crochetbusiness #handmadebusiness #sellhandmade #crochetapp #knittingapp #makersgonnamake
+
+### EN — Facebook (Reel)
+
+> Last days! ⏳ Install Hooky App by 31 October and get 12 months of Hooky App Pro free.
+>
+> Pro is for people who sell their work:
+> • Cost and profit reports
+> • Revenue by customer
+> • Batches: more than 1 of the same piece
+> • Extra counters and more than 5 photos per piece
+>
+> 🎁 No account, no card. Already have the app? You get it too.
+>
+> Get it on Google Play: hookyapp.netlify.app/fb
+
+### EN — YouTube (Short)
+
+Title: `Hooky App Pro free for 12 months: last days! #shorts`
+
+> Install Hooky App by 31 October and get 12 months of Hooky App Pro free. Cost and profit reports, revenue by customer, batches, extra counters and more photos per piece, for makers who sell their crochet and knitting.
+>
+> Get it on Google Play: hookyapp.netlify.app/yt
+>
+> #hookyapp #crochet #knitting #crochetbusiness #handmade
+
+## Fotos: câmera ou galeria / Photos: camera or gallery — Short 2 (written 2026-10-25)
+
+Videos: `BRASIL/videos/short-fotos-camera-galeria-pt.mp4`, `ENGLISH/videos/short-photos-camera-gallery-en.mp4`.
+Evergreen (no Pro dates). Fact behind the tip: app-camera photos live only inside the app and are
+deleted if the app is uninstalled; gallery photos stay on the phone.
+
+### PT-BR — Instagram (Reel)
+
+> 📸 Câmera do app ou galeria? Onde ficam as fotos das suas peças no Hooky App:
+>
+> • Câmera do app: rápido, e a foto fica só no Hooky. Sua galeria não enche de fotos de crochê.
+> • Galeria: a foto continua no seu celular, pronta para postar.
+>
+> 💡 Aquela foto da peça pronta que você quer guardar para sempre? Use a galeria: ela fica no celular mesmo se você apagar o app.
+>
+> Salve este vídeo para lembrar 📌
+>
+> Hooky App é grátis, link na bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #croche #crochê #trico #tricô #crochebrasil #crocheteiras #artesanato #feitoamao #dicasdecroche
+
+### PT-BR — Facebook (Reel)
+
+> 📸 Você sabia que existem duas formas de colocar fotos nas suas peças no Hooky App?
+>
+> 👉 Pela câmera do app: rápido, e a foto fica só no Hooky. Sua galeria não fica cheia de fotos de crochê.
+> 👉 Pela galeria: tire a foto com a câmera do celular e escolha no app. A foto continua no celular, pronta para postar.
+>
+> 💡 Dica: fotos que você quer guardar para sempre, use a galeria. Elas continuam no celular mesmo se você apagar o app.
+>
+> E você, qual usa mais? Conta aqui nos comentários 👇
+>
+> Hooky App é grátis no Google Play: hookyapp.netlify.app/fb
+
+### PT-BR — YouTube (Short)
+
+Title: `Câmera ou galeria? Onde ficam suas fotos no Hooky App #shorts`
+
+> Duas formas de adicionar fotos às suas peças de crochê e tricô no Hooky App. Pela câmera do app, a foto fica só no Hooky e sua galeria não enche. Pela galeria, a foto continua no seu celular, pronta para postar. Fotos para guardar para sempre? Use a galeria: elas ficam no celular mesmo se você apagar o app.
+>
+> 📲 Hooky App grátis no Google Play: hookyapp.netlify.app/yt
+> 🌐 Guia completo: hookyapp.netlify.app/guide.html
+> 📸 Instagram: instagram.com/hooky.app
+> 👍 Facebook: facebook.com/hookyapp
+>
+> #hookyapp #croche #trico #crochebrasil #dicasdecroche
+
+Tags: `Hooky App, app de crochê, app de tricô, crochê, tricô, fotos de crochê, organizar crochê, dicas de crochê, crochê para iniciantes, aplicativo de crochê, contador de carreiras, artesanato`
+
+### EN — Instagram (Reel)
+
+> 📸 App camera or gallery? Where your piece photos go in Hooky App:
+>
+> • App camera: quick, and the photo stays only in Hooky. No more gallery full of crochet pics.
+> • Gallery: the photo stays on your phone, ready to post.
+>
+> 💡 That finished-piece photo you want to keep for good? Use the gallery: it stays on your phone even if you delete the app.
+>
+> Save this for later 📌
+>
+> Hooky App is free, link in bio 👉 hookyapp.netlify.app/ig
+>
+> #hookyapp #crochet #knitting #crochetersofinstagram #knittersofinstagram #crochettips #handmade #crochetapp #knittingapp #makersgonnamake
+
+### EN — Facebook (Reel)
+
+> 📸 Did you know there are two ways to add photos to your pieces in Hooky App?
+>
+> 👉 With the app camera: quick, and the photo stays only in Hooky, so your gallery doesn't fill up with crochet pics.
+> 👉 With the gallery: take the photo with your phone's camera and pick it in the app. It stays on your phone, ready to post.
+>
+> 💡 Tip: for photos you want to keep for good, use the gallery. They stay on your phone even if you delete the app.
+>
+> Which one do you use? Tell us in the comments 👇
+>
+> Hooky App is free on Google Play: hookyapp.netlify.app/fb
+
+### EN — YouTube (Short)
+
+Title: `Camera or gallery? Where your photos go in Hooky App #shorts`
+
+> Two ways to add photos to your crochet and knitting pieces in Hooky App. With the app camera, the photo stays only in Hooky and your gallery stays tidy. With the gallery, the photo stays on your phone, ready to post. Photos you want to keep for good? Use the gallery: they stay on your phone even if you delete the app.
+>
+> 📲 Get Hooky App free on Google Play: hookyapp.netlify.app/yt
+> 🌐 Full guide: hookyapp.netlify.app/guide.html
+> 📸 Instagram: instagram.com/hooky.app
+> 👍 Facebook: facebook.com/hookyapp
+>
+> #hookyapp #crochet #knitting #crochettips #handmade
+
+Tags: `Hooky App, crochet app, knitting app, crochet, knitting, crochet photos, crochet organizer, crochet tips, crochet for beginners, knitting tips, row counter app, yarn stash app`

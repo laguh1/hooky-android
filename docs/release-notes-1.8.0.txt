@@ -1,0 +1,36 @@
+<en-US>
+New: Hooky Pro, tools for makers who sell their work:
+• Cost and profit reports
+• Revenue by customer
+• Batches: more than 1 of the same piece
+• Extra counters and more than 5 photos per piece
+
+Launch gift: install by 31 October and Pro is free for 12 months.
+After that: 7 days free, then one payment for 12 months, no automatic renewal.
+
+Also: Cost & Profit report and more screens now fully translated.
+</en-US>
+<pt-BR>
+Novidade: Hooky Pro, ferramentas para quem vende suas peças:
+• Relatórios de custos e lucro
+• Receita por cliente
+• Lotes: mais de 1 da mesma peça
+• Contadores extras e mais de 5 fotos por peça
+
+Presente de lançamento: instale até 31 de outubro e o Pro é grátis por 12 meses.
+Depois: 7 dias grátis e um único pagamento por 12 meses, sem renovação automática.
+
+Também: relatório de custos e lucro e outras telas agora em português.
+</pt-BR>
+<es-ES>
+Novedad: Hooky Pro, herramientas para quien vende sus piezas:
+• Informes de costes y beneficios
+• Ingresos por cliente
+• Lotes: más de 1 de la misma pieza
+• Contadores extra y más de 5 fotos por pieza
+
+Regalo de lanzamiento: instala hasta el 31 de octubre y Pro es gratis durante 12 meses.
+Después: 7 días gratis y un único pago por 12 meses, sin renovación automática.
+
+Además: el informe de costes y beneficios y otras pantallas ya están en español.
+</es-ES>

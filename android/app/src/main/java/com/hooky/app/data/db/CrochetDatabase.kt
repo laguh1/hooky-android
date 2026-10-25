@@ -31,7 +31,7 @@ import com.hooky.app.data.db.entity.YarnEntity
         CounterEntity::class,
         IdeaEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -122,6 +122,26 @@ abstract class CrochetDatabase : RoomDatabase() {
                        SELECT 'Suzana do Crochê', 'YouTube', 'https://www.youtube.com/@suzanadocroche', 'Canal brasileiro de crochê no YouTube', locale, 1, 50
                        FROM (SELECT DISTINCT locale FROM ideas WHERE locale LIKE 'pt%')"""
                 )
+            }
+        }
+
+        // New photos are now added to the front of the list (newest first).
+        // Reverses the lists saved before, which were oldest first.
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                for (table in listOf("pieces", "yarns", "stitches", "needles")) {
+                    val updates = mutableListOf<Pair<Int, String>>()
+                    database.query("SELECT id, photos FROM $table").use { c ->
+                        while (c.moveToNext()) {
+                            val photos = c.getString(1) ?: continue
+                            val reversed = reversePhotosJson(photos)
+                            if (reversed != photos) updates += c.getInt(0) to reversed
+                        }
+                    }
+                    updates.forEach { (id, photos) ->
+                        database.execSQL("UPDATE $table SET photos = ? WHERE id = ?", arrayOf<Any>(photos, id))
+                    }
+                }
             }
         }
     }

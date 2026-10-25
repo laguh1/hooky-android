@@ -664,7 +664,7 @@ private fun RecentlyFinishedRow(
                 // Date finished
                 piece.dateFinished?.let { date ->
                     Text(
-                        text = "Finished ${date.toDisplayDate()}",
+                        text = stringResource(R.string.dashboard_finished_on, date.toDisplayDate()),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextMuted
                     )

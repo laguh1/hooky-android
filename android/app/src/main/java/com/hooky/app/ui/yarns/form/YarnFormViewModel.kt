@@ -265,7 +265,7 @@ class YarnFormViewModel @Inject constructor(
             is YarnFormAction.CareNotesChanged ->
                 _uiState.update { it.copy(careNotes = action.value) }
             is YarnFormAction.PhotoAdded -> {
-                _uiState.update { it.copy(photos = it.photos + action.uri) }
+                _uiState.update { it.copy(photos = listOf(action.uri) + it.photos) }
                 if (_uiState.value.color.isBlank()) detectColor(action.uri)
             }
             is YarnFormAction.PhotoReceived -> {
@@ -273,7 +273,7 @@ class YarnFormViewModel @Inject constructor(
                     ScanMode.LABEL -> scanPhoto(action.path)
                     ScanMode.HOOK, ScanMode.NEEDLE -> scanNeedle(action.path, _uiState.value.scanMode)
                     ScanMode.NONE -> {
-                        _uiState.update { it.copy(photos = it.photos + action.path) }
+                        _uiState.update { it.copy(photos = listOf(action.path) + it.photos) }
                         if (_uiState.value.color.isBlank()) detectColor(action.path)
                     }
                 }
@@ -332,10 +332,10 @@ class YarnFormViewModel @Inject constructor(
                 if (merged.hasAnyData) {
                     _uiState.update { it.copy(isScanning = false, scanResult = merged, accumulatedScanResult = null) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Couldn't read label info. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = context.getString(R.string.error_scan_label)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, accumulatedScanResult = null, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }
@@ -348,10 +348,10 @@ class YarnFormViewModel @Inject constructor(
                 if (result != null) {
                     _uiState.update { it.copy(isScanning = false, needleScanResult = result, scanMode = target) }
                 } else {
-                    _uiState.update { it.copy(isScanning = false, error = "Couldn't read size. Try a clearer, closer photo with good lighting.") }
+                    _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_size)) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isScanning = false, error = "Scan failed: ${e.message}") }
+                _uiState.update { it.copy(isScanning = false, error = context.getString(R.string.error_scan_failed)) }
             }
         }
     }
