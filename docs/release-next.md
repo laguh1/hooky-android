@@ -3,8 +3,8 @@
 Started 2026-10-24. Branch `fix/suggest-price-i18n`. Last release on Play: build 25 / 1.8.0.
 Add each new change here as it lands; draft the Play release notes from this list at the end.
 
-Build: versionCode 26. versionName is still "1.8.0" and must be bumped
-(1.8.1 if it stays small fixes, 1.9.0 if a new feature lands).
+Build: versionCode 26 / versionName **1.9.0** (bumped 2026-10-25; the suggestions links are a
+small new feature). Bundle: `android/app/build/outputs/bundle/release/app-release.aab`.
 
 ## Changes so far
 
@@ -43,40 +43,42 @@ Build: versionCode 26. versionName is still "1.8.0" and must be bumped
   Room 9 → 10). Both pass (2026-10-24).
 
 ## Before release
-- [ ] Check new/changed labels in PT-BR and ES at 360dp + font scale 1.3 (CLAUDE.md rule)
-- [ ] Try adding photos on a piece and a yarn on the emulator (newest first)
-- [ ] Real upgrade test: install build 25 from Play, add a piece with 3 photos, update to the new build, check order
-- [ ] Look at a share card in PT and ES
-- [ ] On the phone: rotate a camera photo and a gallery photo once, save, check it stays as shown
-- [ ] Settings → Help and Help & Tips: the two new link rows in PT-BR and ES at 360dp + font 1.3, and both links open the right page and language
-- [ ] Trigger a scan error and the 5-photo limit in ES/PT
-- [ ] Bump versionName
-- [ ] Write release notes in EN / PT-BR / ES (max 500 characters each)
+- [x] New/changed labels in PT-BR and ES at 360dp + font scale 1.3: Settings → Help rows and the Help & Tips card checked on the emulator 2026-10-25, wrap between words
+- [x] Suggestions link opens hookyapp.netlify.app in Chrome (emulator)
+- [x] Unit tests (PhotoOrderTest) and instrumented tests (MigrationTest, BitmapUtilsTest) pass
+- [x] Bump versionName (1.9.0), signed release bundle built
+- [x] Privacy policy updated for Play Billing / Firebase / ML Kit (live 2026-10-25)
+- [ ] **On the phone, after installing from internal testing:** rotate a camera photo and a gallery photo once, save, check it stays as shown (fix #14)
+- [ ] **On the phone:** add photos to a piece and a yarn (newest first); a piece made before the update still shows its newest photo first
+- [ ] **On the phone:** a share card in PT (type/destination translated)
+- [ ] Play Console → App content → Data safety: update per `docs/PRIVACY-UPDATE-DRAFT.md` (Device or other IDs, Purchase history, Diagnostics)
+- [ ] Play Console → App content → Privacy policy URL: switch to `https://hookyapp.netlify.app/privacy` (the GitHub copy also shows the new text)
 
-## Draft release notes (update as the list grows)
+## Release notes (final, 1.9.0)
 
 <en-US>
-• Newest photo first: your most recent photo now shows first
-• Share card now fully in your language
+• New: send us ideas and suggestions from Settings → Help
+• Full guide with videos, one tap away in Help
+• Newest photo first: your latest photo now shows first
 • Photo editor: rotating a photo now saves correctly the first time
-• New: send us suggestions from Settings → Help
+• Share card fully in your language
 • More screens translated into Spanish and Portuguese
 • Small fixes and improvements
 </en-US>
 <pt-BR>
-• Foto mais recente primeiro: sua última foto agora aparece na frente
+• Novo: envie ideias e sugestões em Configurações → Ajuda
+• Guia completo com vídeos, a um toque na Ajuda
+• Foto mais recente primeiro: sua última foto aparece na frente
+• Editor de fotos: girar a foto agora salva certo na primeira vez
 • Contador agora fala em "carreiras"
 • Cartão de compartilhamento todo em português
-• Editor de fotos: girar a foto agora salva certo na primeira vez
-• Novo: envie sugestões em Configurações → Ajuda
-• Mais telas traduzidas para o português
-• Pequenas correções e melhorias
+• Mais telas traduzidas e pequenas correções
 </pt-BR>
 <es-ES>
-• La foto más reciente primero: tu última foto ahora aparece delante
-• La tarjeta para compartir, ya toda en español
+• Nuevo: envíanos ideas y sugerencias desde Ajustes → Ayuda
+• Guía completa con vídeos, a un toque en Ayuda
+• La foto más reciente primero: tu última foto aparece delante
 • Editor de fotos: girar una foto ahora se guarda bien a la primera
-• Nuevo: envía sugerencias desde Ajustes → Ayuda
-• Más pantallas traducidas al español
-• Pequeñas correcciones y mejoras
+• La tarjeta para compartir, toda en español
+• Más pantallas traducidas y pequeñas correcciones
 </es-ES>
