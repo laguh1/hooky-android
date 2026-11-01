@@ -82,3 +82,8 @@ small new feature). Bundle: `android/app/build/outputs/bundle/release/app-releas
 • La tarjeta para compartir, toda en español
 • Más pantallas traducidas y pequeñas correcciones
 </es-ES>
+
+## For the release after 1.9.0 (noted 2026-10-31, not started)
+- PT-BR: "gancho" is Portugal Portuguese / literal. Brazilian crocheters say "agulha": `yarn_label_hook_size` "Tamanho gancho" → "Agulha recomendada", `piece_field_hook_size_mm`, `piece_section_dimensions_hook`, and "agulha ou gancho" phrases. `yarn_field_gauge` / `yarn_label_gauge` "Tensão" → "Amostra". Spotted while making the toalhinha reel.
+- ES: Help text says "vueltas" while the counter says "filas".
+- PT/ES: Dashboard Search/Settings accessibility labels are still in English.

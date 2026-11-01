@@ -645,3 +645,82 @@ Title: `Camera or gallery? Where your photos go in Hooky App #shorts`
 > #hookyapp #crochet #knitting #crochettips #handmade
 
 Tags: `Hooky App, crochet app, knitting app, crochet, knitting, crochet photos, crochet organizer, crochet tips, crochet for beginners, knitting tips, row counter app, yarn stash app`
+
+---
+
+## Toalhinha redonda — crocheter reel, PT (written 2026-10-31)
+
+Personal "made by me" reel, not an ad: Hooky App appears only in two screenshots and a small icon + Play badge at the end. Music added in each app when posting (video is silent). Video: `shared/promo/BRASIL/videos/reel-toalhinha-redonda-pt.mp4` · build script `shared/promo/source/clips/build-reel-toalhinha.py`. Recipe: Crochê Lú (YouTube `@crochelu`, no Instagram found), https://youtu.be/SiWhH5arSJE
+
+**Published on YouTube (2026-10-31):** https://youtube.com/shorts/YBiFN6i-5uM (public; music added in YouTube Studio Editor from the Audio Library, filtered to 90–100 BPM). IG/FB version with the same track baked in: `reel-toalhinha-redonda-pt-musica.mp4` (music: "Beat Your Competition" by Vibe Tracks, YouTube Audio Library, no attribution required)
+
+**YouTube Shorts**
+Title: Minha toalhinha de crochê redonda 🌿 receita da @crochelu
+> Terminei minha toalhinha de crochê redonda! Linha Bloom 6/4 (LindeHobby) verde claro, agulha 2,5 mm, 37 cm, umas 6 horas de trabalho. Foi de presente 🎁
+>
+> Receita passo a passo da querida @crochelu 👉 https://youtu.be/SiWhH5arSJE
+>
+> Organizei a linha, a agulha, a receita e as horas no Hooky App: hookyapp.netlify.app/yt
+>
+> #croche #toalhinhadecroche #crochebrasil #feitoamao #Shorts
+
+Tags: `toalhinha de crochê, toalhinha de crochê redonda, crochê, croche, crochê passo a passo, Crochê Lú, crochelu, toalhinha redonda, centro de mesa de crochê, crochê para iniciantes, linha de algodão, agulha 2,5 mm, feito à mão, artesanato, Hooky App, app de crochê`
+
+**Instagram**
+> Terminei minha toalhinha de crochê redonda 🌿
+> Linha Bloom 6/4 (LindeHobby), agulha 2,5 mm, 37 cm, umas 6 horas de trabalho. Foi de presente 🎁
+>
+> A receita é do canal Crochê Lú no YouTube (youtube.com/@crochelu), passo a passo e muito bem explicada ❤️
+>
+> Anotei tudo no Hooky App: linha, agulha, receita e horas. Link na bio.
+>
+> #croche #crochê #toalhinhadecroche #crochebrasil #crocheterapia #feitoamao #fiodealgodao
+
+**Facebook**
+> Terminei minha toalhinha de crochê redonda 🌿 Linha Bloom 6/4, agulha 2,5 mm, 37 cm, umas 6 horas de trabalho. Foi de presente 🎁
+>
+> Receita da Crochê Lú: https://youtu.be/SiWhH5arSJE
+> Organizei tudo no Hooky App: hookyapp.netlify.app/fb
+>
+> #croche #toalhinhadecroche #feitoamao
+
+Tags (Meta Business Suite video tags): `crochê, toalhinha de crochê, centro de mesa de crochê, crochê passo a passo, Crochê Lú, feito à mão, artesanato, Hooky App`
+
+---
+
+## Round doily — crocheter reel, EN (written 2026-10-31)
+
+English version of the toalhinha reel above. Videos: `shared/promo/ENGLISH/videos/reel-doily-en.mp4` (silent, for YouTube) and `reel-doily-en-music.mp4` (music: "Survival Mode" by Blue Deer Studio, YouTube Audio Library). Build: `build-reel-toalhinha.py --en`. Recipe: Crochê Lú, https://youtu.be/SiWhH5arSJE (in Portuguese).
+
+**YouTube Shorts**
+Title: My round crochet doily 🌿 pattern by @crochelu
+> Finished my round crochet doily! Bloom 6/4 cotton (LindeHobby) in sage green, 2.5 mm hook, 37 cm across, about 6 hours of work. It was a gift 🎁
+>
+> Step-by-step pattern by the lovely @crochelu 👉 https://youtu.be/SiWhH5arSJE
+> The tutorial is in Portuguese, but it's easy to follow by watching her hands. For English subtitles, tap CC, then Settings ⚙️ → Subtitles → Auto-translate → English.
+>
+> I kept the yarn, hook, pattern and hours in Hooky App: hookyapp.netlify.app/yt
+>
+> #crochet #crochetdoily #doily #crochetlace #handmade #Shorts
+
+Tags: `crochet doily, round crochet doily, crochet, crochet pattern, crochet tutorial, doily pattern, crochet lace, thread crochet, cotton yarn, 2.5 mm hook, handmade, handmade gift, Crochê Lú, crochelu, Hooky App, crochet app`
+
+**Instagram**
+> Finished my round crochet doily 🌿
+> Bloom 6/4 cotton (LindeHobby) in sage green, 2.5 mm hook, 37 cm across, about 6 hours of work. It was a gift 🎁
+>
+> Pattern from Crochê Lú on YouTube (youtube.com/@crochelu). It's in Portuguese, but YouTube's auto-translated subtitles and her clear close-ups make it easy to follow ❤️
+>
+> I kept everything in Hooky App: yarn, hook, pattern and hours. Link in bio.
+>
+> #crochet #crochetdoily #doily #crochetlace #threadcrochet #handmade #crochetersofinstagram
+
+**Facebook**
+> Finished my round crochet doily 🌿 Bloom 6/4 cotton, 2.5 mm hook, 37 cm, about 6 hours of work. It was a gift 🎁
+>
+> Pattern by Crochê Lú (in Portuguese, with auto-translated English subtitles on YouTube): https://youtu.be/SiWhH5arSJE
+> I kept everything in Hooky App: hookyapp.netlify.app/fb
+>
+> #crochet #crochetdoily #handmade
+
+Tags (Meta Business Suite): `crochet, crochet doily, doily pattern, crochet lace, handmade, handmade gift, Crochê Lú, Hooky App`
