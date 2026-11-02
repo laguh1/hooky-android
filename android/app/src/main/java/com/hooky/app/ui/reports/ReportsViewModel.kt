@@ -9,7 +9,7 @@ import com.hooky.app.data.premium.PremiumManager
 import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.db.entity.YarnEntity
 import com.hooky.app.data.repository.YarnRepository
-import com.hooky.app.domain.model.parseYarnUsages
+import com.hooky.app.domain.model.ballsUsedByYarn
 import com.hooky.app.ui.yarns.UNKNOWN_YARN_COLOR
 import com.hooky.app.util.XlsxCell
 import com.hooky.app.util.XlsxSheet
@@ -104,10 +104,7 @@ class ReportsViewModel @Inject constructor(
                     val revenue = rows.sumOf { (it.totalRevenue ?: 0f).toDouble() }.toFloat()
                     val cost = rows.sumOf { (it.totalCost ?: 0f).toDouble() }.toFloat()
                     val profit = revenue - cost
-                    val ballsUsed = pieces.filter { !it.archived }
-                        .flatMap { parseYarnUsages(it.yarnsUsed) }
-                        .groupBy { it.yarnId }
-                        .mapValues { (_, uses) -> uses.sumOf { it.balls.toDouble() }.toFloat() }
+                    val ballsUsed = ballsUsedByYarn(pieces.filter { !it.archived }.map { it.yarnsUsed })
                     _uiState.update {
                         it.copy(
                             isLoading = false,

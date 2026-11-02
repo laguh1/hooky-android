@@ -1,5 +1,7 @@
 package com.hooky.app.ui.dashboard
 
+import com.hooky.app.util.formatBalls
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -284,8 +286,28 @@ private fun DashboardContent(
         if (uiState.soldRevenue > 0f) {
             item {
                 Spacer(Modifier.height(20.dp))
-                RevenueCard(
-                    revenue = uiState.soldRevenue,
+                ValueCard(
+                    label = stringResource(R.string.dashboard_total_revenue),
+                    amount = uiState.soldRevenue,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+        // ---- Yarn stash value (only if stock with prices was entered) ----
+        if (uiState.stashValue > 0f) {
+            item {
+                Spacer(Modifier.height(if (uiState.soldRevenue > 0f) 10.dp else 20.dp))
+                ValueCard(
+                    label = stringResource(R.string.dashboard_stash_value),
+                    amount = uiState.stashValue,
+                    detail = pluralStringResource(
+                        R.plurals.piece_yarn_balls_amount,
+                        if (uiState.stashBallsLeft == 1f) 1 else 2,
+                        formatBalls(uiState.stashBallsLeft)
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -680,9 +702,11 @@ private fun RecentlyFinishedRow(
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun RevenueCard(
-    revenue: Float,
-    modifier: Modifier = Modifier
+private fun ValueCard(
+    label: String,
+    amount: Float,
+    modifier: Modifier = Modifier,
+    detail: String? = null,
 ) {
     val currencySymbol = getCurrencySymbol(LocalContext.current)
     Surface(
@@ -697,14 +721,19 @@ private fun RevenueCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                detail?.let {
+                    Text(text = it, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                }
+            }
             Text(
-                text = stringResource(R.string.dashboard_total_revenue),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = revenue.formatCurrency(currencySymbol),
+                text = amount.formatCurrency(currencySymbol),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Slate
