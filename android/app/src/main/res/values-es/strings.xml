@@ -330,6 +330,7 @@
     <!-- ================================================================ -->
     <string name="action_save">Guardar</string>
     <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Cerrar</string>
     <string name="action_edit">Editar</string>
     <string name="action_archive">Archivar</string>
     <string name="action_clone">Clonar</string>
@@ -508,6 +509,21 @@
     <string name="yarn_scan_hint">Escanea la etiqueta de la lana para rellenar automáticamente la marca, el color, el material, el gramaje y más.</string>
     <string name="yarn_color_detected">Detectado:</string>
     <string name="yarn_field_color_name">Nombre del color</string>
+    <string name="yarn_color_pick">O elige el color</string>
+    <string name="yarn_color_swatch_cd">Color %1$s</string>
+    <string name="yarn_color_from_photo">Coger el color de la foto</string>
+    <string name="yarn_color_from_photo_hint">Toca la lana para coger su color. Con luz natural, los colores salen más fieles.</string>
+    <string name="color_family_red">Rojo</string>
+    <string name="color_family_pink">Rosa</string>
+    <string name="color_family_orange">Naranja</string>
+    <string name="color_family_yellow">Amarillo</string>
+    <string name="color_family_green">Verde</string>
+    <string name="color_family_blue">Azul</string>
+    <string name="color_family_purple">Morado</string>
+    <string name="color_family_brown">Marrón</string>
+    <string name="color_family_neutral">Neutros</string>
+    <string name="sort_by_colour">Por color</string>
+    <string name="color_filter_cd">Mostrar solo: %1$s</string>
     <string name="yarn_field_color_code_hint">#RRGGBB o código del fabricante</string>
     <string name="yarn_field_composition_hint">p. ej. 80% Merino, 20% Nylon</string>
     <string name="yarn_field_needle_size_hint">p. ej. 4.0-5.0</string>

@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.domain.model.YarnColor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,6 +39,7 @@ data class PieceDetailUiState(
     val timerDisplaySeconds: Long = 0,
     val timerState: TimerState = TimerState.IDLE,
     val yarnNames: Map<String, String> = emptyMap(),
+    val yarnColors: Map<String, Int> = emptyMap(),
     val stitchNames: Map<String, String> = emptyMap(),
     val needleNames: Map<String, String> = emptyMap(),
     val isPremium: Boolean = false,
@@ -125,7 +127,8 @@ class PieceDetailViewModel @Inject constructor(
                     val map = yarns.associate { yarn ->
                         yarn.yarnId to "${yarn.name}${yarn.brand?.let { " (${it})" } ?: ""}"
                     }
-                    _uiState.update { it.copy(yarnNames = map) }
+                    val colors = yarns.mapNotNull { y -> YarnColor.effective(y.colorHex, y.color)?.let { y.yarnId to it } }.toMap()
+                    _uiState.update { it.copy(yarnNames = map, yarnColors = colors) }
                 }
         }
 

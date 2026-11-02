@@ -1,5 +1,6 @@
 package com.hooky.app.ui.stitches.detail
 
+import com.hooky.app.ui.components.FullScreenPhotoViewer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -188,6 +189,8 @@ private fun StitchDetailContent(
         ) {
             if (photos.isNotEmpty()) {
                 val pagerState = rememberPagerState(pageCount = { photos.size })
+                // Tap a photo to see it full screen (zoom, swipe between photos)
+                var viewerStart by remember { mutableStateOf<Int?>(null) }
 
                 HorizontalPager(
                     state = pagerState,
@@ -195,10 +198,15 @@ private fun StitchDetailContent(
                 ) { page ->
                     AsyncImage(
                         model = photos[page],
-                        contentDescription = "Photo ${page + 1}",
+                        contentDescription = stringResource(R.string.piece_photo_cd, page + 1),
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable { viewerStart = page }
                     )
+                }
+                viewerStart?.let { start ->
+                    FullScreenPhotoViewer(photos = photos, startIndex = start, onDismiss = { viewerStart = null })
                 }
 
                 // Page indicator dots

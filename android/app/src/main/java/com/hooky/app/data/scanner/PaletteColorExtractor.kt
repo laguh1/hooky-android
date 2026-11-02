@@ -30,7 +30,11 @@ class PaletteColorExtractor @Inject constructor(
                 // Palette only needs a representative sample of pixels, not full resolution —
                 // decoding small avoids the costly full-size decode entirely.
                 val bitmap = decodeSampledBitmapFromFile(photoPath, maxDimension = 400) ?: return@withContext null
-                val palette = Palette.from(bitmap).generate()
+                // Only the middle of the photo: the yarn is usually centred, and the edges
+                // are where the table, hands or background sit.
+                val palette = Palette.from(bitmap)
+                    .setRegion(bitmap.width / 5, bitmap.height / 5, bitmap.width * 4 / 5, bitmap.height * 4 / 5)
+                    .generate()
 
                 // Yarn close-ups are fuzzy/textured, so the single biggest pixel cluster
                 // (dominantSwatch) is often a desaturated shadow/highlight blend rather

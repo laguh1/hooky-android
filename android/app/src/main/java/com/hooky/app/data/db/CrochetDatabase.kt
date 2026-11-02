@@ -31,7 +31,7 @@ import com.hooky.app.data.db.entity.YarnEntity
         CounterEntity::class,
         IdeaEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -142,6 +142,13 @@ abstract class CrochetDatabase : RoomDatabase() {
                         database.execSQL("UPDATE $table SET photos = ? WHERE id = ?", arrayOf<Any>(photos, id))
                     }
                 }
+            }
+        }
+
+        // Yarns keep the colour itself ("#RRGGBB"), not only its name
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE yarns ADD COLUMN colorHex TEXT")
             }
         }
     }

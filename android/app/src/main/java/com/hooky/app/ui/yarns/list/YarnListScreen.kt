@@ -1,8 +1,10 @@
 package com.hooky.app.ui.yarns.list
 
+import com.hooky.app.ui.yarns.ColorFamilyRow
+import com.hooky.app.ui.yarns.YarnColorDot
+import com.hooky.app.domain.model.YarnColor
 import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -204,6 +206,17 @@ fun YarnListScreen(
                 }
             }
 
+            if (uiState.colorFamilies.isNotEmpty()) {
+                ColorFamilyRow(
+                    families = uiState.colorFamilies,
+                    selected = uiState.selectedColor,
+                    onSelected = { viewModel.onAction(YarnListAction.ColorSelected(it)) },
+                    sortByColor = uiState.sortByColor,
+                    onToggleSort = { viewModel.onAction(YarnListAction.ToggleSortByColor) },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
 
             when {
@@ -345,9 +358,8 @@ private fun YarnGridCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Canvas(modifier = Modifier.size(10.dp)) {
-                        drawCircle(color = Color(0xFF9CA3AF))
-                    }
+                    // Real colour when known; a neutral grey dot means "no colour yet"
+                    YarnColorDot(YarnColor.effective(yarn.colorHex, yarn.color) ?: 0x9CA3AF, size = 12.dp)
                     Text(
                         text = yarnColorLabel(yarn.color),
                         style = MaterialTheme.typography.bodySmall,
