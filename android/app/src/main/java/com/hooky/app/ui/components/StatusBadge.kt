@@ -1,6 +1,9 @@
 package com.hooky.app.ui.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +24,9 @@ enum class BadgeStyle { FILLED_SLATE, OUTLINE, MUTED }
 @Composable
 fun StatusBadge(
     text: String,
-    style: BadgeStyle = BadgeStyle.OUTLINE
+    style: BadgeStyle = BadgeStyle.OUTLINE,
+    /** Optional small element before the text, e.g. a yarn colour circle. */
+    leading: (@Composable () -> Unit)? = null,
 ) {
     val shape = RoundedCornerShape(20.dp)
 
@@ -58,11 +63,22 @@ fun StatusBadge(
         color = backgroundColor,
         modifier = modifier
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            color = textColor,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-        )
+        if (leading == null) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall,
+                color = textColor,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+            )
+        } else {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(start = 8.dp, end = 10.dp, top = 4.dp, bottom = 4.dp)
+            ) {
+                leading()
+                Text(text = text, style = MaterialTheme.typography.labelSmall, color = textColor)
+            }
+        }
     }
 }
