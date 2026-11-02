@@ -1,5 +1,7 @@
 package com.hooky.app.ui.pieces.list
 
+import com.hooky.app.ui.yarns.YarnColorDot
+import com.hooky.app.ui.yarns.ColorFamilyRow
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -212,6 +214,15 @@ fun PieceListScreen(
                 }
             }
 
+            if (uiState.colorFamilies.isNotEmpty()) {
+                ColorFamilyRow(
+                    families = uiState.colorFamilies,
+                    selected = uiState.selectedColor,
+                    onSelected = { viewModel.onAction(PieceListAction.ColorSelected(it)) },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
 
             when {
@@ -246,6 +257,7 @@ fun PieceListScreen(
                         ) { piece ->
                             PieceGridCard(
                                 piece = piece,
+                                colors = uiState.pieceColors[piece.pieceId].orEmpty(),
                                 onClick = { onNavigateToDetail(piece.id) }
                             )
                         }
@@ -259,6 +271,7 @@ fun PieceListScreen(
 @Composable
 private fun PieceGridCard(
     piece: PieceEntity,
+    colors: List<Int>,
     onClick: () -> Unit
 ) {
     // Parse photo list — stored as JSON array of strings
@@ -320,6 +333,13 @@ private fun PieceGridCard(
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1
                 )
+
+                // Colours of the yarns used, most balls first
+                if (colors.isNotEmpty()) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        colors.take(5).forEach { YarnColorDot(it, size = 12.dp) }
+                    }
+                }
 
                 // Type badge
                 val typeResId = try { com.hooky.app.domain.model.enums.PieceType.valueOf(piece.type).labelResId } catch (_: Exception) { null }

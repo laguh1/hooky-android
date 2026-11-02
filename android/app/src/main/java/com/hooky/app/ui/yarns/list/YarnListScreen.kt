@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.list
 
+import com.hooky.app.ui.yarns.ColorFamilyRow
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
 import com.hooky.app.ui.yarns.yarnColorLabel
@@ -203,6 +204,17 @@ fun YarnListScreen(
                         )
                     )
                 }
+            }
+
+            if (uiState.colorFamilies.isNotEmpty()) {
+                ColorFamilyRow(
+                    families = uiState.colorFamilies,
+                    selected = uiState.selectedColor,
+                    onSelected = { viewModel.onAction(YarnListAction.ColorSelected(it)) },
+                    sortByColor = uiState.sortByColor,
+                    onToggleSort = { viewModel.onAction(YarnListAction.ToggleSortByColor) },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(4.dp))

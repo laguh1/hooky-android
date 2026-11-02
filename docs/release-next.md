@@ -99,7 +99,7 @@ Already in the app (don't rebuild): balls used per yarn on a piece, material cos
 3. ✅ *Done on `feature/stash-value` (2026-11-02):* "Yarn in stock" card on the dashboard (balls left × price paid), free for everyone.
 
 **After that**
-- Save the real colour value from the photo (not only a name), colour picker to correct it, colour groups; Yarns tab colour wall and filter by colour.
+- ✅ *Done on `feature/yarn-colours` (2026-11-02):* real colour saved per yarn (DB 11), swatches, tap-the-photo picker, smarter auto-detection, circles everywhere, colour-group filter + sort by colour on Yarns, pieces filtered by the colours of their yarns.
 - "Do I have enough yarn?" for planned pieces + shopping list.
 - Orders with due date, deposit and reminder.
 - Year summary for taxes (autónomo / MEI).
