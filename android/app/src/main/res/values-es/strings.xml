@@ -30,7 +30,7 @@
     <string name="dashboard_finished_empty">No hay piezas terminadas todavía</string>
     <string name="dashboard_see_all">Ver todo</string>
     <string name="dashboard_total_revenue">Ingresos totales</string>
-    <string name="dashboard_stash_value">Hilo en stock</string>
+    <string name="dashboard_stash_value">Lanas en stock</string>
     <string name="dashboard_calculator_shortcut">Calculadora de precio</string>
     <string name="dashboard_report_link">Ver informe de costes y beneficios →</string>
 
@@ -94,7 +94,7 @@
     <string name="reports_share_subject">Informe de Hooky App</string>
     <string name="reports_sheet_pieces">Piezas</string>
     <string name="reports_sheet_customers">Clientes</string>
-    <string name="reports_sheet_yarns">Hilos</string>
+    <string name="reports_sheet_yarns">Lanas</string>
     <string name="reports_total">Total</string>
     <string name="reports_xlsx_header_pieces">Nombre,Estado,Cantidad,Coste de material (por unidad),Precio (por unidad),Precio de venta (por unidad),Horas de trabajo,Coste total,Ingresos totales,Beneficio,Cliente / tienda,Fecha de venta</string>
     <string name="reports_xlsx_header_yarns">Nombre,Marca,Color,Material,Lugar de compra,Fecha de compra,Precio pagado (por ovillo),Ovillos comprados,Usado en piezas,Restante,Total gastado,Notas</string>
@@ -505,7 +505,7 @@
     <string name="yarn_scanning">Escaneando etiqueta…</string>
     <string name="yarn_scan_label">Escanear etiqueta</string>
     <string name="yarn_from_gallery">Desde galería</string>
-    <string name="yarn_scan_hint">Escanea la etiqueta del hilo para rellenar automáticamente la marca, el color, el material, el gramaje y más.</string>
+    <string name="yarn_scan_hint">Escanea la etiqueta de la lana para rellenar automáticamente la marca, el color, el material, el gramaje y más.</string>
     <string name="yarn_color_detected">Detectado:</string>
     <string name="yarn_field_color_name">Nombre del color</string>
     <string name="yarn_field_color_code_hint">#RRGGBB o código del fabricante</string>
