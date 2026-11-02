@@ -9,6 +9,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import com.hooky.app.util.formatBalls
 import com.hooky.app.util.parseBalls
@@ -570,7 +572,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.materialCost,
                         onValueChange = { viewModel.onAction(PieceFormAction.MaterialCostChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_material_cost) + perUnitSuffix) },
+                        label = { Text(stringResource(R.string.piece_field_material_cost, getCurrencySymbol(LocalContext.current)) + perUnitSuffix) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -581,7 +583,7 @@ fun PieceFormScreen(
                     OutlinedTextField(
                         value = uiState.price,
                         onValueChange = { viewModel.onAction(PieceFormAction.PriceChanged(it)) },
-                        label = { Text(stringResource(R.string.piece_field_price) + perUnitSuffix) },
+                        label = { Text(stringResource(R.string.piece_field_price, getCurrencySymbol(LocalContext.current)) + perUnitSuffix) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -635,7 +637,7 @@ fun PieceFormScreen(
                         OutlinedTextField(
                             value = uiState.soldPrice,
                             onValueChange = { viewModel.onAction(PieceFormAction.SoldPriceChanged(it)) },
-                            label = { Text(stringResource(R.string.piece_field_sold_price)) },
+                            label = { Text(stringResource(R.string.piece_field_sold_price, getCurrencySymbol(LocalContext.current))) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -944,15 +946,23 @@ private fun YarnUsagePicker(
                 ) {
                     availableYarns.forEach { yarn ->
                         val id = yarn.yarnId
+                        // The whole row toggles, not only the small checkbox
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .toggleable(
+                                    value = id in tempSelected,
+                                    role = Role.Checkbox,
+                                    onValueChange = { checked ->
+                                        tempSelected = if (checked) tempSelected + id else tempSelected - id
+                                    }
+                                )
+                                .padding(vertical = 12.dp, horizontal = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Checkbox(
                                 checked = id in tempSelected,
-                                onCheckedChange = { checked ->
-                                    tempSelected = if (checked) tempSelected + id else tempSelected - id
-                                }
+                                onCheckedChange = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -1144,15 +1154,23 @@ private fun LibraryMultiPicker(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items.forEach { (id, displayLabel) ->
+                        // The whole row toggles, not only the small checkbox
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .toggleable(
+                                    value = id in tempSelected,
+                                    role = Role.Checkbox,
+                                    onValueChange = { checked ->
+                                        tempSelected = if (checked) tempSelected + id else tempSelected - id
+                                    }
+                                )
+                                .padding(vertical = 12.dp, horizontal = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Checkbox(
                                 checked = id in tempSelected,
-                                onCheckedChange = { checked ->
-                                    tempSelected = if (checked) tempSelected + id else tempSelected - id
-                                }
+                                onCheckedChange = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
