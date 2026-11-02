@@ -137,6 +137,7 @@ fun PieceDetailScreen(
     pieceId: Int,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: (Int) -> Unit,
+    onNavigateToPro: () -> Unit = {},
     viewModel: PieceDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -181,6 +182,7 @@ fun PieceDetailScreen(
                     stitchNames = uiState.stitchNames,
                     needleNames = uiState.needleNames,
                     isPremium = uiState.isPremium,
+                    onNavigateToPro = onNavigateToPro,
                     counters = uiState.counters,
                     onNavigateBack = onNavigateBack,
                     onNavigateToEdit = { onNavigateToEdit(pieceId) },
@@ -234,6 +236,7 @@ private fun PieceDetailContent(
     stitchNames: Map<String, String>,
     needleNames: Map<String, String>,
     isPremium: Boolean,
+    onNavigateToPro: () -> Unit,
     counters: List<CounterEntity>,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
@@ -428,17 +431,17 @@ private fun PieceDetailContent(
                     onEditTime = onEditWorkTime,
                 )
 
-                if (isPremium) {
-                    ExtraCountersCard(
-                        counters = counters,
-                        onAdd = onAddCounter,
-                        onDelete = onDeleteCounter,
-                        onIncrement = onIncrementCounter,
-                        onDecrement = onDecrementCounter,
-                        onReset = onResetCounter,
-                        onUpdate = onUpdateCounter,
-                    )
-                }
+                ExtraCountersCard(
+                    counters = counters,
+                    isPremium = isPremium,
+                    onNavigateToPro = onNavigateToPro,
+                    onAdd = onAddCounter,
+                    onDelete = onDeleteCounter,
+                    onIncrement = onIncrementCounter,
+                    onDecrement = onDecrementCounter,
+                    onReset = onResetCounter,
+                    onUpdate = onUpdateCounter,
+                )
             }
 
             // Price suggestion — available whenever there are hours logged
@@ -1646,6 +1649,8 @@ private fun PriceSuggestionDialog(
 @Composable
 private fun ExtraCountersCard(
     counters: List<CounterEntity>,
+    isPremium: Boolean,
+    onNavigateToPro: () -> Unit,
     onAdd: (String, Int?) -> Unit,
     onDelete: (Int) -> Unit,
     onIncrement: (Int) -> Unit,
@@ -1655,6 +1660,9 @@ private fun ExtraCountersCard(
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
     var editingCounter by remember { mutableStateOf<CounterEntity?>(null) }
+    // Free: the row counter plus one extra counter (e.g. repeats). More need Pro.
+    // Counters added while Pro was active stay usable after it ends.
+    val canAdd = isPremium || counters.size < FREE_EXTRA_COUNTERS
 
     Surface(
         shape = RoundedCornerShape(12.dp),
@@ -1672,16 +1680,18 @@ private fun ExtraCountersCard(
                     style = MaterialTheme.typography.labelMedium,
                     color = TextSecondary
                 )
-                IconButton(
-                    onClick = { showAddDialog = true },
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = stringResource(R.string.piece_counter_add),
-                        tint = Slate,
-                        modifier = Modifier.size(18.dp)
-                    )
+                if (canAdd) {
+                    IconButton(
+                        onClick = { showAddDialog = true },
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(R.string.piece_counter_add),
+                            tint = Slate,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
 
@@ -1703,6 +1713,25 @@ private fun ExtraCountersCard(
                         onDecrement = { onDecrement(counter.id) },
                         onDelete = { onDelete(counter.id) },
                         onEdit = { editingCounter = counter },
+                    )
+                }
+            }
+
+            if (!canAdd) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.pro_gate_counters),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+                TextButton(
+                    onClick = onNavigateToPro,
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.pro_gate_button),
+                        color = BrandPurple,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
