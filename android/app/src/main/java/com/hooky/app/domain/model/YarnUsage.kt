@@ -19,3 +19,10 @@ fun parseYarnUsages(json: String): List<YarnUsage> =
             Json.decodeFromString<List<String>>(json).map { YarnUsage(yarnId = it, balls = 1f) }
         } catch (_: Exception) { emptyList() }
     }
+
+// Balls used per yarn ID, summed over the given pieces' yarnsUsed columns.
+// Callers pass non-archived pieces only.
+fun ballsUsedByYarn(yarnsUsedColumns: List<String>): Map<String, Float> =
+    yarnsUsedColumns.flatMap { parseYarnUsages(it) }
+        .groupBy { it.yarnId }
+        .mapValues { (_, uses) -> uses.sumOf { it.balls.toDouble() }.toFloat() }

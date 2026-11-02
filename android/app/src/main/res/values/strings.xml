@@ -30,6 +30,7 @@
     <string name="dashboard_finished_empty">No finished pieces yet</string>
     <string name="dashboard_see_all">See all</string>
     <string name="dashboard_total_revenue">Total Revenue</string>
+    <string name="dashboard_stash_value">Yarn in stock</string>
     <string name="dashboard_calculator_shortcut">Price Calculator</string>
     <string name="dashboard_report_link">View cost &amp; profit report →</string>
 

@@ -6,6 +6,7 @@ import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.repository.StitchRepository
 import com.hooky.app.data.repository.YarnRepository
+import com.hooky.app.domain.model.ballsUsedByYarn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +25,9 @@ data class DashboardUiState(
     val stitchCount: Int = 0,
     val totalWorkHours: Float = 0f,
     val soldRevenue: Float = 0f,
+    // Yarn still in stock: balls left (bought − used in pieces) and what they cost
+    val stashBallsLeft: Float = 0f,
+    val stashValue: Float = 0f,
     val inProgressPieces: List<PieceEntity> = emptyList(),
     val recentlyFinished: List<PieceEntity> = emptyList()
 )
@@ -74,6 +78,23 @@ class DashboardViewModel @Inject constructor(
             }.catch { e ->
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }.collect {}
+        }
+
+        viewModelScope.launch {
+            combine(yarnRepository.getAllYarns(), pieceRepository.getAllPieces()) { yarns, pieces ->
+                val used = ballsUsedByYarn(pieces.filter { !it.archived }.map { it.yarnsUsed })
+                var balls = 0f
+                var value = 0f
+                yarns.filter { !it.archived }.forEach { y ->
+                    val owned = y.quantityOwned ?: return@forEach
+                    val left = (owned - (used[y.yarnId] ?: 0f)).coerceAtLeast(0f)
+                    balls += left
+                    value += left * (y.pricePaid ?: 0f)
+                }
+                balls to value
+            }
+                .catch { }
+                .collect { (balls, value) -> _uiState.update { it.copy(stashBallsLeft = balls, stashValue = value) } }
         }
 
         // In-progress pieces — marks loading done once received
