@@ -1,5 +1,7 @@
 package com.hooky.app.ui.yarns.form
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.filled.Colorize
 import androidx.compose.foundation.horizontalScroll
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
@@ -401,6 +403,27 @@ fun YarnFormScreen(
                         selectedHex = uiState.colorHex,
                         onSelected = { viewModel.onAction(YarnFormAction.ColorHexChanged(it)) }
                     )
+                    if (uiState.photos.isNotEmpty()) {
+                        var showColorFromPhoto by remember { mutableStateOf(false) }
+                        TextButton(
+                            onClick = { showColorFromPhoto = true },
+                            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.Colorize, contentDescription = null, modifier = Modifier.size(18.dp), tint = Slate)
+                            Spacer(Modifier.width(6.dp))
+                            Text(stringResource(R.string.yarn_color_from_photo), color = Slate)
+                        }
+                        if (showColorFromPhoto) {
+                            ColorFromPhotoDialog(
+                                photos = uiState.photos,
+                                onDismiss = { showColorFromPhoto = false },
+                                onPicked = { rgb ->
+                                    viewModel.onAction(YarnFormAction.ColorHexChanged(YarnColor.toHex(rgb)))
+                                    showColorFromPhoto = false
+                                }
+                            )
+                        }
+                    }
 
                     // Color suggestion chip — appears after photo is added
                     val suggestedColor = uiState.suggestedColor

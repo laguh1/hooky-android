@@ -510,6 +510,8 @@
     <string name="yarn_field_color_name">Color name</string>
     <string name="yarn_color_pick">Or pick the colour</string>
     <string name="yarn_color_swatch_cd">Colour %1$s</string>
+    <string name="yarn_color_from_photo">Pick the colour from a photo</string>
+    <string name="yarn_color_from_photo_hint">Tap the yarn to pick its colour. Daylight photos give truer colours.</string>
     <string name="yarn_field_color_code_hint">#RRGGBB or manufacturer code</string>
     <string name="yarn_field_composition_hint">e.g. 80% Merino, 20% Nylon</string>
     <string name="yarn_field_needle_size_hint">e.g. 4.0-5.0</string>
