@@ -331,6 +331,10 @@
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
+    <string name="action_clear_search">Clear search</string>
+    <string name="photo_edit_cd">Edit photo</string>
+    <string name="photo_delete_cd">Delete photo</string>
+    <string name="photo_n_of_m_cd">Photo %1$d of %2$d</string>
     <string name="action_edit">Edit</string>
     <string name="action_archive">Archive</string>
     <string name="action_clone">Clone</string>

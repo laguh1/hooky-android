@@ -109,7 +109,7 @@ fun YarnListScreen(
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.action_settings),
                             tint = TextSecondary
                         )
                     }
@@ -126,7 +126,7 @@ fun YarnListScreen(
                 contentColor = White,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Yarn")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.yarn_add))
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

@@ -112,3 +112,48 @@ Already in the app (don't rebuild): balls used per yarn on a piece, material cos
 - **Play Console "R8 optimisation" hint (1.9.0):** `proguard-rules.pro` keeps whole libraries (`androidx.room.**`, `dagger.hilt.**`), every `@Serializable` class, and has stale `com.crochet.manager` rules from the old package. Trim to what's needed (Room/Hilt ship their own rules) → smaller, faster app. Test a release build on the emulator end to end before shipping: a missing keep rule only crashes release builds.
 - **Play Console "bitmap downsampling" hint:** already handled. Every decode goes through `util/BitmapUtils.kt` with `inSampleSize`, and photos on screen use Coil. Likely a false positive from the bounds-only decode or a library; no action.
 - Build folder keeps getting "… 2.class" duplicates (iCloud syncs ~/Documents), which breaks `assembleDebug` until `./gradlew clean`.
+
+## Release notes (final, 1.10.0 / build 28, prepared 2026-11-02)
+Paste into Play Console → Release → Release notes. Each is under Play's 500-character limit.
+
+<en-US>
+• Yarn in fractions (2⅓ balls), with balls used and left per yarn
+• Yarn colours: pick a swatch or tap the yarn in a photo
+• Filter and sort yarns by colour; pieces show their colours too
+• Tap any photo to see it full screen and zoom in
+• One extra counter free (repeats, stitches…); more with Pro
+• Yarn in stock: what your stash is worth, on the dashboard
+• Pro: export your report to Excel
+• Fixes: yarns on the piece page, prices in your currency
+</en-US>
+<pt-BR>
+• Fios em frações (2⅓ novelos), com quanto usou e quanto resta
+• Cores dos fios: escolha a cor ou toque no fio na foto
+• Filtre e ordene fios por cor; as peças mostram suas cores
+• Toque em qualquer foto para ver em tela cheia e dar zoom
+• Um contador extra grátis (repetições, pontos…); mais no Pro
+• Fios em estoque: quanto vale seu estoque, no painel
+• Pro: exporte o relatório para o Excel
+• Correções: fios na peça, preços na sua moeda, "agulha de crochê"
+</pt-BR>
+<es-ES>
+• Lana en fracciones (2⅓ ovillos), con lo usado y lo que queda
+• Colores: elige el color o toca la lana en la foto
+• Filtra y ordena las lanas por color; las piezas muestran sus colores
+• Toca cualquier foto para verla a pantalla completa y hacer zoom
+• Un contador extra gratis (repeticiones, puntos…); más con Pro
+• Lanas en stock: cuánto vale tu stock, en el inicio
+• Pro: exporta el informe a Excel
+• Correcciones: lanas en la pieza, precios en tu moneda
+</es-ES>
+
+### 1.10.0 checklist
+- [ ] Upload `android/app/build/outputs/bundle/release/app-release.aab` (build 28)
+- [ ] Store listing: Pro now has "more extra counters" (one extra counter is free), and mention Excel export and yarn colours
+- [ ] DB 10 → 11 (yarns.colorHex): tested by upgrading over existing data on the emulator; check once on your phone after installing
+- [ ] Check on the phone at 360dp-ish width: Yarns colour row, Pieces colour row (emulator kept hanging at 360dp)
+- [ ] Update the guide on the landing page (new features)
+- [ ] Reply to Kim's review once live
+
+### Also in 1.10.0 (internal)
+- PT-BR: "gancho" → "agulha de crochê" / "agulha de tricô"; "Tensão" → "Amostra". ES: "vueltas" → "filas". Screen-reader labels that were hardcoded English are now translated.

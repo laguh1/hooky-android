@@ -331,6 +331,10 @@
     <string name="action_save">Guardar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_close">Cerrar</string>
+    <string name="action_clear_search">Borrar búsqueda</string>
+    <string name="photo_edit_cd">Editar foto</string>
+    <string name="photo_delete_cd">Eliminar foto</string>
+    <string name="photo_n_of_m_cd">Foto %1$d de %2$d</string>
     <string name="action_edit">Editar</string>
     <string name="action_archive">Archivar</string>
     <string name="action_clone">Clonar</string>
@@ -574,7 +578,7 @@
     <!-- Pieces — detail additions -->
     <!-- ================================================================ -->
     <string name="piece_session_duration">%d min</string>
-    <string name="piece_edit_row_count">Editar número de vueltas</string>
+    <string name="piece_edit_row_count">Editar número de filas</string>
     <string name="piece_edit_work_time">Editar tiempo de trabajo</string>
     <string name="piece_label_gift_for">Regalo para</string>
 
