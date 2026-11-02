@@ -58,6 +58,7 @@ ES and PT-BR labels are longer than English, and many phones are only 360dp wide
 - **Never give a text container a fixed height** (`.height(52.dp)`) when its label can wrap; use `heightIn(min = …)`.
 - **Adding a button/chip/field to an existing row** means re-checking the whole row, and the same row on the sibling screens (Piece/Yarn/Stitch/Needle detail and forms are separate code — a fix in one is not shared).
 - **Before calling a UI change done:** check it in PT-BR and ES at 360dp width (`adb shell wm density 480` on the Pixel_6 AVD, which is 411dp by default and hides the problem) and once with font scale 1.3. Reset both afterwards.
+- **Full-screen dialogs and bottom buttons:** also check with three-button navigation (`adb shell cmd overlay enable com.android.internal.systemui.navbar.threebutton`). Gesture navigation hides buttons drawn behind the bar (1.10.0 colour picker bug). Full-screen `Dialog`s need `decorFitsSystemWindows = false` for inset padding to work.
 
 ## Brand (Hooky)
 - App icon: purple `#8C015E` background + white infinity "oo" symbol

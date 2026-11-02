@@ -77,7 +77,12 @@ fun ColorFromPhotoDialog(
         bitmap = withContext(Dispatchers.IO) { decodeSampledBitmapFromFile(photo, maxDimension = 1200) }
     }
 
-    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        // Without this the dialog never receives the system bar sizes, so the bottom
+        // buttons ended up behind a three-button navigation bar
+        decorFitsSystemWindows = false
+    )) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
