@@ -46,6 +46,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hooky.app.R
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.content.FileProvider
+import com.hooky.app.domain.model.enums.Material
+import kotlinx.coroutines.launch
+import java.io.File
 import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +63,8 @@ import com.hooky.app.ui.theme.TextSecondary
 
 private enum class ReportTab { PIECES, CUSTOMERS }
 
+private const val XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
 @Composable
 fun ReportsScreen(
     onNavigateBack: () -> Unit,
@@ -66,6 +73,7 @@ fun ReportsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var selectedTab by rememberSaveable { mutableStateOf(ReportTab.PIECES) }
 
     Scaffold(
@@ -99,27 +107,34 @@ fun ReportsScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                val hasData = if (selectedTab == ReportTab.PIECES) uiState.rows.isNotEmpty() else uiState.customerRows.isNotEmpty()
+                // One workbook with all three tabs, whichever tab is showing
+                val hasData = uiState.rows.isNotEmpty() || uiState.customerRows.isNotEmpty() || uiState.yarns.isNotEmpty()
                 if (uiState.isPremium && hasData) {
-                    val exportLabel = stringResource(R.string.reports_export_csv)
-                    val piecesHeader = stringResource(R.string.reports_csv_header_pieces)
-                    val customersHeader = stringResource(R.string.reports_csv_header_customers)
-                    val piecesSubject = stringResource(R.string.reports_share_subject_pieces)
-                    val customersSubject = stringResource(R.string.reports_share_subject_customers)
-                    val statusLabels = WorkStatus.values().associate { it.name to stringResource(it.labelResId) }
+                    val exportLabel = stringResource(R.string.reports_export_excel)
+                    val subject = stringResource(R.string.reports_share_subject)
+                    val labels = ReportExportLabels(
+                        piecesSheet = stringResource(R.string.reports_sheet_pieces),
+                        customersSheet = stringResource(R.string.reports_sheet_customers),
+                        yarnsSheet = stringResource(R.string.reports_sheet_yarns),
+                        piecesHeader = stringResource(R.string.reports_xlsx_header_pieces).split(','),
+                        customersHeader = stringResource(R.string.reports_xlsx_header_customers).split(','),
+                        yarnsHeader = stringResource(R.string.reports_xlsx_header_yarns).split(','),
+                        total = stringResource(R.string.reports_total),
+                        statusLabels = WorkStatus.values().associate { it.name to stringResource(it.labelResId) },
+                        materialLabels = Material.values().associate { it.name to stringResource(it.labelResId) },
+                    )
                     IconButton(onClick = {
-                        val csv = if (selectedTab == ReportTab.PIECES) {
-                            viewModel.buildCsv(piecesHeader, statusLabels)
-                        } else {
-                            viewModel.buildCustomerCsv(customersHeader)
+                        scope.launch {
+                            val file = viewModel.exportXlsx(File(context.filesDir, "share"), labels)
+                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = XLSX_MIME
+                                putExtra(Intent.EXTRA_STREAM, uri)
+                                putExtra(Intent.EXTRA_SUBJECT, subject)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            context.startActivity(Intent.createChooser(intent, exportLabel))
                         }
-                        val subject = if (selectedTab == ReportTab.PIECES) piecesSubject else customersSubject
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/csv"
-                            putExtra(Intent.EXTRA_TEXT, csv)
-                            putExtra(Intent.EXTRA_SUBJECT, subject)
-                        }
-                        context.startActivity(Intent.createChooser(intent, exportLabel))
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Share,

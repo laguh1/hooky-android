@@ -95,7 +95,7 @@ Already in the app (don't rebuild): balls used per yarn on a piece, material cos
 1. Yarn amounts as fractions (2⅓ balls), not only whole balls. *In progress on `feature/yarn-usage-decimals`.*
    - Fix: piece detail showed no yarns for pieces saved with ball counts (it read the old ID-only format).
    - Yarn detail: "Used in pieces" and "Left" worked out from the pieces (owned − used), so editing a piece never double-counts. Archived pieces don't count.
-2. Excel-friendly export: save a real file, not text. Today the CSV is sent as text with comma separators, which Spanish/Brazilian Excel opens in one column. Prefer .xlsx with tabs Pieces / Customers / Yarns (stock, where bought, unit price, total spent, notes). Then a tutorial reel showing the file in Excel.
+2. ✅ *Done on `feature/excel-export` (2026-11-02):* Reports share button now sends one .xlsx (Pieces / Customers / Yarns tabs, app language, real numbers and dates, frozen header, SUM totals, Total spent = price × balls). Old plan: Excel-friendly export: save a real file, not text. Today the CSV is sent as text with comma separators, which Spanish/Brazilian Excel opens in one column. Prefer .xlsx with tabs Pieces / Customers / Yarns (stock, where bought, unit price, total spent, notes). Then a tutorial reel showing the file in Excel.
 3. Stash value on the dashboard (sum of price paid × balls left).
 
 **After that**
