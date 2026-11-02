@@ -482,6 +482,13 @@
     <string name="piece_picker_empty_stitch">No stitches in your library yet.</string>
     <string name="piece_yarn_decrease_balls_cd">Decrease balls used</string>
     <string name="piece_yarn_increase_balls_cd">Increase balls used</string>
+    <string name="piece_yarn_edit_balls_cd">Edit balls used</string>
+    <string name="piece_yarn_balls_dialog_title">Balls used</string>
+    <string name="piece_yarn_balls_dialog_hint">Whole or part balls, e.g. 2.5</string>
+    <plurals name="piece_yarn_balls_amount">
+        <item quantity="one">%1$s ball</item>
+        <item quantity="other">%1$s balls</item>
+    </plurals>
     <string name="piece_material_cost_suggestion">Material cost from yarns: %s</string>
 
     <!-- ================================================================ -->
@@ -516,6 +523,8 @@
     <string name="yarn_label_date">Date</string>
     <string name="yarn_label_link">Link</string>
     <string name="yarn_label_quantity_owned">Quantity owned</string>
+    <string name="yarn_label_used_in_pieces">Used in pieces</string>
+    <string name="yarn_label_left">Left</string>
     <string name="yarn_label_iron_temp">Wash temperature</string>
     <string name="yarn_label_care_notes">Care notes</string>
     <string name="yarn_label_no_bleach">No Bleach</string>

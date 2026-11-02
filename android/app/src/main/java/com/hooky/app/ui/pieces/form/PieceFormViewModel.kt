@@ -18,6 +18,7 @@ import com.hooky.app.data.scanner.ScanMode
 import com.hooky.app.data.scanner.YarnLabelScannerService
 import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnUsage
+import com.hooky.app.domain.model.parseYarnUsages
 import com.hooky.app.domain.model.enums.Destination
 import com.hooky.app.domain.model.enums.PieceType
 import com.hooky.app.domain.model.enums.WorkStatus
@@ -202,16 +203,7 @@ class PieceFormViewModel @Inject constructor(
                     val photos = try {
                         kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.photos)
                     } catch (_: Exception) { emptyList() }
-                    val yarns = try {
-                        kotlinx.serialization.json.Json.decodeFromString<List<YarnUsage>>(piece.yarnsUsed)
-                    } catch (_: Exception) {
-                        // Pieces saved before per-yarn ball counts existed stored a plain
-                        // List<String> of yarn IDs — read those as 1 ball each.
-                        try {
-                            kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.yarnsUsed)
-                                .map { YarnUsage(yarnId = it, balls = 1f) }
-                        } catch (_: Exception) { emptyList() }
-                    }
+                    val yarns = parseYarnUsages(piece.yarnsUsed)
                     val stitches = try {
                         kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.stitchesUsed)
                     } catch (_: Exception) { emptyList() }
@@ -356,7 +348,8 @@ class PieceFormViewModel @Inject constructor(
             is PieceFormAction.YarnBallsChanged ->
                 _uiState.update { current ->
                     current.copy(yarnsUsed = current.yarnsUsed.map {
-                        if (it.yarnId == action.yarnId) it.copy(balls = action.balls.coerceAtLeast(1f)) else it
+                        // Part balls are allowed (2⅓); only zero or less is refused.
+                        if (it.yarnId == action.yarnId && action.balls > 0f) it.copy(balls = action.balls) else it
                     })
                 }
             PieceFormAction.ApplyYarnMaterialCost ->

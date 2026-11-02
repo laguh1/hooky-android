@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.detail
 
+import com.hooky.app.util.formatBalls
 import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -126,6 +127,7 @@ fun YarnDetailScreen(
             else -> {
                 YarnDetailContent(
                     yarn = uiState.yarn!!,
+                    ballsUsed = uiState.ballsUsed,
                     onNavigateBack = onNavigateBack,
                     onNavigateToEdit = { onNavigateToEdit(yarnId) },
                     onArchiveClick = { viewModel.onAction(YarnDetailAction.ShowArchiveDialog) },
@@ -155,6 +157,7 @@ fun YarnDetailScreen(
 @Composable
 private fun YarnDetailContent(
     yarn: YarnEntity,
+    ballsUsed: Float,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
     onArchiveClick: () -> Unit,
@@ -362,6 +365,12 @@ private fun YarnDetailContent(
                         }
                     }
                     yarn.quantityOwned?.let { InfoRow(label = stringResource(R.string.yarn_label_quantity_owned), value = "$it") }
+                    if (ballsUsed > 0f) {
+                        InfoRow(label = stringResource(R.string.yarn_label_used_in_pieces), value = formatBalls(ballsUsed))
+                        yarn.quantityOwned?.let { owned ->
+                            InfoRow(label = stringResource(R.string.yarn_label_left), value = formatBalls((owned - ballsUsed).coerceAtLeast(0f)))
+                        }
+                    }
                 }
             }
 
