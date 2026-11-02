@@ -63,7 +63,7 @@
     <string name="piece_field_destination">Destino</string>
     <string name="piece_field_width">Largura (cm)</string>
     <string name="piece_field_length">Comprimento (cm)</string>
-    <string name="piece_field_hook_size">Tamanho do Gancho (mm)</string>
+    <string name="piece_field_hook_size">Agulha de crochê (mm)</string>
     <string name="piece_field_date_started">Data de Início</string>
     <string name="piece_field_date_finished">Data de Conclusão</string>
     <string name="piece_field_work_hours">Horas de Trabalho</string>
@@ -139,9 +139,9 @@
     <string name="yarn_field_weight_category">Categoria de Peso</string>
     <string name="yarn_field_ball_weight">Peso do Novelo (g)</string>
     <string name="yarn_field_ball_length">Comprimento do Novelo (m)</string>
-    <string name="yarn_field_hook_size">Tamanho do Gancho (mm)</string>
-    <string name="yarn_field_needle_size">Tamanho da Agulha (mm)</string>
-    <string name="yarn_field_gauge">Tensão</string>
+    <string name="yarn_field_hook_size">Agulha de crochê (mm)</string>
+    <string name="yarn_field_needle_size">Agulha de tricô (mm)</string>
+    <string name="yarn_field_gauge">Amostra</string>
     <string name="yarn_field_price_paid">Preço Pago (%1$s)</string>
     <string name="yarn_field_purchase_location">Local de Compra</string>
     <string name="yarn_field_purchase_date">Data de Compra</string>
@@ -331,6 +331,10 @@
     <string name="action_save">Salvar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_close">Fechar</string>
+    <string name="action_clear_search">Limpar busca</string>
+    <string name="photo_edit_cd">Editar foto</string>
+    <string name="photo_delete_cd">Apagar foto</string>
+    <string name="photo_n_of_m_cd">Foto %1$d de %2$d</string>
     <string name="action_edit">Editar</string>
     <string name="action_archive">Arquivar</string>
     <string name="action_clone">Clonar</string>
@@ -355,7 +359,7 @@
     <string name="label_started">Iniciado</string>
     <string name="label_finished">Concluído</string>
     <string name="label_hours">Horas de Trabalho</string>
-    <string name="label_hook_size">Tamanho do Gancho</string>
+    <string name="label_hook_size">Agulha de crochê</string>
     <string name="label_notes">Notas</string>
     <string name="label_photos">Fotos</string>
     <string name="label_date_hint">aaaa-MM-dd</string>
@@ -433,7 +437,7 @@
     <!-- ================================================================ -->
     <string name="piece_not_found">Peça não encontrada</string>
     <string name="piece_create">Criar peça</string>
-    <string name="piece_section_dimensions_hook">Dimensões e gancho</string>
+    <string name="piece_section_dimensions_hook">Dimensões e agulha</string>
     <string name="piece_section_dates_hours">Datas e horas</string>
     <string name="piece_section_materials_stitches">Materiais e pontos</string>
     <string name="piece_section_needles_used">Agulhas usadas</string>
@@ -460,7 +464,7 @@
     <string name="piece_counter_empty">Conte repetições ou pontos também — toque + para adicionar um contador</string>
     <string name="piece_counter_name_hint">Nome do contador</string>
     <string name="piece_counter_target_hint">Meta (opcional)</string>
-    <string name="piece_field_hook_size_mm">Tamanho do gancho (mm)</string>
+    <string name="piece_field_hook_size_mm">Agulha de crochê (mm)</string>
     <string name="piece_field_row_start">Carreira inicial</string>
     <string name="piece_field_row_start_hint">0 para uma peça nova</string>
     <string name="piece_field_target_rows_hint">ex: 80</string>
@@ -536,9 +540,9 @@
     <string name="yarn_label_specs">Especif.</string>
     <string name="yarn_label_ball_weight">Peso do novelo</string>
     <string name="yarn_label_ball_length">Comprimento do novelo</string>
-    <string name="yarn_label_hook_size">Tamanho gancho</string>
-    <string name="yarn_label_needle_size">Tamanho agulha</string>
-    <string name="yarn_label_gauge">Tensão</string>
+    <string name="yarn_label_hook_size">Agulha de crochê</string>
+    <string name="yarn_label_needle_size">Agulha de tricô</string>
+    <string name="yarn_label_gauge">Amostra</string>
     <string name="yarn_label_price_paid">Preço pago</string>
     <string name="yarn_label_location">Local</string>
     <string name="yarn_label_date">Data</string>
@@ -581,14 +585,14 @@
     <!-- ================================================================ -->
     <!-- Needles — list & general -->
     <!-- ================================================================ -->
-    <string name="needles_title">Agulhas e Ganchos</string>
+    <string name="needles_title">Agulhas</string>
     <string name="needle_new">Nova Agulha</string>
     <string name="needle_edit">Editar Agulha</string>
     <string name="needle_add">Adicionar Agulha</string>
     <string name="needle_not_found">Agulha não encontrada</string>
     <string name="needle_search_hint">Buscar agulhas…</string>
     <string name="needle_empty_title">Nenhuma agulha ainda</string>
-    <string name="needle_empty_subtitle">Adicione sua primeira agulha ou gancho</string>
+    <string name="needle_empty_subtitle">Adicione sua primeira agulha</string>
 
     <!-- Needles — form fields -->
     <string name="needle_field_name_hint">ex: Clover Amour 5.0mm</string>
@@ -609,7 +613,7 @@
     <!-- Needles — scanning -->
     <string name="needle_scan_size">Ler Tamanho</string>
     <string name="needle_scanning">Lendo tamanho…</string>
-    <string name="needle_scan_hint">Fotografe o tamanho gravado na sua agulha ou gancho para preencher o campo automaticamente.</string>
+    <string name="needle_scan_hint">Fotografe o tamanho gravado na sua agulha para preencher o campo automaticamente.</string>
 
     <!-- Common — settings -->
     <string name="action_settings">Configurações</string>
@@ -678,7 +682,7 @@
     <string name="needle_type_dpn">Agulha Dupla Ponta</string>
     <string name="needle_type_circular">Agulha Circular</string>
     <string name="needle_type_other">Outro</string>
-    <string name="needle_filter_hooks">Ganchos</string>
+    <string name="needle_filter_hooks">Crochê</string>
     <string name="needle_filter_knitting">Tricô</string>
     <string name="needle_filter_other">Outro</string>
 
@@ -691,7 +695,7 @@
     <string name="onboarding_2_title">Conheça seu estoque</string>
     <string name="onboarding_2_desc">Mantenha seu inventário de fios organizado. Escaneie as etiquetas para preencher os detalhes automaticamente.</string>
     <string name="onboarding_3_title">Monte sua biblioteca</string>
-    <string name="onboarding_3_desc">Salve seus pontos favoritos com links de tutoriais e avaliação de dificuldade. Adicione seus ganchos e agulhas para ter tudo à mão.</string>
+    <string name="onboarding_3_desc">Salve seus pontos favoritos com links de tutoriais e avaliação de dificuldade. Adicione suas agulhas de crochê e tricô para ter tudo à mão.</string>
 
     <!-- ================================================================ -->
     <!-- Hooky Pro (paid yearly plan, trial, status) -->

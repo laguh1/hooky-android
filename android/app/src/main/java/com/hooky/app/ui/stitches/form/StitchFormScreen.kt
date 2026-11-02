@@ -454,7 +454,7 @@ fun StitchFormScreen(
                             ) {
                                 AsyncImage(
                                     model = File(chartPath),
-                                    contentDescription = "Stitch chart",
+                                    contentDescription = stringResource(R.string.stitch_section_chart),
                                     contentScale = ContentScale.Fit,
                                     modifier = Modifier.fillMaxSize()
                                 )

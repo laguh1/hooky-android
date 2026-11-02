@@ -134,7 +134,7 @@ fun CameraScreen(
             ) {
                 Icon(
                     Icons.Filled.ArrowBack,
-                    contentDescription = "Cancel",
+                    contentDescription = stringResource(R.string.action_cancel),
                     tint = Color.White
                 )
             }
@@ -204,7 +204,7 @@ fun CameraScreen(
                 ) {
                     Icon(
                         Icons.Filled.ArrowBack,
-                        contentDescription = "Cancel",
+                        contentDescription = stringResource(R.string.action_cancel),
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )

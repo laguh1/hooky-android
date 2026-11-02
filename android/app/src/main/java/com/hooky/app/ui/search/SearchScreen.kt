@@ -91,7 +91,7 @@ fun SearchScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.action_back)
                         )
                     }
                 },
@@ -133,7 +133,7 @@ fun SearchScreen(
                         IconButton(onClick = { viewModel.onAction(SearchAction.ClearQuery) }) {
                             Icon(
                                 imageVector = Icons.Filled.Clear,
-                                contentDescription = "Clear search",
+                                contentDescription = stringResource(R.string.action_clear_search),
                                 tint = TextMuted
                             )
                         }

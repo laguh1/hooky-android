@@ -96,7 +96,7 @@ fun PhotoEditorScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onNavigateBack) {
-                Icon(Icons.Filled.Close, contentDescription = "Cancel", tint = Color.White)
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.action_cancel), tint = Color.White)
             }
             Button(
                 onClick = {

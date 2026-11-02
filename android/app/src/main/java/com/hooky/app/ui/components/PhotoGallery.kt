@@ -92,7 +92,7 @@ fun PhotoGallery(
                 Box(modifier = Modifier.fillMaxSize()) {
                     AsyncImage(
                         model = java.io.File(path),
-                        contentDescription = "Photo ${page + 1} of ${photos.size}",
+                        contentDescription = stringResource(R.string.photo_n_of_m_cd, page + 1, photos.size),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -110,7 +110,7 @@ fun PhotoGallery(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Edit,
-                                contentDescription = "Edit photo",
+                                contentDescription = stringResource(R.string.photo_edit_cd),
                                 tint = Color.White,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -130,7 +130,7 @@ fun PhotoGallery(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
-                                contentDescription = "Delete photo",
+                                contentDescription = stringResource(R.string.photo_delete_cd),
                                 tint = Color.White,
                                 modifier = Modifier.size(18.dp)
                             )

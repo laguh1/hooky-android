@@ -173,7 +173,7 @@ fun StitchListScreen(
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.action_settings),
                             tint = TextSecondary
                         )
                     }

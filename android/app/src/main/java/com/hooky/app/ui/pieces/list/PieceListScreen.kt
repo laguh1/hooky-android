@@ -110,14 +110,14 @@ fun PieceListScreen(
                     IconButton(onClick = onNavigateToPriceCalculator) {
                         Icon(
                             imageVector = Icons.Filled.Calculate,
-                            contentDescription = "Price Calculator",
+                            contentDescription = stringResource(R.string.calculator_title),
                             tint = TextSecondary
                         )
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.action_settings),
                             tint = TextSecondary
                         )
                     }
@@ -134,7 +134,7 @@ fun PieceListScreen(
                 contentColor = White,
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Piece")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.piece_new))
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

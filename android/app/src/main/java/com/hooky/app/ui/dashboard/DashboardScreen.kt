@@ -374,7 +374,7 @@ private fun DashboardHeader(
                 IconButton(onClick = onNavigateToSearch) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.action_search),
                         tint = Color.White,
                         modifier = Modifier.size(22.dp)
                     )
@@ -382,7 +382,7 @@ private fun DashboardHeader(
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = stringResource(R.string.action_settings),
                         tint = Color.White,
                         modifier = Modifier.size(22.dp)
                     )
