@@ -4,12 +4,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.YarnEntity
+import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.repository.YarnRepository
+import com.hooky.app.domain.model.parseYarnUsages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -20,7 +23,11 @@ data class YarnDetailUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val showArchiveDialog: Boolean = false,
-    val navigateToClone: Int? = null
+    val navigateToClone: Int? = null,
+    // Balls of this yarn used across all pieces (archived pieces don't count).
+    // Worked out from the pieces each time rather than subtracted from the stock,
+    // so editing or re-saving a piece can never count the same yarn twice.
+    val ballsUsed: Float = 0f
 )
 
 sealed interface YarnDetailAction {
@@ -35,6 +42,7 @@ sealed interface YarnDetailAction {
 @HiltViewModel
 class YarnDetailViewModel @Inject constructor(
     private val yarnRepository: YarnRepository,
+    private val pieceRepository: PieceRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -52,6 +60,16 @@ class YarnDetailViewModel @Inject constructor(
                 .collect { yarn ->
                     _uiState.update { it.copy(yarn = yarn, isLoading = false) }
                 }
+        }
+        viewModelScope.launch {
+            combine(yarnRepository.getYarnById(yarnId), pieceRepository.getAllPieces()) { yarn, pieces ->
+                if (yarn == null) 0f
+                else pieces.sumOf { piece ->
+                    parseYarnUsages(piece.yarnsUsed).filter { it.yarnId == yarn.yarnId }.sumOf { it.balls.toDouble() }
+                }.toFloat()
+            }
+                .catch { }
+                .collect { used -> _uiState.update { it.copy(ballsUsed = used) } }
         }
     }
 
