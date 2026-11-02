@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.parseYarnUsages
 import com.hooky.app.util.formatBalls
 import com.hooky.app.ui.components.WordSafeText
@@ -179,6 +180,7 @@ fun PieceDetailScreen(
                     timerDisplaySeconds = uiState.timerDisplaySeconds,
                     timerState = uiState.timerState,
                     yarnNames = uiState.yarnNames,
+                    yarnColors = uiState.yarnColors,
                     stitchNames = uiState.stitchNames,
                     needleNames = uiState.needleNames,
                     isPremium = uiState.isPremium,
@@ -233,6 +235,7 @@ private fun PieceDetailContent(
     timerDisplaySeconds: Long,
     timerState: TimerState,
     yarnNames: Map<String, String>,
+    yarnColors: Map<String, Int>,
     stitchNames: Map<String, String>,
     needleNames: Map<String, String>,
     isPremium: Boolean,
@@ -476,6 +479,7 @@ private fun PieceDetailContent(
             // Yarns used
             if (yarnsUsed.isNotEmpty()) {
                 ChipListSection(
+                    dots = yarnsUsed.map { yarnColors[it.yarnId] },
                     title = stringResource(R.string.piece_section_yarns_used),
                     items = yarnsUsed.map { usage ->
                         val amount = pluralStringResource(R.plurals.piece_yarn_balls_amount, if (usage.balls == 1f) 1 else 2, formatBalls(usage.balls))
@@ -777,7 +781,7 @@ private fun WorkSessionItem(session: WorkSession) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ChipListSection(title: String, items: List<String>) {
+private fun ChipListSection(title: String, items: List<String>, dots: List<Int?> = emptyList()) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = title,
@@ -789,8 +793,13 @@ private fun ChipListSection(title: String, items: List<String>) {
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            items.forEach { item ->
-                StatusBadge(text = item, style = BadgeStyle.OUTLINE)
+            items.forEachIndexed { i, item ->
+                val dot = dots.getOrNull(i)
+                StatusBadge(
+                    text = item,
+                    style = BadgeStyle.OUTLINE,
+                    leading = dot?.let { rgb -> { YarnColorDot(rgb, size = 10.dp) } }
+                )
             }
         }
     }
