@@ -1,5 +1,7 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.domain.model.parseYarnUsages
+import com.hooky.app.util.formatBalls
 import com.hooky.app.ui.components.WordSafeText
 import android.Manifest
 import android.content.Intent
@@ -89,6 +91,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.hooky.app.R
@@ -269,11 +272,7 @@ private fun PieceDetailContent(
             kotlinx.serialization.json.Json.decodeFromString<List<WorkSession>>(piece.workSessions)
         } catch (_: Exception) { emptyList() }
     }
-    val yarnsUsed = remember(piece.yarnsUsed) {
-        try {
-            kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.yarnsUsed)
-        } catch (_: Exception) { emptyList() }
-    }
+    val yarnsUsed = remember(piece.yarnsUsed) { parseYarnUsages(piece.yarnsUsed) }
     val stitchesUsed = remember(piece.stitchesUsed) {
         try {
             kotlinx.serialization.json.Json.decodeFromString<List<String>>(piece.stitchesUsed)
@@ -475,7 +474,10 @@ private fun PieceDetailContent(
             if (yarnsUsed.isNotEmpty()) {
                 ChipListSection(
                     title = stringResource(R.string.piece_section_yarns_used),
-                    items = yarnsUsed.map { id -> yarnNames[id] ?: id }
+                    items = yarnsUsed.map { usage ->
+                        val amount = pluralStringResource(R.plurals.piece_yarn_balls_amount, if (usage.balls == 1f) 1 else 2, formatBalls(usage.balls))
+                        "${yarnNames[usage.yarnId] ?: usage.yarnId} · $amount"
+                    }
                 )
             }
 

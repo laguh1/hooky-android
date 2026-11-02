@@ -482,6 +482,13 @@
     <string name="piece_picker_empty_stitch">Nenhum ponto na sua biblioteca ainda.</string>
     <string name="piece_yarn_decrease_balls_cd">Diminuir novelos usados</string>
     <string name="piece_yarn_increase_balls_cd">Aumentar novelos usados</string>
+    <string name="piece_yarn_edit_balls_cd">Editar novelos usados</string>
+    <string name="piece_yarn_balls_dialog_title">Novelos usados</string>
+    <string name="piece_yarn_balls_dialog_hint">Inteiros ou partes, ex.: 2,5</string>
+    <plurals name="piece_yarn_balls_amount">
+        <item quantity="one">%1$s novelo</item>
+        <item quantity="other">%1$s novelos</item>
+    </plurals>
     <string name="piece_material_cost_suggestion">Custo de material com base nos fios: %s</string>
 
     <!-- ================================================================ -->
@@ -516,6 +523,8 @@
     <string name="yarn_label_date">Data</string>
     <string name="yarn_label_link">Link</string>
     <string name="yarn_label_quantity_owned">Quantidade</string>
+    <string name="yarn_label_used_in_pieces">Usado em peças</string>
+    <string name="yarn_label_left">Restante</string>
     <string name="yarn_label_iron_temp">Temperatura de lavagem</string>
     <string name="yarn_label_care_notes">Notas de cuidado</string>
     <string name="yarn_label_no_bleach">Sem alvejante</string>

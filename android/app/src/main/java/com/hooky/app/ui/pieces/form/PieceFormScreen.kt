@@ -8,6 +8,10 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextDecoration
+import com.hooky.app.util.formatBalls
+import com.hooky.app.util.parseBalls
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -852,6 +856,7 @@ private fun YarnUsagePicker(
     onBallsChanged: (yarnId: String, balls: Float) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var editingBallsFor by remember { mutableStateOf<YarnUsage?>(null) }
     val nameById = remember(availableYarns) {
         availableYarns.associate { it.yarnId to "${it.name}${it.brand?.let { b -> " – $b" } ?: ""}" }
     }
@@ -875,16 +880,24 @@ private fun YarnUsagePicker(
                 )
                 IconButton(
                     onClick = { onBallsChanged(usage.yarnId, usage.balls - 1f) },
+                    enabled = usage.balls > 1f,
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.piece_yarn_decrease_balls_cd), modifier = Modifier.size(18.dp))
                 }
+                // Tap the number to type part balls (2⅓, 2.5)
+                val ballsCd = stringResource(R.string.piece_yarn_edit_balls_cd)
                 Text(
-                    text = if (usage.balls % 1f == 0f) usage.balls.toInt().toString() else usage.balls.toString(),
+                    text = formatBalls(usage.balls),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.width(20.dp)
+                    textDecoration = TextDecoration.Underline,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .width(44.dp)
+                        .clickable(onClickLabel = ballsCd) { editingBallsFor = usage }
+                        .padding(vertical = 6.dp)
                 )
                 IconButton(
                     onClick = { onBallsChanged(usage.yarnId, usage.balls + 1f) },
@@ -972,6 +985,87 @@ private fun YarnUsagePicker(
             }
         )
     }
+
+    editingBallsFor?.let { usage ->
+        BallsUsedDialog(
+            yarnName = nameById[usage.yarnId] ?: usage.yarnId,
+            initial = usage.balls,
+            onDismiss = { editingBallsFor = null },
+            onConfirm = { balls ->
+                onBallsChanged(usage.yarnId, balls)
+                editingBallsFor = null
+            }
+        )
+    }
+}
+
+// Lets the user type part balls ("2,5", "2 1/3") or pick a common fraction, which is
+// added to the whole balls already typed — 2 then ⅓ gives 2⅓.
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BallsUsedDialog(
+    yarnName: String,
+    initial: Float,
+    onDismiss: () -> Unit,
+    onConfirm: (Float) -> Unit
+) {
+    var text by remember { mutableStateOf(formatBalls(initial)) }
+    val parsed = parseBalls(text)?.takeIf { it > 0f }
+    // The theme outline is nearly the dialog's own grey, so outlines here use a stronger tone
+    val outline = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(R.string.piece_yarn_balls_dialog_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(yarnName, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    singleLine = true,
+                    isError = text.isNotBlank() && parsed == null,
+                    supportingText = { Text(stringResource(R.string.piece_yarn_balls_dialog_hint)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BrandPurple,
+                        unfocusedBorderColor = outline,
+                        cursorColor = BrandPurple
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(1f / 4, 1f / 3, 1f / 2, 2f / 3, 3f / 4).forEach { part ->
+                        val whole = kotlin.math.floor(parseBalls(text) ?: 0f)
+                        OutlinedButton(
+                            onClick = { text = formatBalls(whole + part) },
+                            shape = RoundedCornerShape(8.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, outline),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(formatBalls(part))
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { parsed?.let(onConfirm) },
+                enabled = parsed != null,
+                colors = ButtonDefaults.buttonColors(containerColor = Slate, contentColor = White)
+            ) {
+                Text(stringResource(R.string.action_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel), color = TextSecondary)
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
