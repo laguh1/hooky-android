@@ -11,6 +11,7 @@ import com.hooky.app.data.scanner.PaletteColorExtractor
 import com.hooky.app.data.scanner.ScanMode
 import com.hooky.app.data.scanner.YarnLabelScannerService
 import com.hooky.app.domain.model.CareInstructions
+import com.hooky.app.domain.model.YarnColor
 import com.hooky.app.domain.model.NeedleScanResult
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.hooky.app.domain.model.enums.Material
@@ -40,6 +41,8 @@ data class YarnFormUiState(
     val brand: String = "",
     val color: String = "",
     val colorCode: String = "",
+    // "#RRGGBB" picked from a swatch or the detected photo colour; null = none chosen
+    val colorHex: String? = null,
     val material: Material = Material.OTHER,
     val materialComposition: String = "",
     val materialSpecs: String = "",
@@ -82,6 +85,7 @@ sealed interface YarnFormAction {
     data class NameChanged(val value: String) : YarnFormAction
     data class BrandChanged(val value: String) : YarnFormAction
     data class ColorChanged(val value: String) : YarnFormAction
+    data class ColorHexChanged(val hex: String?) : YarnFormAction
     data class ColorCodeChanged(val value: String) : YarnFormAction
     data class MaterialChanged(val value: Material) : YarnFormAction
     data class MaterialCompositionChanged(val value: String) : YarnFormAction
@@ -173,6 +177,7 @@ class YarnFormViewModel @Inject constructor(
                             brand = yarn.brand ?: "",
                             color = yarn.color.takeUnless { it == UNKNOWN_YARN_COLOR }.orEmpty(),
                             colorCode = yarn.colorCode ?: "",
+                            colorHex = yarn.colorHex,
                             material = try { Material.valueOf(yarn.material) } catch (_: Exception) { Material.OTHER },
                             materialComposition = yarn.materialComposition ?: "",
                             materialSpecs = yarn.materialSpecs ?: "",
@@ -280,7 +285,18 @@ class YarnFormViewModel @Inject constructor(
             }
             YarnFormAction.ApplySuggestedColor -> {
                 val suggested = _uiState.value.suggestedColor ?: return
-                _uiState.update { it.copy(color = suggested, suggestedColor = null, suggestedColorRgb = null) }
+                val rgb = _uiState.value.suggestedColorRgb
+                _uiState.update {
+                    it.copy(
+                        color = suggested,
+                        colorHex = rgb?.let { c -> YarnColor.toHex(c) } ?: it.colorHex,
+                        suggestedColor = null,
+                        suggestedColorRgb = null
+                    )
+                }
+            }
+            is YarnFormAction.ColorHexChanged -> {
+                _uiState.update { it.copy(colorHex = action.hex) }
             }
             YarnFormAction.DismissSuggestedColor ->
                 _uiState.update { it.copy(suggestedColor = null, suggestedColorRgb = null) }
@@ -450,6 +466,7 @@ class YarnFormViewModel @Inject constructor(
                             brand = current.brand.ifBlank { null },
                             color = current.color.ifBlank { UNKNOWN_YARN_COLOR },
                             colorCode = current.colorCode.ifBlank { null },
+                            colorHex = current.colorHex,
                             material = current.material.name,
                             materialComposition = current.materialComposition.ifBlank { null },
                             materialSpecs = current.materialSpecs.ifBlank { null },
@@ -481,6 +498,7 @@ class YarnFormViewModel @Inject constructor(
                         brand = current.brand.ifBlank { null },
                         color = current.color.ifBlank { UNKNOWN_YARN_COLOR },
                         colorCode = current.colorCode.ifBlank { null },
+                        colorHex = current.colorHex,
                         material = current.material.name,
                         materialComposition = current.materialComposition.ifBlank { null },
                         materialSpecs = current.materialSpecs.ifBlank { null },
