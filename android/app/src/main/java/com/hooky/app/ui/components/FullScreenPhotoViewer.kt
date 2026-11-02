@@ -60,7 +60,12 @@ fun FullScreenPhotoViewer(
     // While a photo is zoomed in, sideways drags pan the photo instead of changing page
     var zoomedIn by remember { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(
+        usePlatformDefaultWidth = false,
+        // Without this the dialog never receives the system bar sizes, so the bottom
+        // buttons ended up behind a three-button navigation bar
+        decorFitsSystemWindows = false
+    )) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

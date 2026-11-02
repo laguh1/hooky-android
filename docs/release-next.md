@@ -157,3 +157,16 @@ Paste into Play Console → Release → Release notes. Each is under Play's 500-
 
 ### Also in 1.10.0 (internal)
 - PT-BR: "gancho" → "agulha de crochê" / "agulha de tricô"; "Tensão" → "Amostra". ES: "vueltas" → "filas". Screen-reader labels that were hardcoded English are now translated.
+
+## 1.10.1 / build 29 (2026-11-03)
+Fix: on phones with three-button navigation, the "Pick the colour from a photo" Confirm button was hidden behind the bar.
+
+<en-US>
+• Fix: the Confirm button in "Pick the colour from a photo" was hidden on phones with navigation buttons
+</en-US>
+<pt-BR>
+• Correção: o botão Confirmar em "Pegar a cor da foto" ficava escondido em celulares com botões de navegação
+</pt-BR>
+<es-ES>
+• Corrección: el botón Confirmar de "Coger el color de la foto" quedaba oculto en móviles con botones de navegación
+</es-ES>
