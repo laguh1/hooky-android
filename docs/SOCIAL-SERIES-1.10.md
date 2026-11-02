@@ -6,17 +6,34 @@ ends with a teaser for the next one, so people come back to see it.
 **Start posting only once 1.10.0 is live on Google Play**, so viewers can try what they see.
 
 ## Format (same for every episode)
-- Vertical 9:16, 15–25 s, screen recording of the app in PT-BR (EN version from the same
-  takes with the app in English). Music only, no voiceover. Short on-screen texts.
-- **Title card** (first 1.5 s): "Novidade 1/8" kicker + the hook line. Use the `hooky-design`
-  skill (`caption` or `lower` overlay, story format) so the series looks the same every time.
-- **End card** (last 2.5 s): "Amanhã: <next teaser>" + small icon and Play badge (`cta`).
-  The last episode ends with "Atualize o Hooky App" instead.
-- Captions: "Hooky App" always; link `hookyapp.netlify.app/ig` · `/yt` · `/fb`
-  (Facebook: keep URLs out of the post; only 2 link posts a month).
-- Cadence: **every 2 days** (8 episodes ≈ 2 weeks). Every day works too if recording keeps up.
-  If you post daily, change "Amanhã" to the day name or "Na próxima".
+Most viewers leave within 3 seconds, so every episode follows the same timeline:
+
+| Time | What's on screen | Overlay files (`shared/promo/…/serie-1.10/`) |
+|---|---|---|
+| 0–3 s | **The result first**: a crochet close-up or the "wow" moment of the feature (e.g. the zoomed doily, the rainbow stash), never a busy app screen. Big hook text over it. | `s110_epN_hook_<pt|en>_story.png` (hook text + tint) |
+| whole video | Small purple `hooky` wordmark, top right, from the first frame | `s110_bug_story.png` |
+| 3–20 s | Screen recording of the feature, short on-screen texts | — |
+| last 2.5 s | End card: next episode's hook + "Hooky App: sempre evoluindo com você. Sugestões? Link na bio" | `BRASIL|ENGLISH/images/serie-1.10/s110_epN_end_<pt|en>_story.png` |
+
+- Vertical 9:16, 15–25 s, PT-BR app (EN version from the same takes with the app in English). Music only, no voiceover.
+- All overlays are 1080x1920 transparent PNGs: drop them on the timeline at 100%, no repositioning.
+- The hook in the first frame doubles as the cover/thumbnail.
+- Episode 8 ends with "Atualize o Hooky App" + "Sua ideia pode ser a próxima: link na bio".
+- Cadence: every 2 days (8 episodes ≈ 2 weeks). End cards say "Próxima novidade", so any cadence works.
+- Captions: "Hooky App" always; link `hookyapp.netlify.app/ig` · `/yt` · `/fb` (Facebook: keep URLs out of the post; only 2 link posts a month).
+- **Every caption ends with the feedback line** (below), so people know they can shape the app.
 - Hashtags (PT): #crochê #crochebrasil #fiosdecroche #organizacao #hookyapp
+
+### Closing line for every caption
+- **PT:** O Hooky App está sempre evoluindo para o seu crochê. Tem uma ideia ou sugestão? Conta pra gente pelo link na bio 💜
+- **EN:** Hooky App keeps improving for your craft. Got an idea or suggestion? Tell us through the link in bio 💜
+- **YouTube** (no "bio"): "… Conta pra gente: hookyapp.netlify.app/feedback" / "… Tell us: hookyapp.netlify.app/feedback"
+
+### Bio and channel descriptions (add the feedback link)
+- **Instagram bio (PT):** Seu companheiro de crochê e tricô 🧶 Peças, fios, contador e lucro num app só. Sempre evoluindo com você: mande sua ideia 👇 · Link: hookyapp.netlify.app (has both the Play link and the suggestions form)
+- **Instagram bio (EN):** Your crochet & knitting companion 🧶 Pieces, yarn, counters and profit in one app. Always improving with you: send your idea 👇
+- **YouTube channel description, add at the end:** "Hooky App está sempre evoluindo. Tem uma ideia ou sugestão? hookyapp.netlify.app/feedback 💜" / "Hooky App keeps improving. Have an idea or suggestion? hookyapp.netlify.app/feedback 💜"
+- **Facebook page → About:** same line as YouTube, plus the website field set to hookyapp.netlify.app.
 
 Test data for recordings: use your real pieces and yarns (no faces, no gift names in shot,
 crop the status bar).
@@ -24,7 +41,7 @@ crop the status bar).
 ---
 
 ## 1/8 · Mostre seu trabalho em tela cheia
-**Hook:** "Mostrando sua peça e a foto fica pequenininha?"
+**Hook (0–3 s):** "Sua peça merece *tela cheia*" over the zoomed-in doily
 **Record:** open a finished piece → tap the photo → it fills the screen → double-tap to zoom
 into the stitches → swipe to the next photo → close.
 **On-screen texts:** "Toque na foto" · "Zoom nos pontos" · "Deslize para a próxima"
@@ -34,7 +51,7 @@ into the stitches → swipe to the next photo → close.
 **Teaser for next:** colour picker.
 
 ## 2/8 · A cor exata do seu fio
-**Hook:** "Qual é a cor desse fio, de verdade?"
+**Hook (0–3 s):** "Qual é a cor *de verdade*?" over a yarn close-up
 **Record:** open a yarn with a photo → Editar → "Pegar a cor da foto" → tap the yarn → the
 circle shows the colour → Confirmar → the circle appears in the colour field.
 Bonus 2 s: the row of swatches for a quick pick.
@@ -45,7 +62,7 @@ Bonus 2 s: the row of swatches for a quick pick.
 **Caption EN:** Tap the yarn in its photo and Hooky App picks its exact colour. Or choose from a palette. Tip: daylight photos give truer colours.
 
 ## 3/8 · Seu estoque como um arco-íris
-**Hook:** "Ver todos os seus fios por cor 😍"
+**Hook (0–3 s):** "Seu estoque virou *arco-íris*" over the sorted stash (end result first)
 **Record:** Yarns tab with several coloured yarns → tap "Por cor" → the list reorders into a
 rainbow → tap the green circle → only greens → tap again → all back.
 **On-screen texts:** "Ordene por cor" · "Filtre uma cor" · "Ache o fio em segundos"
@@ -54,7 +71,7 @@ rainbow → tap the green circle → only greens → tap again → all back.
 **Caption EN:** Sort your yarn stash by colour and see it like a rainbow, or show only the greens, the blues… Hooky App.
 
 ## 4/8 · "Tem em azul?"
-**Hook:** "Cliente perguntou: tem em azul?"
+**Hook (0–3 s):** "“Tem em *azul*?”" over a blue piece photo
 **Record:** Pieces tab → the colour dots on each card → tap the blue circle → only blue pieces.
 **On-screen texts:** "As cores vêm dos fios" · "Toque numa cor" · "Resposta na hora"
 **End card:** "Amanhã: 2 novelos e 1/3? Agora dá 🧮"
@@ -62,7 +79,7 @@ rainbow → tap the green circle → only greens → tap again → all back.
 **Caption EN:** Each piece shows the colours of the yarns it uses. One tap shows only the blue ones. Great for selling 🛍️ Hooky App.
 
 ## 5/8 · 2 novelos e 1/3
-**Hook:** "Usou 2 novelos e um pouquinho?"
+**Hook (0–3 s):** "2 novelos e *um pouquinho*?" over a half-used ball
 **Record:** open a piece → Editar → yarn row → tap the number → tap ⅓ → "2⅓" → Confirmar →
 open that yarn: "Usado em peças 2⅓ · Restante 2⅔".
 **On-screen texts:** "Partes de novelo" · "Quanto você usou" · "Quanto ainda resta"
@@ -71,7 +88,7 @@ open that yarn: "Usado em peças 2⅓ · Restante 2⅔".
 **Caption EN:** Log part balls (2⅓!) and each yarn shows how much you used and how much is left. Hooky App.
 
 ## 6/8 · Quanto vale seu estoque
-**Hook:** "Você sabe quanto dinheiro tem em fio parado?"
+**Hook (0–3 s):** "Quanto vale seu *estoque*?" over a pile of yarn
 **Record:** Dashboard → "Fios em estoque · N novelos · R$ X" card. Optional: open one yarn to
 show price per ball × balls left.
 **On-screen texts:** "Fios em estoque" · "Novelos que restam × preço" · "Antes de comprar mais"
@@ -80,7 +97,7 @@ show price per ball × balls left.
 **Caption EN:** Hooky App's dashboard now shows what your yarn stash is worth. Handy before buying more 😅
 
 ## 7/8 · Contador extra grátis
-**Hook:** "Carreiras E repetições ao mesmo tempo?"
+**Hook (0–3 s):** "Carreiras *e* repetições" over a lace close-up
 **Record:** piece in progress → row counter → "Contadores extras" → + → "Repetições" →
 count on both.
 **On-screen texts:** "Conte carreiras" · "E repetições" · "1 contador extra grátis"
@@ -90,7 +107,7 @@ count on both.
 *(This one answers the 4★ review — reply to Kim when it's out.)*
 
 ## 8/8 · Seu relatório no Excel (para quem vende)
-**Hook:** "Custos, vendas e lucro… no Excel, num toque"
+**Hook (0–3 s):** "Seu lucro no *Excel*, num toque" over the spreadsheet with totals
 **Record:** Dashboard → Ver relatório de custos e lucro → share icon → the file name in the
 share sheet → open in Excel/Google Sheets on the phone: tabs Peças, Clientes, Fios and the
 Total row.
@@ -106,5 +123,6 @@ through the file. Script to write after the series.*
 ## Production checklist
 - [ ] 1.10.0 live on Play (all users, not only the 20% rollout) before episode 1
 - [ ] Record all 8 takes in PT-BR in one sitting with real data, then repeat in EN
-- [ ] Render title and end cards with `hooky-design` (story format), one set per language
+- [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders
+- [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
 - [ ] Episode links go into this file and `docs/SOCIAL-CAPTIONS.md` as they're posted
