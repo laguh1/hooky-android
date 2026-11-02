@@ -508,6 +508,8 @@
     <string name="yarn_scan_hint">Escanea la etiqueta de la lana para rellenar automáticamente la marca, el color, el material, el gramaje y más.</string>
     <string name="yarn_color_detected">Detectado:</string>
     <string name="yarn_field_color_name">Nombre del color</string>
+    <string name="yarn_color_pick">O elige el color</string>
+    <string name="yarn_color_swatch_cd">Color %1$s</string>
     <string name="yarn_field_color_code_hint">#RRGGBB o código del fabricante</string>
     <string name="yarn_field_composition_hint">p. ej. 80% Merino, 20% Nylon</string>
     <string name="yarn_field_needle_size_hint">p. ej. 4.0-5.0</string>

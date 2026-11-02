@@ -1,5 +1,7 @@
 package com.hooky.app.ui.yarns.detail
 
+import com.hooky.app.ui.yarns.YarnColorDot
+import com.hooky.app.domain.model.YarnColor
 import androidx.compose.ui.platform.LocalContext
 import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
@@ -311,7 +313,7 @@ private fun YarnDetailContent(
                         } else {
                             colorName
                         }
-                        InfoRow(label = stringResource(R.string.yarn_label_color), value = colorValue)
+                        InfoRow(label = stringResource(R.string.yarn_label_color), value = colorValue, dotRgb = YarnColor.effective(yarn.colorHex, yarn.color))
                     }
                     val materialValue = if (yarn.materialComposition != null) {
                         "$materialDisplayName — ${yarn.materialComposition}"
@@ -491,7 +493,7 @@ private fun YarnInfoCard(
 }
 
 @Composable
-private fun InfoRow(label: String, value: String) {
+private fun InfoRow(label: String, value: String, dotRgb: Int? = null) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -502,13 +504,27 @@ private fun InfoRow(label: String, value: String) {
             style = MaterialTheme.typography.bodySmall,
             color = TextSecondary
         )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        // Gap so a long, wrapping value never touches the label
+        Spacer(modifier = Modifier.width(12.dp))
+        if (dotRgb != null) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                YarnColorDot(dotRgb)
+                InfoValue(value)
+            }
+        } else {
+            InfoValue(value)
+        }
     }
+}
+
+@Composable
+private fun InfoValue(value: String) {
+    Text(
+        text = value,
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.onSurface
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
