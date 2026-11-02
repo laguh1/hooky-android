@@ -1844,6 +1844,8 @@ private fun CounterFormDialog(
 ) {
     var name by remember { mutableStateOf(initialName) }
     var targetText by remember { mutableStateOf(initialTarget?.toString() ?: "") }
+    // The theme outline is nearly the dialog's own grey, so unfocused fields use a stronger tone
+    val outline = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1858,7 +1860,8 @@ private fun CounterFormDialog(
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Slate,
-                        focusedLabelColor = Slate
+                        focusedLabelColor = Slate,
+                        unfocusedBorderColor = outline
                     )
                 )
                 OutlinedTextField(
@@ -1870,7 +1873,8 @@ private fun CounterFormDialog(
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Slate,
-                        focusedLabelColor = Slate
+                        focusedLabelColor = Slate,
+                        unfocusedBorderColor = outline
                     )
                 )
             }

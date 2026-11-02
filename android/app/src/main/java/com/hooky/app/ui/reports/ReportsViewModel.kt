@@ -7,6 +7,17 @@ import com.hooky.app.R
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.premium.PremiumManager
 import com.hooky.app.data.repository.PieceRepository
+import com.hooky.app.data.db.entity.YarnEntity
+import com.hooky.app.data.repository.YarnRepository
+import com.hooky.app.domain.model.parseYarnUsages
+import com.hooky.app.ui.yarns.UNKNOWN_YARN_COLOR
+import com.hooky.app.util.XlsxCell
+import com.hooky.app.util.XlsxSheet
+import com.hooky.app.util.XlsxWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.time.LocalDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +37,7 @@ data class PieceReportRow(
     val workHours: Float?,
     val quantityTotal: Int,
     val salePlatform: String?,
+    val soldDate: String?,
     val totalCost: Float?,
     val totalRevenue: Float?,
     val profit: Float?,
@@ -39,11 +51,26 @@ data class CustomerReportRow(
     val profit: Float,
 )
 
+data class ReportExportLabels(
+    val piecesSheet: String,
+    val customersSheet: String,
+    val yarnsSheet: String,
+    val piecesHeader: List<String>,
+    val customersHeader: List<String>,
+    val yarnsHeader: List<String>,
+    val total: String,
+    val statusLabels: Map<String, String>,
+    val materialLabels: Map<String, String>,
+)
+
 data class ReportsUiState(
     val isLoading: Boolean = true,
     val isPremium: Boolean = false,
     val rows: List<PieceReportRow> = emptyList(),
     val customerRows: List<CustomerReportRow> = emptyList(),
+    val yarns: List<YarnEntity> = emptyList(),
+    // Balls used per yarn ID across non-archived pieces
+    val ballsUsedByYarn: Map<String, Float> = emptyMap(),
     val totalRevenue: Float = 0f,
     val totalCost: Float = 0f,
     val totalProfit: Float = 0f,
@@ -53,6 +80,7 @@ data class ReportsUiState(
 class ReportsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val pieceRepository: PieceRepository,
+    private val yarnRepository: YarnRepository,
     private val premiumManager: PremiumManager,
 ) : ViewModel() {
 
@@ -76,10 +104,15 @@ class ReportsViewModel @Inject constructor(
                     val revenue = rows.sumOf { (it.totalRevenue ?: 0f).toDouble() }.toFloat()
                     val cost = rows.sumOf { (it.totalCost ?: 0f).toDouble() }.toFloat()
                     val profit = revenue - cost
+                    val ballsUsed = pieces.filter { !it.archived }
+                        .flatMap { parseYarnUsages(it.yarnsUsed) }
+                        .groupBy { it.yarnId }
+                        .mapValues { (_, uses) -> uses.sumOf { it.balls.toDouble() }.toFloat() }
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             rows = rows,
+                            ballsUsedByYarn = ballsUsed,
                             customerRows = buildCustomerRows(rows),
                             totalRevenue = revenue,
                             totalCost = cost,
@@ -87,6 +120,14 @@ class ReportsViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            yarnRepository.getAllYarns()
+                .catch { }
+                .collect { yarns -> _uiState.update { it.copy(yarns = yarns.filter { y -> !y.archived }) } }
         }
     }
 
@@ -107,34 +148,74 @@ class ReportsViewModel @Inject constructor(
             .sortedByDescending { it.revenue }
     }
 
-    // Header and status labels come from the screen so the export follows the app language.
-    fun buildCsv(header: String, statusLabels: Map<String, String>): String {
-        val sb = StringBuilder()
-        sb.appendLine(header)
-        _uiState.value.rows.forEach { row ->
-            sb.appendLine(
-                "${row.name.escapeCsv()},${(statusLabels[row.status] ?: row.status).escapeCsv()},${row.quantityTotal}," +
-                    "${row.materialCost ?: ""}," +
-                    "${row.price ?: ""}," +
-                    "${row.soldPrice ?: ""}," +
-                    "${row.workHours ?: ""}," +
-                    "${row.totalCost ?: ""}," +
-                    "${row.totalRevenue ?: ""}," +
-                    "${row.profit ?: ""}"
-            )
-        }
-        return sb.toString()
+    // Labels come from the screen so the export follows the app language.
+    fun buildWorkbook(labels: ReportExportLabels): List<XlsxSheet> {
+        val state = _uiState.value
+        fun num(v: Float?) = v?.let { XlsxCell.Number(it.toDouble()) } ?: XlsxCell.Empty
+        fun int(v: Int?) = v?.let { XlsxCell.Number(it.toDouble(), decimals = false) } ?: XlsxCell.Empty
+        fun text(v: String?) = v?.takeIf { it.isNotBlank() }?.let { XlsxCell.Text(it) } ?: XlsxCell.Empty
+        fun date(v: String?) = v?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+            ?.let { XlsxCell.Date(it) } ?: text(v)
+        // SUM over the data rows of one column; data starts on row 2, after the header
+        fun sum(col: Int, count: Int): XlsxCell =
+            if (count == 0) XlsxCell.Empty
+            else XlsxWriter.column(col).let { c -> XlsxCell.Formula("SUM(${c}2:$c${count + 1})") }
+
+        val pieces = XlsxSheet(
+            name = labels.piecesSheet,
+            header = labels.piecesHeader,
+            rows = state.rows.map { r ->
+                listOf(
+                    XlsxCell.Text(r.name), text(labels.statusLabels[r.status] ?: r.status), int(r.quantityTotal),
+                    num(r.materialCost), num(r.price), num(r.soldPrice), num(r.workHours),
+                    num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate)
+                )
+            },
+            totals = listOf(XlsxCell.Text(labels.total), XlsxCell.Empty, sum(2, state.rows.size), XlsxCell.Empty,
+                XlsxCell.Empty, XlsxCell.Empty, sum(6, state.rows.size), sum(7, state.rows.size),
+                sum(8, state.rows.size), sum(9, state.rows.size)),
+            columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14),
+        )
+        val customers = XlsxSheet(
+            name = labels.customersSheet,
+            header = labels.customersHeader,
+            rows = state.customerRows.map { r ->
+                listOf(XlsxCell.Text(r.name), int(r.pieceCount), num(r.revenue), num(r.cost), num(r.profit))
+            },
+            totals = listOf(XlsxCell.Text(labels.total)) + (1..4).map { sum(it, state.customerRows.size) },
+            columnWidths = listOf(28, 10, 14, 14, 14),
+        )
+        val yarns = XlsxSheet(
+            name = labels.yarnsSheet,
+            header = labels.yarnsHeader,
+            rows = state.yarns.mapIndexed { i, y ->
+                val row = i + 2
+                val used = state.ballsUsedByYarn[y.yarnId] ?: 0f
+                val left = y.quantityOwned?.let { (it - used).coerceAtLeast(0f) }
+                // Total spent = price per ball × balls bought, as a formula so edits in Excel update it
+                val spent = if (y.pricePaid != null && y.quantityOwned != null) XlsxCell.Formula("G$row*H$row") else XlsxCell.Empty
+                listOf(
+                    XlsxCell.Text(y.name), text(y.brand), text(y.color.takeUnless { it == UNKNOWN_YARN_COLOR }),
+                    text(labels.materialLabels[y.material] ?: y.material), text(y.purchaseLocation), date(y.purchaseDate),
+                    num(y.pricePaid), int(y.quantityOwned), if (used > 0f) num(used) else XlsxCell.Empty, num(left),
+                    spent, text(y.notes)
+                )
+            },
+            totals = listOf(XlsxCell.Text(labels.total)) + List(6) { XlsxCell.Empty } +
+                listOf(sum(7, state.yarns.size), sum(8, state.yarns.size), sum(9, state.yarns.size), sum(10, state.yarns.size)),
+            columnWidths = listOf(24, 16, 16, 14, 20, 14, 14, 12, 12, 12, 14, 30),
+        )
+        return listOf(pieces, customers, yarns)
     }
 
-    fun buildCustomerCsv(header: String): String {
-        val sb = StringBuilder()
-        sb.appendLine(header)
-        _uiState.value.customerRows.forEach { row ->
-            sb.appendLine(
-                "${row.name.escapeCsv()},${row.pieceCount},${row.revenue},${row.cost},${row.profit}"
-            )
-        }
-        return sb.toString()
+    /** Writes the .xlsx into [dir] and returns it. Runs off the main thread. */
+    suspend fun exportXlsx(dir: File, labels: ReportExportLabels): File = withContext(Dispatchers.IO) {
+        dir.mkdirs()
+        // Only the latest export is kept, so old ones don't pile up in app storage
+        dir.listFiles { f -> f.name.endsWith(".xlsx") }?.forEach { it.delete() }
+        val file = File(dir, "hooky-app-${LocalDate.now()}.xlsx")
+        file.outputStream().use { XlsxWriter.write(buildWorkbook(labels), it) }
+        file
     }
 
     private fun PieceEntity.toReportRow(): PieceReportRow {
@@ -152,12 +233,10 @@ class ReportsViewModel @Inject constructor(
             workHours = workHours,
             quantityTotal = units,
             salePlatform = salePlatform,
+            soldDate = soldDate,
             totalCost = totalCost,
             totalRevenue = totalRevenue,
             profit = profit,
         )
     }
-
-    private fun String.escapeCsv(): String =
-        if (contains(',') || contains('"') || contains('\n')) "\"${replace("\"", "\"\"")}\"" else this
 }
