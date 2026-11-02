@@ -330,6 +330,7 @@
     <!-- ================================================================ -->
     <string name="action_save">Salvar</string>
     <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Fechar</string>
     <string name="action_edit">Editar</string>
     <string name="action_archive">Arquivar</string>
     <string name="action_clone">Clonar</string>

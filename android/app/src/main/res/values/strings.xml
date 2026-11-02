@@ -330,6 +330,7 @@
     <!-- ================================================================ -->
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
     <string name="action_edit">Edit</string>
     <string name="action_archive">Archive</string>
     <string name="action_clone">Clone</string>

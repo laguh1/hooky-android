@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.detail
 
+import com.hooky.app.ui.components.FullScreenPhotoViewer
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
 import androidx.compose.ui.platform.LocalContext
@@ -203,6 +204,8 @@ private fun YarnDetailContent(
         ) {
             if (photos.isNotEmpty()) {
                 val pagerState = rememberPagerState(pageCount = { photos.size })
+                // Tap a photo to see it full screen (zoom, swipe between photos)
+                var viewerStart by remember { mutableStateOf<Int?>(null) }
 
                 HorizontalPager(
                     state = pagerState,
@@ -210,10 +213,15 @@ private fun YarnDetailContent(
                 ) { page ->
                     AsyncImage(
                         model = photos[page],
-                        contentDescription = "Photo ${page + 1}",
+                        contentDescription = stringResource(R.string.piece_photo_cd, page + 1),
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable { viewerStart = page }
                     )
+                }
+                viewerStart?.let { start ->
+                    FullScreenPhotoViewer(photos = photos, startIndex = start, onDismiss = { viewerStart = null })
                 }
 
                 // Page indicator dots
