@@ -30,6 +30,7 @@
     <string name="dashboard_finished_empty">Nenhuma peça concluída ainda</string>
     <string name="dashboard_see_all">Ver tudo</string>
     <string name="dashboard_total_revenue">Receita Total</string>
+    <string name="dashboard_stash_value">Fios em estoque</string>
     <string name="dashboard_calculator_shortcut">Calculadora de Preços</string>
     <string name="dashboard_report_link">Ver relatório de custos e lucro →</string>
 
