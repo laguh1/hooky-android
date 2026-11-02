@@ -126,3 +126,61 @@ through the file. Script to write after the series.*
 - [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders
 - [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
 - [ ] Episode links go into this file and `docs/SOCIAL-CAPTIONS.md` as they're posted
+
+---
+
+## Voiceover lines (written 2026-11-03)
+Record on your phone in a quiet room, relaxed, like talking to a friend at a crochet group.
+Short sentences; pauses are fine. Music stays underneath, low. Keep the on-screen texts too
+(most people watch muted). Gender-neutral wording in PT.
+
+### Test: spoken hook for episode 4 (first 2 s only)
+- **PT:** "Cliente perguntou: tem em azul? Olha só."
+- **EN:** "A customer asked: got it in blue? Watch this."
+Compare its average watch time in Instagram insights with episodes 1–3 (music only).
+
+### Episode 8 · Seu relatório no Excel (~22 s)
+| Time | On screen | PT | EN |
+|---|---|---|---|
+| 0–3 s | Spreadsheet with totals (hook) | "Quanto você lucrou com seu crochê esse mês? Num toque, você sabe." | "How much did your crochet make this month? One tap and you know." |
+| 3–9 s | Dashboard → Ver relatório de custos e lucro → share icon | "No Hooky App, abra o relatório e toque em compartilhar." | "In Hooky App, open the report and tap share." |
+| 9–16 s | File opening in Excel / Sheets, swipe the tabs | "Vem um arquivo do Excel com três abas: suas peças, seus clientes e seus fios." | "You get an Excel file with three tabs: your pieces, your customers and your yarn." |
+| 16–20 s | Zoom on the Total row | "Os totais já vêm prontos. É só abrir." | "The totals are ready. Just open it." |
+| 20–22 s | End card | "Recurso Pro do Hooky App. E se tiver uma ideia, conta pra gente!" | "A Hooky Pro feature. Got an idea? Tell us!" |
+
+### YouTube tutorial · "Como controlar o lucro do seu crochê no Excel" (2–3 min, wide 16:9 or vertical)
+**Title PT:** Como controlar o lucro do seu crochê no Excel (sem fazer conta) | Hooky App
+**Title EN:** How to track your crochet profit in Excel (no maths) | Hooky App
+Record the phone screen + the spreadsheet (phone app or computer). Have 3–4 pieces with
+prices, a couple marked sold with a customer, and yarns with price and balls.
+
+**1. Hook (0:00–0:10)**
+- PT: "Você vende crochê, mas não sabe direito quanto sobra no fim do mês? Hoje eu te mostro como ver isso numa planilha, sem fazer nenhuma conta."
+- EN: "You sell your crochet, but you're not sure how much is left at the end of the month? Today I'll show you how to see it in a spreadsheet, without doing any maths."
+
+**2. Where the numbers come from (0:10–0:40)**
+- PT: "Tudo começa nas suas peças. Em cada uma, coloque os fios que usou, quantos novelos, até partes, como dois e um terço, e o preço. O custo do material sai sozinho, porque o app sabe quanto você pagou em cada fio. Quando vender, marque o preço de venda e para quem vendeu."
+- EN: "It all starts with your pieces. In each one, add the yarn you used, how many balls, even parts like two and a third, and the price. The material cost works itself out, because the app knows what you paid for each yarn. When you sell, add the sold price and who bought it."
+
+**3. Export (0:40–1:00)**
+- PT: "Agora, no painel, toque em Ver relatório de custos e lucro. Lá em cima, o ícone de compartilhar. Mande o arquivo para você mesmo, salve no Drive, ou abra direto no Excel."
+- EN: "Now on the dashboard, tap View cost and profit report. At the top, the share icon. Send the file to yourself, save it to Drive, or open it straight in Excel."
+
+**4. Tab Peças (1:00–1:30)**
+- PT: "Na primeira aba, cada linha é uma peça: custo do material, preço, horas de trabalho, receita e lucro. Lá embaixo, a linha de total já soma tudo. Esse é o seu lucro sobre o material."
+- EN: "On the first tab, each row is a piece: material cost, price, hours worked, revenue and profit. At the bottom, the total row adds it all up. That's your profit over materials."
+
+**5. Your time counts (1:30–1:55) — the bit sellers love**
+- PT: "Mas e o seu tempo? Crie uma coluna nova, ao lado do lucro, e escreva: igual, lucro menos horas vezes quanto vale a sua hora. Por exemplo, J2 menos G2 vezes 20. Arraste para baixo. Agora você vê o lucro de verdade, contando o seu trabalho."
+- EN: "But what about your time? Add a new column next to profit and type: equals profit minus hours times what your hour is worth. For example, J2 minus G2 times 20. Drag it down. Now you see your real profit, counting your work."
+- On screen: in column M type `=J2-G2*20` (J = Lucro, G = Horas de trabalho; 20 = your hourly rate).
+
+**6. Tabs Clientes and Fios (1:55–2:25)**
+- PT: "Na aba Clientes, você vê quem compra mais: uma pessoa, uma feira, uma loja online. Na aba Fios, o que você tem em estoque, onde comprou, quanto usou, quanto resta e quanto já gastou."
+- EN: "On the Customers tab, you see who buys the most: a person, a market, an online shop. On the Yarn tab, what you have in stock, where you bought it, how much you used, what's left and how much you've spent."
+
+**7. Close (2:25–2:45)**
+- PT: "O relatório e a exportação para o Excel fazem parte do Hooky Pro. O Hooky App está sempre evoluindo para o seu crochê. Se tiver uma ideia, o link de sugestões está na descrição. Até a próxima!"
+- EN: "The report and the Excel export are part of Hooky Pro. Hooky App keeps improving for your craft. If you have an idea, the suggestions link is in the description. See you next time!"
+
+**Description extras:** chapters (0:00 Intro · 0:10 Suas peças · 0:40 Exportar · 1:00 Aba Peças · 1:30 Seu tempo · 1:55 Clientes e fios · 2:25 Final), the Play link `hookyapp.netlify.app/yt`, the suggestions link `hookyapp.netlify.app/feedback`, and the guide `hookyapp.netlify.app/guide`.
