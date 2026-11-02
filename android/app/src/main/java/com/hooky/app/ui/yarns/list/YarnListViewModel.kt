@@ -1,5 +1,7 @@
 package com.hooky.app.ui.yarns.list
 
+import com.hooky.app.domain.model.ColorFamily
+import com.hooky.app.domain.model.YarnColor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.R
@@ -32,12 +34,18 @@ data class YarnListUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val searchQuery: String = "",
-    val selectedFilter: YarnFilter = YarnFilter.ALL
+    val selectedFilter: YarnFilter = YarnFilter.ALL,
+    // Colour groups present in the stash (only these get a chip), the chosen one, and sorting
+    val colorFamilies: List<ColorFamily> = emptyList(),
+    val selectedColor: ColorFamily? = null,
+    val sortByColor: Boolean = false,
 )
 
 sealed interface YarnListAction {
     data class SearchQueryChanged(val query: String) : YarnListAction
     data class FilterSelected(val filter: YarnFilter) : YarnListAction
+    data class ColorSelected(val family: ColorFamily?) : YarnListAction
+    object ToggleSortByColor : YarnListAction
     data class ArchiveYarn(val id: Int) : YarnListAction
     object ClearError : YarnListAction
 }
@@ -63,14 +71,11 @@ class YarnListViewModel @Inject constructor(
                     val active = yarns.filter { !it.archived }
                     allYarns.value = active
                     _uiState.update { current ->
-                        current.copy(
-                            yarns = applyFilterAndSearch(
-                                yarns = active,
-                                filter = current.selectedFilter,
-                                query = current.searchQuery
-                            ),
-                            isLoading = false
-                        )
+                        recompute(current.copy(
+                            isLoading = false,
+                            colorFamilies = active.mapNotNull { colorOf(it)?.let { c -> ColorFamily.of(c) } }
+                                .distinct().sortedBy { it.ordinal }
+                        ))
                     }
                 }
         }
@@ -79,28 +84,16 @@ class YarnListViewModel @Inject constructor(
     fun onAction(action: YarnListAction) {
         when (action) {
             is YarnListAction.SearchQueryChanged -> {
-                _uiState.update { current ->
-                    current.copy(
-                        searchQuery = action.query,
-                        yarns = applyFilterAndSearch(
-                            yarns = allYarns.value,
-                            filter = current.selectedFilter,
-                            query = action.query
-                        )
-                    )
-                }
+                _uiState.update { recompute(it.copy(searchQuery = action.query)) }
             }
             is YarnListAction.FilterSelected -> {
-                _uiState.update { current ->
-                    current.copy(
-                        selectedFilter = action.filter,
-                        yarns = applyFilterAndSearch(
-                            yarns = allYarns.value,
-                            filter = action.filter,
-                            query = current.searchQuery
-                        )
-                    )
-                }
+                _uiState.update { recompute(it.copy(selectedFilter = action.filter)) }
+            }
+            is YarnListAction.ColorSelected -> {
+                _uiState.update { recompute(it.copy(selectedColor = action.family)) }
+            }
+            YarnListAction.ToggleSortByColor -> {
+                _uiState.update { recompute(it.copy(sortByColor = !it.sortByColor)) }
             }
             is YarnListAction.ArchiveYarn -> {
                 viewModelScope.launch {
@@ -116,6 +109,17 @@ class YarnListViewModel @Inject constructor(
                 _uiState.update { it.copy(error = null) }
             }
         }
+    }
+
+    private fun colorOf(yarn: YarnEntity): Int? = YarnColor.effective(yarn.colorHex, yarn.color)
+
+    private fun recompute(state: YarnListUiState): YarnListUiState {
+        var list = applyFilterAndSearch(allYarns.value, state.selectedFilter, state.searchQuery)
+        state.selectedColor?.let { family ->
+            list = list.filter { y -> colorOf(y)?.let { ColorFamily.of(it) } == family }
+        }
+        if (state.sortByColor) list = list.sortedBy { ColorFamily.sortKey(colorOf(it)) }
+        return state.copy(yarns = list)
     }
 
     private fun applyFilterAndSearch(

@@ -34,5 +34,6 @@ data class YarnEntity(
     val archivedDate: String? = null,
     val archivedReason: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val colorHex: String? = null,         // "#RRGGBB" — the colour itself, for circles and sorting
 )

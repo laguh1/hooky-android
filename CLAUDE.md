@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-**Project root:** `/Users/joanasocrates/Documents/claude/hooky/`
+**Project root:** `/Users/joanasocrates/Developer/hooky/` (moved out of iCloud-synced Documents on 2026-11-02; a link at the old path still points here)
 **Android project:** `android/` — open this folder in Android Studio
 **Package name:** `com.laguh.hooky` (changed from `com.hooky.app`, which was already taken on Play Store)
 **Landing page:** separate git repo at `landing/` (pushed independently to `laguh1/hooky-landing`, live on GitHub Pages)

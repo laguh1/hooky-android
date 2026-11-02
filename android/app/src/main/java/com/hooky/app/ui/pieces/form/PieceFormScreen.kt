@@ -1,5 +1,7 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.ui.yarns.YarnColorDot
+import com.hooky.app.domain.model.YarnColor
 import androidx.compose.foundation.layout.PaddingValues
 import com.hooky.app.ui.navigation.Screen
 import com.hooky.app.ui.components.WordSafeText
@@ -862,6 +864,9 @@ private fun YarnUsagePicker(
     val nameById = remember(availableYarns) {
         availableYarns.associate { it.yarnId to "${it.name}${it.brand?.let { b -> " – $b" } ?: ""}" }
     }
+    val colorById = remember(availableYarns) {
+        availableYarns.mapNotNull { y -> YarnColor.effective(y.colorHex, y.color)?.let { y.yarnId to it } }.toMap()
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         yarnsUsed.forEach { usage ->
@@ -873,6 +878,10 @@ private fun YarnUsagePicker(
                     .padding(start = 12.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                colorById[usage.yarnId]?.let { rgb ->
+                    YarnColorDot(rgb, size = 12.dp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 Text(
                     text = displayLabel,
                     style = MaterialTheme.typography.bodyMedium,
@@ -965,6 +974,10 @@ private fun YarnUsagePicker(
                                 onCheckedChange = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
+                            colorById[id]?.let { rgb ->
+                                YarnColorDot(rgb, size = 12.dp)
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
                             Text(
                                 text = nameById[id] ?: id,
                                 style = MaterialTheme.typography.bodyMedium,

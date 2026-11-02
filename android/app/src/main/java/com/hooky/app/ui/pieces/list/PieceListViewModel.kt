@@ -1,5 +1,10 @@
 package com.hooky.app.ui.pieces.list
 
+import kotlinx.coroutines.flow.combine
+import com.hooky.app.domain.model.parseYarnUsages
+import com.hooky.app.domain.model.YarnColor
+import com.hooky.app.domain.model.ColorFamily
+import com.hooky.app.data.repository.YarnRepository
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,19 +31,25 @@ data class PieceListUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val searchQuery: String = "",
-    val selectedFilter: PieceFilter = PieceFilter.ALL
+    val selectedFilter: PieceFilter = PieceFilter.ALL,
+    // A piece's colours come from the yarns it uses (most balls first), so nothing extra to type
+    val pieceColors: Map<String, List<Int>> = emptyMap(),
+    val colorFamilies: List<ColorFamily> = emptyList(),
+    val selectedColor: ColorFamily? = null,
 )
 
 sealed interface PieceListAction {
     data class SearchQueryChanged(val query: String) : PieceListAction
     data class FilterSelected(val filter: PieceFilter) : PieceListAction
+    data class ColorSelected(val family: ColorFamily?) : PieceListAction
     data class ArchivePiece(val id: Int) : PieceListAction
     object ClearError : PieceListAction
 }
 
 @HiltViewModel
 class PieceListViewModel @Inject constructor(
-    private val pieceRepository: PieceRepository
+    private val pieceRepository: PieceRepository,
+    private val yarnRepository: YarnRepository,
 ) : ViewModel() {
 
     // Raw unfiltered list from DB
@@ -49,21 +60,27 @@ class PieceListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            pieceRepository.getAllPieces()
+            combine(pieceRepository.getAllPieces(), yarnRepository.getAllYarns()) { pieces, yarns -> pieces to yarns }
                 .catch { e ->
                     _uiState.update { it.copy(error = e.message, isLoading = false) }
                 }
-                .collect { pieces ->
-                    allPieces.value = pieces.filter { !it.archived }
+                .collect { (pieces, yarns) ->
+                    val active = pieces.filter { !it.archived }
+                    allPieces.value = active
+                    val colorByYarn = yarns.mapNotNull { y -> YarnColor.effective(y.colorHex, y.color)?.let { y.yarnId to it } }.toMap()
+                    val pieceColors = active.associate { piece ->
+                        piece.pieceId to parseYarnUsages(piece.yarnsUsed)
+                            .sortedByDescending { it.balls }
+                            .mapNotNull { colorByYarn[it.yarnId] }
+                            .distinct()
+                    }
                     _uiState.update { current ->
-                        current.copy(
-                            pieces = applyFilterAndSearch(
-                                pieces = pieces.filter { !it.archived },
-                                filter = current.selectedFilter,
-                                query = current.searchQuery
-                            ),
-                            isLoading = false
-                        )
+                        recompute(current.copy(
+                            isLoading = false,
+                            pieceColors = pieceColors,
+                            colorFamilies = pieceColors.values.flatten().map { ColorFamily.of(it) }
+                                .distinct().sortedBy { it.ordinal }
+                        ))
                     }
                 }
         }
@@ -72,28 +89,13 @@ class PieceListViewModel @Inject constructor(
     fun onAction(action: PieceListAction) {
         when (action) {
             is PieceListAction.SearchQueryChanged -> {
-                _uiState.update { current ->
-                    current.copy(
-                        searchQuery = action.query,
-                        pieces = applyFilterAndSearch(
-                            pieces = allPieces.value,
-                            filter = current.selectedFilter,
-                            query = action.query
-                        )
-                    )
-                }
+                _uiState.update { recompute(it.copy(searchQuery = action.query)) }
             }
             is PieceListAction.FilterSelected -> {
-                _uiState.update { current ->
-                    current.copy(
-                        selectedFilter = action.filter,
-                        pieces = applyFilterAndSearch(
-                            pieces = allPieces.value,
-                            filter = action.filter,
-                            query = current.searchQuery
-                        )
-                    )
-                }
+                _uiState.update { recompute(it.copy(selectedFilter = action.filter)) }
+            }
+            is PieceListAction.ColorSelected -> {
+                _uiState.update { recompute(it.copy(selectedColor = action.family)) }
             }
             is PieceListAction.ArchivePiece -> {
                 viewModelScope.launch {
@@ -109,6 +111,14 @@ class PieceListViewModel @Inject constructor(
                 _uiState.update { it.copy(error = null) }
             }
         }
+    }
+
+    private fun recompute(state: PieceListUiState): PieceListUiState {
+        var list = applyFilterAndSearch(allPieces.value, state.selectedFilter, state.searchQuery)
+        state.selectedColor?.let { family ->
+            list = list.filter { p -> state.pieceColors[p.pieceId].orEmpty().any { ColorFamily.of(it) == family } }
+        }
+        return state.copy(pieces = list)
     }
 
     private fun applyFilterAndSearch(

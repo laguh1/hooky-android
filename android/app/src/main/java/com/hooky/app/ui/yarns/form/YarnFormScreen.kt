@@ -1,5 +1,10 @@
 package com.hooky.app.ui.yarns.form
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.filled.Colorize
+import androidx.compose.foundation.horizontalScroll
+import com.hooky.app.ui.yarns.YarnColorDot
+import com.hooky.app.domain.model.YarnColor
 import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
@@ -382,15 +387,43 @@ fun YarnFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    // Circle shows the picked colour, or one worked out from the typed name
+                    val shownColor = YarnColor.effective(uiState.colorHex, uiState.color)
                     OutlinedTextField(
                         value = uiState.color,
                         onValueChange = { viewModel.onAction(YarnFormAction.ColorChanged(it)) },
                         label = { Text(stringResource(R.string.yarn_field_color_name)) },
+                        leadingIcon = shownColor?.let { rgb -> { YarnColorDot(rgb, size = 20.dp) } },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()
                     )
+                    ColorSwatchPicker(
+                        selectedHex = uiState.colorHex,
+                        onSelected = { viewModel.onAction(YarnFormAction.ColorHexChanged(it)) }
+                    )
+                    if (uiState.photos.isNotEmpty()) {
+                        var showColorFromPhoto by remember { mutableStateOf(false) }
+                        TextButton(
+                            onClick = { showColorFromPhoto = true },
+                            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.Colorize, contentDescription = null, modifier = Modifier.size(18.dp), tint = Slate)
+                            Spacer(Modifier.width(6.dp))
+                            Text(stringResource(R.string.yarn_color_from_photo), color = Slate)
+                        }
+                        if (showColorFromPhoto) {
+                            ColorFromPhotoDialog(
+                                photos = uiState.photos,
+                                onDismiss = { showColorFromPhoto = false },
+                                onPicked = { rgb ->
+                                    viewModel.onAction(YarnFormAction.ColorHexChanged(YarnColor.toHex(rgb)))
+                                    showColorFromPhoto = false
+                                }
+                            )
+                        }
+                    }
 
                     // Color suggestion chip — appears after photo is added
                     val suggestedColor = uiState.suggestedColor
@@ -945,3 +978,39 @@ private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
     focusedLabelColor = BrandPurple,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )
+
+// A row of yarn-like swatches. Tapping the selected one again clears the choice.
+@Composable
+private fun ColorSwatchPicker(selectedHex: String?, onSelected: (String?) -> Unit) {
+    val selected = YarnColor.parseHex(selectedHex)
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = stringResource(R.string.yarn_color_pick),
+            style = MaterialTheme.typography.bodySmall,
+            color = TextSecondary
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            YarnColor.PALETTE.forEach { rgb ->
+                val isSelected = rgb == selected
+                val hex = YarnColor.toHex(rgb)
+                val cd = stringResource(R.string.yarn_color_swatch_cd, hex)
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(if (isSelected) 2.dp else 0.dp, if (isSelected) Slate else Color.Transparent, CircleShape)
+                        .padding(4.dp)
+                        .clickable(onClickLabel = cd) { onSelected(if (isSelected) null else hex) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    YarnColorDot(rgb, size = 30.dp)
+                }
+            }
+        }
+    }
+}
