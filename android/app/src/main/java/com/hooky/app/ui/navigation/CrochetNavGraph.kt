@@ -235,7 +235,8 @@ fun CrochetNavGraph(
                     onNavigateBack = { navController.popBackStack() },
                     onNavigateToEdit = { pieceId ->
                         navController.navigate(Screen.PieceEdit.createRoute(pieceId))
-                    }
+                    },
+                    onNavigateToPro = { navController.navigate(Screen.Pro.route) }
                 )
             }
             composable(Screen.PieceCreate.route) {

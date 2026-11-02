@@ -451,7 +451,7 @@
     <string name="piece_extra_counters">Contadores extra</string>
     <string name="piece_counter_add">Añadir contador</string>
     <string name="piece_counter_edit">Editar contador</string>
-    <string name="piece_counter_empty">Sin contadores extra — toca + para añadir uno</string>
+    <string name="piece_counter_empty">Cuenta repeticiones o puntos también — toca + para añadir un contador</string>
     <string name="piece_counter_name_hint">Nombre del contador</string>
     <string name="piece_counter_target_hint">Objetivo (opcional)</string>
     <string name="piece_field_hook_size_mm">Tamaño gancho (mm)</string>
@@ -680,7 +680,7 @@
     <string name="pro_feature_reports">Informes de costes y beneficios</string>
     <string name="pro_feature_customers">Ingresos por cliente</string>
     <string name="pro_feature_batches">Lotes: más de 1 de la misma pieza</string>
-    <string name="pro_feature_counters">Contadores extra en cada pieza</string>
+    <string name="pro_feature_counters">Más de un contador extra en cada pieza</string>
     <string name="pro_feature_photos">Más de 5 fotos por pieza</string>
     <string name="pro_buy_button">Obtener Pro · %s</string>
     <string name="pro_extend_button">Añadir 12 meses más · %s</string>
@@ -699,6 +699,7 @@
     <string name="pro_gate_reports">Los informes de costes y beneficios forman parte de Hooky Pro.</string>
     <string name="pro_gate_button">Ver Hooky Pro</string>
     <string name="pro_gate_quantity">¿Vas a hacer más de 1 de la misma pieza? Los lotes forman parte de Hooky Pro.</string>
+    <string name="pro_gate_counters">¿Quieres más contadores? Más de un contador extra es parte de Hooky Pro.</string>
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Activo</string>
     <string name="settings_pro_subtitle_inactive">Herramientas para vender</string>

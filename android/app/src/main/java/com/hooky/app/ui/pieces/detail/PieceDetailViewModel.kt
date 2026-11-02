@@ -27,6 +27,9 @@ import javax.inject.Inject
 
 enum class TimerState { IDLE, RUNNING, PAUSED }
 
+// Free users get the row counter plus this many extra counters per piece
+const val FREE_EXTRA_COUNTERS = 1
+
 data class PieceDetailUiState(
     val piece: PieceEntity? = null,
     val isLoading: Boolean = true,
@@ -351,6 +354,9 @@ class PieceDetailViewModel @Inject constructor(
                 }
             }
             is PieceDetailAction.AddCounter -> {
+                // Free: one extra counter per piece; more need Pro
+                val state = _uiState.value
+                if (!state.isPremium && state.counters.size >= FREE_EXTRA_COUNTERS) return
                 viewModelScope.launch {
                     try {
                         counterRepository.addCounter(pieceId.toString(), action.name, action.target)

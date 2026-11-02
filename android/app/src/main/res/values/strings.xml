@@ -451,7 +451,7 @@
     <string name="piece_extra_counters">Extra Counters</string>
     <string name="piece_counter_add">Add Counter</string>
     <string name="piece_counter_edit">Edit Counter</string>
-    <string name="piece_counter_empty">No extra counters yet — tap + to add one</string>
+    <string name="piece_counter_empty">Count repeats or stitches too — tap + to add a counter</string>
     <string name="piece_counter_name_hint">Counter name</string>
     <string name="piece_counter_target_hint">Target (optional)</string>
     <string name="piece_field_hook_size_mm">Hook size (mm)</string>
@@ -691,7 +691,7 @@
     <string name="pro_feature_reports">Cost &amp; profit reports</string>
     <string name="pro_feature_customers">Revenue by customer</string>
     <string name="pro_feature_batches">Batches: more than 1 of the same piece</string>
-    <string name="pro_feature_counters">Extra counters on every piece</string>
+    <string name="pro_feature_counters">More than one extra counter on every piece</string>
     <string name="pro_feature_photos">More than 5 photos per piece</string>
     <string name="pro_buy_button">Get Pro · %s</string>
     <string name="pro_extend_button">Add 12 more months · %s</string>
@@ -710,6 +710,7 @@
     <string name="pro_gate_reports">Cost &amp; profit reports are part of Hooky Pro.</string>
     <string name="pro_gate_button">See Hooky Pro</string>
     <string name="pro_gate_quantity">Making more than 1 of the same piece? Batches are part of Hooky Pro.</string>
+    <string name="pro_gate_counters">Want more counters? More than one extra counter is part of Hooky Pro.</string>
     <string name="settings_section_pro">HOOKY PRO</string>
     <string name="settings_pro_subtitle_active">Active</string>
     <string name="settings_pro_subtitle_inactive">Tools for sellers</string>
