@@ -67,14 +67,14 @@
     <string name="piece_field_date_finished">Date Finished</string>
     <string name="piece_field_work_hours">Hours</string>
     <string name="piece_field_work_minutes">Minutes (0–59)</string>
-    <string name="piece_field_price">Suggested Price (€)</string>
-    <string name="piece_field_material_cost">Material Cost (€)</string>
+    <string name="piece_field_price">Suggested Price (%1$s)</string>
+    <string name="piece_field_material_cost">Material Cost (%1$s)</string>
     <string name="piece_field_gift_recipient">Gift Recipient</string>
     <string name="piece_field_sale_platform">Customer / Shop / Webpage</string>
     <string name="piece_field_sale_platform_hint">e.g. Maria Silva, Etsy, Shopify, local craft fair</string>
     <string name="piece_field_sale_link">Notes / Links</string>
     <string name="piece_field_sold_date">Sold Date</string>
-    <string name="piece_field_sold_price">Sold Price (€)</string>
+    <string name="piece_field_sold_price">Sold Price (%1$s)</string>
     <string name="piece_field_quantity_total">Quantity</string>
     <string name="piece_field_quantity_sold">Sold</string>
     <string name="piece_suffix_per_unit">" (per unit)"</string>
@@ -137,7 +137,7 @@
     <string name="yarn_field_hook_size">Hook Size (mm)</string>
     <string name="yarn_field_needle_size">Needle Size (mm)</string>
     <string name="yarn_field_gauge">Gauge</string>
-    <string name="yarn_field_price_paid">Price Paid (€)</string>
+    <string name="yarn_field_price_paid">Price Paid (%1$s)</string>
     <string name="yarn_field_purchase_location">Purchase Location</string>
     <string name="yarn_field_purchase_date">Purchase Date</string>
     <string name="yarn_field_purchase_link">Purchase Link</string>

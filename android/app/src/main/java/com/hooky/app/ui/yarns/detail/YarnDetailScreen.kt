@@ -1,5 +1,8 @@
 package com.hooky.app.ui.yarns.detail
 
+import androidx.compose.ui.platform.LocalContext
+import com.hooky.app.ui.settings.formatCurrency
+import com.hooky.app.ui.settings.getCurrencySymbol
 import com.hooky.app.util.formatBalls
 import com.hooky.app.ui.yarns.yarnColorLabel
 import androidx.compose.foundation.background
@@ -337,7 +340,7 @@ private fun YarnDetailContent(
             val hasPurchase = yarn.pricePaid != null || yarn.purchaseLocation != null
             if (hasPurchase) {
                 YarnInfoCard(title = stringResource(R.string.yarn_section_purchase)) {
-                    yarn.pricePaid?.let { InfoRow(label = stringResource(R.string.yarn_label_price_paid), value = "€$it") }
+                    yarn.pricePaid?.let { InfoRow(label = stringResource(R.string.yarn_label_price_paid), value = it.formatCurrency(getCurrencySymbol(LocalContext.current))) }
                     yarn.purchaseLocation?.let { InfoRow(label = stringResource(R.string.yarn_label_location), value = it) }
                     yarn.purchaseDate?.let { InfoRow(label = stringResource(R.string.yarn_label_date), value = it.toDisplayDate()) }
                     yarn.purchaseLink?.let { link ->

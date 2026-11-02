@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.form
 
+import com.hooky.app.ui.settings.getCurrencySymbol
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -596,7 +597,7 @@ fun YarnFormScreen(
                     OutlinedTextField(
                         value = uiState.pricePaid,
                         onValueChange = { viewModel.onAction(YarnFormAction.PricePaidChanged(it)) },
-                        label = { Text(stringResource(R.string.yarn_field_price_paid)) },
+                        label = { Text(stringResource(R.string.yarn_field_price_paid, getCurrencySymbol(LocalContext.current))) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
