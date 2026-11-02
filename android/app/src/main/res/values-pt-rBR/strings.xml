@@ -67,14 +67,14 @@
     <string name="piece_field_date_finished">Data de Conclusão</string>
     <string name="piece_field_work_hours">Horas de Trabalho</string>
     <string name="piece_field_work_minutes">Minutos (0–59)</string>
-    <string name="piece_field_price">Preço Sugerido (R$)</string>
-    <string name="piece_field_material_cost">Custo do Material (R$)</string>
+    <string name="piece_field_price">Preço Sugerido (%1$s)</string>
+    <string name="piece_field_material_cost">Custo do Material (%1$s)</string>
     <string name="piece_field_gift_recipient">Destinatário do Presente</string>
     <string name="piece_field_sale_platform">Cliente / Loja / Site</string>
     <string name="piece_field_sale_platform_hint">ex. Maria Silva, Etsy, Shopify, feira de artesanato</string>
     <string name="piece_field_sale_link">Notas / Links</string>
     <string name="piece_field_sold_date">Data de Venda</string>
-    <string name="piece_field_sold_price">Preço Vendido (R$)</string>
+    <string name="piece_field_sold_price">Preço Vendido (%1$s)</string>
     <string name="piece_field_quantity_total">Quantidade</string>
     <string name="piece_field_quantity_sold">Vendidas</string>
     <string name="piece_suffix_per_unit">" (por unidade)"</string>
@@ -137,7 +137,7 @@
     <string name="yarn_field_hook_size">Tamanho do Gancho (mm)</string>
     <string name="yarn_field_needle_size">Tamanho da Agulha (mm)</string>
     <string name="yarn_field_gauge">Tensão</string>
-    <string name="yarn_field_price_paid">Preço Pago (R$)</string>
+    <string name="yarn_field_price_paid">Preço Pago (%1$s)</string>
     <string name="yarn_field_purchase_location">Local de Compra</string>
     <string name="yarn_field_purchase_date">Data de Compra</string>
     <string name="yarn_field_purchase_link">Link de Compra</string>
@@ -482,6 +482,13 @@
     <string name="piece_picker_empty_stitch">Nenhum ponto na sua biblioteca ainda.</string>
     <string name="piece_yarn_decrease_balls_cd">Diminuir novelos usados</string>
     <string name="piece_yarn_increase_balls_cd">Aumentar novelos usados</string>
+    <string name="piece_yarn_edit_balls_cd">Editar novelos usados</string>
+    <string name="piece_yarn_balls_dialog_title">Novelos usados</string>
+    <string name="piece_yarn_balls_dialog_hint">Inteiros ou partes, ex.: 2,5</string>
+    <plurals name="piece_yarn_balls_amount">
+        <item quantity="one">%1$s novelo</item>
+        <item quantity="other">%1$s novelos</item>
+    </plurals>
     <string name="piece_material_cost_suggestion">Custo de material com base nos fios: %s</string>
 
     <!-- ================================================================ -->
@@ -516,6 +523,8 @@
     <string name="yarn_label_date">Data</string>
     <string name="yarn_label_link">Link</string>
     <string name="yarn_label_quantity_owned">Quantidade</string>
+    <string name="yarn_label_used_in_pieces">Usado em peças</string>
+    <string name="yarn_label_left">Restante</string>
     <string name="yarn_label_iron_temp">Temperatura de lavagem</string>
     <string name="yarn_label_care_notes">Notas de cuidado</string>
     <string name="yarn_label_no_bleach">Sem alvejante</string>

@@ -67,14 +67,14 @@
     <string name="piece_field_date_finished">Fecha de finalización</string>
     <string name="piece_field_work_hours">Horas trabajadas</string>
     <string name="piece_field_work_minutes">Minutos (0–59)</string>
-    <string name="piece_field_price">Precio sugerido (€)</string>
-    <string name="piece_field_material_cost">Coste de material (€)</string>
+    <string name="piece_field_price">Precio sugerido (%1$s)</string>
+    <string name="piece_field_material_cost">Coste de material (%1$s)</string>
     <string name="piece_field_gift_recipient">Destinatario del regalo</string>
     <string name="piece_field_sale_platform">Cliente / Tienda / Página web</string>
     <string name="piece_field_sale_platform_hint">ej. Maria Silva, Etsy, Shopify, feria artesanal</string>
     <string name="piece_field_sale_link">Notas / Enlaces</string>
     <string name="piece_field_sold_date">Fecha de venta</string>
-    <string name="piece_field_sold_price">Precio de venta (€)</string>
+    <string name="piece_field_sold_price">Precio de venta (%1$s)</string>
     <string name="piece_field_quantity_total">Cantidad</string>
     <string name="piece_field_quantity_sold">Vendidas</string>
     <string name="piece_suffix_per_unit">" (por unidad)"</string>
@@ -137,7 +137,7 @@
     <string name="yarn_field_hook_size">Tamaño de ganchillo (mm)</string>
     <string name="yarn_field_needle_size">Tamaño de aguja (mm)</string>
     <string name="yarn_field_gauge">Tensión</string>
-    <string name="yarn_field_price_paid">Precio pagado (€)</string>
+    <string name="yarn_field_price_paid">Precio pagado (%1$s)</string>
     <string name="yarn_field_purchase_location">Lugar de compra</string>
     <string name="yarn_field_purchase_date">Fecha de compra</string>
     <string name="yarn_field_purchase_link">Enlace de compra</string>
@@ -482,6 +482,13 @@
     <string name="piece_picker_empty_stitch">No hay puntos en tu biblioteca todavía.</string>
     <string name="piece_yarn_decrease_balls_cd">Reducir ovillos usados</string>
     <string name="piece_yarn_increase_balls_cd">Aumentar ovillos usados</string>
+    <string name="piece_yarn_edit_balls_cd">Editar ovillos usados</string>
+    <string name="piece_yarn_balls_dialog_title">Ovillos usados</string>
+    <string name="piece_yarn_balls_dialog_hint">Enteros o partes, p. ej. 2,5</string>
+    <plurals name="piece_yarn_balls_amount">
+        <item quantity="one">%1$s ovillo</item>
+        <item quantity="other">%1$s ovillos</item>
+    </plurals>
     <string name="piece_material_cost_suggestion">Coste de material según las lanas: %s</string>
 
     <!-- ================================================================ -->
@@ -516,6 +523,8 @@
     <string name="yarn_label_date">Fecha</string>
     <string name="yarn_label_link">Enlace</string>
     <string name="yarn_label_quantity_owned">Cantidad</string>
+    <string name="yarn_label_used_in_pieces">Usado en piezas</string>
+    <string name="yarn_label_left">Restante</string>
     <string name="yarn_label_iron_temp">Temperatura de lavado</string>
     <string name="yarn_label_care_notes">Notas de cuidado</string>
     <string name="yarn_label_no_bleach">Sin lejía</string>

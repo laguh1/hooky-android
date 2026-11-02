@@ -87,3 +87,27 @@ small new feature). Bundle: `android/app/build/outputs/bundle/release/app-releas
 - PT-BR: "gancho" is Portugal Portuguese / literal. Brazilian crocheters say "agulha": `yarn_label_hook_size` "Tamanho gancho" → "Agulha recomendada", `piece_field_hook_size_mm`, `piece_section_dimensions_hook`, and "agulha ou gancho" phrases. `yarn_field_gauge` / `yarn_label_gauge` "Tensão" → "Amostra". Spotted while making the toalhinha reel.
 - ES: Help text says "vueltas" while the counter says "filas".
 - PT/ES: Dashboard Search/Settings accessibility labels are still in English.
+
+## Feature plan: "the app for crafters who sell" (agreed 2026-11-02)
+Already in the app (don't rebuild): balls used per yarn on a piece, material cost from balls × price paid, Suggested Price, work timer.
+
+**Next release**
+1. Yarn amounts as fractions (2⅓ balls), not only whole balls. *In progress on `feature/yarn-usage-decimals`.*
+   - Fix: piece detail showed no yarns for pieces saved with ball counts (it read the old ID-only format).
+   - Yarn detail: "Used in pieces" and "Left" worked out from the pieces (owned − used), so editing a piece never double-counts. Archived pieces don't count.
+2. Excel-friendly export: save a real file, not text. Today the CSV is sent as text with comma separators, which Spanish/Brazilian Excel opens in one column. Prefer .xlsx with tabs Pieces / Customers / Yarns (stock, where bought, unit price, total spent, notes). Then a tutorial reel showing the file in Excel.
+3. Stash value on the dashboard (sum of price paid × balls left).
+
+**After that**
+- Save the real colour value from the photo (not only a name), colour picker to correct it, colour groups; Yarns tab colour wall and filter by colour.
+- "Do I have enough yarn?" for planned pieces + shopping list.
+- Orders with due date, deposit and reminder.
+- Year summary for taxes (autónomo / MEI).
+- Automatic Google Drive backup; home-screen widget.
+- Check Play Console store-listing conversion and retention before big builds.
+
+## Also noted 2026-11-02
+- **Extra counters are invisible without Pro** (`PieceDetailScreen` shows `ExtraCountersCard` only `if (isPremium)`). A 4★ review on 1.7.0 (before Pro could be bought) said the counter is "useless" without repeat/stitch counters. Options: make 1–2 extra counters free, or at least show the card to free users with a Pro lock so people know it exists. Lace ideas: linked counters (every N rows → +1 repeat, auto-reset), voice for extra counters, keep screen on while counting.
+- **Play Console "R8 optimisation" hint (1.9.0):** `proguard-rules.pro` keeps whole libraries (`androidx.room.**`, `dagger.hilt.**`), every `@Serializable` class, and has stale `com.crochet.manager` rules from the old package. Trim to what's needed (Room/Hilt ship their own rules) → smaller, faster app. Test a release build on the emulator end to end before shipping: a missing keep rule only crashes release builds.
+- **Play Console "bitmap downsampling" hint:** already handled. Every decode goes through `util/BitmapUtils.kt` with `inSampleSize`, and photos on screen use Coil. Likely a false positive from the bounds-only decode or a library; no action.
+- Build folder keeps getting "… 2.class" duplicates (iCloud syncs ~/Documents), which breaks `assembleDebug` until `./gradlew clean`.
