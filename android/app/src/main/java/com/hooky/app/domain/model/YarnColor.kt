@@ -101,3 +101,52 @@ object YarnColor {
         add(0xC5E384, "yellow green", "verde limao", "verde lima", "lima", "lime")
     }
 }
+
+/** Colour groups for filtering, in rainbow order (the order chips and "sort by colour" use). */
+enum class ColorFamily(val swatch: Int) {
+    RED(0xD32F2F), PINK(0xE91E63), ORANGE(0xFB8C00), YELLOW(0xFDD835), GREEN(0x43A047),
+    BLUE(0x1E88E5), PURPLE(0x8E24AA), BROWN(0x795548), NEUTRAL(0xBDBDBD);
+
+    companion object {
+        fun of(rgb: Int): ColorFamily {
+            val (h, s, l) = hsl(rgb)
+            return when {
+                // white, cream, ecru, beige (very light), greys, black
+                s < 0.18f || l > 0.88f || l < 0.10f -> NEUTRAL
+                // dark or muted warm tones read as brown (camel, chocolate, rust)
+                h in 15f..50f && (l < 0.45f || s < 0.45f) -> BROWN
+                h < 15f || h >= 345f -> if (l > 0.70f) PINK else RED
+                h < 45f -> ORANGE
+                h < 70f -> YELLOW
+                h < 170f -> GREEN
+                h < 260f -> BLUE
+                h < 320f -> PURPLE     // lilac sits right at 300°
+                else -> PINK
+            }
+        }
+
+        /** Sort key for "sort by colour": group first, then hue, then light to dark. */
+        fun sortKey(rgb: Int?): Double {
+            if (rgb == null) return Double.MAX_VALUE        // no colour: at the end
+            val (h, _, l) = hsl(rgb)
+            return of(rgb).ordinal * 1000.0 + h + (1 - l)
+        }
+
+        private fun hsl(rgb: Int): Triple<Float, Float, Float> {
+            val r = ((rgb shr 16) and 0xFF) / 255f
+            val g = ((rgb shr 8) and 0xFF) / 255f
+            val b = (rgb and 0xFF) / 255f
+            val max = maxOf(r, g, b); val min = minOf(r, g, b)
+            val l = (max + min) / 2f
+            if (max == min) return Triple(0f, 0f, l)
+            val d = max - min
+            val s = if (l > 0.5f) d / (2f - max - min) else d / (max + min)
+            val h = when (max) {
+                r -> ((g - b) / d + (if (g < b) 6 else 0)) * 60f
+                g -> ((b - r) / d + 2) * 60f
+                else -> ((r - g) / d + 4) * 60f
+            }
+            return Triple(h, s, l)
+        }
+    }
+}
