@@ -13,6 +13,13 @@ they come (from the user, reviews, the suggestions form, social comments); move 
    - Pairs with: deposit/advance paid ("sinal"), and an "Encomenda" status before "Em Andamento".
 
 ## Small fixes found on the phone (2026-11-03, 1.10.1 on the S22)
+- **Decimal comma loses prices and costs (bug, important):** the piece form saves money fields with
+  `toFloatOrNull()`, which only accepts a dot. In PT/ES, `ApplyYarnMaterialCost` fills the cost with
+  `"%.2f".format(cost)` → "12,50" → saved as null, and anything the user types with a comma is
+  lost the same way, silently (`PieceFormViewModel.kt:358, 441–447, 476`). Seen 2026-11-03:
+  Escândalo Bege and Cacherubì keep no cost; every cost in the report is a whole number. Fix: one
+  locale-aware parser for all decimal fields (pieces, yarns, calculator), format with the locale
+  but parse both "," and "."; also check the yarn form's price paid. Add a unit test.
 - **Hidden saved fields (bug, reported by the user) — batched for the next release, no 1.10.2 (decided 2026-11-03):**
   - Piece: changing destination from gift to sale hides the "Presente para" field but saving keeps
     the name, and `PieceDetailScreen.kt:525` shows it for any destination ("Marcia" on a
