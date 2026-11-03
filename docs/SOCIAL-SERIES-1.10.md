@@ -121,7 +121,7 @@ through the file. Script to write after the series.*
 ---
 
 ## Production checklist
-- [ ] 1.10.0 live on Play (all users, not only the 20% rollout) before episode 1
+- [x] 1.10.0 and 1.10.1 (colour-picker fix) live on Play for all users (user confirmed 2026-11-03)
 - [ ] Record all 8 takes in PT-BR in one sitting with real data, then repeat in EN
 - [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders
 - [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
