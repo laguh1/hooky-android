@@ -13,6 +13,18 @@ they come (from the user, reviews, the suggestions form, social comments); move 
    - Pairs with: deposit/advance paid ("sinal"), and an "Encomenda" status before "Em Andamento".
 
 ## Small fixes found on the phone (2026-11-03, 1.10.1 on the S22)
+- **Hidden saved fields (bug, reported by the user):**
+  - Piece: changing destination from gift to sale hides the "Presente para" field but saving keeps
+    the name, and `PieceDetailScreen.kt:525` shows it for any destination ("Marcia" on a
+    Feirinha de Natal piece). Same the other way: a gifted piece keeps its price and the report
+    counts it (Cacherubì R$210). Fix: in `PieceFormViewModel` save, clear gift fields unless
+    FOR_GIFT/GIFTED and sale fields unless FOR_SALE/SOLD; detail shows gift row only for gifts.
+  - Yarn: label scanner stores `materialComposition` with line breaks ("100% Merino Wool\n
+    Superwash\nLndeobky"); the form field is `singleLine` so only line 1 shows and the rest can't
+    be deleted. Fix: replace line breaks with spaces on scan and when loading the form, allow up to
+    3 lines; check other scanned fields too.
+  - Workarounds: switch destination back to show the field, clear, switch again; for the yarn,
+    long-press → Selecionar tudo → retype.
 - **Card names cut with no "…":** piece and stitch cards use `maxLines = 1` without
   `overflow = TextOverflow.Ellipsis` (`PieceListScreen.kt:330`, `StitchListScreen.kt:685`), so
   "Xale branco final de ano" shows as "Xale branco final de". Use 2 lines + ellipsis.
