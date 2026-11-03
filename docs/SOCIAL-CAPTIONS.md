@@ -692,6 +692,8 @@ Tags (Meta Business Suite video tags): `crochê, toalhinha de crochê, centro de
 
 English version of the toalhinha reel above. Videos: `shared/promo/ENGLISH/videos/reel-doily-en.mp4` (silent, for YouTube) and `reel-doily-en-music.mp4` (music: "Survival Mode" by Blue Deer Studio, YouTube Audio Library). Build: `build-reel-toalhinha.py --en`. Recipe: Crochê Lú, https://youtu.be/SiWhH5arSJE (in Portuguese).
 
+**Published on YouTube (2026-11-03):** https://youtube.com/shorts/2rU4t8NqRrs (silent upload, music added in YouTube Studio Editor)
+
 **YouTube Shorts**
 Title: My round crochet doily 🌿 pattern by @crochelu
 > Finished my round crochet doily! Bloom 6/4 cotton (LindeHobby) in sage green, 2.5 mm hook, 37 cm across, about 6 hours of work. It was a gift 🎁
