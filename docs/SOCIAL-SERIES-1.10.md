@@ -115,13 +115,13 @@ the button in the edit instead.
 **How Clonar works (checked in code):** it opens the edit form straight away with everything
 copied **except photos**: brand, material, price, balls, purchase date, notes **and the colour**.
 So on every copy: add the new ball's photo first (the picker needs it), then change the colour.
-**Prep:** Shine 1 complete (photo + colour). Shines 3–5 cloned beforehand off camera, each with its
-own photo and colour. One photo per ball, daylight, plain background. Check balls, price and date
+**Prep:** 3 Shines already in the app (Pérola de amêndoa, Rosa dourada, Verde azulado), each with
+its own photo and colour; the 4th is cloned live on camera (decided 2026-11-03). One photo per ball, daylight, plain background. Check balls, price and date
 on each copy (they feed the stash value and the Fios tab).
 **Record (part 1, ~13 s):** open Shine 1 → Clonar → the filled-in form (hold 1 s) → add the photo
 of the next ball → "Pegar a cor da foto" → tap the yarn → Confirmar → change the colour name
 (short, e.g. "Rosa"; speed typing up 2x in the edit) → Salvar.
-**Record (part 2, ~9 s):** Yarns tab → "Por cor" → the rainbow, with the 5 Shines together → tap
+**Record (part 2, ~9 s):** Yarns tab → "Por cor" → the rainbow, with the 4 Shines together → tap
 one colour circle → only that colour → tap again → all back.
 **On-screen texts:** "Toque no fio na foto" · "A cor certinha" · "Ordene por cor" · "Ache o fio em segundos"
 **Tip text (small):** "Foto com luz natural = cor mais fiel"
