@@ -107,17 +107,27 @@ show price per ball × balls left.
 **Caption PT:** Antes de comprar fio para as encomendas de Natal, veja quanto vale o que você já tem guardado. Está no painel do Hooky App 😅
 **Caption EN:** Before buying yarn for Christmas orders, check what your stash is already worth. It's on Hooky App's dashboard 😅
 
-## 7/8 · Seu estoque virou arco-íris (colour picker + sort/filter by colour, merged)
+## 7/8 · Seu estoque virou arco-íris (clone + colour picker + sort/filter by colour)
 **Hook (0–3 s):** "Seu estoque virou *arco-íris*" over the sorted stash (end result first)
-**Record (part 1, ~7 s):** open a yarn with a photo → Editar → "Pegar a cor da foto" → tap the
-yarn → Confirmar → the circle shows the colour.
-**Record (part 2, ~8 s):** Yarns tab → "Por cor" → the list becomes a rainbow → tap the green
-circle → only greens → tap again → all back.
+**Idea (2026-11-03):** build the rainbow on camera by cloning the same yarn in another colour
+(LindeHobby Shine, 5 colours). Clonar is an older feature, shown again with no subtitle: zoom on
+the button in the edit instead.
+**How Clonar works (checked in code):** it opens the edit form straight away with everything
+copied **except photos**: brand, material, price, balls, purchase date, notes **and the colour**.
+So on every copy: add the new ball's photo first (the picker needs it), then change the colour.
+**Prep:** Shine 1 complete (photo + colour). Shines 3–5 cloned beforehand off camera, each with its
+own photo and colour. One photo per ball, daylight, plain background. Check balls, price and date
+on each copy (they feed the stash value and the Fios tab).
+**Record (part 1, ~13 s):** open Shine 1 → Clonar → the filled-in form (hold 1 s) → add the photo
+of the next ball → "Pegar a cor da foto" → tap the yarn → Confirmar → change the colour name
+(short, e.g. "Rosa"; speed typing up 2x in the edit) → Salvar.
+**Record (part 2, ~9 s):** Yarns tab → "Por cor" → the rainbow, with the 5 Shines together → tap
+one colour circle → only that colour → tap again → all back.
 **On-screen texts:** "Toque no fio na foto" · "A cor certinha" · "Ordene por cor" · "Ache o fio em segundos"
 **Tip text (small):** "Foto com luz natural = cor mais fiel"
 **End card:** "Quanto seu Natal *rendeu*?"
-**Caption PT:** Toque no fio na foto e o Hooky App pega a cor certinha. Depois é só ordenar o estoque por cor e ver tudo como um arco-íris, ou mostrar só os verdes, os azuis… Dica: fotos com luz natural dão cores mais fiéis.
-**Caption EN:** Tap the yarn in its photo and Hooky App picks its exact colour. Then sort your stash by colour and see it as a rainbow, or show only the greens, the blues… Tip: daylight photos give truer colours.
+**Caption PT:** Comprou o mesmo fio em outras cores? Clone e só troque a cor: toque no fio na foto e o Hooky App pega a cor certinha. Depois ordene o estoque por cor e veja tudo como um arco-íris, ou mostre só os verdes, os azuis… Dica: fotos com luz natural dão cores mais fiéis.
+**Caption EN:** Bought the same yarn in more colours? Clone it and just change the colour: tap the yarn in its photo and Hooky App picks the exact shade. Then sort your stash by colour and see it as a rainbow, or show only the greens, the blues… Tip: daylight photos give truer colours.
 
 ## 8/8 · Quanto seu Natal rendeu? (Pro, Excel from the money side)
 **Hook (0–3 s):** "Quanto seu Natal *rendeu*?" over the spreadsheet with the Total row
