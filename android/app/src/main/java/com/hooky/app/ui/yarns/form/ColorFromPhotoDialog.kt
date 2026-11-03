@@ -15,16 +15,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -50,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.hooky.app.R
+import com.hooky.app.ui.components.WordSafeText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.White
 import com.hooky.app.ui.yarns.YarnColorDot
@@ -88,7 +93,6 @@ fun ColorFromPhotoDialog(
                 .fillMaxSize()
                 .background(Color.Black)
                 .statusBarsPadding()
-                .navigationBarsPadding()
         ) {
             Text(
                 text = stringResource(R.string.yarn_color_from_photo_hint),
@@ -96,6 +100,34 @@ fun ColorFromPhotoDialog(
                 color = White,
                 modifier = Modifier.padding(16.dp)
             )
+
+            // Buttons at the top, where no navigation bar can cover them
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                picked?.let { YarnColorDot(it, size = 36.dp) }
+                Box(modifier = Modifier.weight(1f))
+                TextButton(onClick = onDismiss) {
+                    WordSafeText(stringResource(R.string.action_cancel), style = LocalTextStyle.current.copy(color = White))
+                }
+                Button(
+                    onClick = { picked?.let(onPicked) },
+                    enabled = picked != null,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = White,
+                        contentColor = Slate,
+                        disabledContainerColor = White.copy(alpha = 0.25f),
+                        disabledContentColor = White.copy(alpha = 0.6f)
+                    )
+                ) {
+                    WordSafeText(stringResource(R.string.action_confirm))
+                }
+            }
 
             BoxWithConstraints(
                 modifier = Modifier
@@ -161,32 +193,11 @@ fun ColorFromPhotoDialog(
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                picked?.let { YarnColorDot(it, size = 36.dp) }
-                Box(modifier = Modifier.weight(1f))
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.action_cancel), color = White)
-                }
-                Button(
-                    onClick = { picked?.let(onPicked) },
-                    enabled = picked != null,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = White,
-                        contentColor = Slate,
-                        disabledContainerColor = White.copy(alpha = 0.25f),
-                        disabledContentColor = White.copy(alpha = 0.6f)
-                    )
-                ) {
-                    Text(stringResource(R.string.action_confirm))
-                }
-            }
+            // Some phones (Samsung, Android 16) report no navigation bar height inside this
+            // dialog, so anything at the bottom could still sit under a three-button bar.
+            // Keep a minimum gap at the bottom; the buttons live at the top (1.10.2).
+            val navBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            Spacer(modifier = Modifier.height(maxOf(navBottom, 56.dp)))
         }
     }
 }

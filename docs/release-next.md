@@ -170,3 +170,22 @@ Fix: on phones with three-button navigation, the "Pick the colour from a photo" 
 <es-ES>
 • Corrección: el botón Confirmar de "Coger el color de la foto" quedaba oculto en móviles con botones de navegación
 </es-ES>
+
+## 1.10.2 / build 30 (2026-11-03)
+The 1.10.1 fix didn't work on a Samsung S22 with Android 16 and three-button navigation: inside
+the full-screen colour picker the navigation bar reports zero height, so Cancelar/Confirmar were
+still under the bar (found while recording the 1.10 social series). The buttons now sit at the
+top of the picker, under the hint, and the bottom keeps a minimum 56dp gap. Labels use
+`WordSafeText`. Checked on the Pixel_6 emulator with three-button nav at 360dp and 308dp.
+**Check on the S22 from internal testing before promoting to production** (the Play-signed app
+can't be replaced with a local build without uninstalling).
+
+<en-US>
+• Fix: Confirm and Cancel in "Pick the colour from a photo" are now at the top, so navigation buttons can't hide them
+</en-US>
+<pt-BR>
+• Correção: Confirmar e Cancelar em "Pegar a cor da foto" agora ficam no alto da tela, sem ficar escondidos pelos botões de navegação
+</pt-BR>
+<es-ES>
+• Corrección: Confirmar y Cancelar de "Coger el color de la foto" ahora están arriba y los botones de navegación ya no los tapan
+</es-ES>
