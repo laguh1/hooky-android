@@ -143,6 +143,13 @@ Peças tab: scroll to Preço de venda, Receita total, Lucro → zoom on the Tota
 
 ---
 
+## Music (picked 2026-11-04, Pixabay, no credit needed)
+Files in `shared/promo/source/music/` (25 s previews in `music/previews/`). All ~117 BPM.
+- **Happy Day** (`stockaudios-happy-day-113985.mp3`) from 0:00 → episodes **1 and 8** (Excel bookends, full energy from the first second)
+- **Happy Pop** (`lightbeatsmusic-happy-pop-upbeat-mood-513945.mp3`) from 0:15 → episodes **2, 4, 6** (quick tips; starts on the lift)
+- **Outdoors Folk** (`musictown-outdoors-folk-1-28593.mp3`) from 0:20 → episodes **3, 5, 7** (close-ups, warm acoustic)
+Export with music baked in for IG/FB; YouTube can use the same file (keep the Pixabay licence pages in case of a Content ID claim).
+
 ## Production checklist
 - [x] 1.10.0 and 1.10.1 (colour-picker fix) live on Play for all users (user confirmed 2026-11-03)
 - [ ] Set up Christmas test pieces (made-up customers, statuses, quantities) before episode 1
