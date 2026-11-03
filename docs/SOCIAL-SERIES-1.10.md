@@ -1,9 +1,17 @@
-# "Novidades do Hooky App" — series for release 1.10.0 (drafted 2026-11-02)
+# "Novidades do Hooky App" — series for release 1.10.0 (drafted 2026-11-02, reordered 2026-11-03)
+
+**Reordered 2026-11-03 for the Christmas season:** sellers are already taking Christmas orders in
+November, so the series opens with the strongest feature for them (the Excel report as an orders
+overview) and closes with the same report seen from the money side. Colour picker and rainbow stash
+are merged into one episode (7). The app has **no due dates or orders yet**, so never say "prazo"
+or "data de entrega" in this series (idea logged in `docs/IDEAS-NEXT-RELEASE.md`).
 
 **Goal:** one short video per new feature, posted as a numbered series. Each episode
 ends with a teaser for the next one, so people come back to see it.
 
-**Start posting only once 1.10.0 is live on Google Play**, so viewers can try what they see.
+1.10.0 and 1.10.1 are live on Google Play (2026-11-03). Start ~2026-11-05; every 2 days ends ~2026-11-19,
+inside the Christmas build-up. Episode 8 can also wait until mid-December, when "what did Christmas
+earn me?" is a real question.
 
 ## Format (same for every episode)
 Most viewers leave within 3 seconds, so every episode follows the same timeline:
@@ -20,6 +28,8 @@ Most viewers leave within 3 seconds, so every episode follows the same timeline:
 - The hook in the first frame doubles as the cover/thumbnail.
 - Episode 8 ends with "Atualize o Hooky App" + "Sua ideia pode ser a próxima: link na bio".
 - Cadence: every 2 days (8 episodes ≈ 2 weeks). End cards say "Próxima novidade", so any cadence works.
+- **Pro episodes (1 and 8) always mention the free trial**, so non-Pro viewers aren't put off:
+  PT "Recurso Pro, com 7 dias grátis para testar." · EN "A Pro feature, with a 7-day free trial."
 - Captions: "Hooky App" always; link `hookyapp.netlify.app/ig` · `/yt` · `/fb` (Facebook: keep URLs out of the post; only 2 link posts a month).
 - **Every caption ends with the feedback line** (below), so people know they can shape the app.
 - Hashtags (PT): #crochê #crochebrasil #fiosdecroche #organizacao #hookyapp
@@ -40,113 +50,125 @@ crop the status bar).
 
 ---
 
-## 1/8 · Mostre seu trabalho em tela cheia
-**Hook (0–3 s):** "Sua peça merece *tela cheia*" over the zoomed-in doily
-**Record:** open a finished piece → tap the photo → it fills the screen → double-tap to zoom
-into the stitches → swipe to the next photo → close.
-**On-screen texts:** "Toque na foto" · "Zoom nos pontos" · "Deslize para a próxima"
-**End card:** "Amanhã: pegue a cor exata do seu fio 🎨"
-**Caption PT:** Agora é só tocar na foto da peça para ver em tela cheia, dar zoom nos pontos e passar para a próxima. Perfeito para mostrar seu trabalho 🧶 Hooky App, grátis no Google Play.
-**Caption EN:** Tap a piece's photo to see it full screen, zoom into the stitches and swipe to the next one. Made for showing off your work 🧶 Hooky App, free on Google Play.
-**Teaser for next:** colour picker.
+## 1/8 · Encomendas de Natal sob controle (Pro, Excel as an orders overview)
+**Hook (0–3 s):** "Encomendas de Natal *sob controle*" over the spreadsheet (or Christmas pieces on the table)
+**Before recording:** set up 4–6 Christmas pieces with made-up customers ("Feira de Natal",
+"Loja online", "Ana", never real customers): some "Em Andamento", some "Pronto", one "Concluído",
+with quantities (e.g. 12 bolas de Natal) and prices.
+**Record:** Dashboard → Ver relatório de custos e lucro → share icon → open in Excel/Sheets on
+the phone → Peças tab: scroll the Status, Quantidade and Cliente / loja columns → Clientes tab.
+**On-screen texts:** "Tudo numa planilha" · "O que está em andamento e o que está pronto" · "Para quem é cada peça"
+**End card:** "“Tem em azul?”"
+**Caption PT:** Natal chegando e as encomendas acumulando? 🎄 No Hooky App você exporta todas as suas peças para o Excel: o que está em andamento, o que já está pronto, quantas unidades e para quem é cada uma. Recurso Pro, com 7 dias grátis para testar.
+**Caption EN:** Christmas is coming and the orders are piling up? 🎄 Hooky App exports all your pieces to Excel: what's in progress, what's ready, how many and who each one is for. A Pro feature, with a 7-day free trial.
 
-## 2/8 · A cor exata do seu fio
-**Hook (0–3 s):** "Qual é a cor *de verdade*?" over a yarn close-up
-**Record:** open a yarn with a photo → Editar → "Pegar a cor da foto" → tap the yarn → the
-circle shows the colour → Confirmar → the circle appears in the colour field.
-Bonus 2 s: the row of swatches for a quick pick.
-**On-screen texts:** "Toque no fio na foto" · "A cor certinha" · "Ou escolha uma cor"
-**Tip text (small):** "Foto com luz natural = cor mais fiel"
-**End card:** "Amanhã: seu estoque como um arco-íris 🌈"
-**Caption PT:** Toque no fio na foto e o Hooky App pega a cor certinha. Ou escolha numa paleta de cores. Dica: fotos com luz natural dão cores mais fiéis.
-**Caption EN:** Tap the yarn in its photo and Hooky App picks its exact colour. Or choose from a palette. Tip: daylight photos give truer colours.
-
-## 3/8 · Seu estoque como um arco-íris
-**Hook (0–3 s):** "Seu estoque virou *arco-íris*" over the sorted stash (end result first)
-**Record:** Yarns tab with several coloured yarns → tap "Por cor" → the list reorders into a
-rainbow → tap the green circle → only greens → tap again → all back.
-**On-screen texts:** "Ordene por cor" · "Filtre uma cor" · "Ache o fio em segundos"
-**End card:** "Amanhã: 'tem em azul?' 👀"
-**Caption PT:** Organize seu estoque de fios por cor: toque em "Por cor" e veja tudo como um arco-íris, ou filtre só os verdes, os azuis… Hooky App.
-**Caption EN:** Sort your yarn stash by colour and see it like a rainbow, or show only the greens, the blues… Hooky App.
-
-## 4/8 · "Tem em azul?"
+## 2/8 · "Tem em azul?"
 **Hook (0–3 s):** "“Tem em *azul*?”" over a blue piece photo
 **Record:** Pieces tab → the colour dots on each card → tap the blue circle → only blue pieces.
 **On-screen texts:** "As cores vêm dos fios" · "Toque numa cor" · "Resposta na hora"
-**End card:** "Amanhã: 2 novelos e 1/3? Agora dá 🧮"
-**Caption PT:** Cada peça mostra as cores dos fios que você usou. Um toque e você vê só as peças azuis. Ideal pra quem vende 🛍️ Hooky App.
-**Caption EN:** Each piece shows the colours of the yarns it uses. One tap shows only the blue ones. Great for selling 🛍️ Hooky App.
+**End card:** "Mostre cada *ponto* ao cliente"
+**Caption PT:** Cliente pediu em azul? Cada peça mostra as cores dos fios que você usou, e um toque mostra só as azuis. Ideal para a correria do Natal 🛍️ Hooky App.
+**Caption EN:** A customer wants it in blue? Each piece shows the colours of its yarns, and one tap shows only the blue ones. Made for the Christmas rush 🛍️ Hooky App.
+*Spoken-hook test runs on this episode (see Voiceover lines).*
+
+## 3/8 · Mostre cada ponto ao cliente (full-screen photos)
+**Hook (0–3 s):** "Mostre cada *ponto* ao cliente" over the zoomed-in doily
+**Record:** open a finished piece → tap the photo → it fills the screen → double-tap to zoom
+into the stitches → swipe to the next photo → close.
+**On-screen texts:** "Toque na foto" · "Zoom nos pontos" · "Deslize para a próxima"
+**End card:** "Carreiras *e* repetições"
+**Caption PT:** Vai mostrar uma peça para quem quer comprar? Toque na foto, veja em tela cheia e dê zoom nos pontos. Seu trabalho merece 🧶 Hooky App, grátis no Google Play.
+**Caption EN:** Showing a piece to a buyer? Tap the photo to see it full screen and zoom into the stitches. Your work deserves it 🧶 Hooky App, free on Google Play.
+
+## 4/8 · Carreiras e repetições (free extra counter)
+**Hook (0–3 s):** "Carreiras *e* repetições" over a lace close-up (or a pile of ornaments)
+**Record:** piece in progress → row counter → "Contadores extras" → + → "Repetições" → count on both.
+**On-screen texts:** "Conte carreiras" · "E repetições" · "1 contador extra grátis"
+**End card:** "2 novelos e *um pouquinho*?"
+**Caption PT:** Fazendo 20 enfeites de Natal iguais? Conte as carreiras e as repetições ao mesmo tempo. Pedido de vocês: agora todo mundo ganha um contador extra por peça. Mais contadores no Hooky Pro.
+**Caption EN:** Making 20 identical Christmas ornaments? Count rows and repeats at the same time. You asked for it: everyone now gets an extra counter on each piece. More counters with Hooky Pro.
+*(This one answers the 4★ review — reply to Kim when it's out.)*
 
 ## 5/8 · 2 novelos e 1/3
 **Hook (0–3 s):** "2 novelos e *um pouquinho*?" over a half-used ball
 **Record:** open a piece → Editar → yarn row → tap the number → tap ⅓ → "2⅓" → Confirmar →
 open that yarn: "Usado em peças 2⅓ · Restante 2⅔".
 **On-screen texts:** "Partes de novelo" · "Quanto você usou" · "Quanto ainda resta"
-**End card:** "Amanhã: quanto vale seu estoque? 💰"
-**Caption PT:** Agora dá para registrar partes de novelo (2⅓!) e cada fio mostra quanto você usou e quanto ainda resta. Hooky App.
-**Caption EN:** Log part balls (2⅓!) and each yarn shows how much you used and how much is left. Hooky App.
+**End card:** "Quanto vale seu *estoque*?"
+**Caption PT:** Agora dá para registrar partes de novelo (2⅓!) e cada fio mostra quanto você usou e quanto ainda resta. O custo de cada peça fica certinho. Hooky App.
+**Caption EN:** Log part balls (2⅓!) and each yarn shows how much you used and how much is left. Your cost per piece comes out right. Hooky App.
 
 ## 6/8 · Quanto vale seu estoque
 **Hook (0–3 s):** "Quanto vale seu *estoque*?" over a pile of yarn
 **Record:** Dashboard → "Fios em estoque · N novelos · R$ X" card. Optional: open one yarn to
 show price per ball × balls left.
 **On-screen texts:** "Fios em estoque" · "Novelos que restam × preço" · "Antes de comprar mais"
-**End card:** "Amanhã: contador de repetições, grátis 🔁"
-**Caption PT:** O painel do Hooky App agora mostra quanto vale o fio que você tem guardado. Ótimo para pensar antes de comprar mais 😅
-**Caption EN:** Hooky App's dashboard now shows what your yarn stash is worth. Handy before buying more 😅
+**End card:** "Seu estoque virou *arco-íris*"
+**Caption PT:** Antes de comprar fio para as encomendas de Natal, veja quanto vale o que você já tem guardado. Está no painel do Hooky App 😅
+**Caption EN:** Before buying yarn for Christmas orders, check what your stash is already worth. It's on Hooky App's dashboard 😅
 
-## 7/8 · Contador extra grátis
-**Hook (0–3 s):** "Carreiras *e* repetições" over a lace close-up
-**Record:** piece in progress → row counter → "Contadores extras" → + → "Repetições" →
-count on both.
-**On-screen texts:** "Conte carreiras" · "E repetições" · "1 contador extra grátis"
-**End card:** "Na próxima: seu relatório no Excel 📊"
-**Caption PT:** Pedido de vocês! Agora todo mundo ganha um contador extra por peça, para repetições, pontos ou o que precisar. Mais contadores no Hooky Pro.
-**Caption EN:** You asked for it! Everyone now gets an extra counter on each piece, for repeats, stitches or anything else. More counters with Hooky Pro.
-*(This one answers the 4★ review — reply to Kim when it's out.)*
+## 7/8 · Seu estoque virou arco-íris (colour picker + sort/filter by colour, merged)
+**Hook (0–3 s):** "Seu estoque virou *arco-íris*" over the sorted stash (end result first)
+**Record (part 1, ~7 s):** open a yarn with a photo → Editar → "Pegar a cor da foto" → tap the
+yarn → Confirmar → the circle shows the colour.
+**Record (part 2, ~8 s):** Yarns tab → "Por cor" → the list becomes a rainbow → tap the green
+circle → only greens → tap again → all back.
+**On-screen texts:** "Toque no fio na foto" · "A cor certinha" · "Ordene por cor" · "Ache o fio em segundos"
+**Tip text (small):** "Foto com luz natural = cor mais fiel"
+**End card:** "Quanto seu Natal *rendeu*?"
+**Caption PT:** Toque no fio na foto e o Hooky App pega a cor certinha. Depois é só ordenar o estoque por cor e ver tudo como um arco-íris, ou mostrar só os verdes, os azuis… Dica: fotos com luz natural dão cores mais fiéis.
+**Caption EN:** Tap the yarn in its photo and Hooky App picks its exact colour. Then sort your stash by colour and see it as a rainbow, or show only the greens, the blues… Tip: daylight photos give truer colours.
 
-## 8/8 · Seu relatório no Excel (para quem vende)
-**Hook (0–3 s):** "Seu lucro no *Excel*, num toque" over the spreadsheet with totals
-**Record:** Dashboard → Ver relatório de custos e lucro → share icon → the file name in the
-share sheet → open in Excel/Google Sheets on the phone: tabs Peças, Clientes, Fios and the
-Total row.
-**On-screen texts:** "Um toque" · "3 abas: peças, clientes, fios" · "Totais prontos"
-**End card:** "Atualize o Hooky App ✨" (series ends)
-**Caption PT:** Para quem vende: exporte seu relatório de custos e lucro para o Excel, com peças, clientes, fios e totais prontos. Recurso Pro do Hooky App.
-**Caption EN:** For makers who sell: export your cost and profit report to Excel, with pieces, customers, yarns and totals ready. A Hooky Pro feature.
-*Longer follow-up (YouTube, 2–3 min): "Como controlar o lucro do seu crochê no Excel" walking
-through the file. Script to write after the series.*
+## 8/8 · Quanto seu Natal rendeu? (Pro, Excel from the money side)
+**Hook (0–3 s):** "Quanto seu Natal *rendeu*?" over the spreadsheet with the Total row
+**Before recording:** mark the episode-1 pieces as sold (sold price, customer, sale date).
+**Record:** Dashboard → Ver relatório de custos e lucro → share icon → open in Excel/Sheets →
+Peças tab: scroll to Preço de venda, Receita total, Lucro → zoom on the Total row → Clientes tab
+(who bought the most).
+**On-screen texts:** "Quanto entrou" · "Quanto sobrou" · "Quem mais comprou"
+**End card:** "Atualize o *Hooky App*" (series ends)
+**Caption PT:** Natal vendido, e agora: quanto entrou e quanto sobrou? 💰 Exporte seu relatório do Hooky App para o Excel, com receita, lucro e quem mais comprou, totais prontos. Recurso Pro, com 7 dias grátis para testar.
+**Caption EN:** Christmas sold, so how much came in and how much was left? 💰 Export your Hooky App report to Excel, with revenue, profit and your best customers, totals ready. A Pro feature, with a 7-day free trial.
+*Longer follow-up (YouTube, 2–3 min): "Como controlar o lucro do seu crochê no Excel" — script below.*
 
 ---
 
 ## Production checklist
 - [x] 1.10.0 and 1.10.1 (colour-picker fix) live on Play for all users (user confirmed 2026-11-03)
+- [ ] Set up Christmas test pieces (made-up customers, statuses, quantities) before episode 1
 - [ ] Record all 8 takes in PT-BR in one sitting with real data, then repeat in EN
-- [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders
+- [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders; re-rendered the same day for the new order
 - [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
 - [ ] Episode links go into this file and `docs/SOCIAL-CAPTIONS.md` as they're posted
 
 ---
 
-## Voiceover lines (written 2026-11-03)
+## Voiceover lines (written 2026-11-03, updated for the new order)
 Record on your phone in a quiet room, relaxed, like talking to a friend at a crochet group.
 Short sentences; pauses are fine. Music stays underneath, low. Keep the on-screen texts too
 (most people watch muted). Gender-neutral wording in PT.
 
-### Test: spoken hook for episode 4 (first 2 s only)
+### Test: spoken hook for episode 2 (first 2 s only)
 - **PT:** "Cliente perguntou: tem em azul? Olha só."
 - **EN:** "A customer asked: got it in blue? Watch this."
-Compare its average watch time in Instagram insights with episodes 1–3 (music only).
+Compare its average watch time in Instagram insights with episodes 3–4 (music only).
 
-### Episode 8 · Seu relatório no Excel (~22 s)
+### Episode 1 · Encomendas de Natal (~20 s)
 | Time | On screen | PT | EN |
 |---|---|---|---|
-| 0–3 s | Spreadsheet with totals (hook) | "Quanto você lucrou com seu crochê esse mês? Num toque, você sabe." | "How much did your crochet make this month? One tap and you know." |
-| 3–9 s | Dashboard → Ver relatório de custos e lucro → share icon | "No Hooky App, abra o relatório e toque em compartilhar." | "In Hooky App, open the report and tap share." |
-| 9–16 s | File opening in Excel / Sheets, swipe the tabs | "Vem um arquivo do Excel com três abas: suas peças, seus clientes e seus fios." | "You get an Excel file with three tabs: your pieces, your customers and your yarn." |
-| 16–20 s | Zoom on the Total row | "Os totais já vêm prontos. É só abrir." | "The totals are ready. Just open it." |
-| 20–22 s | End card | "Recurso Pro do Hooky App. E se tiver uma ideia, conta pra gente!" | "A Hooky Pro feature. Got an idea? Tell us!" |
+| 0–3 s | Spreadsheet / Christmas pieces (hook) | "Natal chegando e as encomendas acumulando?" | "Christmas is coming and the orders are piling up?" |
+| 3–8 s | Dashboard → relatório → share | "No Hooky App, abra o relatório e toque em compartilhar." | "In Hooky App, open the report and tap share." |
+| 8–16 s | Peças tab: Status, Quantidade, Cliente | "Vem tudo numa planilha: o que está em andamento, o que já está pronto e para quem é cada peça." | "It's all in one spreadsheet: what's in progress, what's ready and who each piece is for." |
+| 16–20 s | End card | "Recurso Pro, com sete dias grátis. Na próxima: tem em azul?" | "A Pro feature, with a 7-day free trial. Next: got it in blue?" |
+
+### Episode 8 · Quanto seu Natal rendeu (~22 s)
+| Time | On screen | PT | EN |
+|---|---|---|---|
+| 0–3 s | Spreadsheet with totals (hook) | "Quanto o seu Natal rendeu? Num toque, você sabe." | "What did your Christmas earn? One tap and you know." |
+| 3–9 s | Dashboard → relatório → share icon | "No Hooky App, abra o relatório e toque em compartilhar." | "In Hooky App, open the report and tap share." |
+| 9–16 s | Peças tab: sold price, revenue, profit | "Para cada peça: preço de venda, quanto entrou e quanto sobrou." | "For each piece: sold price, what came in and what was left." |
+| 16–20 s | Total row, then Clientes tab | "Os totais já vêm prontos. E você vê quem mais comprou." | "The totals are ready. And you see who bought the most." |
+| 20–22 s | End card | "Recurso Pro, com sete dias grátis. E se tiver uma ideia, conta pra gente!" | "A Pro feature, with a 7-day free trial. Got an idea? Tell us!" |
 
 ### YouTube tutorial · "Como controlar o lucro do seu crochê no Excel" (2–3 min, wide 16:9 or vertical)
 **Title PT:** Como controlar o lucro do seu crochê no Excel (sem fazer conta) | Hooky App
