@@ -13,6 +13,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
    - Pairs with: deposit/advance paid ("sinal"), and an "Encomenda" status before "Em Andamento".
 
 ## Small fixes found on the phone (2026-11-03, 1.10.1 on the S22)
+- ✅ *Done in 1.10.2:* colour picker Cancelar/Confirmar still hidden under the nav bar on the S22 → moved to the top.
 - **Decimal comma loses prices and costs (bug, important):** the piece form saves money fields with
   `toFloatOrNull()`, which only accepts a dot. In PT/ES, `ApplyYarnMaterialCost` fills the cost with
   `"%.2f".format(cost)` → "12,50" → saved as null, and anything the user types with a comma is
