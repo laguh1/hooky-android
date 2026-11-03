@@ -13,7 +13,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
    - Pairs with: deposit/advance paid ("sinal"), and an "Encomenda" status before "Em Andamento".
 
 ## Small fixes found on the phone (2026-11-03, 1.10.1 on the S22)
-- **Hidden saved fields (bug, reported by the user):**
+- **Hidden saved fields (bug, reported by the user) — batched for the next release, no 1.10.2 (decided 2026-11-03):**
   - Piece: changing destination from gift to sale hides the "Presente para" field but saving keeps
     the name, and `PieceDetailScreen.kt:525` shows it for any destination ("Marcia" on a
     Feirinha de Natal piece). Same the other way: a gifted piece keeps its price and the report
