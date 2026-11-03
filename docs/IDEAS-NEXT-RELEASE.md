@@ -23,6 +23,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   but parse both "," and "."; also check the yarn form's price paid. Add a unit test.
 - **Dashboard "Fios em estoque" shows "13,17 novelos"** when the total isn't a simple fraction (13⅙); earlier it showed "12½". Round to the nearest supported fraction or show "≈ 13".
 - **Excel export: Clientes "Peças" total shows "14.00"** (and Quantidade-type counts may too); whole-number columns should use an integer format.
+- **Yarns "Por cor" keeps the old first item in view:** after sorting, the list stays on the yarn that was at the top (e.g. Viking, now among the blues), so reds/pinks/yellows are above the screen. Scroll to the top when the sort changes.
 - **Hidden saved fields (bug, reported by the user) — batched for the next release, no 1.10.2 (decided 2026-11-03):**
   - Piece: changing destination from gift to sale hides the "Presente para" field but saving keeps
     the name, and `PieceDetailScreen.kt:525` shows it for any destination ("Marcia" on a

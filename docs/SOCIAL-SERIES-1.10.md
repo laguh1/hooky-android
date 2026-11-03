@@ -146,7 +146,8 @@ Peças tab: scroll to Preço de venda, Receita total, Lucro → zoom on the Tota
 ## Production checklist
 - [x] 1.10.0 and 1.10.1 (colour-picker fix) live on Play for all users (user confirmed 2026-11-03)
 - [ ] Set up Christmas test pieces (made-up customers, statuses, quantities) before episode 1
-- [ ] Record all 8 takes in PT-BR in one sitting with real data, then repeat in EN
+- [x] PT-BR takes recorded by Claude over adb, 2026-11-03/04, in `shared/promo/source/recordings/BRASIL/ep*_pt.mp4` (ep4 counter is named "Motivos": adb can't type accents; ep7 recorded on 1.10.2; ep1/ep8 in Google Sheets, numbers in US format)
+- [ ] Repeat in EN
 - [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders; re-rendered the same day for the new order
 - [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
 - [ ] Episode links go into this file and `docs/SOCIAL-CAPTIONS.md` as they're posted
