@@ -21,6 +21,11 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   the clock overlap.
 - **Pieces status filter has no "Prontas"** (only Todas / Em Andamento / Concluídas), although
   "Pronto" is a status.
+- **Report totals don't match the rows (bug):** "Por cliente" showed total profit R$1007,11
+  but the rows add up to R$598,50: "Não atribuído" (pieces with a price but no cost) shows profit
+  R$0,00 while the total counts its R$408,61 as profit. Make both use the same rule.
+- **"Receita" counts unsold quantity** (Toalhinha 0/3 sold counted as 3 × R$74). Consider
+  splitting "Receita" (sold) and "Receita prevista" (still to sell), on screen and in the Excel.
 - **Report shows pieces with a price but no linked yarn as "—" cost/profit**: consider a hint
   ("Adicione os fios para ver o custo").
 
