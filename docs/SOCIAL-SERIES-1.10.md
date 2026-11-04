@@ -148,16 +148,24 @@ Files in `shared/promo/source/music/` (25 s previews in `music/previews/`). All 
 - **Happy Day** (`stockaudios-happy-day-113985.mp3`) from 0:00 → episodes **1 and 8** (Excel bookends, full energy from the first second)
 - **Happy Pop** (`lightbeatsmusic-happy-pop-upbeat-mood-513945.mp3`) from 0:15 → episodes **2, 4, 6** (quick tips; starts on the lift)
 - **Outdoors Folk** (`musictown-outdoors-folk-1-28593.mp3`) from 0:20 → episodes **3, 5, 7** (close-ups, warm acoustic)
+**EN versions (picked 2026-11-04, different songs so followers of both languages don't hear the same tracks; previews in `music/previews/en/`):**
+- **A** `sigmamusicart-no-copyright-music-604196.mp3` from 0:15 → EN episodes **1 and 8** (bright, D major, lifts at 0:15)
+- **B** `tatamusic-no-copyright-music-623365.mp3` from 0:15 → EN episodes **2, 4, 6** (E major, ~100 BPM)
+- **C** `ikoliks_aj-no-copyright-music-468179.mp3` from 0:25 → EN episodes **3, 5, 7** (warm, E major, builds up)
+- Spare: `tatamusic-no-copyright-music-595121.mp3` from 0:15 (mellow); left out: `sub_clair-…-luxury-550484` (minor key, lounge), both `nastelbom-…` (dark/low), `sub_clair-…-564211` (no clear key)
 Export with music baked in for IG/FB; YouTube can use the same file (keep the Pixabay licence pages in case of a Content ID claim).
 
 ## Production checklist
 - [x] 1.10.0 and 1.10.1 (colour-picker fix) live on Play for all users (user confirmed 2026-11-03)
 - [ ] Set up Christmas test pieces (made-up customers, statuses, quantities) before episode 1
 - [x] PT-BR takes recorded by Claude over adb, 2026-11-03/04, in `shared/promo/source/recordings/BRASIL/ep*_pt.mp4` (ep4 counter is named "Motivos": adb can't type accents; ep7 recorded on 1.10.2; ep1/ep8 in Google Sheets, numbers in US format)
-- [ ] Repeat in EN
+- [x] PT-BR edits assembled 2026-11-04 in `shared/promo/BRASIL/videos/serie-1.10/` (s110_ep1…ep8_*_pt.mp4): photo opening (kicker "Novidades do Hooky App · N/8" + tagline, user's crochet close-ups), app → report → Excel for ep1/ep8, lower-third texts, `hooky` wordmark, end card, music baked in. Overlays `s110_epN_hookphoto_pt` / `s110_epN_tN_pt` in `video-elements/serie-1.10/`
+- [x] EN takes recorded 2026-11-04 (app in English with a translated US$ copy of the data, then the PT backup restored) in `shared/promo/source/recordings/ENGLISH/`; EN edits in `shared/promo/ENGLISH/videos/serie-1.10/` (s110_epN_*_en.mp4)
+- [x] EN music: 3 new tracks (see Music), swapped in 2026-11-04. Swap in `MUS` of `shared/promo/source/clips/serie-1.10/build_en.py` and rerun `python3 build_en.py 1 2 3 4 5 6 7 8` (PT: `build_pt.py`)
 - [x] Hook, logo and end-card overlays rendered (PT + EN) on 2026-11-03 in `serie-1.10/` folders; re-rendered the same day for the new order
 - [ ] Add the feedback line to the Instagram bio, YouTube and Facebook descriptions
-- [ ] Episode links go into this file and `docs/SOCIAL-CAPTIONS.md` as they're posted
+- [ ] Scheduling (2026-11-04): PT eps 1–6 scheduled on IG + FB; still to do: PT eps 7–8 (IG/FB). YouTube gets the EN version only (EN ep1 scheduled 4 Nov 19:00 Madrid, then every other day); no PT on YouTube for now
+- [ ] Episode links go into this file as they're posted. Post text (IG/FB/YT, PT+EN) lives in `docs/SOCIAL-SERIES-1.10-CAPTIONS.md`
 
 ---
 
