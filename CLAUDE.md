@@ -74,6 +74,13 @@ ES and PT-BR labels are longer than English, and many phones are only 360dp wide
 - AI vision: A) ML Kit OCR yarn label scanner ✅, B) TFLite stitch recognition (not yet built)
 - Premium: Firebase Remote Config-driven, not a backend server — manual per-tester allowlist (`premium_ids`, supports optional expiry) plus an automatic early-adopter promo (`early_adopter_cutoff` / `early_adopter_premium_days`) for anyone installing before a given date
 
+## Releasing (works without the Mac — GitHub Actions)
+- Every push touching `android/**` runs the **Check** workflow (unit tests + debug build). Check it passed before saying a change is done (`gh run list` / the Actions tab).
+- Never commit `local.properties`, `google-services.json` or `*.jks` — CI gets them from repo secrets (see `.github/actions/android-setup/action.yml`).
+- For a new release: bump `versionCode` (+1, never reuse — Play Console rejects used codes) and `versionName` in `android/app/build.gradle.kts`, add the changes to `docs/release-next.md`, merge to `main`, then run **Actions → Release build → Run workflow**. It builds the signed `.aab`, checks it is signed with the upload key, and offers it as a download artifact (plus `mapping.txt`). The user uploads the `.aab` in Play Console.
+- Draft Play release notes in EN, ES and PT-BR (max 500 characters each).
+- Play App Signing is on; the repo keystore is only the upload key.
+
 ---
 
 ## When Starting Work
