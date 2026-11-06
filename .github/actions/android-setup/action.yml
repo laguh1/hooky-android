@@ -1,0 +1,43 @@
+name: Android setup
+description: Java, Gradle and the private files (signing key, google-services.json) that are not in git
+inputs:
+  keystore-base64: {required: true}
+  store-password: {required: true}
+  key-alias: {required: true}
+  key-password: {required: true}
+  google-services-base64: {required: true}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "17"
+
+    # gradle-wrapper.jar is not in git, so install the same Gradle version the wrapper uses
+    - id: gradle-version
+      shell: bash
+      run: echo "version=$(grep distributionUrl android/gradle/wrapper/gradle-wrapper.properties | sed -E 's/.*gradle-([0-9.]+)-.*/\1/')" >> "$GITHUB_OUTPUT"
+
+    - uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: ${{ steps.gradle-version.outputs.version }}
+
+    - name: Write private files
+      shell: bash
+      env:
+        KEYSTORE: ${{ inputs.keystore-base64 }}
+        STORE_PASSWORD: ${{ inputs.store-password }}
+        KEY_ALIAS: ${{ inputs.key-alias }}
+        KEY_PASSWORD: ${{ inputs.key-password }}
+        GOOGLE_SERVICES: ${{ inputs.google-services-base64 }}
+      run: |
+        echo "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+        echo "$GOOGLE_SERVICES" | base64 --decode > android/app/google-services.json
+        {
+          echo "sdk.dir=$ANDROID_HOME"
+          echo "HOOKY_STORE_FILE=$RUNNER_TEMP/upload.jks"
+          echo "HOOKY_STORE_PASSWORD=$STORE_PASSWORD"
+          echo "HOOKY_KEY_ALIAS=$KEY_ALIAS"
+          echo "HOOKY_KEY_PASSWORD=$KEY_PASSWORD"
+        } > android/local.properties
