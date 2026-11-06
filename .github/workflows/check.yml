@@ -1,0 +1,39 @@
+name: Check
+
+# Runs after every push that touches the app: compiles it and runs the unit tests.
+on:
+  push:
+    paths:
+      - "android/**"
+      - ".github/**"
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/android-setup
+        with:
+          keystore-base64: ${{ secrets.HOOKY_KEYSTORE_BASE64 }}
+          store-password: ${{ secrets.HOOKY_STORE_PASSWORD }}
+          key-alias: ${{ secrets.HOOKY_KEY_ALIAS }}
+          key-password: ${{ secrets.HOOKY_KEY_PASSWORD }}
+          google-services-base64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+      - name: Unit tests and debug build
+        working-directory: android
+        run: gradle --no-daemon testDebugUnitTest assembleDebug
+      - name: Test reports (if something failed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: android/app/build/reports/tests/

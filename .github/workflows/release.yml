@@ -1,0 +1,67 @@
+name: Release build
+
+# Press "Run workflow" on GitHub (works from a phone or tablet browser).
+# Builds the signed .aab to upload in Play Console. Bump versionCode/versionName
+# in android/app/build.gradle.kts before running it.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# SHA-256 of the upload key certificate (public, not a secret). The build fails
+# if the bundle is signed with anything else.
+env:
+  UPLOAD_KEY_SHA256: "B6:6D:58:F6:4B:5A:87:D9:26:FD:D6:AB:38:41:9F:0A:56:42:91:16:86:2D:E3:26:C8:06:6E:4B:FD:ED:B5:ED"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/android-setup
+        with:
+          keystore-base64: ${{ secrets.HOOKY_KEYSTORE_BASE64 }}
+          store-password: ${{ secrets.HOOKY_STORE_PASSWORD }}
+          key-alias: ${{ secrets.HOOKY_KEY_ALIAS }}
+          key-password: ${{ secrets.HOOKY_KEY_PASSWORD }}
+          google-services-base64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+
+      - id: version
+        name: Read version
+        run: |
+          f=android/app/build.gradle.kts
+          echo "code=$(grep -m1 -E '^\s*versionCode\s*=' $f | grep -oE '[0-9]+')" >> "$GITHUB_OUTPUT"
+          echo "name=$(grep -m1 -E '^\s*versionName\s*=' $f | sed -E 's/.*"(.*)".*/\1/')" >> "$GITHUB_OUTPUT"
+
+      - name: Unit tests and signed release bundle
+        working-directory: android
+        run: gradle --no-daemon testReleaseUnitTest bundleRelease
+
+      - name: Check it is signed with the upload key
+        run: |
+          aab=android/app/build/outputs/bundle/release/app-release.aab
+          sha=$(keytool -printcert -jarfile "$aab" | grep -m1 'SHA256:' | awk '{print $2}')
+          echo "Signed with: $sha"
+          [ "$sha" = "$UPLOAD_KEY_SHA256" ] || { echo "::error::Bundle is not signed with the Hooky upload key"; exit 1; }
+          mv "$aab" "hooky-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}.aab"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hooky-${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}
+          path: |
+            hooky-*.aab
+            android/app/build/outputs/mapping/release/mapping.txt
+          retention-days: 30
+
+      - name: Summary
+        run: |
+          {
+            echo "## Hooky ${{ steps.version.outputs.name }} (build ${{ steps.version.outputs.code }})"
+            echo "Signed with the upload key ✅"
+            echo
+            echo "1. Download the artifact below (zip) and unzip it."
+            echo "2. Play Console → Test and release → pick a track → Create new release → upload the .aab."
+            echo "3. mapping.txt is for crash reports (App bundle explorer → Downloads → ReTrace mapping file)."
+          } >> "$GITHUB_STEP_SUMMARY"
