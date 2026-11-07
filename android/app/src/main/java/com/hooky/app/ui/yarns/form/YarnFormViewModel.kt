@@ -189,7 +189,7 @@ class YarnFormViewModel @Inject constructor(
                             },
                             ballWeightG = yarn.ballWeightG?.toInputText() ?: "",
                             ballLengthM = yarn.ballLengthM?.toInputText() ?: "",
-                            pricePaid = yarn.pricePaid?.toInputText() ?: "",
+                            pricePaid = yarn.pricePaid?.toInputText(money = true) ?: "",
                             purchaseLocation = yarn.purchaseLocation ?: "",
                             purchaseLink = yarn.purchaseLink ?: "",
                             purchaseDate = yarn.purchaseDate ?: "",

@@ -57,6 +57,13 @@ class InputTextTest {
     }
 
     @Test
+    fun moneyKeepsCents() {
+        assertEquals("9,50", 9.5f.toInputText(pt, money = true))
+        assertEquals("120", 120f.toInputText(pt, money = true))
+        assertEquals("120,25", 120.25f.toInputText(pt, money = true))
+    }
+
+    @Test
     fun roundTrips() {
         listOf(0.5f, 9.5f, 120.25f, 1234.56f).forEach { v ->
             assertEquals(v, v.toInputText(pt).toDecimalOrNull()!!, 0.001f)
