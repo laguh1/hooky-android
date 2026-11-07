@@ -267,7 +267,7 @@ same build scrolled at 99th percentile 32 ms. **Check scrolling on the S22.**
 - [ ] Deposit "30,50" saves; "Falta receber" right
 - [ ] Settings → Sua marca: name + logo from gallery; share a piece; switch off "via Hooky App" (Pro)
 - [ ] Dark mode: dashboard, Fios search, report
-- [ ] "Entregas" is the 4th filter chip — at 360 dp it's just off-screen; decide if it should move
+- [x] "Entregas" moved to 2nd filter chip (user, 2026-11-07), visible at 360 dp
 
 ### Play release notes (paste as is)
 ```
