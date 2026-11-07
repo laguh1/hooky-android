@@ -64,6 +64,7 @@ import com.hooky.app.ui.yarns.form.YarnFormScreen
 import com.hooky.app.ui.yarns.list.YarnListScreen
 import com.hooky.app.ui.help.HelpScreen
 import com.hooky.app.ui.onboarding.OnboardingScreen
+import com.hooky.app.util.AppPrefs
 import com.hooky.app.ui.reports.ReportsScreen
 import com.hooky.app.ui.settings.SettingsScreen
 import com.hooky.app.ui.theme.Slate
@@ -143,9 +144,9 @@ fun CrochetNavGraph(
     navController: NavHostController = rememberNavController()
 ) {
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("hooky_settings", Context.MODE_PRIVATE) }
+    val prefs = remember { AppPrefs.get(context) }
     val startDestination = remember {
-        if (prefs.getBoolean("hasSeenOnboarding", false)) Screen.Dashboard.route
+        if (prefs.getBoolean(AppPrefs.HAS_SEEN_ONBOARDING, false)) Screen.Dashboard.route
         else Screen.Onboarding.route
     }
 
@@ -177,11 +178,16 @@ fun CrochetNavGraph(
         ) {
             composable(Screen.Onboarding.route) {
                 OnboardingScreen(
-                    onFinish = {
-                        prefs.edit().putBoolean("hasSeenOnboarding", true).apply()
+                    onFinish = { addFirstPiece ->
+                        prefs.edit()
+                            .putBoolean(AppPrefs.HAS_SEEN_ONBOARDING, true)
+                            .putBoolean(AppPrefs.GETTING_STARTED_NEW_USER, true)
+                            .apply()
                         navController.navigate(Screen.Dashboard.route) {
                             popUpTo(Screen.Onboarding.route) { inclusive = true }
                         }
+                        // Back from the form lands on the dashboard with the getting-started card.
+                        if (addFirstPiece) navController.navigate(Screen.PieceCreate.route)
                     }
                 )
             }
@@ -213,6 +219,8 @@ fun CrochetNavGraph(
                     onNavigateToSearch = { navController.navigate(Screen.Search.route) },
                     onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                     onNavigateToReports = { navController.navigate(Screen.Reports.route) },
+                    onCreatePiece = { navController.navigate(Screen.PieceCreate.route) },
+                    onCreateYarn = { navController.navigate(Screen.YarnCreate.route) },
                 )
             }
 

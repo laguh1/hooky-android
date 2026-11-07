@@ -53,6 +53,9 @@ class YarnRepository @Inject constructor(
         val clone = original.copy(
             id = 0,
             yarnId = newYarnId,
+            // Cloning is mostly "same yarn, another colour": the old colour code (e.g. "D-17")
+            // would be wrong on the copy, so it starts empty.
+            colorCode = null,
             photos = "[]",
             archived = false,
             archivedDate = null,

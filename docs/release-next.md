@@ -189,3 +189,50 @@ can't be replaced with a local build without uninstalling).
 <es-ES>
 • Corrección: Confirmar y Cancelar de "Coger el color de la foto" ahora están arriba y los botones de navegación ya no los tapan
 </es-ES>
+
+## 1.10.3 / build 31 (2026-11-07)
+Onboarding + rating (below) **and** the bug-fix batch from `docs/IDEAS-NEXT-RELEASE.md` groups 1–2
+(full list with how each was verified: `docs/FIXES-2026-08-31.md`, section "1.10.3").
+
+Fixes: comma prices/costs lost in PT/ES · Skip on the welcome screens didn't work · backup import now
+asks first + "Undo last import" · "Save to phone" for backups · report totals match the rows, gifts
+not counted as revenue · gift name hidden on pieces for sale · scanned yarn material on one line ·
+dashboard status bar · stash "≈ 13¼" · Excel whole-number totals and date cells · "Por cor" scrolls
+to top · long names end with "…" · yarn clone clears the colour code.
+
+Onboarding (Play stats 9 Oct–5 Nov: ~9.9k impressions, 61 installs, only 25 first opens):
+- **Getting started card** on the dashboard (new installs, and older installs with no pieces): 3 steps
+  (add a piece, add a yarn by scanning its label, count rows with the counter), each a shortcut to the right screen and
+  ticked off from real data. Hides when all 3 are done or with ✕. `ui/dashboard/GettingStartedCard.kt`.
+- **Empty "In progress"** now has a "+ New piece" button.
+- **Last onboarding slide**: "Add my first piece" (opens the new-piece form) + "Look around first".
+- **In-app review prompt** (Play Review API `com.google.android.play:review:2.0.2`) right after a piece
+  becomes Finished, only if installed ≥3 days, ≥2 pieces and not asked in the last 90 days
+  (`util/ReviewPolicy.kt` + unit tests). Play also applies its own quota, so it may not appear in testing.
+- Checked on the Pixel_6 emulator: fresh install in PT-BR and ES at 360dp, ES at font 1.3, EN in dark
+  mode; all three steps tick off and the card disappears.
+
+<en-US>
+• New "Getting started" steps on the home screen, and "Add my first piece" on the welcome screens
+• Prices and costs typed with a comma are saved correctly
+• Importing a backup now asks first, and you can undo it in Settings
+• "Save to phone" for backups
+• Cost & profit report: totals match the rows; gifts don't count as revenue
+• Skip on the welcome screens works, plus many small fixes
+</en-US>
+<pt-BR>
+• Novos "Primeiros passos" na tela inicial e "Adicionar minha primeira peça" nas boas-vindas
+• Preços e custos digitados com vírgula agora são salvos corretamente
+• Importar um backup agora pede confirmação, e dá para desfazer em Configurações
+• "Salvar no celular" para backups
+• Relatório de custos e lucro: totais batem com as linhas; presentes não contam como receita
+• "Pular" nas boas-vindas funciona, e muitas pequenas correções
+</pt-BR>
+<es-ES>
+• Nuevos "Primeros pasos" en el inicio y "Añadir mi primera pieza" en la bienvenida
+• Los precios y costes con coma ahora se guardan bien
+• Importar una copia ahora pide confirmación, y se puede deshacer en Ajustes
+• "Guardar en el móvil" para las copias
+• Informe de costes y beneficio: los totales cuadran con las filas; los regalos no cuentan como ingresos
+• "Omitir" en la bienvenida funciona, y muchas pequeñas correcciones
+</es-ES>

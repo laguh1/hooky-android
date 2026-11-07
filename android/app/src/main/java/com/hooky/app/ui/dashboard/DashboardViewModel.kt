@@ -1,13 +1,17 @@
 package com.hooky.app.ui.dashboard
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hooky.app.data.db.entity.PieceEntity
 import com.hooky.app.data.repository.PieceRepository
 import com.hooky.app.data.repository.StitchRepository
 import com.hooky.app.data.repository.YarnRepository
+import com.hooky.app.domain.model.enums.WorkStatus
 import com.hooky.app.domain.model.ballsUsedByYarn
+import com.hooky.app.util.AppPrefs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,11 +33,20 @@ data class DashboardUiState(
     val stashBallsLeft: Float = 0f,
     val stashValue: Float = 0f,
     val inProgressPieces: List<PieceEntity> = emptyList(),
-    val recentlyFinished: List<PieceEntity> = emptyList()
-)
+    val recentlyFinished: List<PieceEntity> = emptyList(),
+    // Getting-started card (new users)
+    val gettingStartedVisible: Boolean = false,
+    val hasCountedRows: Boolean = false,
+    // Piece the "use the counter" step opens: newest in progress, else newest piece
+    val counterPieceId: Int? = null
+) {
+    val gettingStartedDoneCount: Int
+        get() = listOf(pieceCount > 0, yarnCount > 0, hasCountedRows).count { it }
+}
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val pieceRepository: PieceRepository,
     private val yarnRepository: YarnRepository,
     private val stitchRepository: StitchRepository
@@ -42,8 +55,47 @@ class DashboardViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    private val prefs = AppPrefs.get(context)
+    private val gettingStartedDismissed = MutableStateFlow(
+        prefs.getBoolean(AppPrefs.GETTING_STARTED_DISMISSED, false)
+    )
+
     init {
         loadDashboardData()
+        loadGettingStarted()
+    }
+
+    private fun loadGettingStarted() {
+        val newUser = prefs.getBoolean(AppPrefs.GETTING_STARTED_NEW_USER, false)
+        viewModelScope.launch {
+            combine(
+                pieceRepository.getAllPieces(),
+                yarnRepository.getTotalYarnCount(),
+                gettingStartedDismissed
+            ) { pieces, yarnCount, dismissed ->
+                val active = pieces.filter { !it.archived }
+                val counted = active.any { it.rowCount > 0 }
+                val counterPiece = active
+                    .filter { it.workStatus == WorkStatus.IN_PROGRESS.name }
+                    .maxByOrNull { it.updatedAt }
+                    ?: active.maxByOrNull { it.updatedAt }
+                // New installs see the card; people who already used the app only if they have no pieces yet.
+                val eligible = newUser || active.isEmpty()
+                val allDone = active.isNotEmpty() && yarnCount > 0 && counted
+                Triple(eligible && !dismissed && !allDone, counted, counterPiece?.id)
+            }
+                .catch { }
+                .collect { (visible, counted, pieceId) ->
+                    _uiState.update {
+                        it.copy(gettingStartedVisible = visible, hasCountedRows = counted, counterPieceId = pieceId)
+                    }
+                }
+        }
+    }
+
+    fun dismissGettingStarted() {
+        prefs.edit().putBoolean(AppPrefs.GETTING_STARTED_DISMISSED, true).apply()
+        gettingStartedDismissed.value = true
     }
 
     private fun loadDashboardData() {

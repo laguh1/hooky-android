@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
 import androidx.compose.foundation.layout.PaddingValues
@@ -82,6 +83,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.hooky.app.ui.util.maybeAskForReview
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -188,6 +190,7 @@ fun PieceFormScreen(
     // Navigate back on save
     LaunchedEffect(uiState.savedSuccessfully) {
         if (uiState.savedSuccessfully) {
+            if (uiState.justFinished) maybeAskForReview(context, uiState.pieceCountAfterSave)
             onSaved()
         }
     }
@@ -595,7 +598,7 @@ fun PieceFormScreen(
 
                     if (quantityTotal > 1) {
                         val remainingUnits = (quantityTotal - uiState.quantitySold).coerceAtLeast(0)
-                        val unitPrice = uiState.price.toFloatOrNull() ?: 0f
+                        val unitPrice = uiState.price.toDecimalOrNull() ?: 0f
                         if (unitPrice > 0f) {
                             val sym = getCurrencySymbol(LocalContext.current)
                             Text(

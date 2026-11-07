@@ -650,6 +650,17 @@
     <string name="settings_backup_import_subtitle">Reemplaza los datos actuales con el contenido de la copia</string>
     <string name="settings_backup_share_title">Guardar copia de seguridad de Hooky</string>
     <string name="settings_backup_import_done">%d elementos restaurados correctamente</string>
+    <string name="settings_backup_export_choice">¿Guardar la copia en este móvil (Descargas, Drive…) o compartirla (email, WhatsApp…)?</string>
+    <string name="settings_backup_save_to_phone">Guardar en el móvil</string>
+    <string name="settings_backup_share">Compartir</string>
+    <string name="settings_backup_saved">Copia guardada</string>
+    <string name="settings_backup_import_confirm_title">¿Reemplazar todos tus datos?</string>
+    <string name="settings_backup_import_confirm_text">Esta copia tiene %1$d piezas, %2$d lanas, %3$d puntos y %4$d agujas (guardada el %5$s).\n\nTodo lo que hay ahora en Hooky se reemplazará. Se guarda una copia de tus datos actuales, así que puedes deshacerlo en Ajustes.</string>
+    <string name="settings_backup_import_confirm_replace">Reemplazar</string>
+    <string name="settings_backup_undo_title">Deshacer la última importación</string>
+    <string name="settings_backup_undo_subtitle">Recupera los datos que tenías antes de importar</string>
+    <string name="settings_backup_undo_confirm_text">Tus datos volverán a como estaban justo antes de la última importación. Lo que hayas añadido desde entonces se perderá.</string>
+    <string name="settings_backup_undo_confirm">Deshacer</string>
 
     <string name="settings_help_title">Ayuda y consejos</string>
     <string name="settings_help_subtitle">Funciones ocultas y atajos</string>
@@ -690,6 +701,15 @@
     <string name="onboarding_skip">Omitir</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_add_first_piece">Añadir mi primera pieza</string>
+    <string name="onboarding_look_around">Echar un vistazo primero</string>
+    <string name="getting_started_title">Primeros pasos</string>
+    <string name="getting_started_progress">%1$d de %2$d</string>
+    <string name="getting_started_dismiss">Ocultar primeros pasos</string>
+    <string name="getting_started_step_piece">Añade tu primera pieza</string>
+    <string name="getting_started_step_yarn">Añade una lana (escanea la etiqueta con la cámara)</string>
+    <string name="getting_started_step_counter">Cuenta tus filas con el contador de filas</string>
+    <string name="dashboard_new_piece">Nueva pieza</string>
     <string name="onboarding_1_title">Registra cada proyecto</string>
     <string name="onboarding_1_desc">Añade tus piezas de crochet y tejido, registra tus sesiones de trabajo con el temporizador y ve exactamente cuánto vale cada una.</string>
     <string name="onboarding_2_title">Conoce tu inventario</string>
