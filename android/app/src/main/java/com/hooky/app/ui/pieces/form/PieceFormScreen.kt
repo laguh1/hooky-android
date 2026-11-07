@@ -407,11 +407,25 @@ fun PieceFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Delivery date: for orders and for gifts with a deadline (Christmas)
+                    // Delivery date: for orders and for gifts with a deadline (Christmas).
+                    // Setting one is the moment to ask for notifications (reminders), not app start.
+                    val notifPermission = rememberLauncherForActivityResult(
+                        ActivityResultContracts.RequestPermission()
+                    ) { /* reminders simply stay off if refused */ }
+                    val formContext = LocalContext.current
                     DatePickerField(
                         label = stringResource(R.string.piece_field_due_date),
                         value = uiState.dueDate,
-                        onValueChange = { viewModel.onAction(PieceFormAction.DueDateChanged(it)) },
+                        onValueChange = {
+                            viewModel.onAction(PieceFormAction.DueDateChanged(it))
+                            if (it.isNotBlank() && android.os.Build.VERSION.SDK_INT >= 33 &&
+                                androidx.core.content.ContextCompat.checkSelfPermission(
+                                    formContext, android.Manifest.permission.POST_NOTIFICATIONS
+                                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                            ) {
+                                notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        },
                         clearable = true,
                         modifier = Modifier.fillMaxWidth()
                     )

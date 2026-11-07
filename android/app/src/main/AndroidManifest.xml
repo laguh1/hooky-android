@@ -7,6 +7,9 @@
     <!-- Microphone permission for voice row counting -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- Delivery-date reminders (Android 13+ asks the user) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- Camera feature declaration -->
     <uses-feature
         android:name="android.hardware.camera"
@@ -28,6 +31,7 @@
         <activity
             android:name="com.hooky.app.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:label="@string/app_name"
             android:theme="@style/Theme.Hooky.Splash">
             <intent-filter>

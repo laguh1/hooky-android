@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand purple for places outside Compose (notification accent) -->
+    <color name="brand_purple">#8C015E</color>
+</resources>

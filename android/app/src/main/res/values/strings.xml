@@ -795,4 +795,11 @@
         <item quantity="one">in %d day</item>
         <item quantity="other">in %d days</item>
     </plurals>
+    <string name="notif_channel_deliveries">Deliveries</string>
+    <string name="notif_channel_deliveries_desc">Reminders before a piece\'s delivery date</string>
+    <string name="notif_delivery_today">Delivery is today</string>
+    <plurals name="notif_delivery_soon">
+        <item quantity="one">Delivery in %d day</item>
+        <item quantity="other">Delivery in %d days</item>
+    </plurals>
 </resources>

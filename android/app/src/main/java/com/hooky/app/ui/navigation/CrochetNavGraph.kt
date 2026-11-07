@@ -22,6 +22,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -141,7 +142,10 @@ private val topLevelRoutes = setOf(
 
 @Composable
 fun CrochetNavGraph(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    /** Set when the app is opened from a delivery reminder. */
+    openPieceId: Int? = null,
+    onOpenPieceHandled: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val prefs = remember { AppPrefs.get(context) }
@@ -169,6 +173,12 @@ fun CrochetNavGraph(
         // statusBarsPadding), so this root Scaffold must not add them a second time.
         contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
+        LaunchedEffect(openPieceId) {
+            openPieceId?.let { id ->
+                navController.navigate(Screen.PieceDetail.createRoute(id)) { launchSingleTop = true }
+                onOpenPieceHandled()
+            }
+        }
         NavHost(
             navController = navController,
             startDestination = startDestination,

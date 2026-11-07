@@ -157,6 +157,9 @@ dependencies {
     // Google Play in-app review prompt (asked after a piece is finished)
     implementation("com.google.android.play:review:2.0.2")
 
+    // Daily delivery-date reminders (1.11)
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
     // ML Kit — Yarn Label Scanner (Phase A)
     // Play Services dynamic module instead of the bundled model: the bundled
     // com.google.mlkit:text-recognition artifact ships native libs that are not
