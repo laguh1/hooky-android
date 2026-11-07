@@ -686,7 +686,9 @@ private fun StitchGridCard(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
+                    // Long names wrap to a second line and end with "…" instead of being cut silently
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 stitch.abbreviation?.let { abbr ->

@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
 import androidx.compose.foundation.layout.PaddingValues
@@ -597,7 +598,7 @@ fun PieceFormScreen(
 
                     if (quantityTotal > 1) {
                         val remainingUnits = (quantityTotal - uiState.quantitySold).coerceAtLeast(0)
-                        val unitPrice = uiState.price.toFloatOrNull() ?: 0f
+                        val unitPrice = uiState.price.toDecimalOrNull() ?: 0f
                         if (unitPrice > 0f) {
                             val sym = getCurrencySymbol(LocalContext.current)
                             Text(

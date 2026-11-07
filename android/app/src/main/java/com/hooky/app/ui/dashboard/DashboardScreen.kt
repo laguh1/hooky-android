@@ -1,5 +1,8 @@
 package com.hooky.app.ui.dashboard
 
+import com.hooky.app.util.formatBallsApprox
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.statusBars
 import com.hooky.app.util.formatBalls
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.foundation.BorderStroke
@@ -198,8 +201,17 @@ private fun DashboardContent(
     onDismissGettingStarted: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Column(modifier = modifier.fillMaxSize()) {
+    // Purple strip behind the status bar that stays put: the header scrolls away, and
+    // without this the cards scrolled under the clock with nothing behind them.
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BrandPurple)
+            .windowInsetsTopHeight(WindowInsets.statusBars)
+    )
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 8.dp)
     ) {
         // ---- Header ----
@@ -346,7 +358,7 @@ private fun DashboardContent(
                     detail = pluralStringResource(
                         R.plurals.piece_yarn_balls_amount,
                         if (uiState.stashBallsLeft == 1f) 1 else 2,
-                        formatBalls(uiState.stashBallsLeft)
+                        formatBallsApprox(uiState.stashBallsLeft)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -375,6 +387,7 @@ private fun DashboardContent(
         }
 
     }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -390,7 +403,6 @@ private fun DashboardHeader(
         modifier = Modifier
             .fillMaxWidth()
             .background(BrandPurple)
-            .statusBarsPadding()
     ) {
         Row(
             modifier = Modifier

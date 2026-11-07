@@ -56,4 +56,12 @@ class YarnAmountFormatTest {
         assertEquals(listOf(YarnUsage("YARN-002", 2.5f)), parseYarnUsages("[{\"yarnId\":\"YARN-002\",\"balls\":2.5}]"))
         assertEquals(emptyList<YarnUsage>(), parseYarnUsages("not json"))
     }
+
+    @Test
+    fun approximateTotalsUseCraftFractions() {
+        assertEquals("≈ 13¼", formatBallsApprox(13f + 1f / 6))
+        assertEquals("12½", formatBallsApprox(12.5f))
+        assertEquals("4", formatBallsApprox(4f))
+        assertEquals("≈ 5", formatBallsApprox(4.95f))
+    }
 }

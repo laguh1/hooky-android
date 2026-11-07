@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.components.FullScreenPhotoViewer
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.parseYarnUsages
@@ -521,9 +522,13 @@ private fun PieceDetailContent(
                 PricingCard(piece = piece)
             }
 
-            // Gift section
-            piece.giftRecipient?.let { recipient ->
-                InfoRow(label = stringResource(R.string.piece_label_gift_for), value = recipient)
+            // Gift section — only for gift destinations. The name is kept when the destination
+            // changes (so switching back restores it) but must not show on a piece for sale.
+            val isGiftDestination = piece.destination == "FOR_GIFT" || piece.destination == "GIFTED"
+            if (isGiftDestination) {
+                piece.giftRecipient?.let { recipient ->
+                    InfoRow(label = stringResource(R.string.piece_label_gift_for), value = recipient)
+                }
             }
 
             // Notes
@@ -1557,7 +1562,7 @@ private fun PriceSuggestionDialog(
         })
     }
 
-    val hourlyRate = hourlyRateText.toFloatOrNull() ?: 0f
+    val hourlyRate = hourlyRateText.toDecimalOrNull() ?: 0f
     val suggested = hourlyRate * workHours + (materialCost ?: 0f)
 
     AlertDialog(
