@@ -28,7 +28,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Texture
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -118,6 +121,8 @@ fun DashboardScreen(
     onNavigateToSearch: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onNavigateToReports: () -> Unit = {},
+    onCreatePiece: () -> Unit = {},
+    onCreateYarn: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -165,6 +170,9 @@ fun DashboardScreen(
                 onNavigateToSearch = onNavigateToSearch,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToReports = onNavigateToReports,
+                onCreatePiece = onCreatePiece,
+                onCreateYarn = onCreateYarn,
+                onDismissGettingStarted = viewModel::dismissGettingStarted,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -185,6 +193,9 @@ private fun DashboardContent(
     onNavigateToSearch: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToReports: () -> Unit,
+    onCreatePiece: () -> Unit,
+    onCreateYarn: () -> Unit,
+    onDismissGettingStarted: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -212,6 +223,25 @@ private fun DashboardContent(
             )
         }
 
+        // ---- Getting started (new users) ----
+        if (uiState.gettingStartedVisible) {
+            item {
+                GettingStartedCard(
+                    hasPiece = uiState.pieceCount > 0,
+                    hasYarn = uiState.yarnCount > 0,
+                    hasCountedRows = uiState.hasCountedRows,
+                    doneCount = uiState.gettingStartedDoneCount,
+                    onAddPiece = onCreatePiece,
+                    onAddYarn = onCreateYarn,
+                    onUseCounter = {
+                        uiState.counterPieceId?.let(onNavigateToPieceDetail) ?: onCreatePiece()
+                    },
+                    onDismiss = onDismissGettingStarted,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                )
+            }
+        }
+
         // ---- In Progress section ----
         item {
             SectionHeader(
@@ -224,14 +254,24 @@ private fun DashboardContent(
 
         item {
             if (uiState.inProgressPieces.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.dashboard_in_progress_empty),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextMuted,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .padding(bottom = 8.dp)
-                )
+                Column(modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp)) {
+                    Text(
+                        text = stringResource(R.string.dashboard_in_progress_empty),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextMuted,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                    OutlinedButton(
+                        onClick = onCreatePiece,
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(R.string.dashboard_new_piece))
+                    }
+                }
             } else {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

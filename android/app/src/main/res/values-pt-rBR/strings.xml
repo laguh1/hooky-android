@@ -690,6 +690,15 @@
     <string name="onboarding_skip">Pular</string>
     <string name="onboarding_next">Próximo</string>
     <string name="onboarding_get_started">Começar</string>
+    <string name="onboarding_add_first_piece">Adicionar minha primeira peça</string>
+    <string name="onboarding_look_around">Explorar primeiro</string>
+    <string name="getting_started_title">Primeiros passos</string>
+    <string name="getting_started_progress">%1$d de %2$d</string>
+    <string name="getting_started_dismiss">Ocultar primeiros passos</string>
+    <string name="getting_started_step_piece">Adicione sua primeira peça</string>
+    <string name="getting_started_step_yarn">Adicione um fio (escaneie a etiqueta com a câmera)</string>
+    <string name="getting_started_step_counter">Conte suas carreiras com o contador de carreiras</string>
+    <string name="dashboard_new_piece">Nova peça</string>
     <string name="onboarding_1_title">Acompanhe cada projeto</string>
     <string name="onboarding_1_desc">Adicione suas peças de crochê e tricô, registre suas sessões de trabalho com o cronômetro e veja exatamente quanto cada uma vale.</string>
     <string name="onboarding_2_title">Conheça seu estoque</string>

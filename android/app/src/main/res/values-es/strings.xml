@@ -690,6 +690,15 @@
     <string name="onboarding_skip">Omitir</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_add_first_piece">Añadir mi primera pieza</string>
+    <string name="onboarding_look_around">Echar un vistazo primero</string>
+    <string name="getting_started_title">Primeros pasos</string>
+    <string name="getting_started_progress">%1$d de %2$d</string>
+    <string name="getting_started_dismiss">Ocultar primeros pasos</string>
+    <string name="getting_started_step_piece">Añade tu primera pieza</string>
+    <string name="getting_started_step_yarn">Añade una lana (escanea la etiqueta con la cámara)</string>
+    <string name="getting_started_step_counter">Cuenta tus filas con el contador de filas</string>
+    <string name="dashboard_new_piece">Nueva pieza</string>
     <string name="onboarding_1_title">Registra cada proyecto</string>
     <string name="onboarding_1_desc">Añade tus piezas de crochet y tejido, registra tus sesiones de trabajo con el temporizador y ve exactamente cuánto vale cada una.</string>
     <string name="onboarding_2_title">Conoce tu inventario</string>

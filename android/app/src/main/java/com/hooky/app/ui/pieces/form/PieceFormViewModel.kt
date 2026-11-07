@@ -40,6 +40,9 @@ data class PieceFormUiState(
     val isSaving: Boolean = false,
     val error: String? = null,
     val savedSuccessfully: Boolean = false,
+    // Set on save when the piece has just become Finished (used for the review prompt)
+    val justFinished: Boolean = false,
+    val pieceCountAfterSave: Int = 0,
     // Form fields
     val name: String = "",
     val type: PieceType = PieceType.OTHER,
@@ -406,6 +409,7 @@ class PieceFormViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                var justFinished = false
                 val jsonEncoder = kotlinx.serialization.json.Json
                 val stringListSerializer = kotlinx.serialization.builtins.ListSerializer(
                     kotlinx.serialization.serializer<String>()
@@ -425,6 +429,9 @@ class PieceFormViewModel @Inject constructor(
                     val photosJson = jsonEncoder.encodeToString(stringListSerializer, permanentPhotos)
                     // Load existing to preserve workSessions, pieceId, createdAt
                     val existing = pieceRepository.getPieceById(pieceId).first()
+                    justFinished = existing != null &&
+                        existing.workStatus != WorkStatus.FINISHED.name &&
+                        current.workStatus == WorkStatus.FINISHED
                     if (existing != null) {
                         val updated = existing.copy(
                             name = current.name,
@@ -492,9 +499,18 @@ class PieceFormViewModel @Inject constructor(
                         quantitySold = resolvedQuantitySold
                     )
                     pieceRepository.insertPiece(entity)
+                    justFinished = current.workStatus == WorkStatus.FINISHED
                 }
 
-                _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) }
+                val pieceCount = if (justFinished) pieceRepository.getPieceCount().first() else 0
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        savedSuccessfully = true,
+                        justFinished = justFinished,
+                        pieceCountAfterSave = pieceCount
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
             }
