@@ -518,10 +518,10 @@ private fun CrochetBottomBar(
                                 modifier = Modifier
                                     .size(56.dp, 32.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Slate)
+                                    .background(MaterialTheme.colorScheme.primary)
                             )
                         }
-                        val iconTint = if (selected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                        val iconTint = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                         if (destination.iconRes != null) {
                             Icon(
                                 painter = painterResource(destination.iconRes),
@@ -544,11 +544,11 @@ private fun CrochetBottomBar(
                         fontSize = 10.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Clip,
-                        color = if (selected) Slate else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     indicatorColor = Color.Transparent
                 )

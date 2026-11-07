@@ -123,8 +123,8 @@ fun PriceCalculatorScreen(
             // ---- Input card ----
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = BackgroundLight,
-                border = BorderStroke(1.dp, BorderLight),
+                color = MaterialTheme.colorScheme.background,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 tonalElevation = 0.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -224,8 +224,8 @@ fun PriceCalculatorScreen(
                                     )
                                 },
                                 colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Slate,
-                                    selectedLabelColor = White,
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                                     containerColor = MaterialTheme.colorScheme.surface,
                                     labelColor = TextSecondary
                                 ),
@@ -233,7 +233,7 @@ fun PriceCalculatorScreen(
                                     enabled = true,
                                     selected = selected,
                                     borderColor = BorderLight,
-                                    selectedBorderColor = Slate,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary,
                                     borderWidth = 1.dp,
                                     selectedBorderWidth = 1.dp
                                 ),

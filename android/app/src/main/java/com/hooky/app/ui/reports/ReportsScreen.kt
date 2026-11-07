@@ -191,7 +191,7 @@ private fun ReportTabRow(
             onClick = { onTabSelected(ReportTab.PIECES) },
             label = { Text(stringResource(R.string.reports_tab_pieces)) },
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Slate,
+                selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = androidx.compose.ui.graphics.Color.White
             )
         )
@@ -200,7 +200,7 @@ private fun ReportTabRow(
             onClick = { onTabSelected(ReportTab.CUSTOMERS) },
             label = { Text(stringResource(R.string.reports_tab_customers)) },
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Slate,
+                selectedContainerColor = MaterialTheme.colorScheme.primary,
                 selectedLabelColor = androidx.compose.ui.graphics.Color.White
             )
         )
