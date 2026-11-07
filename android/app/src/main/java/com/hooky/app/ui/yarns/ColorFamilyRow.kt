@@ -20,7 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hooky.app.R
@@ -58,8 +64,27 @@ fun ColorFamilyRow(
     onToggleSort: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val scroll = rememberScrollState()
+    // Fade the right edge while more circles are off-screen, so it's clear the row scrolls.
+    // Drawn as an alpha mask, so it works on any background (light, dark, grey).
+    val fadeWidth = with(LocalDensity.current) { 40.dp.toPx() }
     Row(
-        modifier = modifier.horizontalScroll(rememberScrollState()),
+        modifier = modifier
+            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+            .drawWithContent {
+                drawContent()
+                if (scroll.canScrollForward) {
+                    drawRect(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color.Black, Color.Transparent),
+                            startX = size.width - fadeWidth,
+                            endX = size.width
+                        ),
+                        blendMode = BlendMode.DstIn
+                    )
+                }
+            }
+            .horizontalScroll(scroll),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
