@@ -701,6 +701,15 @@
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_add_first_piece">Add my first piece</string>
+    <string name="onboarding_look_around">Look around first</string>
+    <string name="getting_started_title">Getting started</string>
+    <string name="getting_started_progress">%1$d of %2$d</string>
+    <string name="getting_started_dismiss">Hide getting started</string>
+    <string name="getting_started_step_piece">Add your first piece</string>
+    <string name="getting_started_step_yarn">Add a yarn (scan its label with the camera)</string>
+    <string name="getting_started_step_counter">Count your rows with the row counter</string>
+    <string name="dashboard_new_piece">New piece</string>
     <string name="onboarding_1_title">Track every project</string>
     <string name="onboarding_1_desc">Add your crochet and knitting pieces, log your work sessions with the timer, and see exactly what each one is worth.</string>
     <string name="onboarding_2_title">Know your stash</string>

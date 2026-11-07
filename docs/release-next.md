@@ -189,3 +189,31 @@ can't be replaced with a local build without uninstalling).
 <es-ES>
 • Corrección: Confirmar y Cancelar de "Coger el color de la foto" ahora están arriba y los botones de navegación ya no los tapan
 </es-ES>
+
+## 1.10.3 / build 31 (2026-11-07)
+Play stats for 9 Oct–5 Nov: ~9.9k impressions, 61 installs, only 25 first opens, 2 ratings. New users
+landed on an empty dashboard after three generic slides, with no clear next step, and the app never
+asked for a rating.
+- **Getting started card** on the dashboard (new installs, and older installs with no pieces): 3 steps
+  (add a piece, add a yarn by scanning its label, count rows with the counter), each a shortcut to the right screen and
+  ticked off from real data. Hides when all 3 are done or with ✕. `ui/dashboard/GettingStartedCard.kt`.
+- **Empty "In progress"** now has a "+ New piece" button.
+- **Last onboarding slide**: "Add my first piece" (opens the new-piece form) + "Look around first".
+- **In-app review prompt** (Play Review API `com.google.android.play:review:2.0.2`) right after a piece
+  becomes Finished, only if installed ≥3 days, ≥2 pieces and not asked in the last 90 days
+  (`util/ReviewPolicy.kt` + unit tests). Play also applies its own quota, so it may not appear in testing.
+- Checked on the Pixel_6 emulator: fresh install in PT-BR and ES at 360dp, ES at font 1.3, EN in dark
+  mode; all three steps tick off and the card disappears.
+
+<en-US>
+• New "Getting started" steps on the home screen to help you set up your first piece, yarn and row counter
+• "Add my first piece" right from the welcome screens
+</en-US>
+<pt-BR>
+• Novos "Primeiros passos" na tela inicial para ajudar você a cadastrar sua primeira peça, fio e contador de carreiras
+• "Adicionar minha primeira peça" direto nas telas de boas-vindas
+</pt-BR>
+<es-ES>
+• Nuevos "Primeros pasos" en la pantalla de inicio para ayudarte a añadir tu primera pieza, lana y contador de filas
+• "Añadir mi primera pieza" directamente desde las pantallas de bienvenida
+</es-ES>

@@ -82,6 +82,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.hooky.app.ui.util.maybeAskForReview
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -188,6 +189,7 @@ fun PieceFormScreen(
     // Navigate back on save
     LaunchedEffect(uiState.savedSuccessfully) {
         if (uiState.savedSuccessfully) {
+            if (uiState.justFinished) maybeAskForReview(context, uiState.pieceCountAfterSave)
             onSaved()
         }
     }
