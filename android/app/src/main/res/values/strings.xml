@@ -96,7 +96,7 @@
     <string name="reports_sheet_customers">Customers</string>
     <string name="reports_sheet_yarns">Yarns</string>
     <string name="reports_total">Total</string>
-    <string name="reports_xlsx_header_pieces">Name,Status,Quantity,Material cost (per unit),Price (per unit),Sold price (per unit),Work hours,Total cost,Total revenue,Profit,Customer / shop,Date sold</string>
+    <string name="reports_xlsx_header_pieces">Name,Status,Quantity,Material cost (per unit),Price (per unit),Sold price (per unit),Work hours,Total cost,Total revenue,Profit,Customer / shop,Date sold,Delivery date,Deposit paid</string>
     <string name="reports_xlsx_header_yarns">Name,Brand,Colour,Material,Where bought,Purchase date,Price paid (per ball),Balls bought,Used in pieces,Left,Total spent,Notes</string>
     <plurals name="reports_piece_count">
         <item quantity="one">%d piece</item>
@@ -779,4 +779,20 @@
     <string name="error_scan_size">Couldn\'t read the size. Try a clearer, closer photo with good lighting.</string>
     <string name="error_scan_label">Couldn\'t read the label. Try a clearer, closer photo with good lighting.</string>
     <string name="error_scan_failed">Scan failed. Please try again.</string>
+
+    <!-- 1.11: delivery date and deposit on pieces -->
+    <string name="piece_field_due_date">Delivery date</string>
+    <string name="piece_field_deposit">Deposit paid (%1$s)</string>
+    <string name="piece_label_due_date">Delivery</string>
+    <string name="piece_label_deposit">Deposit paid</string>
+    <string name="piece_label_balance_due">Still to receive</string>
+    <string name="piece_due_badge">Due %1$s</string>
+    <string name="piece_due_today">Due today</string>
+    <string name="piece_due_late">Late · %1$s</string>
+    <string name="piece_filter_due">Deliveries</string>
+    <string name="date_field_clear_cd">Clear date</string>
+    <plurals name="piece_due_in_days">
+        <item quantity="one">in %d day</item>
+        <item quantity="other">in %d days</item>
+    </plurals>
 </resources>

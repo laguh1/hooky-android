@@ -96,7 +96,7 @@
     <string name="reports_sheet_customers">Clientes</string>
     <string name="reports_sheet_yarns">Fios</string>
     <string name="reports_total">Total</string>
-    <string name="reports_xlsx_header_pieces">Nome,Status,Quantidade,Custo do material (por unidade),Preço (por unidade),Preço de venda (por unidade),Horas de trabalho,Custo total,Receita total,Lucro,Cliente / loja,Data da venda</string>
+    <string name="reports_xlsx_header_pieces">Nome,Status,Quantidade,Custo do material (por unidade),Preço (por unidade),Preço de venda (por unidade),Horas de trabalho,Custo total,Receita total,Lucro,Cliente / loja,Data da venda,Data de entrega,Sinal pago</string>
     <string name="reports_xlsx_header_yarns">Nome,Marca,Cor,Material,Local de compra,Data de compra,Preço pago (por novelo),Novelos comprados,Usado em peças,Restante,Total gasto,Notas</string>
     <plurals name="reports_piece_count">
         <item quantity="one">%d peça</item>
@@ -768,4 +768,20 @@
     <string name="error_scan_size">Não foi possível ler o tamanho. Tente uma foto mais nítida, de perto e com boa luz.</string>
     <string name="error_scan_label">Não foi possível ler a etiqueta. Tente uma foto mais nítida, de perto e com boa luz.</string>
     <string name="error_scan_failed">Não foi possível escanear. Tente novamente.</string>
+
+    <!-- 1.11: delivery date and deposit on pieces -->
+    <string name="piece_field_due_date">Data de entrega</string>
+    <string name="piece_field_deposit">Sinal pago (%1$s)</string>
+    <string name="piece_label_due_date">Entrega</string>
+    <string name="piece_label_deposit">Sinal pago</string>
+    <string name="piece_label_balance_due">Falta receber</string>
+    <string name="piece_due_badge">Entrega %1$s</string>
+    <string name="piece_due_today">Entrega hoje</string>
+    <string name="piece_due_late">Atrasada · %1$s</string>
+    <string name="piece_filter_due">Entregas</string>
+    <string name="date_field_clear_cd">Limpar data</string>
+    <plurals name="piece_due_in_days">
+        <item quantity="one">em %d dia</item>
+        <item quantity="other">em %d dias</item>
+    </plurals>
 </resources>

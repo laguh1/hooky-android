@@ -43,3 +43,23 @@ class TextCleanTest {
         assertEquals("Shine", "Shine".oneLine())
     }
 }
+
+class InputTextTest {
+    private val pt = java.util.Locale.forLanguageTag("pt-BR")
+
+    @Test
+    fun localeSeparatorAndNoTrailingZeros() {
+        assertEquals("25", 25.0f.toInputText(pt))
+        assertEquals("9,5", 9.5f.toInputText(pt))
+        assertEquals("120,25", 120.25f.toInputText(pt))
+        assertEquals("1234,5", 1234.5f.toInputText(pt))
+        assertEquals("9.5", 9.5f.toInputText(java.util.Locale.US))
+    }
+
+    @Test
+    fun roundTrips() {
+        listOf(0.5f, 9.5f, 120.25f, 1234.56f).forEach { v ->
+            assertEquals(v, v.toInputText(pt).toDecimalOrNull()!!, 0.001f)
+        }
+    }
+}

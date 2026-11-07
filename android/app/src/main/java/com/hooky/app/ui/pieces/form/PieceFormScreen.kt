@@ -407,6 +407,15 @@ fun PieceFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    // Delivery date: for orders and for gifts with a deadline (Christmas)
+                    DatePickerField(
+                        label = stringResource(R.string.piece_field_due_date),
+                        value = uiState.dueDate,
+                        onValueChange = { viewModel.onAction(PieceFormAction.DueDateChanged(it)) },
+                        clearable = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
                             value = uiState.workHours,
@@ -589,6 +598,17 @@ fun PieceFormScreen(
                         value = uiState.price,
                         onValueChange = { viewModel.onAction(PieceFormAction.PriceChanged(it)) },
                         label = { Text(stringResource(R.string.piece_field_price, getCurrencySymbol(LocalContext.current)) + perUnitSuffix) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.deposit,
+                        onValueChange = { viewModel.onAction(PieceFormAction.DepositChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_deposit, getCurrencySymbol(LocalContext.current))) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -1231,7 +1251,9 @@ internal fun DatePickerField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Shows an ✕ to remove the date (optional dates like the delivery date). */
+    clearable: Boolean = false
 ) {
     var showPicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
@@ -1244,8 +1266,15 @@ internal fun DatePickerField(
         readOnly = true,
         label = { Text(label) },
         trailingIcon = {
-            IconButton(onClick = { showPicker = true }) {
-                Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+            Row {
+                if (clearable && value.isNotBlank()) {
+                    IconButton(onClick = { onValueChange("") }) {
+                        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.date_field_clear_cd))
+                    }
+                }
+                IconButton(onClick = { showPicker = true }) {
+                    Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+                }
             }
         },
         shape = RoundedCornerShape(10.dp),
