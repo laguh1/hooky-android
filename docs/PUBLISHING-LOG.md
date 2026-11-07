@@ -29,6 +29,7 @@ IG from today, FB from tomorrow"). Episodes 7 and 8 (PT) also scheduled on IG + 
 **YouTube: English only for now** (user decision 2026-11-04), every other day: EN ep1 scheduled Wed 4 Nov 19:00 Madrid (moved from 16:00 to suit Brazil + US time zones; use 19:00 Madrid for the rest), link https://youtube.com/shorts/Us2zm3KZsiA
 EN ep2 scheduled Fri 6 Nov 19:00 Madrid, link https://youtube.com/shorts/xaNjgD-NXBU
 EN ep3 (show every stitch) scheduled Sun 8 Nov 19:00 Madrid, link https://youtube.com/shorts/D02BLTHrDzA (scheduled 2026-11-06, after ep2 so ep2 can be its related video)
+EN ep4 (rows and repeats) scheduled Tue 10 Nov, link https://youtube.com/shorts/TjqWvqKFwRY (scheduled 2026-11-07)
 YouTube EN episodes are scheduled one at a time, each after the previous one is live, so the newest live episode can be set as the related video.
 (`shared/promo/ENGLISH/videos/serie-1.10/s110_ep1_christmas_orders_en.mp4`); if the pace holds, ep2 6 Nov, ep3 8, ep4 10, ep5 12, ep6 14, ep7 16, ep8 18 Nov.
 Move each episode up into the Log, with date and link, once it's live.
