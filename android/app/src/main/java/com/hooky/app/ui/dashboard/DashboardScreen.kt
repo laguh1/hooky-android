@@ -641,6 +641,7 @@ private fun InProgressCard(
                         text = destinationDisplay,
                         style = BadgeStyle.OUTLINE
                     )
+                    com.hooky.app.ui.pieces.DueBadge(piece.dueDate, piece.destination)
                 }
 
                 // Work hours (if present)
