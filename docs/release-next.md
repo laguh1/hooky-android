@@ -191,9 +191,16 @@ can't be replaced with a local build without uninstalling).
 </es-ES>
 
 ## 1.10.3 / build 31 (2026-11-07)
-Play stats for 9 Oct–5 Nov: ~9.9k impressions, 61 installs, only 25 first opens, 2 ratings. New users
-landed on an empty dashboard after three generic slides, with no clear next step, and the app never
-asked for a rating.
+Onboarding + rating (below) **and** the bug-fix batch from `docs/IDEAS-NEXT-RELEASE.md` groups 1–2
+(full list with how each was verified: `docs/FIXES-2026-08-31.md`, section "1.10.3").
+
+Fixes: comma prices/costs lost in PT/ES · Skip on the welcome screens didn't work · backup import now
+asks first + "Undo last import" · "Save to phone" for backups · report totals match the rows, gifts
+not counted as revenue · gift name hidden on pieces for sale · scanned yarn material on one line ·
+dashboard status bar · stash "≈ 13¼" · Excel whole-number totals and date cells · "Por cor" scrolls
+to top · long names end with "…" · yarn clone clears the colour code.
+
+Onboarding (Play stats 9 Oct–5 Nov: ~9.9k impressions, 61 installs, only 25 first opens):
 - **Getting started card** on the dashboard (new installs, and older installs with no pieces): 3 steps
   (add a piece, add a yarn by scanning its label, count rows with the counter), each a shortcut to the right screen and
   ticked off from real data. Hides when all 3 are done or with ✕. `ui/dashboard/GettingStartedCard.kt`.
@@ -206,14 +213,26 @@ asked for a rating.
   mode; all three steps tick off and the card disappears.
 
 <en-US>
-• New "Getting started" steps on the home screen to help you set up your first piece, yarn and row counter
-• "Add my first piece" right from the welcome screens
+• New "Getting started" steps on the home screen, and "Add my first piece" on the welcome screens
+• Prices and costs typed with a comma are saved correctly
+• Importing a backup now asks first, and you can undo it in Settings
+• "Save to phone" for backups
+• Cost & profit report: totals match the rows; gifts don't count as revenue
+• Skip on the welcome screens works, plus many small fixes
 </en-US>
 <pt-BR>
-• Novos "Primeiros passos" na tela inicial para ajudar você a cadastrar sua primeira peça, fio e contador de carreiras
-• "Adicionar minha primeira peça" direto nas telas de boas-vindas
+• Novos "Primeiros passos" na tela inicial e "Adicionar minha primeira peça" nas boas-vindas
+• Preços e custos digitados com vírgula agora são salvos corretamente
+• Importar um backup agora pede confirmação, e dá para desfazer em Configurações
+• "Salvar no celular" para backups
+• Relatório de custos e lucro: totais batem com as linhas; presentes não contam como receita
+• "Pular" nas boas-vindas funciona, e muitas pequenas correções
 </pt-BR>
 <es-ES>
-• Nuevos "Primeros pasos" en la pantalla de inicio para ayudarte a añadir tu primera pieza, lana y contador de filas
-• "Añadir mi primera pieza" directamente desde las pantallas de bienvenida
+• Nuevos "Primeros pasos" en el inicio y "Añadir mi primera pieza" en la bienvenida
+• Los precios y costes con coma ahora se guardan bien
+• Importar una copia ahora pide confirmación, y se puede deshacer en Ajustes
+• "Guardar en el móvil" para las copias
+• Informe de costes y beneficio: los totales cuadran con las filas; los regalos no cuentan como ingresos
+• "Omitir" en la bienvenida funciona, y muchas pequeñas correcciones
 </es-ES>

@@ -1,5 +1,6 @@
 package com.hooky.app.ui.calculator
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.components.WordSafeText
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -287,8 +288,8 @@ fun PriceCalculatorScreen(
                     ResultCard(
                         suggestedPrice = price,
                         breakdown = uiState.breakdown,
-                        workHours = uiState.workHours.toFloatOrNull() ?: 0f,
-                        laborRate = uiState.laborRate.toFloatOrNull() ?: 8f,
+                        workHours = uiState.workHours.toDecimalOrNull() ?: 0f,
+                        laborRate = uiState.laborRate.toDecimalOrNull() ?: 8f,
                         complexityFactor = uiState.complexityFactor,
                         profitMargin = uiState.profitMargin,
                         currencySymbol = currencySymbol,

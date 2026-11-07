@@ -72,6 +72,15 @@ fun OnboardingScreen(onFinish: (addFirstPiece: Boolean) -> Unit) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { index ->
+            PageContent(page = pages[index])
+        }
+
+        // Drawn after the pager so it sits on top: when it came first, the pager covered it
+        // and taps on "Skip" never arrived (bug until 1.10.3).
         if (!isLastPage) {
             TextButton(
                 onClick = { onFinish(false) },
@@ -86,13 +95,6 @@ fun OnboardingScreen(onFinish: (addFirstPiece: Boolean) -> Unit) {
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-        }
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { index ->
-            PageContent(page = pages[index])
         }
 
         Column(

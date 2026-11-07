@@ -650,6 +650,17 @@
     <string name="settings_backup_import_subtitle">Reemplaza los datos actuales con el contenido de la copia</string>
     <string name="settings_backup_share_title">Guardar copia de seguridad de Hooky</string>
     <string name="settings_backup_import_done">%d elementos restaurados correctamente</string>
+    <string name="settings_backup_export_choice">¿Guardar la copia en este móvil (Descargas, Drive…) o compartirla (email, WhatsApp…)?</string>
+    <string name="settings_backup_save_to_phone">Guardar en el móvil</string>
+    <string name="settings_backup_share">Compartir</string>
+    <string name="settings_backup_saved">Copia guardada</string>
+    <string name="settings_backup_import_confirm_title">¿Reemplazar todos tus datos?</string>
+    <string name="settings_backup_import_confirm_text">Esta copia tiene %1$d piezas, %2$d lanas, %3$d puntos y %4$d agujas (guardada el %5$s).\n\nTodo lo que hay ahora en Hooky se reemplazará. Se guarda una copia de tus datos actuales, así que puedes deshacerlo en Ajustes.</string>
+    <string name="settings_backup_import_confirm_replace">Reemplazar</string>
+    <string name="settings_backup_undo_title">Deshacer la última importación</string>
+    <string name="settings_backup_undo_subtitle">Recupera los datos que tenías antes de importar</string>
+    <string name="settings_backup_undo_confirm_text">Tus datos volverán a como estaban justo antes de la última importación. Lo que hayas añadido desde entonces se perderá.</string>
+    <string name="settings_backup_undo_confirm">Deshacer</string>
 
     <string name="settings_help_title">Ayuda y consejos</string>
     <string name="settings_help_subtitle">Funciones ocultas y atajos</string>

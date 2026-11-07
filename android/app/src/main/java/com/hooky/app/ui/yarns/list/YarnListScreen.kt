@@ -24,6 +24,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -86,6 +90,19 @@ fun YarnListScreen(
     viewModel: YarnListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // After changing the sort or colour filter, start from the top of the list (it used to stay
+    // on the yarn that had been first, hiding everything above it). Only on a real change, so
+    // coming back from a yarn keeps the scroll position.
+    val gridState = rememberLazyGridState()
+    val listKey = "${uiState.sortByColor}|${uiState.selectedColor}"
+    var lastListKey by rememberSaveable { mutableStateOf(listKey) }
+    LaunchedEffect(listKey) {
+        if (listKey != lastListKey) {
+            lastListKey = listKey
+            gridState.scrollToItem(0)
+        }
+    }
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.error) {
@@ -236,6 +253,7 @@ fun YarnListScreen(
                 else -> {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
+                        state = gridState,
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,

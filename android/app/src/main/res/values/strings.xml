@@ -655,6 +655,17 @@
     <string name="settings_backup_import_subtitle">Replaces current data with backup contents</string>
     <string name="settings_backup_share_title">Save Hooky backup</string>
     <string name="settings_backup_import_done">%d items restored successfully</string>
+    <string name="settings_backup_export_choice">Save the backup file on this phone (Downloads, Drive…) or share it (email, WhatsApp…)?</string>
+    <string name="settings_backup_save_to_phone">Save to phone</string>
+    <string name="settings_backup_share">Share</string>
+    <string name="settings_backup_saved">Backup saved</string>
+    <string name="settings_backup_import_confirm_title">Replace all your data?</string>
+    <string name="settings_backup_import_confirm_text">This backup has %1$d pieces, %2$d yarns, %3$d stitches and %4$d needles (saved on %5$s).\n\nEverything now in Hooky will be replaced by it. A copy of your current data is kept, so you can undo this in Settings.</string>
+    <string name="settings_backup_import_confirm_replace">Replace</string>
+    <string name="settings_backup_undo_title">Undo last import</string>
+    <string name="settings_backup_undo_subtitle">Bring back the data you had before importing</string>
+    <string name="settings_backup_undo_confirm_text">Your data will go back to how it was just before the last import. Anything added since then will be lost.</string>
+    <string name="settings_backup_undo_confirm">Undo import</string>
 
     <string name="settings_help_title">Help &amp; Tips</string>
     <string name="settings_help_subtitle">Hidden features and shortcuts</string>

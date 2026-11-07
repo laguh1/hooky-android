@@ -43,7 +43,7 @@ class BackupService @Inject constructor(
         encodeDefaults = true
     }
 
-    suspend fun export(): Uri = withContext(ioDispatcher) {
+    private suspend fun currentDataJson(): String {
         val data = BackupData(
             version = BACKUP_CURRENT_VERSION,
             pieces = pieceDao.getAllNow(),
@@ -53,7 +53,50 @@ class BackupService @Inject constructor(
             counters = counterDao.getAllNow(),
             idCounters = idCounterDao.getAllNow()
         )
-        val jsonString = json.encodeToString(data)
+        return json.encodeToString(data)
+    }
+
+    /** Copy of the data as it was just before the last import, so an import can be undone. */
+    private val safetyCopy: File
+        get() = File(File(context.filesDir, "backup"), "before_last_import.json")
+
+    fun hasSafetyCopy(): Boolean = safetyCopy.exists()
+
+    /** Writes a backup straight to a file the user picked (e.g. Downloads or Drive). */
+    suspend fun exportTo(target: Uri) = withContext(ioDispatcher) {
+        val jsonString = currentDataJson()
+        context.contentResolver.openOutputStream(target, "wt")?.use {
+            it.write(jsonString.toByteArray(Charsets.UTF_8))
+        } ?: error("Cannot write backup file")
+    }
+
+    /** Reads a backup file without changing anything, to show what it contains before importing. */
+    suspend fun preview(uri: Uri): Result<BackupPreview> = withContext(ioDispatcher) {
+        runCatching {
+            val data = readBackup(uri)
+            BackupPreview(
+                pieces = data.pieces.size,
+                yarns = data.yarns.size,
+                stitches = data.stitches.size,
+                needles = data.needles.size,
+                exportedAt = data.exportedAt
+            )
+        }
+    }
+
+    /** Puts back the data from just before the last import. */
+    suspend fun restoreSafetyCopy(): Result<Int> =
+        import(Uri.fromFile(safetyCopy), keepSafetyCopy = false).onSuccess { safetyCopy.delete() }
+
+    private fun readBackup(uri: Uri): BackupData {
+        val jsonString = context.contentResolver.openInputStream(uri)
+            ?.use { it.readBytes().toString(Charsets.UTF_8) }
+            ?: error("Cannot read backup file")
+        return json.decodeFromString<BackupData>(jsonString)
+    }
+
+    suspend fun export(): Uri = withContext(ioDispatcher) {
+        val jsonString = currentDataJson()
         val dateStr = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val backupDir = File(context.filesDir, "backup").also { it.mkdirs() }
         val file = File(backupDir, "hooky_backup_$dateStr.json")
@@ -61,12 +104,9 @@ class BackupService @Inject constructor(
         FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     }
 
-    suspend fun import(uri: Uri): Result<Int> = withContext(ioDispatcher) {
+    suspend fun import(uri: Uri, keepSafetyCopy: Boolean = true): Result<Int> = withContext(ioDispatcher) {
         runCatching {
-            val jsonString = context.contentResolver.openInputStream(uri)
-                ?.use { it.readBytes().toString(Charsets.UTF_8) }
-                ?: error("Cannot read backup file")
-            val decoded = json.decodeFromString<BackupData>(jsonString)
+            val decoded = readBackup(uri)
             // Backups made before photos went newest first: flip them
             val data = if (decoded.version >= 2) decoded else decoded.copy(
                 pieces = decoded.pieces.map { it.copy(photos = reversePhotosJson(it.photos)) },
@@ -74,6 +114,11 @@ class BackupService @Inject constructor(
                 stitches = decoded.stitches.map { it.copy(photos = reversePhotosJson(it.photos)) },
                 needles = decoded.needles.map { it.copy(photos = reversePhotosJson(it.photos)) }
             )
+            // Import replaces everything: keep the current data first so it can be undone.
+            if (keepSafetyCopy) {
+                safetyCopy.parentFile?.mkdirs()
+                safetyCopy.writeText(currentDataJson())
+            }
             database.withTransaction {
                 pieceDao.clearAll()
                 yarnDao.clearAll()
@@ -92,3 +137,11 @@ class BackupService @Inject constructor(
         }
     }
 }
+
+data class BackupPreview(
+    val pieces: Int,
+    val yarns: Int,
+    val stitches: Int,
+    val needles: Int,
+    val exportedAt: Long
+)

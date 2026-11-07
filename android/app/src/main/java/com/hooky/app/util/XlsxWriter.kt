@@ -15,7 +15,7 @@ sealed interface XlsxCell {
     data class Number(val value: Double, val decimals: Boolean = true) : XlsxCell
     data class Date(val value: LocalDate) : XlsxCell
     /** A formula without the leading "=", e.g. "SUM(B2:B9)". */
-    data class Formula(val value: String) : XlsxCell
+    data class Formula(val value: String, val decimals: Boolean = true) : XlsxCell
     object Empty : XlsxCell
 }
 
@@ -37,6 +37,7 @@ object XlsxWriter {
     private const val STYLE_DATE = 4
     private const val STYLE_TOTAL_TEXT = 5
     private const val STYLE_TOTAL_NUMBER = 6
+    private const val STYLE_TOTAL_INTEGER = 7
 
     fun write(sheets: List<XlsxSheet>, out: OutputStream) {
         ZipOutputStream(out).use { zip ->
@@ -94,7 +95,13 @@ object XlsxWriter {
             rowNum++
             sb.append("""<row r="$rowNum">""")
             totals.forEachIndexed { c, value ->
-                val style = if (value is XlsxCell.Text) STYLE_TOTAL_TEXT else STYLE_TOTAL_NUMBER
+                // Counts (pieces, balls bought) total as whole numbers: "14", not "14.00"
+                val style = when {
+                    value is XlsxCell.Text -> STYLE_TOTAL_TEXT
+                    value is XlsxCell.Formula && !value.decimals -> STYLE_TOTAL_INTEGER
+                    value is XlsxCell.Number && !value.decimals -> STYLE_TOTAL_INTEGER
+                    else -> STYLE_TOTAL_NUMBER
+                }
                 sb.append(cell(c, rowNum, value, style))
             }
             sb.append("</row>")
@@ -119,7 +126,7 @@ object XlsxWriter {
                 val serial = ChronoUnit.DAYS.between(LocalDate.of(1899, 12, 30), value.value)
                 """<c r="$ref" s="${forcedStyle ?: STYLE_DATE}"><v>$serial</v></c>"""
             }
-            is XlsxCell.Formula -> """<c r="$ref" s="${forcedStyle ?: STYLE_NUMBER}"><f>${escape(value.value)}</f></c>"""
+            is XlsxCell.Formula -> """<c r="$ref" s="${forcedStyle ?: if (value.decimals) STYLE_NUMBER else STYLE_INTEGER}"><f>${escape(value.value)}</f></c>"""
             XlsxCell.Empty -> forcedStyle?.let { """<c r="$ref" s="$it"/>""" } ?: ""
         }
     }
@@ -167,5 +174,5 @@ object XlsxWriter {
     private const val ROOT_RELS = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>"""
 
     // numFmtId 4 = #,##0.00, 1 = 0, 14 = the reader's own short date format
-    private const val STYLES = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF3F4F6"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left/><right/><top style="thin"><color rgb="FF9CA3AF"/></top><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="4" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="1" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="14" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1"/><xf numFmtId="4" fontId="1" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>"""
+    private const val STYLES = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF3F4F6"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left/><right/><top style="thin"><color rgb="FF9CA3AF"/></top><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="8"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="4" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="1" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="14" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1"/><xf numFmtId="4" fontId="1" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1"/><xf numFmtId="1" fontId="1" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>"""
 }

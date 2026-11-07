@@ -1,5 +1,6 @@
 package com.hooky.app.ui.needles.form
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.R
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
@@ -217,7 +218,7 @@ class NeedleFormViewModel @Inject constructor(
                         existing.copy(
                             name = state.name.trim(),
                             type = state.type.name,
-                            sizeMm = state.sizeMm.toFloatOrNull(),
+                            sizeMm = state.sizeMm.toDecimalOrNull(),
                             sizeLabel = state.sizeLabel.trim().ifBlank { null },
                             material = state.material.trim().ifBlank { null },
                             brand = state.brand.trim().ifBlank { null },
@@ -243,7 +244,7 @@ class NeedleFormViewModel @Inject constructor(
                             needleId = needleEntityId,
                             name = state.name.trim(),
                             type = state.type.name,
-                            sizeMm = state.sizeMm.toFloatOrNull(),
+                            sizeMm = state.sizeMm.toDecimalOrNull(),
                             sizeLabel = state.sizeLabel.trim().ifBlank { null },
                             material = state.material.trim().ifBlank { null },
                             brand = state.brand.trim().ifBlank { null },
