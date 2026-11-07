@@ -23,3 +23,8 @@ val DarkBorder = Color(0xFF374151)
 val DarkTextPrimary = Color(0xFFF9FAFB)
 val DarkTextSecondary = Color(0xFF9CA3AF)
 val DarkSlate = Color(0xFFE2E8F0)
+
+// Brand purple for text, icons, outlines and cursors in dark mode: #8C015E on the dark
+// background is hard to read, so dark mode uses a lighter tint of the same purple.
+// Filled purple surfaces (buttons, badges, the dashboard header) keep BrandPurple.
+val BrandPurpleOnDark = Color(0xFFCB8DB7)

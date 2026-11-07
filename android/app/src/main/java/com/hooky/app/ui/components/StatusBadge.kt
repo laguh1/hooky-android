@@ -37,8 +37,9 @@ fun StatusBadge(
 
     when (style) {
         BadgeStyle.FILLED_SLATE -> {
-            backgroundColor = Slate
-            textColor = White
+            // Theme primary: slate + white in light mode, light slate + dark text in dark mode
+            backgroundColor = MaterialTheme.colorScheme.primary
+            textColor = MaterialTheme.colorScheme.onPrimary
             borderColor = null
         }
         BadgeStyle.OUTLINE -> {

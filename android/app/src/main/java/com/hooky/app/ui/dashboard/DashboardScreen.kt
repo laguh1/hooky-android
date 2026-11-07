@@ -165,7 +165,7 @@ fun DashboardScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Slate)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
             DashboardContent(
@@ -383,7 +383,7 @@ private fun DashboardContent(
                 Text(
                     text = stringResource(R.string.dashboard_report_link),
                     style = MaterialTheme.typography.labelMedium,
-                    color = Slate,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -511,7 +511,7 @@ private fun StatCard(
                 text = number,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Slate,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
             Text(
@@ -793,7 +793,7 @@ private fun ValueCard(
                 text = amount.formatCurrency(currencySymbol),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Slate
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

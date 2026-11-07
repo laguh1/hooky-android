@@ -122,6 +122,7 @@ import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BorderStrong
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.ErrorRed
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
@@ -166,7 +167,7 @@ fun PieceDetailScreen(
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator(
-                    color = Slate,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -466,7 +467,7 @@ private fun PieceDetailContent(
                     Text(
                         text = stringResource(R.string.piece_suggest_price),
                         style = MaterialTheme.typography.labelMedium,
-                        color = BrandPurple,
+                        color = BrandPurpleText,
                         textAlign = TextAlign.End,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -590,11 +591,11 @@ private fun PieceDetailContent(
                 enabled = !isSharing,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, BrandPurple),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = BrandPurple)
+                border = androidx.compose.foundation.BorderStroke(1.dp, BrandPurpleText),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = BrandPurpleText)
             ) {
                 if (isSharing) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), color = BrandPurple, strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(18.dp), color = BrandPurpleText, strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(8.dp))
                 } else {
                     Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -972,7 +973,7 @@ private fun WorkTimerCard(
                 text = timeFormatted,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = if (timerState == TimerState.RUNNING) BrandPurple else MaterialTheme.colorScheme.onSurface,
+                color = if (timerState == TimerState.RUNNING) BrandPurpleText else MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -1329,7 +1330,7 @@ private fun RowCounterCard(
                         Icon(
                             imageVector = Icons.Filled.Mic,
                             contentDescription = if (isListening) stringResource(R.string.action_stop_listening) else stringResource(R.string.action_voice_count),
-                            tint = if (isListening) BrandPurple else TextSecondary,
+                            tint = if (isListening) BrandPurpleText else TextSecondary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -1534,8 +1535,8 @@ private fun ArchiveDialog(
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BrandPurple,
-                        cursorColor = BrandPurple
+                        focusedBorderColor = BrandPurpleText,
+                        cursorColor = BrandPurpleText
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1641,9 +1642,9 @@ private fun PriceSuggestionDialog(
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = RoundedCornerShape(10.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BrandPurple,
-                        cursorColor = BrandPurple,
-                        focusedLabelColor = BrandPurple,
+                        focusedBorderColor = BrandPurpleText,
+                        cursorColor = BrandPurpleText,
+                        focusedLabelColor = BrandPurpleText,
                         unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier.fillMaxWidth()
@@ -1663,7 +1664,7 @@ private fun PriceSuggestionDialog(
                         suggested.formatCurrency(sym),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = BrandPurple
+                        color = BrandPurpleText
                     )
                 }
             }
@@ -1728,7 +1729,7 @@ private fun ExtraCountersCard(
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = stringResource(R.string.piece_counter_add),
-                            tint = Slate,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -1770,7 +1771,7 @@ private fun ExtraCountersCard(
                 ) {
                     Text(
                         text = stringResource(R.string.pro_gate_button),
-                        color = BrandPurple,
+                        color = BrandPurpleText,
                         fontWeight = FontWeight.SemiBold
                     )
                 }

@@ -1,5 +1,6 @@
 package com.hooky.app.ui.reports
 
+import com.hooky.app.util.SaleRevenue
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -77,6 +78,9 @@ data class ReportsUiState(
     val totalRevenue: Float = 0f,
     val totalCost: Float = 0f,
     val totalProfit: Float = 0f,
+    // Revenue split into money already in and money still to come (same rule as the dashboard)
+    val revenueSold: Float = 0f,
+    val revenueToSell: Float = 0f,
 )
 
 @HiltViewModel
@@ -112,6 +116,7 @@ class ReportsViewModel @Inject constructor(
                     // when both its price and its cost are known (before, the total counted the
                     // full price of pieces with no cost as profit, so totals didn't match the rows).
                     val profit = rows.sumOf { (it.profit ?: 0f).toDouble() }.toFloat()
+                    val splits = pieces.map { SaleRevenue.of(it.destination, it.archived, it.price, it.soldPrice, it.quantityTotal, it.quantitySold) }
                     val ballsUsed = ballsUsedByYarn(pieces.filter { !it.archived }.map { it.yarnsUsed })
                     _uiState.update {
                         it.copy(
@@ -122,6 +127,8 @@ class ReportsViewModel @Inject constructor(
                             totalRevenue = revenue,
                             totalCost = cost,
                             totalProfit = profit,
+                            revenueSold = splits.sumOf { s -> s.sold.toDouble() }.toFloat(),
+                            revenueToSell = splits.sumOf { s -> s.toSell.toDouble() }.toFloat(),
                         )
                     }
                 }

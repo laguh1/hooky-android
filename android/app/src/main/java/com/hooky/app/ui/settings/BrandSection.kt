@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.hooky.app.R
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.util.MakerBrand
@@ -124,7 +125,7 @@ fun BrandSection(isPremium: Boolean, onNavigateToPro: () -> Unit) {
                     Text(
                         stringResource(if (isPremium) R.string.settings_brand_mark_sub_pro else R.string.settings_brand_mark_sub_free),
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (isPremium) TextSecondary else BrandPurple
+                        color = if (isPremium) TextSecondary else BrandPurpleText
                     )
                 }
                 Spacer(Modifier.width(12.dp))

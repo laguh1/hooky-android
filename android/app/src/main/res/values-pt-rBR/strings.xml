@@ -29,7 +29,7 @@
     <string name="dashboard_in_progress_empty">Nada em andamento — comece uma nova peça!</string>
     <string name="dashboard_finished_empty">Nenhuma peça concluída ainda</string>
     <string name="dashboard_see_all">Ver tudo</string>
-    <string name="dashboard_total_revenue">Receita Total</string>
+    <string name="dashboard_total_revenue">Total vendido</string>
     <string name="dashboard_stash_value">Fios em estoque</string>
     <string name="dashboard_calculator_shortcut">Calculadora de Preços</string>
     <string name="dashboard_report_link">Ver relatório de custos e lucro →</string>
@@ -805,4 +805,5 @@
     <string name="settings_brand_mark_sub_free">Com o Hooky Pro você pode desligar</string>
     <string name="settings_brand_mark_sub_pro">Desligue para mostrar só a sua marca</string>
     <string name="share_card_via">via Hooky App</string>
+    <string name="reports_revenue_split">Vendido %1$s · A vender %2$s</string>
 </resources>
