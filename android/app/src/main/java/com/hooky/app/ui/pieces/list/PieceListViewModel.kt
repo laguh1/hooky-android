@@ -23,9 +23,9 @@ import javax.inject.Inject
 
 enum class PieceFilter(@StringRes val labelResId: Int) {
     ALL(R.string.piece_filter_all),
+    DUE(R.string.piece_filter_due),      // open deliveries, soonest first; 2nd so it's visible at 360 dp
     IN_PROGRESS(R.string.piece_filter_in_progress),
-    FINISHED(R.string.piece_filter_finished),
-    DUE(R.string.piece_filter_due)       // open deliveries, soonest first
+    FINISHED(R.string.piece_filter_finished)
 }
 
 data class PieceListUiState(
