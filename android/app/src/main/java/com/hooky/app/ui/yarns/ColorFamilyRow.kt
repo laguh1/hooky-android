@@ -93,7 +93,7 @@ fun ColorFamilyRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .border(if (isSelected) 2.dp else 0.dp, if (isSelected) Slate else Color.Transparent, CircleShape)
+                    .border(if (isSelected) 2.dp else 0.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, CircleShape)
                     .padding(5.dp)
                     .clickable(onClickLabel = cd) { onSelected(if (isSelected) null else family) },
                 contentAlignment = Alignment.Center

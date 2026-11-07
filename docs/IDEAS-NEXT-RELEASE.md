@@ -84,8 +84,12 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 - Unused string `work_status_ready` ("Pronto") in PT only; there is no "Ready" status, so the
   "Prontas" filter item above was a mistake (removed from the list 2026-11-07).
 
+## Found while starting 1.11 (2026-11-07, emulator, dark mode)
+- Yarns search field stays white in dark mode; the selected "All" chip and the selected bottom-tab
+  pill are dark slate on a dark background, so the selection is hard to see. Use theme roles.
+
 ## Requested by the user (2026-11-04)
-### Softer colour-filter palette
+### ✅ *Done in 1.11 (swatches only).* Softer colour-filter palette
 - Today the filter circles use saturated "primary" swatches (`ColorFamily` in `domain/model/YarnColor.kt`:
   RED D32F2F, PINK E91E63, ORANGE FB8C00, YELLOW FDD835, GREEN 43A047, BLUE 1E88E5, PURPLE 8E24AA,
   BROWN 795548, NEUTRAL BDBDBD). Make them muted, yarn-like tones, as on lindehobby's site (screenshot
@@ -102,7 +106,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 - Now (`ui/share/ShareCardGenerator.kt`): photo, piece name, hours/rows, Hooky wordmark bottom right.
 - **Maker's name or logo on the card** (set once in Settings: shop name, @handle, optional logo image).
   Free.
-- **Card types (Pro):**
+- **Card types (Pro)** — *care + materials cards postponed past 1.11 (user, 2026-11-07: "not so impactful")*:
   1. *Showcase* (today's card, with the maker's name/logo).
   2. *Care card* for customers and gift recipients: piece name, yarn composition, care symbols and
      temperature from the yarn (hand wash, 30 °C, dry flat…), maker name/contact. Square + a
