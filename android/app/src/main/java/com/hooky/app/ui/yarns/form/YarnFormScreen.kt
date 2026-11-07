@@ -100,6 +100,7 @@ import com.hooky.app.ui.components.NeedleScanConfirmDialog
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -973,10 +974,10 @@ private fun WashTemperatureDropdown(selected: String, onSelected: (String) -> Un
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = BrandPurple,
+    focusedBorderColor = BrandPurpleText,
     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-    cursorColor = BrandPurple,
-    focusedLabelColor = BrandPurple,
+    cursorColor = BrandPurpleText,
+    focusedLabelColor = BrandPurpleText,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )
 

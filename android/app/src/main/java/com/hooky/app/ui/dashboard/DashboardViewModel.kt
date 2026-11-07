@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -115,7 +116,12 @@ class DashboardViewModel @Inject constructor(
             ) { counts, totalHours ->
                 Pair(counts, totalHours)
             }.combine(
-                pieceRepository.getSoldRevenue()
+                // Same rule as the report's "Vendido" (SaleRevenue), so the two numbers match
+                pieceRepository.getAllPieces().map { pieces ->
+                    pieces.sumOf {
+                        com.hooky.app.util.SaleRevenue.of(it.destination, it.archived, it.price, it.soldPrice, it.quantityTotal, it.quantitySold).sold.toDouble()
+                    }.toFloat()
+                }
             ) { (counts, totalHours), soldRevenue ->
                 val (pieceCount, yarnCount, stitchCount) = counts
                 _uiState.update { current ->

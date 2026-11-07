@@ -83,6 +83,7 @@ import com.hooky.app.ui.camera.rememberPhotoPickerLauncher
 import com.hooky.app.ui.components.PhotoGallery
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -236,7 +237,7 @@ fun StitchFormScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Slate)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
             Column(
@@ -432,7 +433,7 @@ fun StitchFormScreen(
                                     .padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(Icons.Filled.Description, contentDescription = null, modifier = Modifier.size(32.dp), tint = BrandPurple)
+                                Icon(Icons.Filled.Description, contentDescription = null, modifier = Modifier.size(32.dp), tint = BrandPurpleText)
                                 Spacer(Modifier.width(12.dp))
                                 Text(
                                     text = File(chartPath).name,
@@ -636,9 +637,9 @@ private fun EnumDropdown(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = BrandPurple,
+    focusedBorderColor = BrandPurpleText,
     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-    cursorColor = BrandPurple,
-    focusedLabelColor = BrandPurple,
+    cursorColor = BrandPurpleText,
+    focusedLabelColor = BrandPurpleText,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )

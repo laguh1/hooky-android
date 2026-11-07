@@ -103,9 +103,11 @@ object YarnColor {
 }
 
 /** Colour groups for filtering, in rainbow order (the order chips and "sort by colour" use). */
+// Filter-circle swatches: muted, yarn-like tones (1.11, user request) instead of saturated
+// primaries. Only the circle colour; the grouping in of() is unchanged.
 enum class ColorFamily(val swatch: Int) {
-    RED(0xD32F2F), PINK(0xE91E63), ORANGE(0xFB8C00), YELLOW(0xFDD835), GREEN(0x43A047),
-    BLUE(0x1E88E5), PURPLE(0x8E24AA), BROWN(0x795548), NEUTRAL(0xBDBDBD);
+    RED(0xC75B5B), PINK(0xD98A9F), ORANGE(0xD9894A), YELLOW(0xE3C065), GREEN(0x7FA58A),
+    BLUE(0x6F8FBF), PURPLE(0x9A82B8), BROWN(0xA88468), NEUTRAL(0xE9E4DA);
 
     companion object {
         fun of(rgb: Int): ColorFamily {

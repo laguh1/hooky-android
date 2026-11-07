@@ -107,6 +107,7 @@ import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -245,7 +246,7 @@ fun PieceFormScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Slate)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
             Column(
@@ -407,6 +408,29 @@ fun PieceFormScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    // Delivery date: for orders and for gifts with a deadline (Christmas).
+                    // Setting one is the moment to ask for notifications (reminders), not app start.
+                    val notifPermission = rememberLauncherForActivityResult(
+                        ActivityResultContracts.RequestPermission()
+                    ) { /* reminders simply stay off if refused */ }
+                    val formContext = LocalContext.current
+                    DatePickerField(
+                        label = stringResource(R.string.piece_field_due_date),
+                        value = uiState.dueDate,
+                        onValueChange = {
+                            viewModel.onAction(PieceFormAction.DueDateChanged(it))
+                            if (it.isNotBlank() && android.os.Build.VERSION.SDK_INT >= 33 &&
+                                androidx.core.content.ContextCompat.checkSelfPermission(
+                                    formContext, android.Manifest.permission.POST_NOTIFICATIONS
+                                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                            ) {
+                                notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        },
+                        clearable = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
                             value = uiState.workHours,
@@ -502,7 +526,7 @@ fun PieceFormScreen(
                             TextButton(onClick = {
                                 viewModel.onAction(PieceFormAction.ApplyYarnMaterialCost)
                             }) {
-                                Text(stringResource(R.string.action_apply), color = Slate, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.action_apply), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -533,7 +557,7 @@ fun PieceFormScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.pro_gate_button),
-                                color = BrandPurple,
+                                color = BrandPurpleText,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -589,6 +613,17 @@ fun PieceFormScreen(
                         value = uiState.price,
                         onValueChange = { viewModel.onAction(PieceFormAction.PriceChanged(it)) },
                         label = { Text(stringResource(R.string.piece_field_price, getCurrencySymbol(LocalContext.current)) + perUnitSuffix) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = formTextFieldColors(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.deposit,
+                        onValueChange = { viewModel.onAction(PieceFormAction.DepositChanged(it)) },
+                        label = { Text(stringResource(R.string.piece_field_deposit, getCurrencySymbol(LocalContext.current))) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         shape = RoundedCornerShape(10.dp),
@@ -1055,9 +1090,9 @@ private fun BallsUsedDialog(
                     supportingText = { Text(stringResource(R.string.piece_yarn_balls_dialog_hint)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BrandPurple,
+                        focusedBorderColor = BrandPurpleText,
                         unfocusedBorderColor = outline,
-                        cursorColor = BrandPurple
+                        cursorColor = BrandPurpleText
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1231,7 +1266,9 @@ internal fun DatePickerField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Shows an ✕ to remove the date (optional dates like the delivery date). */
+    clearable: Boolean = false
 ) {
     var showPicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
@@ -1244,8 +1281,15 @@ internal fun DatePickerField(
         readOnly = true,
         label = { Text(label) },
         trailingIcon = {
-            IconButton(onClick = { showPicker = true }) {
-                Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+            Row {
+                if (clearable && value.isNotBlank()) {
+                    IconButton(onClick = { onValueChange("") }) {
+                        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.date_field_clear_cd))
+                    }
+                }
+                IconButton(onClick = { showPicker = true }) {
+                    Icon(Icons.Filled.CalendarMonth, contentDescription = null)
+                }
             }
         },
         shape = RoundedCornerShape(10.dp),
@@ -1289,9 +1333,9 @@ private fun millisToIsoDate(millis: Long): String =
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = BrandPurple,
+    focusedBorderColor = BrandPurpleText,
     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-    cursorColor = BrandPurple,
-    focusedLabelColor = BrandPurple,
+    cursorColor = BrandPurpleText,
+    focusedLabelColor = BrandPurpleText,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )

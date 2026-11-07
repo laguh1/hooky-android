@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.form
 
+import com.hooky.app.util.toInputText
 import com.hooky.app.util.oneLine
 import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.yarns.UNKNOWN_YARN_COLOR
@@ -186,14 +187,14 @@ class YarnFormViewModel @Inject constructor(
                             weightCategory = yarn.weightCategory?.let {
                                 try { WeightCategory.valueOf(it) } catch (_: Exception) { null }
                             },
-                            ballWeightG = yarn.ballWeightG?.toString() ?: "",
-                            ballLengthM = yarn.ballLengthM?.toString() ?: "",
-                            pricePaid = yarn.pricePaid?.toString() ?: "",
+                            ballWeightG = yarn.ballWeightG?.toInputText() ?: "",
+                            ballLengthM = yarn.ballLengthM?.toInputText() ?: "",
+                            pricePaid = yarn.pricePaid?.toInputText(money = true) ?: "",
                             purchaseLocation = yarn.purchaseLocation ?: "",
                             purchaseLink = yarn.purchaseLink ?: "",
                             purchaseDate = yarn.purchaseDate ?: "",
                             quantityOwned = yarn.quantityOwned?.toString() ?: "",
-                            hookSizeMm = yarn.hookSizeMm?.toString() ?: "",
+                            hookSizeMm = yarn.hookSizeMm?.toInputText() ?: "",
                             needleSizeMm = yarn.needleSizeMm ?: "",
                             gauge = (yarn.gauge ?: "").oneLine(),
                             machineWash = care.machineWash,

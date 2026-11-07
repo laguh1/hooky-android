@@ -29,7 +29,7 @@
     <string name="dashboard_in_progress_empty">Nada em andamento — comece uma nova peça!</string>
     <string name="dashboard_finished_empty">Nenhuma peça concluída ainda</string>
     <string name="dashboard_see_all">Ver tudo</string>
-    <string name="dashboard_total_revenue">Receita Total</string>
+    <string name="dashboard_total_revenue">Total vendido</string>
     <string name="dashboard_stash_value">Fios em estoque</string>
     <string name="dashboard_calculator_shortcut">Calculadora de Preços</string>
     <string name="dashboard_report_link">Ver relatório de custos e lucro →</string>
@@ -96,7 +96,7 @@
     <string name="reports_sheet_customers">Clientes</string>
     <string name="reports_sheet_yarns">Fios</string>
     <string name="reports_total">Total</string>
-    <string name="reports_xlsx_header_pieces">Nome,Status,Quantidade,Custo do material (por unidade),Preço (por unidade),Preço de venda (por unidade),Horas de trabalho,Custo total,Receita total,Lucro,Cliente / loja,Data da venda</string>
+    <string name="reports_xlsx_header_pieces">Nome,Status,Quantidade,Custo do material (por unidade),Preço (por unidade),Preço de venda (por unidade),Horas de trabalho,Custo total,Receita total,Lucro,Cliente / loja,Data da venda,Data de entrega,Sinal pago</string>
     <string name="reports_xlsx_header_yarns">Nome,Marca,Cor,Material,Local de compra,Data de compra,Preço pago (por novelo),Novelos comprados,Usado em peças,Restante,Total gasto,Notas</string>
     <plurals name="reports_piece_count">
         <item quantity="one">%d peça</item>
@@ -768,4 +768,42 @@
     <string name="error_scan_size">Não foi possível ler o tamanho. Tente uma foto mais nítida, de perto e com boa luz.</string>
     <string name="error_scan_label">Não foi possível ler a etiqueta. Tente uma foto mais nítida, de perto e com boa luz.</string>
     <string name="error_scan_failed">Não foi possível escanear. Tente novamente.</string>
+
+    <!-- 1.11: delivery date and deposit on pieces -->
+    <string name="piece_field_due_date">Data de entrega</string>
+    <string name="piece_field_deposit">Sinal pago (%1$s)</string>
+    <string name="piece_label_due_date">Entrega</string>
+    <string name="piece_label_deposit">Sinal pago</string>
+    <string name="piece_label_balance_due">Falta receber</string>
+    <string name="piece_due_badge">Entrega %1$s</string>
+    <string name="piece_due_today">Entrega hoje</string>
+    <string name="piece_due_late">Atrasada · %1$s</string>
+    <string name="piece_filter_due">Entregas</string>
+    <string name="date_field_clear_cd">Limpar data</string>
+    <plurals name="piece_due_in_days">
+        <item quantity="one">em %d dia</item>
+        <item quantity="other">em %d dias</item>
+    </plurals>
+    <string name="notif_channel_deliveries">Entregas</string>
+    <string name="notif_channel_deliveries_desc">Lembretes antes da data de entrega de uma peça</string>
+    <string name="notif_delivery_today">A entrega é hoje</string>
+    <plurals name="notif_delivery_soon">
+        <item quantity="one">Entrega em %d dia</item>
+        <item quantity="other">Entrega em %d dias</item>
+    </plurals>
+
+    <!-- 1.11: maker brand on share cards -->
+    <string name="settings_section_brand">SUA MARCA</string>
+    <string name="settings_brand_name_title">Nome da loja ou @</string>
+    <string name="settings_brand_name_sub_empty">Aparece nas peças que você compartilha</string>
+    <string name="settings_brand_name_hint">ex. @mariacroche</string>
+    <string name="settings_brand_logo_title">Logo</string>
+    <string name="settings_brand_logo_sub_empty">Adicione seu logo ao cartão</string>
+    <string name="settings_brand_logo_sub_set">Toque para trocar</string>
+    <string name="settings_brand_logo_remove">Remover logo</string>
+    <string name="settings_brand_mark_title">“via Hooky App” nos cartões</string>
+    <string name="settings_brand_mark_sub_free">Com o Hooky Pro você pode desligar</string>
+    <string name="settings_brand_mark_sub_pro">Desligue para mostrar só a sua marca</string>
+    <string name="share_card_via">via Hooky App</string>
+    <string name="reports_revenue_split">Vendido %1$s · A vender %2$s</string>
 </resources>

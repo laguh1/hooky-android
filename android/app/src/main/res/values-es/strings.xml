@@ -29,7 +29,7 @@
     <string name="dashboard_in_progress_empty">Nada en progreso — ¡empieza una nueva pieza!</string>
     <string name="dashboard_finished_empty">No hay piezas terminadas todavía</string>
     <string name="dashboard_see_all">Ver todo</string>
-    <string name="dashboard_total_revenue">Ingresos totales</string>
+    <string name="dashboard_total_revenue">Total vendido</string>
     <string name="dashboard_stash_value">Lanas en stock</string>
     <string name="dashboard_calculator_shortcut">Calculadora de precio</string>
     <string name="dashboard_report_link">Ver informe de costes y beneficios →</string>
@@ -96,7 +96,7 @@
     <string name="reports_sheet_customers">Clientes</string>
     <string name="reports_sheet_yarns">Lanas</string>
     <string name="reports_total">Total</string>
-    <string name="reports_xlsx_header_pieces">Nombre,Estado,Cantidad,Coste de material (por unidad),Precio (por unidad),Precio de venta (por unidad),Horas de trabajo,Coste total,Ingresos totales,Beneficio,Cliente / tienda,Fecha de venta</string>
+    <string name="reports_xlsx_header_pieces">Nombre,Estado,Cantidad,Coste de material (por unidad),Precio (por unidad),Precio de venta (por unidad),Horas de trabajo,Coste total,Ingresos totales,Beneficio,Cliente / tienda,Fecha de venta,Fecha de entrega,Señal pagada</string>
     <string name="reports_xlsx_header_yarns">Nombre,Marca,Color,Material,Lugar de compra,Fecha de compra,Precio pagado (por ovillo),Ovillos comprados,Usado en piezas,Restante,Total gastado,Notas</string>
     <plurals name="reports_piece_count">
         <item quantity="one">%d pieza</item>
@@ -768,4 +768,42 @@
     <string name="error_scan_size">No se pudo leer la talla. Prueba con una foto más nítida, de cerca y con buena luz.</string>
     <string name="error_scan_label">No se pudo leer la etiqueta. Prueba con una foto más nítida, de cerca y con buena luz.</string>
     <string name="error_scan_failed">No se pudo escanear. Inténtalo de nuevo.</string>
+
+    <!-- 1.11: delivery date and deposit on pieces -->
+    <string name="piece_field_due_date">Fecha de entrega</string>
+    <string name="piece_field_deposit">Señal pagada (%1$s)</string>
+    <string name="piece_label_due_date">Entrega</string>
+    <string name="piece_label_deposit">Señal pagada</string>
+    <string name="piece_label_balance_due">Falta cobrar</string>
+    <string name="piece_due_badge">Entrega %1$s</string>
+    <string name="piece_due_today">Entrega hoy</string>
+    <string name="piece_due_late">Retrasada · %1$s</string>
+    <string name="piece_filter_due">Entregas</string>
+    <string name="date_field_clear_cd">Borrar fecha</string>
+    <plurals name="piece_due_in_days">
+        <item quantity="one">en %d día</item>
+        <item quantity="other">en %d días</item>
+    </plurals>
+    <string name="notif_channel_deliveries">Entregas</string>
+    <string name="notif_channel_deliveries_desc">Recordatorios antes de la fecha de entrega de una pieza</string>
+    <string name="notif_delivery_today">La entrega es hoy</string>
+    <plurals name="notif_delivery_soon">
+        <item quantity="one">Entrega en %d día</item>
+        <item quantity="other">Entrega en %d días</item>
+    </plurals>
+
+    <!-- 1.11: maker brand on share cards -->
+    <string name="settings_section_brand">TU MARCA</string>
+    <string name="settings_brand_name_title">Nombre de la tienda o @</string>
+    <string name="settings_brand_name_sub_empty">Aparece en las piezas que compartes</string>
+    <string name="settings_brand_name_hint">ej. @mariaganchillo</string>
+    <string name="settings_brand_logo_title">Logo</string>
+    <string name="settings_brand_logo_sub_empty">Añade tu logo a la tarjeta</string>
+    <string name="settings_brand_logo_sub_set">Toca para cambiar</string>
+    <string name="settings_brand_logo_remove">Quitar logo</string>
+    <string name="settings_brand_mark_title">“via Hooky App” en las tarjetas</string>
+    <string name="settings_brand_mark_sub_free">Con Hooky Pro puedes quitarlo</string>
+    <string name="settings_brand_mark_sub_pro">Desactívalo para mostrar solo tu marca</string>
+    <string name="share_card_via">via Hooky App</string>
+    <string name="reports_revenue_split">Vendido %1$s · Por vender %2$s</string>
 </resources>
