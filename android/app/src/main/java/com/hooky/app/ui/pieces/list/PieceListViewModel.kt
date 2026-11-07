@@ -18,10 +18,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.hooky.app.R
+import com.hooky.app.util.DueDate
 import javax.inject.Inject
 
 enum class PieceFilter(@StringRes val labelResId: Int) {
     ALL(R.string.piece_filter_all),
+    DUE(R.string.piece_filter_due),      // open deliveries, soonest first; 2nd so it's visible at 360 dp
     IN_PROGRESS(R.string.piece_filter_in_progress),
     FINISHED(R.string.piece_filter_finished)
 }
@@ -130,6 +132,7 @@ class PieceListViewModel @Inject constructor(
             PieceFilter.ALL -> pieces
             PieceFilter.IN_PROGRESS -> pieces.filter { it.workStatus == "IN_PROGRESS" }
             PieceFilter.FINISHED -> pieces.filter { it.workStatus == "FINISHED" }
+            PieceFilter.DUE -> pieces.filter { DueDate.isOpen(it.dueDate, it.destination) }.sortedBy { it.dueDate }
         }
         return if (query.isBlank()) {
             filtered

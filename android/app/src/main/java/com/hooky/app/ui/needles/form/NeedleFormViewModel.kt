@@ -1,5 +1,6 @@
 package com.hooky.app.ui.needles.form
 
+import com.hooky.app.util.toInputText
 import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.R
 import android.content.Context
@@ -115,7 +116,7 @@ class NeedleFormViewModel @Inject constructor(
                 isEditMode = true,
                 name = needle.name,
                 type = type,
-                sizeMm = needle.sizeMm?.toString() ?: "",
+                sizeMm = needle.sizeMm?.toInputText() ?: "",
                 sizeLabel = needle.sizeLabel ?: "",
                 material = needle.material ?: "",
                 brand = needle.brand ?: "",

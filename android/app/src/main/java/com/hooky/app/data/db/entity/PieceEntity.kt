@@ -44,4 +44,6 @@ data class PieceEntity(
     val needlesUsed: String = "[]",      // JSON: List<String> (NEEDLE-IDs)
     val quantityTotal: Int = 1,
     val quantitySold: Int = 0,
+    val dueDate: String? = null,       // delivery date "yyyy-MM-dd" (orders, gifts with a deadline)
+    val deposit: Float? = null,        // amount already paid in advance ("sinal")
 )

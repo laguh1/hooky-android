@@ -1,5 +1,6 @@
 package com.hooky.app.ui.dashboard
 
+import androidx.compose.ui.graphics.luminance
 import com.hooky.app.util.formatBallsApprox
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.statusBars
@@ -133,12 +134,15 @@ fun DashboardScreen(
     val view = LocalView.current
 
     // White status bar icons while on Dashboard (purple background)
+    // On leaving, restore the icons for the theme: dark icons only on a light background
+    // (it always restored dark icons, so in dark mode the clock was dark on dark).
+    val lightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
     if (!view.isInEditMode) {
-        DisposableEffect(Unit) {
+        DisposableEffect(lightBackground) {
             val window = (view.context as Activity).window
             val controller = WindowCompat.getInsetsController(window, view)
             controller.isAppearanceLightStatusBars = false
-            onDispose { controller.isAppearanceLightStatusBars = true }
+            onDispose { controller.isAppearanceLightStatusBars = lightBackground }
         }
     }
 
@@ -161,7 +165,7 @@ fun DashboardScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Slate)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
             DashboardContent(
@@ -379,7 +383,7 @@ private fun DashboardContent(
                 Text(
                     text = stringResource(R.string.dashboard_report_link),
                     style = MaterialTheme.typography.labelMedium,
-                    color = Slate,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -507,7 +511,7 @@ private fun StatCard(
                 text = number,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Slate,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
             Text(
@@ -641,6 +645,7 @@ private fun InProgressCard(
                         text = destinationDisplay,
                         style = BadgeStyle.OUTLINE
                     )
+                    com.hooky.app.ui.pieces.DueBadge(piece.dueDate, piece.destination)
                 }
 
                 // Work hours (if present)
@@ -788,7 +793,7 @@ private fun ValueCard(
                 text = amount.formatCurrency(currencySymbol),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Slate
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

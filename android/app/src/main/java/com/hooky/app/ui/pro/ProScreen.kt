@@ -49,6 +49,7 @@ import com.hooky.app.R
 import com.hooky.app.data.premium.ProPurchaseEvent
 import com.hooky.app.data.premium.ProStatus
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
@@ -175,7 +176,7 @@ fun ProScreen(
                     }
                     isLoadingOffer -> {
                         CircularProgressIndicator(
-                            color = Slate,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(28.dp)
@@ -225,7 +226,7 @@ private fun StatusCard(text: String) {
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
-        border = androidx.compose.foundation.BorderStroke(1.dp, BrandPurple),
+        border = androidx.compose.foundation.BorderStroke(1.dp, BrandPurpleText),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -236,7 +237,7 @@ private fun StatusCard(text: String) {
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
-                tint = BrandPurple,
+                tint = BrandPurpleText,
                 modifier = Modifier.size(20.dp)
             )
             Text(
@@ -257,7 +258,7 @@ private fun FeatureRow(text: String) {
         Icon(
             imageVector = Icons.Filled.Check,
             contentDescription = null,
-            tint = BrandPurple,
+            tint = BrandPurpleText,
             modifier = Modifier.size(20.dp)
         )
         Text(

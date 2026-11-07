@@ -157,16 +157,16 @@ fun NeedleListScreen(
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Slate,
-                            selectedLabelColor = White,
-                            containerColor = BackgroundLight,
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = androidx.compose.ui.graphics.Color.Transparent,
                             labelColor = TextSecondary
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
                             selected = selected,
                             borderColor = BorderLight,
-                            selectedBorderColor = Slate
+                            selectedBorderColor = MaterialTheme.colorScheme.primary
                         )
                     )
                 }
@@ -175,7 +175,7 @@ fun NeedleListScreen(
             when {
                 uiState.isLoading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Slate)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 uiState.needles.isEmpty() -> {

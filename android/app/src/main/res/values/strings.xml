@@ -29,7 +29,7 @@
     <string name="dashboard_in_progress_empty">Nothing in progress — start a new piece!</string>
     <string name="dashboard_finished_empty">No finished pieces yet</string>
     <string name="dashboard_see_all">See all</string>
-    <string name="dashboard_total_revenue">Total Revenue</string>
+    <string name="dashboard_total_revenue">Total sold</string>
     <string name="dashboard_stash_value">Yarn in stock</string>
     <string name="dashboard_calculator_shortcut">Price Calculator</string>
     <string name="dashboard_report_link">View cost &amp; profit report →</string>
@@ -96,7 +96,7 @@
     <string name="reports_sheet_customers">Customers</string>
     <string name="reports_sheet_yarns">Yarns</string>
     <string name="reports_total">Total</string>
-    <string name="reports_xlsx_header_pieces">Name,Status,Quantity,Material cost (per unit),Price (per unit),Sold price (per unit),Work hours,Total cost,Total revenue,Profit,Customer / shop,Date sold</string>
+    <string name="reports_xlsx_header_pieces">Name,Status,Quantity,Material cost (per unit),Price (per unit),Sold price (per unit),Work hours,Total cost,Total revenue,Profit,Customer / shop,Date sold,Delivery date,Deposit paid</string>
     <string name="reports_xlsx_header_yarns">Name,Brand,Colour,Material,Where bought,Purchase date,Price paid (per ball),Balls bought,Used in pieces,Left,Total spent,Notes</string>
     <plurals name="reports_piece_count">
         <item quantity="one">%d piece</item>
@@ -779,4 +779,42 @@
     <string name="error_scan_size">Couldn\'t read the size. Try a clearer, closer photo with good lighting.</string>
     <string name="error_scan_label">Couldn\'t read the label. Try a clearer, closer photo with good lighting.</string>
     <string name="error_scan_failed">Scan failed. Please try again.</string>
+
+    <!-- 1.11: delivery date and deposit on pieces -->
+    <string name="piece_field_due_date">Delivery date</string>
+    <string name="piece_field_deposit">Deposit paid (%1$s)</string>
+    <string name="piece_label_due_date">Delivery</string>
+    <string name="piece_label_deposit">Deposit paid</string>
+    <string name="piece_label_balance_due">Still to receive</string>
+    <string name="piece_due_badge">Due %1$s</string>
+    <string name="piece_due_today">Due today</string>
+    <string name="piece_due_late">Late · %1$s</string>
+    <string name="piece_filter_due">Deliveries</string>
+    <string name="date_field_clear_cd">Clear date</string>
+    <plurals name="piece_due_in_days">
+        <item quantity="one">in %d day</item>
+        <item quantity="other">in %d days</item>
+    </plurals>
+    <string name="notif_channel_deliveries">Deliveries</string>
+    <string name="notif_channel_deliveries_desc">Reminders before a piece\'s delivery date</string>
+    <string name="notif_delivery_today">Delivery is today</string>
+    <plurals name="notif_delivery_soon">
+        <item quantity="one">Delivery in %d day</item>
+        <item quantity="other">Delivery in %d days</item>
+    </plurals>
+
+    <!-- 1.11: maker brand on share cards -->
+    <string name="settings_section_brand">YOUR BRAND</string>
+    <string name="settings_brand_name_title">Shop name or @</string>
+    <string name="settings_brand_name_sub_empty">Shown on the pieces you share</string>
+    <string name="settings_brand_name_hint">e.g. @mariacrochet</string>
+    <string name="settings_brand_logo_title">Logo</string>
+    <string name="settings_brand_logo_sub_empty">Add your logo to the share card</string>
+    <string name="settings_brand_logo_sub_set">Tap to change</string>
+    <string name="settings_brand_logo_remove">Remove logo</string>
+    <string name="settings_brand_mark_title">“via Hooky App” on cards</string>
+    <string name="settings_brand_mark_sub_free">With Hooky Pro you can turn it off</string>
+    <string name="settings_brand_mark_sub_pro">Turn off to show only your brand</string>
+    <string name="share_card_via">via Hooky App</string>
+    <string name="reports_revenue_split">Sold %1$s · Still to sell %2$s</string>
 </resources>

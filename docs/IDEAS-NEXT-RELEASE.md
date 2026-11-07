@@ -5,7 +5,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 `docs/release-next.md` once it is picked for a release.
 
 ## Top of the list
-1. **Delivery date ("prazo de entrega") on a piece**, with a reminder before it's due.
+1. 🟡 *In progress for 1.11 (date, deposit, badge, Entregas filter, Excel done 2026-11-07; reminder still to do).* **Delivery date ("prazo de entrega") on a piece**, with a reminder before it's due.
    - Why: sellers take Christmas orders in November; the 1.10 social series had to avoid saying
      "prazo" because the app can't do it yet (2026-11-03).
    - Show it on the piece card and detail, sort/filter "due soon", and add a "Data de entrega"
@@ -47,7 +47,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 - ✅ *Done in 1.10.3.* **Report totals don't match the rows (bug):** "Por cliente" showed total profit R$1007,11
   but the rows add up to R$598,50: "Não atribuído" (pieces with a price but no cost) shows profit
   R$0,00 while the total counts its R$408,61 as profit. Make both use the same rule.
-- **"Receita" counts unsold quantity** (Toalhinha 0/3 sold counted as 3 × R$74). Consider
+- ✅ *Done in 1.11 (split line under the report totals).* **"Receita" counts unsold quantity** (Toalhinha 0/3 sold counted as 3 × R$74). Consider
   splitting "Receita" (sold) and "Receita prevista" (still to sell), on screen and in the Excel.
 - **Report shows pieces with a price but no linked yarn as "—" cost/profit**: consider a hint
   ("Adicione os fios para ver o custo").
@@ -64,7 +64,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   the S22. Use `application/json`, and add a "Salvar no celular" option with the system "create
   document" picker (`ActivityResultContracts.CreateDocument`) so people can choose Downloads or Drive
   without the share menu.
-- **Dashboard "Receita Total" doesn't match the report:** the dashboard showed R$212,00 / $212.00 while
+- ✅ *Done in 1.11: dashboard 'Total vendido' = report 'Vendido'; report adds 'Vendido · A vender' (SaleRevenue).* **Dashboard "Receita Total" doesn't match the report:** the dashboard showed R$212,00 / $212.00 while
   the report showed R$1296,75 for the same data. Decide what each one means (sold only vs. all prices)
   and label it, or use the same number (related to the report items below).
 - ✅ *Done in 1.10.3.* **Clone keeps the colour code:** cloning Shine "Pérola de amêndoa (D-17)" to make the white one kept
@@ -75,17 +75,21 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   spreadsheet app formats them by its own locale.
 
 ## Found while testing 1.10.3 (2026-11-07, emulator)
-- **Bottom tab labels may not respond to taps on three-button navigation.** On the Pixel_6 emulator
+- ❌ *Not a bug: labels work on the S22 and the Tab S6 Lite (user checked 2026-11-07); emulator-only.* **Bottom tab labels may not respond to taps on three-button navigation.** On the Pixel_6 emulator
   the system navigation bar overlaps the lower part of the tab labels (Painel, Peças…), so a tap
   right on the word goes to the system bar; the icon works. Android's own file picker has the same
   overlap on this emulator (SAVE button), so it may be emulator-only. **Check on the S22 / tablet**
   before changing anything.
-- **Piece dimensions use a dot in PT/ES** ("25.0cm de largura") — format with the locale and drop ".0".
+- ✅ *Done in 1.11 (also form fields: prices, sizes, yarn weights).* **Piece dimensions use a dot in PT/ES** ("25.0cm de largura") — format with the locale and drop ".0".
 - Unused string `work_status_ready` ("Pronto") in PT only; there is no "Ready" status, so the
   "Prontas" filter item above was a mistake (removed from the list 2026-11-07).
 
+## Found while starting 1.11 (2026-11-07, emulator, dark mode)
+- ✅ *Done in 1.11 (plus status-bar icons, report chips, badges, purple text — BrandPurpleText).* Yarns search field stays white in dark mode; the selected "All" chip and the selected bottom-tab
+  pill are dark slate on a dark background, so the selection is hard to see. Use theme roles.
+
 ## Requested by the user (2026-11-04)
-### Softer colour-filter palette
+### ✅ *Done in 1.11 (swatches only).* Softer colour-filter palette
 - Today the filter circles use saturated "primary" swatches (`ColorFamily` in `domain/model/YarnColor.kt`:
   RED D32F2F, PINK E91E63, ORANGE FB8C00, YELLOW FDD835, GREEN 43A047, BLUE 1E88E5, PURPLE 8E24AA,
   BROWN 795548, NEUTRAL BDBDBD). Make them muted, yarn-like tones, as on lindehobby's site (screenshot
@@ -102,7 +106,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 - Now (`ui/share/ShareCardGenerator.kt`): photo, piece name, hours/rows, Hooky wordmark bottom right.
 - **Maker's name or logo on the card** (set once in Settings: shop name, @handle, optional logo image).
   Free.
-- **Card types (Pro):**
+- **Card types (Pro)** — *care + materials cards postponed past 1.11 (user, 2026-11-07: "not so impactful")*:
   1. *Showcase* (today's card, with the maker's name/logo).
   2. *Care card* for customers and gift recipients: piece name, yarn composition, care symbols and
      temperature from the yarn (hand wash, 30 °C, dry flat…), maker name/contact. Square + a

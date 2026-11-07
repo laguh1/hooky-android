@@ -65,6 +65,7 @@ import androidx.compose.ui.res.stringResource
 import com.hooky.app.BuildConfig
 import com.hooky.app.R
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.ErrorRed
 import androidx.compose.material3.AlertDialog
@@ -545,6 +546,12 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Your brand (share cards)
+            SectionHeader(stringResource(R.string.settings_section_brand))
+            BrandSection(isPremium = isPremium, onNavigateToPro = onNavigateToPro)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Hooky Pro section
             SectionHeader(stringResource(R.string.settings_section_pro))
 
@@ -571,7 +578,7 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = null,
-                            tint = BrandPurple,
+                            tint = BrandPurpleText,
                             modifier = Modifier.size(20.dp)
                         )
                         Column {
@@ -678,14 +685,14 @@ fun SettingsScreen(
                             Text(
                                 text = if (isPremium) stringResource(R.string.settings_beta_access_premium) else stringResource(R.string.settings_beta_access_standard),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (isPremium) BrandPurple else TextSecondary
+                                color = if (isPremium) BrandPurpleText else TextSecondary
                             )
                         }
                         if (isPremium) {
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = null,
-                                tint = BrandPurple,
+                                tint = BrandPurpleText,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -769,6 +776,12 @@ fun SettingsScreen(
                         )
                     }
                 }
+                // Debug only (English, not translated): run the 9:00 delivery check now
+                val debugContext = LocalContext.current
+                TextButton(
+                    onClick = { com.hooky.app.notifications.DeliveryReminderWorker.runNow(debugContext, resetSent = true) },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) { Text("Run delivery reminders now") }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -802,7 +815,7 @@ private fun HelpRow(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Slate,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
             Column {

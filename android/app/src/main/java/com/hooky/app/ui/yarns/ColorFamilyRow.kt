@@ -20,7 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hooky.app.R
@@ -58,8 +64,27 @@ fun ColorFamilyRow(
     onToggleSort: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val scroll = rememberScrollState()
+    // Fade the right edge while more circles are off-screen, so it's clear the row scrolls.
+    // Drawn as an alpha mask, so it works on any background (light, dark, grey).
+    val fadeWidth = with(LocalDensity.current) { 40.dp.toPx() }
     Row(
-        modifier = modifier.horizontalScroll(rememberScrollState()),
+        modifier = modifier
+            .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+            .drawWithContent {
+                drawContent()
+                if (scroll.canScrollForward) {
+                    drawRect(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color.Black, Color.Transparent),
+                            startX = size.width - fadeWidth,
+                            endX = size.width
+                        ),
+                        blendMode = BlendMode.DstIn
+                    )
+                }
+            }
+            .horizontalScroll(scroll),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -70,9 +95,9 @@ fun ColorFamilyRow(
                 label = { Text(stringResource(R.string.sort_by_colour), style = MaterialTheme.typography.labelMedium, maxLines = 1) },
                 leadingIcon = { Icon(Icons.Filled.Palette, contentDescription = null, modifier = Modifier.size(16.dp)) },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = Slate,
-                    selectedLabelColor = White,
-                    selectedLeadingIconColor = White,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
                     containerColor = Color.Transparent,
                     labelColor = TextSecondary,
                     iconColor = TextSecondary
@@ -81,7 +106,7 @@ fun ColorFamilyRow(
                     enabled = true,
                     selected = sortByColor,
                     borderColor = BorderLight,
-                    selectedBorderColor = Slate,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
                     borderWidth = 1.dp,
                     selectedBorderWidth = 1.dp
                 )
@@ -93,7 +118,7 @@ fun ColorFamilyRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .border(if (isSelected) 2.dp else 0.dp, if (isSelected) Slate else Color.Transparent, CircleShape)
+                    .border(if (isSelected) 2.dp else 0.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, CircleShape)
                     .padding(5.dp)
                     .clickable(onClickLabel = cd) { onSelected(if (isSelected) null else family) },
                 contentAlignment = Alignment.Center

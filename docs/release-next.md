@@ -236,3 +236,87 @@ Onboarding (Play stats 9 Oct–5 Nov: ~9.9k impressions, 61 installs, only 25 fi
 • Informe de costes y beneficio: los totales cuadran con las filas; los regalos no cuentan como ingresos
 • "Omitir" en la bienvenida funciona, y muchas pequeñas correcciones
 </es-ES>
+
+
+## 1.11.0 / build 32 (2026-11-07) — before Christmas
+Branch `feature/1.11`. Target: live by ~1 Dec for the Christmas promotion.
+
+Changes:
+- **Delivery date** on pieces (any destination): card/dashboard badge "Entrega 09/11" (purple ≤3 days or
+  late), detail row "em N dias", "Entregas" filter (open deliveries, soonest first), Excel columns.
+  DB 11→12 adds `dueDate`, `deposit` (nullable; checked by installing over 1.10.3 data).
+- **Reminders**: daily ~9:00 check (WorkManager); "Entrega em N dias" (1–3 days before) and "A entrega é
+  hoje", once each; permission asked when a date is first set; tap opens the piece.
+- **Deposit** ("Sinal pago") + "Falta receber" on the piece page.
+- **Sua marca** (Settings): shop name/@ + logo on the share card (free); card mark is the app icon +
+  "via Hooky App" (not "feito com", user 2026-11-07); Pro can switch the mark off.
+- **Softer colour-filter circles** + fade on the row's right edge.
+- **Revenue**: dashboard "Total vendido" = report "Vendido"; report adds "Vendido · A vender".
+- **Dark mode pass**: search text, chips, tab pill, badges, status-bar icons, slate texts; purple text
+  uses a lighter tint in dark mode only (`BrandPurpleText`).
+- Numbers in forms/sizes use the locale comma, money keeps cents ("9,50", "25cm").
+- Not in 1.11: care/materials cards (user: later); Tester-ID feedback promotion (paused, see memory).
+
+Checked on the emulator (PT-BR; ES at 360dp + font 1.3; light + dark). The emulator showed "isn't
+responding" a few times while the Mac was overloaded (GPU frames of 4.95 s); after a cold restart the
+same build scrolled at 99th percentile 32 ms. **Check scrolling on the S22.**
+
+### Test on the S22 (internal testing) before production
+- [ ] Scroll the dashboard and the piece edit form fast: smooth, no "isn't responding"
+- [ ] Add a delivery date 1–2 days ahead → permission prompt → badge; next morning a reminder; tap opens the piece
+- [ ] Deposit "30,50" saves; "Falta receber" right
+- [ ] Settings → Sua marca: name + logo from gallery; share a piece; switch off "via Hooky App" (Pro)
+- [ ] Dark mode: dashboard, Fios search, report
+- [x] "Entregas" moved to 2nd filter chip (user, 2026-11-07), visible at 360 dp
+
+### Play release notes (paste as is)
+```
+<en-GB>
+• Delivery dates for orders: badge, "Deliveries" filter and a reminder 3 days before and on the day
+• Record the deposit paid and see what's still to receive
+• Your shop name or @ and logo on the cards you share
+• Softer colour filters for yarns and pieces
+• "Total sold" on the home screen matches the report, which now shows sold vs. still to sell
+• Better dark mode, and numbers in your language's format
+</en-GB>
+<en-US>
+• Delivery dates for orders: badge, "Deliveries" filter and a reminder 3 days before and on the day
+• Record the deposit paid and see what's still to receive
+• Your shop name or @ and logo on the cards you share
+• Softer color filters for yarns and pieces
+• "Total sold" on the home screen matches the report, which now shows sold vs. still to sell
+• Better dark mode, and numbers in your language's format
+</en-US>
+<es-419>
+• Fecha de entrega en los pedidos: etiqueta, filtro "Entregas" y recordatorio 3 días antes y el mismo día
+• Registra la seña pagada y mira cuánto falta cobrar
+• El nombre de tu tienda o @ y tu logo en las tarjetas que compartes
+• Filtros de color más suaves para lanas y piezas
+• "Total vendido" en el inicio coincide con el informe, que ahora muestra vendido y por vender
+• Mejor modo oscuro y números en el formato de tu idioma
+</es-419>
+<es-ES>
+• Fecha de entrega en los encargos: etiqueta, filtro "Entregas" y aviso 3 días antes y el mismo día
+• Anota la señal pagada y mira cuánto falta cobrar
+• El nombre de tu tienda o @ y tu logo en las tarjetas que compartes
+• Filtros de color más suaves para lanas y piezas
+• "Total vendido" en el inicio coincide con el informe, que ahora muestra vendido y por vender
+• Mejor modo oscuro y números con coma
+</es-ES>
+<pt-BR>
+• Data de entrega nas encomendas: selo, filtro "Entregas" e lembrete 3 dias antes e no dia
+• Registre o sinal pago e veja quanto falta receber
+• Nome da loja ou @ e seu logo nos cartões que você compartilha
+• Filtros de cor mais suaves para fios e peças
+• "Total vendido" na tela inicial bate com o relatório, que agora mostra vendido e a vender
+• Modo escuro melhorado e números com vírgula
+</pt-BR>
+<pt-PT>
+• Data de entrega nas encomendas: etiqueta, filtro "Entregas" e lembrete 3 dias antes e no próprio dia
+• Registe o sinal pago e veja quanto falta receber
+• Nome da loja ou @ e o seu logótipo nos cartões que partilha
+• Filtros de cor mais suaves para fios e peças
+• "Total vendido" no ecrã inicial coincide com o relatório, que agora mostra vendido e a vender
+• Modo escuro melhorado e números com vírgula
+</pt-PT>
+```

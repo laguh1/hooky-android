@@ -31,7 +31,7 @@ import com.hooky.app.data.db.entity.YarnEntity
         CounterEntity::class,
         IdeaEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -149,6 +149,14 @@ abstract class CrochetDatabase : RoomDatabase() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE yarns ADD COLUMN colorHex TEXT")
+            }
+        }
+
+        // Pieces get a delivery date and a deposit (orders, 1.11)
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE pieces ADD COLUMN dueDate TEXT")
+                database.execSQL("ALTER TABLE pieces ADD COLUMN deposit REAL")
             }
         }
     }

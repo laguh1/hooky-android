@@ -61,6 +61,7 @@ import com.hooky.app.data.db.entity.StitchEntity
 import com.hooky.app.data.db.entity.YarnEntity
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -145,8 +146,8 @@ fun SearchScreen(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = BrandPurple,
-                    cursorColor = BrandPurple
+                    focusedBorderColor = BrandPurpleText,
+                    cursorColor = BrandPurpleText
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

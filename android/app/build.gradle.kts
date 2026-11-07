@@ -30,8 +30,8 @@ android {
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
-        versionCode = 31
-        versionName = "1.10.3"
+        versionCode = 32
+        versionName = "1.11.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -156,6 +156,9 @@ dependencies {
     implementation("com.android.billingclient:billing:8.3.0")
     // Google Play in-app review prompt (asked after a piece is finished)
     implementation("com.google.android.play:review:2.0.2")
+
+    // Daily delivery-date reminders (1.11)
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     // ML Kit — Yarn Label Scanner (Phase A)
     // Play Services dynamic module instead of the bundled model: the bundled

@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.util.toInputText
 import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.R
 import android.content.Context
@@ -64,6 +65,8 @@ data class PieceFormUiState(
     val saleLink: String = "",
     val soldDate: String = "",
     val soldPrice: String = "",
+    val dueDate: String = "",
+    val deposit: String = "",
     val quantityTotal: String = "1",
     // Batches (quantity above 1) are a Pro feature; without Pro the field is read-only.
     val isPro: Boolean = false,
@@ -122,6 +125,8 @@ sealed interface PieceFormAction {
     data class SaleLinkChanged(val value: String) : PieceFormAction
     data class SoldDateChanged(val value: String) : PieceFormAction
     data class SoldPriceChanged(val value: String) : PieceFormAction
+    data class DueDateChanged(val value: String) : PieceFormAction
+    data class DepositChanged(val value: String) : PieceFormAction
     data class QuantityTotalChanged(val value: String) : PieceFormAction
     object IncrementQuantitySold : PieceFormAction
     object DecrementQuantitySold : PieceFormAction
@@ -222,21 +227,23 @@ class PieceFormViewModel @Inject constructor(
                             type = try { PieceType.valueOf(piece.type) } catch (_: Exception) { PieceType.OTHER },
                             workStatus = try { WorkStatus.valueOf(piece.workStatus) } catch (_: Exception) { WorkStatus.IN_PROGRESS },
                             destination = try { Destination.valueOf(piece.destination) } catch (_: Exception) { Destination.FOR_SELF },
-                            widthCm = piece.widthCm?.toString() ?: "",
-                            lengthCm = piece.lengthCm?.toString() ?: "",
+                            widthCm = piece.widthCm?.toInputText() ?: "",
+                            lengthCm = piece.lengthCm?.toInputText() ?: "",
                             dateStarted = piece.dateStarted ?: "",
                             dateFinished = piece.dateFinished ?: "",
                             workHours = piece.workHours?.let { kotlin.math.floor(it).toInt().toString() } ?: "",
                             workMinutes = piece.workHours?.let { h -> ((h - kotlin.math.floor(h)) * 60).toInt().let { if (it > 0) it.toString() else "" } } ?: "",
-                            hookSizeMm = piece.hookSizeMm?.toString() ?: "",
+                            hookSizeMm = piece.hookSizeMm?.toInputText() ?: "",
                             photos = photos,
-                            price = piece.price?.toString() ?: "",
-                            materialCost = piece.materialCost?.toString() ?: "",
+                            price = piece.price?.toInputText(money = true) ?: "",
+                            materialCost = piece.materialCost?.toInputText(money = true) ?: "",
                             giftRecipient = piece.giftRecipient ?: "",
                             salePlatform = piece.salePlatform ?: "",
                             saleLink = piece.saleLink ?: "",
                             soldDate = piece.soldDate ?: "",
-                            soldPrice = piece.soldPrice?.toString() ?: "",
+                            soldPrice = piece.soldPrice?.toInputText(money = true) ?: "",
+                            dueDate = piece.dueDate ?: "",
+                            deposit = piece.deposit?.toInputText(money = true) ?: "",
                             quantityTotal = piece.quantityTotal.toString(),
                             quantitySold = piece.quantitySold,
                             yarnsUsed = yarns,
@@ -316,6 +323,10 @@ class PieceFormViewModel @Inject constructor(
                 _uiState.update { it.copy(soldDate = action.value) }
             is PieceFormAction.SoldPriceChanged ->
                 _uiState.update { it.copy(soldPrice = action.value) }
+            is PieceFormAction.DueDateChanged ->
+                _uiState.update { it.copy(dueDate = action.value) }
+            is PieceFormAction.DepositChanged ->
+                _uiState.update { it.copy(deposit = action.value) }
             is PieceFormAction.QuantityTotalChanged -> {
                 // Without Pro the quantity can't be changed. A batch saved while Pro was
                 // active keeps its quantity and its sold counter still works.
@@ -453,6 +464,8 @@ class PieceFormViewModel @Inject constructor(
                             saleLink = current.saleLink.ifBlank { null },
                             soldDate = current.soldDate.ifBlank { null },
                             soldPrice = current.soldPrice.toDecimalOrNull(),
+                            dueDate = current.dueDate.ifBlank { null },
+                            deposit = current.deposit.toDecimalOrNull(),
                             yarnsUsed = yarnsJson,
                             stitchesUsed = stitchesJson,
                             needlesUsed = needlesJson,
@@ -487,6 +500,8 @@ class PieceFormViewModel @Inject constructor(
                         saleLink = current.saleLink.ifBlank { null },
                         soldDate = current.soldDate.ifBlank { null },
                         soldPrice = current.soldPrice.toDecimalOrNull(),
+                        dueDate = current.dueDate.ifBlank { null },
+                        deposit = current.deposit.toDecimalOrNull(),
                         yarnsUsed = yarnsJson,
                         stitchesUsed = stitchesJson,
                         needlesUsed = needlesJson,

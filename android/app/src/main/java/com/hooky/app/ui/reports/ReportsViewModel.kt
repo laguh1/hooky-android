@@ -1,5 +1,6 @@
 package com.hooky.app.ui.reports
 
+import com.hooky.app.util.SaleRevenue
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,6 +40,8 @@ data class PieceReportRow(
     val quantityTotal: Int,
     val salePlatform: String?,
     val soldDate: String?,
+    val dueDate: String? = null,
+    val deposit: Float? = null,
     val totalCost: Float?,
     val totalRevenue: Float?,
     val profit: Float?,
@@ -75,6 +78,9 @@ data class ReportsUiState(
     val totalRevenue: Float = 0f,
     val totalCost: Float = 0f,
     val totalProfit: Float = 0f,
+    // Revenue split into money already in and money still to come (same rule as the dashboard)
+    val revenueSold: Float = 0f,
+    val revenueToSell: Float = 0f,
 )
 
 @HiltViewModel
@@ -110,6 +116,7 @@ class ReportsViewModel @Inject constructor(
                     // when both its price and its cost are known (before, the total counted the
                     // full price of pieces with no cost as profit, so totals didn't match the rows).
                     val profit = rows.sumOf { (it.profit ?: 0f).toDouble() }.toFloat()
+                    val splits = pieces.map { SaleRevenue.of(it.destination, it.archived, it.price, it.soldPrice, it.quantityTotal, it.quantitySold) }
                     val ballsUsed = ballsUsedByYarn(pieces.filter { !it.archived }.map { it.yarnsUsed })
                     _uiState.update {
                         it.copy(
@@ -120,6 +127,8 @@ class ReportsViewModel @Inject constructor(
                             totalRevenue = revenue,
                             totalCost = cost,
                             totalProfit = profit,
+                            revenueSold = splits.sumOf { s -> s.sold.toDouble() }.toFloat(),
+                            revenueToSell = splits.sumOf { s -> s.toSell.toDouble() }.toFloat(),
                         )
                     }
                 }
@@ -175,13 +184,15 @@ class ReportsViewModel @Inject constructor(
                 listOf(
                     XlsxCell.Text(r.name), text(labels.statusLabels[r.status] ?: r.status), int(r.quantityTotal),
                     num(r.materialCost), num(r.price), num(r.soldPrice), num(r.workHours),
-                    num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate)
+                    num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate),
+                    date(r.dueDate), num(r.deposit)
                 )
             },
             totals = listOf(XlsxCell.Text(labels.total), XlsxCell.Empty, sum(2, state.rows.size, decimals = false), XlsxCell.Empty,
                 XlsxCell.Empty, XlsxCell.Empty, sum(6, state.rows.size), sum(7, state.rows.size),
-                sum(8, state.rows.size), sum(9, state.rows.size)),
-            columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14),
+                sum(8, state.rows.size), sum(9, state.rows.size), XlsxCell.Empty, XlsxCell.Empty,
+                XlsxCell.Empty, sum(13, state.rows.size)),
+            columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14, 14, 14),
         )
         val customers = XlsxSheet(
             name = labels.customersSheet,
@@ -243,6 +254,8 @@ class ReportsViewModel @Inject constructor(
             quantityTotal = units,
             salePlatform = salePlatform,
             soldDate = soldDate,
+            dueDate = dueDate,
+            deposit = deposit,
             totalCost = totalCost,
             totalRevenue = totalRevenue,
             profit = profit,

@@ -50,6 +50,7 @@ Full plan in `docs/PLAN.md`.
 - Border radius: 12–16dp on cards, 8dp on chips/buttons
 - No decorative colors — content is the focus
 - Bottom navigation: 5 tabs (Dashboard, Pieces, Yarns, Stitches, Needles)
+- **Dark mode:** for text, icons, outlines, spinners and selected chips use theme roles (`MaterialTheme.colorScheme.primary` / `onPrimary` / `background`), not `Slate`/`White`/`BackgroundLight` (those made text invisible in dark mode, fixed in 1.11). For brand-purple *foreground* use `BrandPurpleText` (lighter tint in dark mode); plain `BrandPurple` only for filled surfaces with white content.
 - **Custom `Button`/`AlertDialog` colors:** when setting a non-theme-role `containerColor` (e.g. `Slate`, `BrandPurple`) via `ButtonDefaults.buttonColors()`, always pass an explicit `contentColor` too — Compose's automatic contrast computation only works for registered `MaterialTheme.colorScheme` roles (`primary`, `error`, etc.), not custom colors, and silently falls back to a low-contrast default otherwise (caused an invisible-button bug in dark mode)
 
 ## Labels Must Never Break Mid-Word
