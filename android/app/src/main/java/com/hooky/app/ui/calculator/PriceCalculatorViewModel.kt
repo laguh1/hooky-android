@@ -1,5 +1,6 @@
 package com.hooky.app.ui.calculator
 
+import com.hooky.app.util.toDecimalOrNull
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,9 +65,9 @@ class PriceCalculatorViewModel @Inject constructor() : ViewModel() {
 
     private fun recalculate() {
         val current = _uiState.value
-        val materialCost = current.materialCost.toFloatOrNull() ?: return clearResult()
-        val workHours = current.workHours.toFloatOrNull() ?: return clearResult()
-        val laborRate = current.laborRate.toFloatOrNull() ?: return clearResult()
+        val materialCost = current.materialCost.toDecimalOrNull() ?: return clearResult()
+        val workHours = current.workHours.toDecimalOrNull() ?: return clearResult()
+        val laborRate = current.laborRate.toDecimalOrNull() ?: return clearResult()
         if (materialCost < 0f || workHours < 0f || laborRate < 0f) return clearResult()
 
         val laborCost = workHours * laborRate

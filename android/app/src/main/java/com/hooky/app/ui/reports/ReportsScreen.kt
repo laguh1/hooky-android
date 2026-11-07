@@ -1,5 +1,6 @@
 package com.hooky.app.ui.reports
 
+import androidx.compose.ui.text.style.TextOverflow
 import com.hooky.app.ui.components.WordSafeText
 import com.hooky.app.ui.util.labelResId
 import com.hooky.app.domain.model.enums.WorkStatus
@@ -381,7 +382,9 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1
+                // Long names wrap to a second line and end with "…" instead of being cut silently
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = runCatching { WorkStatus.valueOf(row.status) }.getOrNull()

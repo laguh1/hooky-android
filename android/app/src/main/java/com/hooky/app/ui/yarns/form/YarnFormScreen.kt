@@ -518,7 +518,8 @@ fun YarnFormScreen(
                         onValueChange = { viewModel.onAction(YarnFormAction.MaterialCompositionChanged(it)) },
                         label = { Text(stringResource(R.string.yarn_field_composition)) },
                         placeholder = { Text(stringResource(R.string.yarn_field_composition_hint), color = TextMuted) },
-                        singleLine = true,
+                        // Long compositions ("80% Merino, 20% Polyamide…") can wrap instead of hiding.
+                        maxLines = 3,
                         shape = RoundedCornerShape(10.dp),
                         colors = formTextFieldColors(),
                         modifier = Modifier.fillMaxWidth()

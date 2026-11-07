@@ -66,6 +66,12 @@ import com.hooky.app.BuildConfig
 import com.hooky.app.R
 import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
+import com.hooky.app.ui.theme.ErrorRed
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import kotlinx.coroutines.delay
@@ -126,15 +132,26 @@ fun SettingsScreen(
     var selectedNightMode by remember { mutableStateOf(getSavedNightMode(context)) }
     var selectedCurrency by remember { mutableStateOf(getCurrentCurrencyCode(context)) }
 
+    val canUndoImport by viewModel.canUndoImport.collectAsState()
+    var showExportChoice by remember { mutableStateOf(false) }
+    var showUndoConfirm by remember { mutableStateOf(false) }
+
+    // Import first shows what the file contains and asks before replacing everything.
     val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { viewModel.import(it) }
+        uri?.let { viewModel.prepareImport(it) }
+    }
+    // "Save to phone": the system file picker (Downloads, Drive…), no share menu needed.
+    val saveLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.exportTo(it) }
     }
 
     LaunchedEffect(backupState) {
         if (backupState is BackupState.ExportReady) {
             val uri = (backupState as BackupState.ExportReady).uri
             val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "*/*"
+                type = "application/json"
                 putExtra(Intent.EXTRA_STREAM, uri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
@@ -316,7 +333,7 @@ fun SettingsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(enabled = !isBusy) { viewModel.export() }
+                            .clickable(enabled = !isBusy) { showExportChoice = true }
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -388,7 +405,102 @@ fun SettingsScreen(
                             )
                         }
                     }
+
+                    if (canUndoImport) {
+                        Divider(
+                            color = MaterialTheme.colorScheme.outline,
+                            thickness = 0.5.dp,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(enabled = !isBusy) { showUndoConfirm = true }
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.settings_backup_undo_title),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = stringResource(R.string.settings_backup_undo_subtitle),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextSecondary
+                                )
+                            }
+                        }
+                    }
                 }
+            }
+
+            if (showExportChoice) {
+                AlertDialog(
+                    onDismissRequest = { showExportChoice = false },
+                    title = { Text(stringResource(R.string.settings_backup_export_title)) },
+                    text = { Text(stringResource(R.string.settings_backup_export_choice)) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showExportChoice = false
+                            val date = SimpleDateFormat("yyyyMMdd", Locale.US).format(Date())
+                            saveLauncher.launch("hooky_backup_$date.json")
+                        }) { Text(stringResource(R.string.settings_backup_save_to_phone), color = MaterialTheme.colorScheme.primary) }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showExportChoice = false
+                            viewModel.export()
+                        }) { Text(stringResource(R.string.settings_backup_share), color = MaterialTheme.colorScheme.primary) }
+                    }
+                )
+            }
+
+            (backupState as? BackupState.ConfirmImport)?.let { confirm ->
+                val p = confirm.preview
+                val savedOn = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(p.exportedAt))
+                AlertDialog(
+                    onDismissRequest = { viewModel.clearBackupState() },
+                    title = { Text(stringResource(R.string.settings_backup_import_confirm_title)) },
+                    text = {
+                        Text(
+                            stringResource(
+                                R.string.settings_backup_import_confirm_text,
+                                p.pieces, p.yarns, p.stitches, p.needles, savedOn
+                            )
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { viewModel.import(confirm.uri) }) {
+                            Text(stringResource(R.string.settings_backup_import_confirm_replace), color = ErrorRed)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { viewModel.clearBackupState() }) {
+                            Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                )
+            }
+
+            if (showUndoConfirm) {
+                AlertDialog(
+                    onDismissRequest = { showUndoConfirm = false },
+                    title = { Text(stringResource(R.string.settings_backup_undo_title)) },
+                    text = { Text(stringResource(R.string.settings_backup_undo_confirm_text)) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showUndoConfirm = false
+                            viewModel.undoLastImport()
+                        }) { Text(stringResource(R.string.settings_backup_undo_confirm), color = ErrorRed) }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showUndoConfirm = false }) {
+                            Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                )
             }
 
             when (val s = backupState) {
@@ -399,6 +511,18 @@ fun SettingsScreen(
                     }
                     Text(
                         text = stringResource(R.string.settings_backup_import_done, s.count),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
+                    )
+                }
+                is BackupState.ExportSaved -> {
+                    LaunchedEffect(s) {
+                        delay(4000)
+                        viewModel.clearBackupState()
+                    }
+                    Text(
+                        text = stringResource(R.string.settings_backup_saved),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)

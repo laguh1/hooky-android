@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,13 +98,18 @@ class ReportsViewModel @Inject constructor(
             pieceRepository.getAllPieces()
                 .catch { _uiState.update { it.copy(isLoading = false) } }
                 .collect { pieces ->
+                    // Only pieces for sale or sold: price and sale fields are hidden (but kept)
+                    // for gifts and own pieces, so they must not count as revenue.
                     val rows = pieces
-                        .filter { !it.archived }
+                        .filter { !it.archived && it.destination in SALE_DESTINATIONS }
                         .sortedByDescending { it.updatedAt }
                         .map { it.toReportRow() }
                     val revenue = rows.sumOf { (it.totalRevenue ?: 0f).toDouble() }.toFloat()
                     val cost = rows.sumOf { (it.totalCost ?: 0f).toDouble() }.toFloat()
-                    val profit = revenue - cost
+                    // Same rule as each row and the "by customer" tab: a piece adds to profit only
+                    // when both its price and its cost are known (before, the total counted the
+                    // full price of pieces with no cost as profit, so totals didn't match the rows).
+                    val profit = rows.sumOf { (it.profit ?: 0f).toDouble() }.toFloat()
                     val ballsUsed = ballsUsedByYarn(pieces.filter { !it.archived }.map { it.yarnsUsed })
                     _uiState.update {
                         it.copy(
@@ -151,12 +157,16 @@ class ReportsViewModel @Inject constructor(
         fun num(v: Float?) = v?.let { XlsxCell.Number(it.toDouble()) } ?: XlsxCell.Empty
         fun int(v: Int?) = v?.let { XlsxCell.Number(it.toDouble(), decimals = false) } ?: XlsxCell.Empty
         fun text(v: String?) = v?.takeIf { it.isNotBlank() }?.let { XlsxCell.Text(it) } ?: XlsxCell.Empty
-        fun date(v: String?) = v?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
-            ?.let { XlsxCell.Date(it) } ?: text(v)
+        // Real date cells, so each spreadsheet shows them in its own format. Accepts dd/MM/yyyy
+        // too: those used to go out as text that US-English Google Sheets read as MM/dd.
+        fun date(v: String?) = v?.let {
+            runCatching { LocalDate.parse(it) }.getOrNull()
+                ?: runCatching { LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy")) }.getOrNull()
+        }?.let { XlsxCell.Date(it) } ?: text(v)
         // SUM over the data rows of one column; data starts on row 2, after the header
-        fun sum(col: Int, count: Int): XlsxCell =
+        fun sum(col: Int, count: Int, decimals: Boolean = true): XlsxCell =
             if (count == 0) XlsxCell.Empty
-            else XlsxWriter.column(col).let { c -> XlsxCell.Formula("SUM(${c}2:$c${count + 1})") }
+            else XlsxWriter.column(col).let { c -> XlsxCell.Formula("SUM(${c}2:$c${count + 1})", decimals) }
 
         val pieces = XlsxSheet(
             name = labels.piecesSheet,
@@ -168,7 +178,7 @@ class ReportsViewModel @Inject constructor(
                     num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate)
                 )
             },
-            totals = listOf(XlsxCell.Text(labels.total), XlsxCell.Empty, sum(2, state.rows.size), XlsxCell.Empty,
+            totals = listOf(XlsxCell.Text(labels.total), XlsxCell.Empty, sum(2, state.rows.size, decimals = false), XlsxCell.Empty,
                 XlsxCell.Empty, XlsxCell.Empty, sum(6, state.rows.size), sum(7, state.rows.size),
                 sum(8, state.rows.size), sum(9, state.rows.size)),
             columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14),
@@ -179,7 +189,7 @@ class ReportsViewModel @Inject constructor(
             rows = state.customerRows.map { r ->
                 listOf(XlsxCell.Text(r.name), int(r.pieceCount), num(r.revenue), num(r.cost), num(r.profit))
             },
-            totals = listOf(XlsxCell.Text(labels.total)) + (1..4).map { sum(it, state.customerRows.size) },
+            totals = listOf(XlsxCell.Text(labels.total)) + (1..4).map { sum(it, state.customerRows.size, decimals = it != 1) },
             columnWidths = listOf(28, 10, 14, 14, 14),
         )
         val yarns = XlsxSheet(
@@ -199,7 +209,7 @@ class ReportsViewModel @Inject constructor(
                 )
             },
             totals = listOf(XlsxCell.Text(labels.total)) + List(6) { XlsxCell.Empty } +
-                listOf(sum(7, state.yarns.size), sum(8, state.yarns.size), sum(9, state.yarns.size), sum(10, state.yarns.size)),
+                listOf(sum(7, state.yarns.size, decimals = false), sum(8, state.yarns.size), sum(9, state.yarns.size), sum(10, state.yarns.size)),
             columnWidths = listOf(24, 16, 16, 14, 20, 14, 14, 12, 12, 12, 14, 30),
         )
         return listOf(pieces, customers, yarns)
@@ -217,7 +227,9 @@ class ReportsViewModel @Inject constructor(
 
     private fun PieceEntity.toReportRow(): PieceReportRow {
         val units = quantityTotal.coerceAtLeast(1)
-        val unitRevenue = soldPrice ?: price
+        // A sold price only applies once the piece is marked Sold (it is hidden otherwise).
+        val effectiveSoldPrice = soldPrice.takeIf { destination == "SOLD" }
+        val unitRevenue = effectiveSoldPrice ?: price
         val totalRevenue = unitRevenue?.let { it * units }
         val totalCost = materialCost?.let { it * units }
         val profit = if (totalRevenue != null && totalCost != null) totalRevenue - totalCost else null
@@ -226,7 +238,7 @@ class ReportsViewModel @Inject constructor(
             status = workStatus,
             materialCost = materialCost,
             price = price,
-            soldPrice = soldPrice,
+            soldPrice = effectiveSoldPrice,
             workHours = workHours,
             quantityTotal = units,
             salePlatform = salePlatform,
@@ -237,3 +249,5 @@ class ReportsViewModel @Inject constructor(
         )
     }
 }
+
+private val SALE_DESTINATIONS = setOf("FOR_SALE", "SOLD")

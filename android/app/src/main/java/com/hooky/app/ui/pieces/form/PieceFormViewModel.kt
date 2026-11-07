@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.form
 
+import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.R
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
@@ -40,6 +41,9 @@ data class PieceFormUiState(
     val isSaving: Boolean = false,
     val error: String? = null,
     val savedSuccessfully: Boolean = false,
+    // Set on save when the piece has just become Finished (used for the review prompt)
+    val justFinished: Boolean = false,
+    val pieceCountAfterSave: Int = 0,
     // Form fields
     val name: String = "",
     val type: PieceType = PieceType.OTHER,
@@ -406,6 +410,7 @@ class PieceFormViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                var justFinished = false
                 val jsonEncoder = kotlinx.serialization.json.Json
                 val stringListSerializer = kotlinx.serialization.builtins.ListSerializer(
                     kotlinx.serialization.serializer<String>()
@@ -425,26 +430,29 @@ class PieceFormViewModel @Inject constructor(
                     val photosJson = jsonEncoder.encodeToString(stringListSerializer, permanentPhotos)
                     // Load existing to preserve workSessions, pieceId, createdAt
                     val existing = pieceRepository.getPieceById(pieceId).first()
+                    justFinished = existing != null &&
+                        existing.workStatus != WorkStatus.FINISHED.name &&
+                        current.workStatus == WorkStatus.FINISHED
                     if (existing != null) {
                         val updated = existing.copy(
                             name = current.name,
                             type = current.type.name,
                             workStatus = current.workStatus.name,
                             destination = current.destination.name,
-                            widthCm = current.widthCm.toFloatOrNull(),
-                            lengthCm = current.lengthCm.toFloatOrNull(),
+                            widthCm = current.widthCm.toDecimalOrNull(),
+                            lengthCm = current.lengthCm.toDecimalOrNull(),
                             dateStarted = current.dateStarted.ifBlank { null },
                             dateFinished = current.dateFinished.ifBlank { null },
-                            workHours = run { val h = current.workHours.toFloatOrNull() ?: 0f; val m = current.workMinutes.toFloatOrNull() ?: 0f; if (h > 0 || m > 0) h + m / 60f else null },
-                            hookSizeMm = current.hookSizeMm.toFloatOrNull(),
+                            workHours = run { val h = current.workHours.toDecimalOrNull() ?: 0f; val m = current.workMinutes.toDecimalOrNull() ?: 0f; if (h > 0 || m > 0) h + m / 60f else null },
+                            hookSizeMm = current.hookSizeMm.toDecimalOrNull(),
                             photos = photosJson,
-                            price = current.price.toFloatOrNull(),
-                            materialCost = current.materialCost.toFloatOrNull(),
+                            price = current.price.toDecimalOrNull(),
+                            materialCost = current.materialCost.toDecimalOrNull(),
                             giftRecipient = current.giftRecipient.ifBlank { null },
                             salePlatform = current.salePlatform.ifBlank { null },
                             saleLink = current.saleLink.ifBlank { null },
                             soldDate = current.soldDate.ifBlank { null },
-                            soldPrice = current.soldPrice.toFloatOrNull(),
+                            soldPrice = current.soldPrice.toDecimalOrNull(),
                             yarnsUsed = yarnsJson,
                             stitchesUsed = stitchesJson,
                             needlesUsed = needlesJson,
@@ -465,20 +473,20 @@ class PieceFormViewModel @Inject constructor(
                         type = current.type.name,
                         workStatus = current.workStatus.name,
                         destination = current.destination.name,
-                        widthCm = current.widthCm.toFloatOrNull(),
-                        lengthCm = current.lengthCm.toFloatOrNull(),
+                        widthCm = current.widthCm.toDecimalOrNull(),
+                        lengthCm = current.lengthCm.toDecimalOrNull(),
                         dateStarted = current.dateStarted.ifBlank { null },
                         dateFinished = current.dateFinished.ifBlank { null },
-                        workHours = current.workHours.toFloatOrNull(),
-                        hookSizeMm = current.hookSizeMm.toFloatOrNull(),
+                        workHours = current.workHours.toDecimalOrNull(),
+                        hookSizeMm = current.hookSizeMm.toDecimalOrNull(),
                         photos = photosJson,
-                        price = current.price.toFloatOrNull(),
-                        materialCost = current.materialCost.toFloatOrNull(),
+                        price = current.price.toDecimalOrNull(),
+                        materialCost = current.materialCost.toDecimalOrNull(),
                         giftRecipient = current.giftRecipient.ifBlank { null },
                         salePlatform = current.salePlatform.ifBlank { null },
                         saleLink = current.saleLink.ifBlank { null },
                         soldDate = current.soldDate.ifBlank { null },
-                        soldPrice = current.soldPrice.toFloatOrNull(),
+                        soldPrice = current.soldPrice.toDecimalOrNull(),
                         yarnsUsed = yarnsJson,
                         stitchesUsed = stitchesJson,
                         needlesUsed = needlesJson,
@@ -492,9 +500,18 @@ class PieceFormViewModel @Inject constructor(
                         quantitySold = resolvedQuantitySold
                     )
                     pieceRepository.insertPiece(entity)
+                    justFinished = current.workStatus == WorkStatus.FINISHED
                 }
 
-                _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) }
+                val pieceCount = if (justFinished) pieceRepository.getPieceCount().first() else 0
+                _uiState.update {
+                    it.copy(
+                        isSaving = false,
+                        savedSuccessfully = true,
+                        justFinished = justFinished,
+                        pieceCountAfterSave = pieceCount
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
             }
