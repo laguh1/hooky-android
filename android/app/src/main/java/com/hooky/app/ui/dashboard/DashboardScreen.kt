@@ -1,5 +1,6 @@
 package com.hooky.app.ui.dashboard
 
+import androidx.compose.ui.graphics.luminance
 import com.hooky.app.util.formatBallsApprox
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.statusBars
@@ -133,12 +134,15 @@ fun DashboardScreen(
     val view = LocalView.current
 
     // White status bar icons while on Dashboard (purple background)
+    // On leaving, restore the icons for the theme: dark icons only on a light background
+    // (it always restored dark icons, so in dark mode the clock was dark on dark).
+    val lightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
     if (!view.isInEditMode) {
-        DisposableEffect(Unit) {
+        DisposableEffect(lightBackground) {
             val window = (view.context as Activity).window
             val controller = WindowCompat.getInsetsController(window, view)
             controller.isAppearanceLightStatusBars = false
-            onDispose { controller.isAppearanceLightStatusBars = true }
+            onDispose { controller.isAppearanceLightStatusBars = lightBackground }
         }
     }
 
