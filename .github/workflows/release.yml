@@ -16,10 +16,10 @@ env:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/android-setup
         with:
           keystore-base64: ${{ secrets.HOOKY_KEYSTORE_BASE64 }}
@@ -47,7 +47,7 @@ jobs:
           [ "$sha" = "$UPLOAD_KEY_SHA256" ] || { echo "::error::Bundle is not signed with the Hooky upload key"; exit 1; }
           mv "$aab" "hooky-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}.aab"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: hooky-${{ steps.version.outputs.name }}-build${{ steps.version.outputs.code }}
           path: |

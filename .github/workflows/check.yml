@@ -17,10 +17,10 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/android-setup
         with:
           keystore-base64: ${{ secrets.HOOKY_KEYSTORE_BASE64 }}
@@ -33,7 +33,7 @@ jobs:
         run: gradle --no-daemon testDebugUnitTest assembleDebug
       - name: Test reports (if something failed)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: android/app/build/reports/tests/
