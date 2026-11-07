@@ -60,6 +60,7 @@ import com.hooky.app.R
 import com.hooky.app.ui.theme.BackgroundLight
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.BorderStrong
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
@@ -152,8 +153,8 @@ fun PriceCalculatorScreen(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedBorderColor = BrandPurple,
-                                cursorColor = BrandPurple
+                                focusedBorderColor = BrandPurpleText,
+                                cursorColor = BrandPurpleText
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -172,8 +173,8 @@ fun PriceCalculatorScreen(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedBorderColor = BrandPurple,
-                                cursorColor = BrandPurple
+                                focusedBorderColor = BrandPurpleText,
+                                cursorColor = BrandPurpleText
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -192,8 +193,8 @@ fun PriceCalculatorScreen(
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedBorderColor = BrandPurple,
-                                cursorColor = BrandPurple
+                                focusedBorderColor = BrandPurpleText,
+                                cursorColor = BrandPurpleText
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -260,7 +261,7 @@ fun PriceCalculatorScreen(
                             text = "${(uiState.profitMargin * 100).toInt()}%",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = Slate
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Slider(

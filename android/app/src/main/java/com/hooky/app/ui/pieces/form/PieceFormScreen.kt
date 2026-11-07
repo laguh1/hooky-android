@@ -107,6 +107,7 @@ import com.hooky.app.ui.settings.formatCurrency
 import com.hooky.app.ui.settings.getCurrencySymbol
 import com.hooky.app.ui.theme.BorderLight
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -245,7 +246,7 @@ fun PieceFormScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Slate)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
             Column(
@@ -525,7 +526,7 @@ fun PieceFormScreen(
                             TextButton(onClick = {
                                 viewModel.onAction(PieceFormAction.ApplyYarnMaterialCost)
                             }) {
-                                Text(stringResource(R.string.action_apply), color = Slate, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.action_apply), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -556,7 +557,7 @@ fun PieceFormScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.pro_gate_button),
-                                color = BrandPurple,
+                                color = BrandPurpleText,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -1089,9 +1090,9 @@ private fun BallsUsedDialog(
                     supportingText = { Text(stringResource(R.string.piece_yarn_balls_dialog_hint)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = BrandPurple,
+                        focusedBorderColor = BrandPurpleText,
                         unfocusedBorderColor = outline,
-                        cursorColor = BrandPurple
+                        cursorColor = BrandPurpleText
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1332,9 +1333,9 @@ private fun millisToIsoDate(millis: Long): String =
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun formTextFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = BrandPurple,
+    focusedBorderColor = BrandPurpleText,
     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-    cursorColor = BrandPurple,
-    focusedLabelColor = BrandPurple,
+    cursorColor = BrandPurpleText,
+    focusedLabelColor = BrandPurpleText,
     unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
 )

@@ -104,7 +104,7 @@ fun StitchDetailScreen(
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator(
-                    color = Slate,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -501,14 +501,14 @@ private fun TutorialLinkRow(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Slate,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp)
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Slate
+                color = MaterialTheme.colorScheme.primary
             )
         }
         Icon(

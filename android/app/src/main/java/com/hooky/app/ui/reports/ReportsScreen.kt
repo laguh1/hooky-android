@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
@@ -192,7 +193,7 @@ private fun ReportTabRow(
             label = { Text(stringResource(R.string.reports_tab_pieces)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
-                selectedLabelColor = androidx.compose.ui.graphics.Color.White
+                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
             )
         )
         FilterChip(
@@ -201,7 +202,7 @@ private fun ReportTabRow(
             label = { Text(stringResource(R.string.reports_tab_customers)) },
             colors = FilterChipDefaults.filterChipColors(
                 selectedContainerColor = MaterialTheme.colorScheme.primary,
-                selectedLabelColor = androidx.compose.ui.graphics.Color.White
+                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
             )
         )
     }
@@ -218,7 +219,7 @@ private fun PremiumGate(onSeePro: () -> Unit) {
             Icon(
                 imageVector = Icons.Filled.Lock,
                 contentDescription = null,
-                tint = BrandPurple,
+                tint = BrandPurpleText,
                 modifier = Modifier.size(48.dp)
             )
             Text(
@@ -253,6 +254,8 @@ private fun ReportsContent(uiState: ReportsUiState) {
         item {
             SummaryCard(
                 totalRevenue = uiState.totalRevenue,
+                revenueSold = uiState.revenueSold,
+                revenueToSell = uiState.revenueToSell,
                 totalCost = uiState.totalCost,
                 totalProfit = uiState.totalProfit,
                 modifier = Modifier
@@ -291,6 +294,8 @@ private fun ReportsContent(uiState: ReportsUiState) {
 @Composable
 private fun SummaryCard(
     totalRevenue: Float,
+    revenueSold: Float,
+    revenueToSell: Float,
     totalCost: Float,
     totalProfit: Float,
     modifier: Modifier = Modifier,
@@ -301,10 +306,9 @@ private fun SummaryCard(
         color = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             SummaryCell(label = stringResource(R.string.reports_revenue), value = totalRevenue.formatCurrency(sym))
@@ -312,8 +316,20 @@ private fun SummaryCard(
             SummaryCell(
                 label = stringResource(R.string.reports_profit),
                 value = totalProfit.formatCurrency(sym),
-                valueColor = if (totalProfit >= 0f) BrandPurple else MaterialTheme.colorScheme.error
+                valueColor = if (totalProfit >= 0f) BrandPurpleText else MaterialTheme.colorScheme.error
             )
+        }
+        // "Vendido €X · A vender €Y": what's already in vs. still to come. "Vendido" is the
+        // dashboard's "Total vendido".
+        if (revenueToSell > 0f && revenueSold + revenueToSell > 0f) {
+            Text(
+                text = stringResource(R.string.reports_revenue_split, revenueSold.formatCurrency(sym), revenueToSell.formatCurrency(sym)),
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+            )
+        }
         }
     }
 }
@@ -409,7 +425,7 @@ private fun ReportTableRow(row: PieceReportRow, modifier: Modifier = Modifier) {
         )
         val profitColor = when {
             row.profit == null -> TextMuted
-            row.profit >= 0f -> BrandPurple
+            row.profit >= 0f -> BrandPurpleText
             else -> MaterialTheme.colorScheme.error
         }
         Text(
@@ -429,6 +445,8 @@ private fun CustomerReportsContent(uiState: ReportsUiState) {
         item {
             SummaryCard(
                 totalRevenue = uiState.totalRevenue,
+                revenueSold = uiState.revenueSold,
+                revenueToSell = uiState.revenueToSell,
                 totalCost = uiState.totalCost,
                 totalProfit = uiState.totalProfit,
                 modifier = Modifier
@@ -519,7 +537,7 @@ private fun CustomerTableRow(row: CustomerReportRow, modifier: Modifier = Modifi
             modifier = Modifier.weight(1f)
         )
         val profitColor = when {
-            row.profit >= 0f -> BrandPurple
+            row.profit >= 0f -> BrandPurpleText
             else -> MaterialTheme.colorScheme.error
         }
         Text(

@@ -175,7 +175,7 @@ fun NeedleListScreen(
             when {
                 uiState.isLoading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Slate)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 uiState.needles.isEmpty() -> {

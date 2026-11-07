@@ -47,7 +47,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 - ✅ *Done in 1.10.3.* **Report totals don't match the rows (bug):** "Por cliente" showed total profit R$1007,11
   but the rows add up to R$598,50: "Não atribuído" (pieces with a price but no cost) shows profit
   R$0,00 while the total counts its R$408,61 as profit. Make both use the same rule.
-- **"Receita" counts unsold quantity** (Toalhinha 0/3 sold counted as 3 × R$74). Consider
+- ✅ *Done in 1.11 (split line under the report totals).* **"Receita" counts unsold quantity** (Toalhinha 0/3 sold counted as 3 × R$74). Consider
   splitting "Receita" (sold) and "Receita prevista" (still to sell), on screen and in the Excel.
 - **Report shows pieces with a price but no linked yarn as "—" cost/profit**: consider a hint
   ("Adicione os fios para ver o custo").
@@ -64,7 +64,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   the S22. Use `application/json`, and add a "Salvar no celular" option with the system "create
   document" picker (`ActivityResultContracts.CreateDocument`) so people can choose Downloads or Drive
   without the share menu.
-- **Dashboard "Receita Total" doesn't match the report:** the dashboard showed R$212,00 / $212.00 while
+- ✅ *Done in 1.11: dashboard 'Total vendido' = report 'Vendido'; report adds 'Vendido · A vender' (SaleRevenue).* **Dashboard "Receita Total" doesn't match the report:** the dashboard showed R$212,00 / $212.00 while
   the report showed R$1296,75 for the same data. Decide what each one means (sold only vs. all prices)
   and label it, or use the same number (related to the report items below).
 - ✅ *Done in 1.10.3.* **Clone keeps the colour code:** cloning Shine "Pérola de amêndoa (D-17)" to make the white one kept
@@ -85,7 +85,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   "Prontas" filter item above was a mistake (removed from the list 2026-11-07).
 
 ## Found while starting 1.11 (2026-11-07, emulator, dark mode)
-- Yarns search field stays white in dark mode; the selected "All" chip and the selected bottom-tab
+- ✅ *Done in 1.11 (plus status-bar icons, report chips, badges, purple text — BrandPurpleText).* Yarns search field stays white in dark mode; the selected "All" chip and the selected bottom-tab
   pill are dark slate on a dark background, so the selection is hard to see. Use theme roles.
 
 ## Requested by the user (2026-11-04)

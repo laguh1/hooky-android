@@ -90,6 +90,7 @@ import com.hooky.app.ui.components.StatusBadge
 import com.hooky.app.ui.stitches.ideas.IdeasUiState
 import com.hooky.app.ui.stitches.ideas.IdeasViewModel
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
@@ -277,7 +278,7 @@ private fun StitchTabRow(
                             text = label,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (selected) BrandPurple else TextSecondary
+                            color = if (selected) BrandPurpleText else TextSecondary
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Box(
@@ -322,8 +323,8 @@ private fun LibraryContent(
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = BrandPurple,
-                cursorColor = BrandPurple
+                focusedBorderColor = BrandPurpleText,
+                cursorColor = BrandPurpleText
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -414,7 +415,7 @@ private fun IdeasContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = BrandPurple)
+                CircularProgressIndicator(color = BrandPurpleText)
             }
         }
         else -> {
@@ -567,7 +568,7 @@ private fun AddIdeaDialog(
                     label = { Text(stringResource(R.string.ideas_dialog_title_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple)
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurpleText)
                 )
                 OutlinedTextField(
                     value = url,
@@ -576,7 +577,7 @@ private fun AddIdeaDialog(
                     singleLine = true,
                     placeholder = { Text("https://", color = TextMuted) },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurpleText),
                     supportingText = if (url.isNotBlank()) {
                         { Text(detectedPlatform, color = TextMuted) }
                     } else null
@@ -587,7 +588,7 @@ private fun AddIdeaDialog(
                     label = { Text(stringResource(R.string.ideas_dialog_description_label)) },
                     maxLines = 3,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurple)
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = BrandPurpleText)
                 )
             }
         },

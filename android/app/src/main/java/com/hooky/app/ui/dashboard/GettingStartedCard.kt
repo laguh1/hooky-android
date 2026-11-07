@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.hooky.app.R
 import com.hooky.app.ui.theme.BorderStrong
 import com.hooky.app.ui.theme.BrandPurple
+import com.hooky.app.ui.theme.BrandPurpleText
 import com.hooky.app.ui.theme.TextSecondary
 
 /**
@@ -101,7 +102,7 @@ private fun Step(label: String, done: Boolean, onClick: () -> Unit) {
         Icon(
             imageVector = if (done) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
             contentDescription = null,
-            tint = if (done) BrandPurple else BorderStrong,
+            tint = if (done) BrandPurpleText else BorderStrong,
             modifier = Modifier.size(22.dp)
         )
         Spacer(Modifier.width(12.dp))
