@@ -174,11 +174,11 @@ fun YarnListScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = BackgroundLight,
-                    focusedContainerColor = BackgroundLight,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
                     unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Slate,
-                    cursorColor = Slate
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -206,8 +206,8 @@ fun YarnListScreen(
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Slate,
-                            selectedLabelColor = White,
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                             containerColor = Color.Transparent,
                             labelColor = TextSecondary
                         ),
@@ -215,7 +215,7 @@ fun YarnListScreen(
                             enabled = true,
                             selected = selected,
                             borderColor = BorderLight,
-                            selectedBorderColor = Slate,
+                            selectedBorderColor = MaterialTheme.colorScheme.primary,
                             borderWidth = 1.dp,
                             selectedBorderWidth = 1.dp
                         )
@@ -413,7 +413,7 @@ private fun YarnEmptyState() {
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .background(BackgroundLight),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

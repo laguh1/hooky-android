@@ -95,9 +95,9 @@ fun ColorFamilyRow(
                 label = { Text(stringResource(R.string.sort_by_colour), style = MaterialTheme.typography.labelMedium, maxLines = 1) },
                 leadingIcon = { Icon(Icons.Filled.Palette, contentDescription = null, modifier = Modifier.size(16.dp)) },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = Slate,
-                    selectedLabelColor = White,
-                    selectedLeadingIconColor = White,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
                     containerColor = Color.Transparent,
                     labelColor = TextSecondary,
                     iconColor = TextSecondary
@@ -106,7 +106,7 @@ fun ColorFamilyRow(
                     enabled = true,
                     selected = sortByColor,
                     borderColor = BorderLight,
-                    selectedBorderColor = Slate,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
                     borderWidth = 1.dp,
                     selectedBorderWidth = 1.dp
                 )
