@@ -29,3 +29,16 @@ fun String.toDecimalOrNull(): Float? {
     }
     return normalized.toFloatOrNull()
 }
+
+/**
+ * A stored number as the user should see it in a text field or label: the locale's decimal
+ * separator ("12,5" in PT/ES) and no trailing zeros ("25" not "25.0"). Round-trips through
+ * [toDecimalOrNull]. Uses at most 2 decimals; no thousands separators, so it stays editable.
+ */
+fun Float.toInputText(locale: java.util.Locale = java.util.Locale.getDefault()): String {
+    val nf = java.text.NumberFormat.getNumberInstance(locale)
+    nf.isGroupingUsed = false
+    nf.maximumFractionDigits = 2
+    nf.minimumFractionDigits = 0
+    return nf.format(this.toDouble())
+}

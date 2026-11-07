@@ -362,6 +362,9 @@ private fun PieceGridCard(
                 val destResId = try { com.hooky.app.domain.model.enums.Destination.valueOf(piece.destination).labelResId } catch (_: Exception) { null }
                 val destName = destResId?.let { stringResource(it) } ?: piece.destination
                 StatusBadge(text = destName, style = BadgeStyle.MUTED)
+
+                // Delivery date while the order is open ("Entrega 15/12")
+                com.hooky.app.ui.pieces.DueBadge(piece.dueDate, piece.destination)
             }
         }
     }

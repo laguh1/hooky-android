@@ -1,5 +1,6 @@
 package com.hooky.app.ui.pieces.detail
 
+import com.hooky.app.util.toInputText
 import com.hooky.app.util.toDecimalOrNull
 import com.hooky.app.ui.components.FullScreenPhotoViewer
 import com.hooky.app.ui.yarns.YarnColorDot
@@ -474,7 +475,7 @@ private fun PieceDetailContent(
 
             // Info card
             val hasInfo = piece.widthCm != null || piece.lengthCm != null ||
-                piece.dateStarted != null || piece.dateFinished != null ||
+                piece.dateStarted != null || piece.dateFinished != null || piece.dueDate != null ||
                 piece.hookSizeMm != null || piece.workHours != null
             if (hasInfo) {
                 InfoCard(piece = piece)
@@ -517,7 +518,7 @@ private fun PieceDetailContent(
             val isSaleDestination = piece.destination == "FOR_SALE" || piece.destination == "SOLD"
             val hasPricing = piece.price != null || piece.materialCost != null ||
                 piece.salePlatform != null || piece.saleLink != null ||
-                piece.soldDate != null || piece.soldPrice != null
+                piece.soldDate != null || piece.soldPrice != null || piece.deposit != null
             if (isSaleDestination && hasPricing) {
                 PricingCard(piece = piece)
             }
@@ -682,14 +683,22 @@ private fun InfoCard(piece: PieceEntity) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             if (piece.widthCm != null || piece.lengthCm != null) {
-                val widthText = piece.widthCm?.let { stringResource(R.string.piece_dimension_wide, it.toString()) }
-                val lengthText = piece.lengthCm?.let { stringResource(R.string.piece_dimension_long, it.toString()) }
+                val widthText = piece.widthCm?.let { stringResource(R.string.piece_dimension_wide, it.toInputText()) }
+                val lengthText = piece.lengthCm?.let { stringResource(R.string.piece_dimension_long, it.toInputText()) }
                 val dims = listOfNotNull(widthText, lengthText).joinToString(" × ")
                 InfoRow(label = stringResource(R.string.label_dimensions), value = dims)
             }
             piece.dateStarted?.let { InfoRow(label = stringResource(R.string.label_started), value = formatDate(it)) }
             piece.dateFinished?.let { InfoRow(label = stringResource(R.string.label_finished), value = formatDate(it)) }
-            piece.hookSizeMm?.let { InfoRow(label = stringResource(R.string.label_hook_size), value = "${it}mm") }
+            piece.dueDate?.let { due ->
+                val days = com.hooky.app.util.DueDate.daysLeft(due)
+                val open = com.hooky.app.util.DueDate.isOpen(due, piece.destination)
+                val relative = if (open && days != null && days > 0)
+                    " · " + pluralStringResource(R.plurals.piece_due_in_days, days.toInt(), days.toInt()) else ""
+                InfoRow(label = stringResource(R.string.piece_label_due_date), value = formatDate(due) + relative)
+                if (open && days != null && days <= 0) com.hooky.app.ui.pieces.DueBadge(due, piece.destination)
+            }
+            piece.hookSizeMm?.let { InfoRow(label = stringResource(R.string.label_hook_size), value = "${it.toInputText()}mm") }
             piece.workHours?.let { InfoRow(label = stringResource(R.string.label_hours), value = formatWorkTime(it)) }
         }
     }
@@ -845,6 +854,14 @@ private fun PricingCard(piece: PieceEntity) {
             }
             piece.materialCost?.let { InfoRow(label = stringResource(R.string.piece_label_material_cost) + perUnitSuffix, value = it.formatCurrency(sym)) }
             piece.price?.let { InfoRow(label = stringResource(R.string.piece_label_suggested_price) + perUnitSuffix, value = it.formatCurrency(sym)) }
+            piece.deposit?.let { deposit ->
+                InfoRow(label = stringResource(R.string.piece_label_deposit), value = deposit.formatCurrency(sym))
+                // What's still to be paid for an order that isn't marked Sold yet
+                val total = piece.price?.let { it * piece.quantityTotal }
+                if (piece.destination != "SOLD" && total != null && total > deposit) {
+                    InfoRow(label = stringResource(R.string.piece_label_balance_due), value = (total - deposit).formatCurrency(sym))
+                }
+            }
             piece.salePlatform?.let { InfoRow(label = stringResource(R.string.piece_label_sale_platform), value = it) }
             piece.saleLink?.let { InfoRow(label = stringResource(R.string.piece_label_sale_link), value = it) }
             if (piece.destination == "SOLD") {

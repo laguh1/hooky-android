@@ -5,7 +5,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
 `docs/release-next.md` once it is picked for a release.
 
 ## Top of the list
-1. **Delivery date ("prazo de entrega") on a piece**, with a reminder before it's due.
+1. 🟡 *In progress for 1.11 (date, deposit, badge, Entregas filter, Excel done 2026-11-07; reminder still to do).* **Delivery date ("prazo de entrega") on a piece**, with a reminder before it's due.
    - Why: sellers take Christmas orders in November; the 1.10 social series had to avoid saying
      "prazo" because the app can't do it yet (2026-11-03).
    - Show it on the piece card and detail, sort/filter "due soon", and add a "Data de entrega"
@@ -80,7 +80,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   right on the word goes to the system bar; the icon works. Android's own file picker has the same
   overlap on this emulator (SAVE button), so it may be emulator-only. **Check on the S22 / tablet**
   before changing anything.
-- **Piece dimensions use a dot in PT/ES** ("25.0cm de largura") — format with the locale and drop ".0".
+- ✅ *Done in 1.11 (also form fields: prices, sizes, yarn weights).* **Piece dimensions use a dot in PT/ES** ("25.0cm de largura") — format with the locale and drop ".0".
 - Unused string `work_status_ready` ("Pronto") in PT only; there is no "Ready" status, so the
   "Prontas" filter item above was a mistake (removed from the list 2026-11-07).
 

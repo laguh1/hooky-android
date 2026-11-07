@@ -39,6 +39,8 @@ data class PieceReportRow(
     val quantityTotal: Int,
     val salePlatform: String?,
     val soldDate: String?,
+    val dueDate: String? = null,
+    val deposit: Float? = null,
     val totalCost: Float?,
     val totalRevenue: Float?,
     val profit: Float?,
@@ -175,13 +177,15 @@ class ReportsViewModel @Inject constructor(
                 listOf(
                     XlsxCell.Text(r.name), text(labels.statusLabels[r.status] ?: r.status), int(r.quantityTotal),
                     num(r.materialCost), num(r.price), num(r.soldPrice), num(r.workHours),
-                    num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate)
+                    num(r.totalCost), num(r.totalRevenue), num(r.profit), text(r.salePlatform), date(r.soldDate),
+                    date(r.dueDate), num(r.deposit)
                 )
             },
             totals = listOf(XlsxCell.Text(labels.total), XlsxCell.Empty, sum(2, state.rows.size, decimals = false), XlsxCell.Empty,
                 XlsxCell.Empty, XlsxCell.Empty, sum(6, state.rows.size), sum(7, state.rows.size),
-                sum(8, state.rows.size), sum(9, state.rows.size)),
-            columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14),
+                sum(8, state.rows.size), sum(9, state.rows.size), XlsxCell.Empty, XlsxCell.Empty,
+                XlsxCell.Empty, sum(13, state.rows.size)),
+            columnWidths = listOf(28, 14, 10, 14, 14, 14, 12, 14, 14, 14, 22, 14, 14, 14),
         )
         val customers = XlsxSheet(
             name = labels.customersSheet,
@@ -243,6 +247,8 @@ class ReportsViewModel @Inject constructor(
             quantityTotal = units,
             salePlatform = salePlatform,
             soldDate = soldDate,
+            dueDate = dueDate,
+            deposit = deposit,
             totalCost = totalCost,
             totalRevenue = totalRevenue,
             profit = profit,

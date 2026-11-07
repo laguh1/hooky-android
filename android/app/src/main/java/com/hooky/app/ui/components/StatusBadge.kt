@@ -14,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hooky.app.ui.theme.BorderLight
+import com.hooky.app.ui.theme.BrandPurple
 import com.hooky.app.ui.theme.Slate
 import com.hooky.app.ui.theme.TextMuted
 import com.hooky.app.ui.theme.TextSecondary
 import com.hooky.app.ui.theme.White
 
-enum class BadgeStyle { FILLED_SLATE, OUTLINE, MUTED }
+enum class BadgeStyle { FILLED_SLATE, OUTLINE, MUTED, ACCENT }
 
 @Composable
 fun StatusBadge(
@@ -44,6 +45,12 @@ fun StatusBadge(
             backgroundColor = Color.Transparent
             textColor = TextSecondary
             borderColor = BorderLight
+        }
+        // Brand purple: something that needs attention soon (delivery date)
+        BadgeStyle.ACCENT -> {
+            backgroundColor = BrandPurple
+            textColor = White
+            borderColor = null
         }
         BadgeStyle.MUTED -> {
             backgroundColor = MaterialTheme.colorScheme.surfaceVariant
