@@ -769,6 +769,12 @@ fun SettingsScreen(
                         )
                     }
                 }
+                // Debug only (English, not translated): run the 9:00 delivery check now
+                val debugContext = LocalContext.current
+                TextButton(
+                    onClick = { com.hooky.app.notifications.DeliveryReminderWorker.runNow(debugContext, resetSent = true) },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) { Text("Run delivery reminders now") }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

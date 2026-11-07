@@ -784,4 +784,11 @@
         <item quantity="one">em %d dia</item>
         <item quantity="other">em %d dias</item>
     </plurals>
+    <string name="notif_channel_deliveries">Entregas</string>
+    <string name="notif_channel_deliveries_desc">Lembretes antes da data de entrega de uma peça</string>
+    <string name="notif_delivery_today">A entrega é hoje</string>
+    <plurals name="notif_delivery_soon">
+        <item quantity="one">Entrega em %d dia</item>
+        <item quantity="other">Entrega em %d dias</item>
+    </plurals>
 </resources>
