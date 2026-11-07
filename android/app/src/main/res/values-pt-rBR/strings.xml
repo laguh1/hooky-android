@@ -791,4 +791,18 @@
         <item quantity="one">Entrega em %d dia</item>
         <item quantity="other">Entrega em %d dias</item>
     </plurals>
+
+    <!-- 1.11: maker brand on share cards -->
+    <string name="settings_section_brand">SUA MARCA</string>
+    <string name="settings_brand_name_title">Nome da loja ou @</string>
+    <string name="settings_brand_name_sub_empty">Aparece nas peças que você compartilha</string>
+    <string name="settings_brand_name_hint">ex. @mariacroche</string>
+    <string name="settings_brand_logo_title">Logo</string>
+    <string name="settings_brand_logo_sub_empty">Adicione seu logo ao cartão</string>
+    <string name="settings_brand_logo_sub_set">Toque para trocar</string>
+    <string name="settings_brand_logo_remove">Remover logo</string>
+    <string name="settings_brand_mark_title">“Feito com Hooky App” nos cartões</string>
+    <string name="settings_brand_mark_sub_free">Com o Hooky Pro você pode desligar</string>
+    <string name="settings_brand_mark_sub_pro">Desligue para mostrar só a sua marca</string>
+    <string name="share_card_made_with">feito com</string>
 </resources>

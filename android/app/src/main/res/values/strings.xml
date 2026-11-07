@@ -802,4 +802,18 @@
         <item quantity="one">Delivery in %d day</item>
         <item quantity="other">Delivery in %d days</item>
     </plurals>
+
+    <!-- 1.11: maker brand on share cards -->
+    <string name="settings_section_brand">YOUR BRAND</string>
+    <string name="settings_brand_name_title">Shop name or @</string>
+    <string name="settings_brand_name_sub_empty">Shown on the pieces you share</string>
+    <string name="settings_brand_name_hint">e.g. @mariacrochet</string>
+    <string name="settings_brand_logo_title">Logo</string>
+    <string name="settings_brand_logo_sub_empty">Add your logo to the share card</string>
+    <string name="settings_brand_logo_sub_set">Tap to change</string>
+    <string name="settings_brand_logo_remove">Remove logo</string>
+    <string name="settings_brand_mark_title">“Made with Hooky App” on cards</string>
+    <string name="settings_brand_mark_sub_free">With Hooky Pro you can turn it off</string>
+    <string name="settings_brand_mark_sub_pro">Turn off to show only your brand</string>
+    <string name="share_card_made_with">made with</string>
 </resources>
