@@ -801,8 +801,8 @@
     <string name="settings_brand_logo_sub_empty">Añade tu logo a la tarjeta</string>
     <string name="settings_brand_logo_sub_set">Toca para cambiar</string>
     <string name="settings_brand_logo_remove">Quitar logo</string>
-    <string name="settings_brand_mark_title">“Hecho con Hooky App” en las tarjetas</string>
+    <string name="settings_brand_mark_title">“via Hooky App” en las tarjetas</string>
     <string name="settings_brand_mark_sub_free">Con Hooky Pro puedes quitarlo</string>
     <string name="settings_brand_mark_sub_pro">Desactívalo para mostrar solo tu marca</string>
-    <string name="share_card_made_with">hecho con</string>
+    <string name="share_card_via">via Hooky App</string>
 </resources>

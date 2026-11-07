@@ -15,7 +15,6 @@ import androidx.core.content.FileProvider
 import com.hooky.app.R
 import com.hooky.app.util.MakerBrand
 import com.hooky.app.util.decodeSampledBitmapFromFile
-import com.hooky.app.util.decodeSampledBitmapFromResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -154,34 +153,34 @@ object ShareCardGenerator {
         val margin = 44
         val bottom = size - margin
 
-        // Hooky wordmark (bottom right). With the maker's brand on the card it becomes a small,
-        // quiet "made with Hooky App"; Pro can hide it (Settings → Your brand).
+        // "via Hooky App" (bottom right): the app icon + text. Not "made with", which reads as
+        // if the piece itself was made by Hooky (user, 2026-11-07). Pro can hide it.
         val showHookyMark = !(isPremium && brand.hideHookyMark)
         var markLeft = size - margin
         if (showHookyMark) try {
-            val wm = decodeSampledBitmapFromResource(context.resources, R.drawable.hooky_wordmark, maxDimension = 128)
-            if (wm != null) {
-                val wmH = if (brand.isEmpty) 64 else 44
-                val wmW = (wm.width * wmH.toFloat() / wm.height).toInt()
-                val scaled = Bitmap.createScaledBitmap(wm, wmW, wmH, true)
-                val wmX = size - wmW - margin
-                // White: the purple wordmark disappeared on the dark slate card
-                val wmPaint = Paint().apply {
-                    alpha = if (brand.isEmpty) 220 else 190
-                    colorFilter = android.graphics.PorterDuffColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN)
-                    isFilterBitmap = true
-                }
-                canvas.drawBitmap(scaled, wmX.toFloat(), (bottom - wmH).toFloat(), wmPaint)
-                markLeft = wmX
-                if (!brand.isEmpty) {
-                    val madeWith = Paint().apply { color = Color.parseColor("#94A3B8"); textSize = 26f; isAntiAlias = true }
-                    val label = context.getString(R.string.share_card_made_with)
-                    canvas.drawText(label, (size - margin - madeWith.measureText(label)), (bottom - wmH - 10).toFloat(), madeWith)
-                    markLeft = minOf(markLeft, (size - margin - madeWith.measureText(label)).toInt())
-                }
-                scaled.recycle()
-                wm.recycle()
+            val big = brand.isEmpty
+            val icon = if (big) 60 else 48
+            val viaPaint = Paint().apply {
+                color = Color.WHITE; alpha = 220; textSize = if (big) 36f else 30f
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD); isAntiAlias = true
             }
+            val label = context.getString(R.string.share_card_via)
+            val textW = viaPaint.measureText(label)
+            val textX = size - margin - textW
+            val iconL = textX - 14 - icon
+            val iconT = (bottom - icon).toFloat()
+            // App icon: brand-purple rounded square with the white "oo"
+            canvas.drawRoundRect(iconL, iconT, iconL + icon, iconT + icon, icon * 0.24f, icon * 0.24f,
+                Paint().apply { color = accentColor; isAntiAlias = true })
+            androidx.core.content.ContextCompat.getDrawable(context, R.drawable.ic_notification)?.let { d ->
+                val pad = (icon * 0.16f).toInt()
+                d.setBounds(iconL.toInt() + pad, iconT.toInt() + pad, (iconL + icon).toInt() - pad, (iconT + icon).toInt() - pad)
+                d.draw(canvas)
+            }
+            val fm = viaPaint.fontMetrics
+            val baseline = iconT + icon / 2f - (fm.ascent + fm.descent) / 2f
+            canvas.drawText(label, textX, baseline, viaPaint)
+            markLeft = iconL.toInt()
         } catch (_: Exception) {}
 
         // The maker's brand (bottom left): logo on a white tile + shop name / @handle

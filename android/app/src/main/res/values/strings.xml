@@ -812,8 +812,8 @@
     <string name="settings_brand_logo_sub_empty">Add your logo to the share card</string>
     <string name="settings_brand_logo_sub_set">Tap to change</string>
     <string name="settings_brand_logo_remove">Remove logo</string>
-    <string name="settings_brand_mark_title">“Made with Hooky App” on cards</string>
+    <string name="settings_brand_mark_title">“via Hooky App” on cards</string>
     <string name="settings_brand_mark_sub_free">With Hooky Pro you can turn it off</string>
     <string name="settings_brand_mark_sub_pro">Turn off to show only your brand</string>
-    <string name="share_card_made_with">made with</string>
+    <string name="share_card_via">via Hooky App</string>
 </resources>
