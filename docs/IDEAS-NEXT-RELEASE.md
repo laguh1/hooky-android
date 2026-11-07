@@ -75,7 +75,7 @@ they come (from the user, reviews, the suggestions form, social comments); move 
   spreadsheet app formats them by its own locale.
 
 ## Found while testing 1.10.3 (2026-11-07, emulator)
-- **Bottom tab labels may not respond to taps on three-button navigation.** On the Pixel_6 emulator
+- ❌ *Not a bug: labels work on the S22 and the Tab S6 Lite (user checked 2026-11-07); emulator-only.* **Bottom tab labels may not respond to taps on three-button navigation.** On the Pixel_6 emulator
   the system navigation bar overlaps the lower part of the tab labels (Painel, Peças…), so a tap
   right on the word goes to the system bar; the icon works. Android's own file picker has the same
   overlap on this emulator (SAVE button), so it may be emulator-only. **Check on the S22 / tablet**
