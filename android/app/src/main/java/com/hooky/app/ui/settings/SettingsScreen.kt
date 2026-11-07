@@ -545,6 +545,12 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Your brand (share cards)
+            SectionHeader(stringResource(R.string.settings_section_brand))
+            BrandSection(isPremium = isPremium, onNavigateToPro = onNavigateToPro)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Hooky Pro section
             SectionHeader(stringResource(R.string.settings_section_pro))
 

@@ -578,7 +578,8 @@ private fun PieceDetailContent(
                             destination = destBaseName,
                             workHours = piece.workHours,
                             rowCount = piece.rowCount,
-                            photoPath = photos.firstOrNull()
+                            photoPath = photos.firstOrNull(),
+                            isPremium = isPremium
                         )
                         isSharing = false
                         if (intent != null) {
