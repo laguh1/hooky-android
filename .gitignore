@@ -33,3 +33,6 @@ FACEBOOK-GROUPS.md
 
 # Landing page is its own git repo (laguh1/hooky-landing)
 landing/
+
+# Private docs live in the separate private repo laguh1/hooky-docs (docs is a symlink to ../hooky-docs)
+/docs

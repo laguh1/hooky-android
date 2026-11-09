@@ -6,6 +6,7 @@
 **Android project:** `android/` — open this folder in Android Studio
 **Package name:** `com.laguh.hooky` (changed from `com.hooky.app`, which was already taken on Play Store)
 **Landing page:** separate git repo at `landing/` (pushed independently to `laguh1/hooky-landing`, live on GitHub Pages)
+**Docs (private):** `docs/` is a symlink to `../hooky-docs`, a separate **private** repo (`laguh1/hooky-docs`). `hooky-android` is public (recruiters see it), so plans, release notes, marketing and business docs must never be committed here — commit and push them from `../hooky-docs` instead. Moved out (with history rewrite) on 2026-11-09.
 
 ## Reference Projects
 - **The Nag** (same Android tech stack): `/Users/joanasocrates/Documents/claude/nag/`
