@@ -8,7 +8,14 @@ import java.text.Normalizer
 // A line of recognized text plus its height in pixels (from ML Kit's bounding box) and the
 // text block it came from. heightPx = 0 when size info isn't available, which degrades
 // gracefully to line order; block = -1 when unknown (lines are then never joined).
-data class OcrLine(val text: String, val heightPx: Int, val block: Int = -1)
+// left/top/right: the line's box in the photo (-1 when unknown); used to find a value printed
+// under its caption, since ML Kit's block order is not reading order.
+data class OcrLine(
+    val text: String, val heightPx: Int, val block: Int = -1,
+    val left: Int = -1, val top: Int = -1, val right: Int = -1
+) {
+    val hasBox: Boolean get() = left >= 0 && top >= 0 && right > left && heightPx > 0
+}
 
 /**
  * Turns the OCR text of a yarn label into form fields. Reworked in 1.12 after testing five
@@ -320,6 +327,31 @@ object YarnLabelParser {
         // Caption line: only the keyword, maybe with a neighbouring caption ("Colour: Dyelot")
         val caption = Regex("""(?i)^\s*${colourKeyword}s?\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
         val otherCaption = Regex("""(?i)^\s*(?:dye\s*)?lot[e\w]*\s*(?:n[º°o]\.?)?\s*:?\s*$|^\s*bain\s*:?\s*$|^\s*partida\s*:?\s*$""")
+        fun codeAtStart(t: String): String? {
+            val first = Regex(codeToken).find(t.uppercase())?.value ?: return null
+            return first.takeIf { isCode(it) && t.uppercase().startsWith(it) }
+        }
+        fun isBarcodePiece(t: String) = t.none { it.isLetter() } && t.count { it.isDigit() } >= 6
+
+        // With positions: the code is the nearest line directly below the caption (same
+        // column). ML Kit lists blocks in no fixed order — on the S22 "OEKO TEX", "Dyelot" or a
+        // barcode piece came between "Colour:" and "LH-SHI-01" in the line list.
+        for (cap in lines.filter { it.hasBox && caption.matches(it.text) }) {
+            val capBottom = cap.top + cap.heightPx
+            val below = lines.filter { o ->
+                o !== cap && o.hasBox && o.top >= cap.top + cap.heightPx / 2 &&
+                    o.top <= capBottom + cap.heightPx * 4 &&
+                    minOf(o.right, cap.right) - maxOf(o.left, cap.left) > 0 // overlaps the column
+            }.sortedBy { it.top }
+            for (o in below) {
+                val t = o.text.trim()
+                if (otherCaption.matches(t) || isBarcodePiece(t)) continue
+                if (measurement.containsMatchIn(t)) break
+                codeAtStart(t)?.let { return it }
+                break
+            }
+        }
+
         for ((i, line) in lines.withIndex()) {
             if (!caption.matches(line.text)) continue
             // The code is on the next line, or one further down when OCR read the neighbouring

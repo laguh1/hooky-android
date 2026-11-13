@@ -305,4 +305,35 @@ class YarnLabelParserTest {
         assertEquals("Zorblax", guess.brand)
         assertEquals("DROPS", guess.mergeWith(known).brand)
     }
+
+    // Third phone test (2026-11-13 15:50): ML Kit listed "OEKO TEX" (or a barcode piece and
+    // "Dyelot") between "Colour:" and "LH-SHI-01 1025". With line positions the code is found
+    // directly below its caption, whatever the list order. Boxes from the label photo.
+    @Test
+    fun shine_colourCodeFoundBelowCaptionByPosition() {
+        fun b(text: String, left: Int, top: Int, right: Int, h: Int, block: Int) =
+            OcrLine(text, h, block, left, top, right)
+        val lines = listOf(
+            b("Shine", 320, 590, 665, 194, 0),
+            b("5 714215 064256", 285, 1235, 635, 40, 3),
+            b("Colour:", 345, 1290, 440, 30, 4),
+            b("Dyelot", 565, 1293, 650, 30, 5),
+            b("OEKO", 470, 1420, 520, 40, 6),
+            b("TEX®", 470, 1460, 520, 40, 6),
+            b("LH-SHI-01 1025", 285, 1330, 655, 45, 7),
+            b("Made in Turkey", 660, 1120, 690, 140, 9),
+        )
+        val r = YarnLabelParser.parse(lines.joinToString("\n") { it.text }, lines)
+        assertEquals("LH-SHI-01", r.colorCode)
+
+        val withPiece = listOf(
+            b("5714215", 330, 1235, 470, 40, 3),
+            b("Colour:", 345, 1290, 440, 30, 4),
+            b("064256", 515, 1235, 635, 40, 5),
+            b("OEKO", 470, 1420, 520, 40, 6),
+            b("Dyelot", 565, 1293, 650, 30, 7),
+            b("LH-SHI-01 1025", 285, 1330, 655, 45, 8),
+        )
+        assertEquals("LH-SHI-01", YarnLabelParser.parse(withPiece.joinToString("\n") { it.text }, withPiece).colorCode)
+    }
 }

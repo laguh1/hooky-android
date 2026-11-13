@@ -40,12 +40,15 @@ class YarnLabelScannerService @Inject constructor(
         // Line height (from ML Kit's bounding boxes) tells brand/logo text (largest print)
         // apart from the product name and small-print details — order alone is unreliable.
         val ocrLines = result.textBlocks.withIndex().flatMap { (blockIndex, block) ->
-            block.lines.map { line -> OcrLine(line.text, line.boundingBox?.height() ?: 0, blockIndex) }
+            block.lines.map { line ->
+                val box = line.boundingBox
+                OcrLine(line.text, box?.height() ?: 0, blockIndex, box?.left ?: -1, box?.top ?: -1, box?.right ?: -1)
+            }
         }
         if (com.hooky.app.BuildConfig.DEBUG) {
             // Debug builds only: the raw OCR lines, to tune the parser from real labels
             // (adb logcat -s HookyOCR). Never logged in release builds.
-            ocrLines.forEach { android.util.Log.d("HookyOCR", "b${it.block} h${it.heightPx} | ${it.text}") }
+            ocrLines.forEach { android.util.Log.d("HookyOCR", "b${it.block} h${it.heightPx} x${it.left}-${it.right} y${it.top} | ${it.text}") }
         }
         return YarnLabelParser.parse(result.text, ocrLines)
     }
