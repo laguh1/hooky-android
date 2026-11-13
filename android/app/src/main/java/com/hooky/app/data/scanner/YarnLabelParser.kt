@@ -39,7 +39,9 @@ object YarnLabelParser {
             weightCategory = extractWeightCategory(text),
             ballWeightG = extractBallWeightG(text),
             ballLengthM = extractBallLengthM(text),
-            hookSizeMm = extractHookSize(text),
+            // The yarn's hook size is one number in the database: a label range ("5-5,5 mm")
+            // would be saved as empty, so the smaller size is used
+            hookSizeMm = extractHookSize(text)?.substringBefore('-'),
             needleSizeMm = extractNeedleSize(text, lines),
             gauge = extractGauge(text),
             washTemp = extractWashTemp(text),
@@ -313,13 +315,19 @@ object YarnLabelParser {
 
         // Caption line: only the keyword, maybe with a neighbouring caption ("Colour: Dyelot")
         val caption = Regex("""(?i)^\s*$colourKeyword\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
+        val otherCaption = Regex("""(?i)^\s*(?:dye\s*)?lot[e\w]*\s*(?:n[º°o]\.?)?\s*:?\s*$|^\s*bain\s*:?\s*$|^\s*partida\s*:?\s*$""")
         for ((i, line) in lines.withIndex()) {
             if (!caption.matches(line.text)) continue
-            val next = lines.getOrNull(i + 1)?.text ?: continue
-            // A barcode line ("5 714215 064256") is never a colour code
-            if (next.count { it.isDigit() } >= 10 && next.none { it.isLetter() }) continue
-            val first = Regex(codeToken).find(next.trim().uppercase())?.value ?: continue
-            if (isCode(first) && next.trim().uppercase().startsWith(first)) return first
+            // The code is on the next line, or one further down when OCR read the neighbouring
+            // caption in between ("Colour:" / "Dyelot" / "LH-SHI-01 1025")
+            for (next in lines.drop(i + 1).take(2).map { it.text.trim() }) {
+                if (otherCaption.matches(next)) continue
+                // A barcode line ("5 714215 064256") is never a colour code
+                if (next.count { it.isDigit() } >= 10 && next.none { it.isLetter() }) break
+                val first = Regex(codeToken).find(next.uppercase())?.value
+                if (first != null && isCode(first) && next.uppercase().startsWith(first)) return first
+                break
+            }
         }
         return null
     }
@@ -362,7 +370,12 @@ object YarnLabelParser {
     // (OEKO-TEX, barcode digits, logo misreads) dropped.
     private fun extractMaterialComposition(lines: List<OcrLine>): String? {
         val pct = Regex("""\d{1,3}\s*%""")
-        val parts = mutableListOf<String>()
+        // Groups of consecutive "NN%" lines from the same text block. Labels often print
+        // the composition twice (icon list + front); OCR may garble one copy ("21% ACryie
+        // 9% Wool"), so a group whose percentages add up to 100 wins.
+        val groups = mutableListOf<MutableList<String>>()
+        var lastBlock = Int.MIN_VALUE
+        var lastIndex = -2
         for ((i, line) in lines.withIndex()) {
             if (!pct.containsMatchIn(line.text)) continue
             var part = cleanComposition(line.text) ?: continue
@@ -371,10 +384,18 @@ object YarnLabelParser {
                 val ws = words(next)
                 if (ws.isNotEmpty() && ws.all { it in compositionWords }) part += " " + next.trim()
             }
-            if (parts.none { key(it) == key(part) }) parts += part
-            if (parts.size == 3) break
+            val sameGroup = i == lastIndex + 1 && (line.block == lastBlock || line.block < 0)
+            if (sameGroup) groups.last() += part else groups += mutableListOf(part)
+            lastBlock = line.block; lastIndex = i
         }
-        return parts.takeIf { it.isNotEmpty() }?.joinToString(", ")
+        if (groups.isEmpty()) return null
+        fun total(g: List<String>) = g.sumOf { p -> Regex("""(\d{1,3})%""").findAll(p).sumOf { it.groupValues[1].toInt() } }
+        val chosen = groups.firstOrNull { total(it) in 99..101 }
+            ?: groups.flatten().fold(mutableListOf<String>()) { acc, p -> if (acc.none { key(it) == key(p) }) acc += p; acc }.take(3)
+        // "70% Polyamide | 21% Acrylic" / "21% Acrylic - 9% Wool" → "70% Polyamide, 21% Acrylic, 9% Wool"
+        return chosen.joinToString(", ")
+            .replace(Regex("""(\p{L})\s*[-|]?\s+(\d{1,3}%)"""), "$1, $2")
+            .replace(Regex("""\s*,\s*,\s*"""), ", ")
     }
 
     private fun cleanComposition(raw: String): String? {
@@ -463,16 +484,29 @@ object YarnLabelParser {
         }?.groupValues?.get(1)?.let { v ->
             val c = cleanSize(v)
             if (sizeInRange(c)) return c
+            unglueRange(c)?.let { return it }
         }
 
         val rangeOnly = Regex("""^\s*(\d{1,2}(?:[.,]\d)?)\s*[-–]\s*(\d{1,2}(?:[.,]\d)?)\s*(?:mm)?\s*$""")
-        return lines.firstNotNullOfOrNull { l ->
+        val hookCaption = Regex("""(?i)crochet|hook|ganchillo|crochê|gancho|haken""")
+        return lines.withIndex().firstNotNullOfOrNull { (i, l) ->
+            // A range under a crochet caption is the hook ("Crochet Size" / "5-5,5 mm")
+            if (i > 0 && hookCaption.containsMatchIn(lines[i - 1].text)) return@firstNotNullOfOrNull null
             rangeOnly.find(l.text)?.let { m ->
                 val a = m.groupValues[1].replace(',', '.').toFloatOrNull()
                 val b = m.groupValues[2].replace(',', '.').toFloatOrNull()
-                if (a != null && b != null && a in 1.5f..15f && b in 1.5f..15f && a < b && b - a <= 3f) cleanSize(m.value) else null
+                if (a != null && b != null && a in 1.5f..15f && b in 1.5f..15f && a < b && b - a <= 3f)
+                    cleanSize(m.groupValues[1] + "-" + m.groupValues[2]) else null
             }
         }
+    }
+
+    // OCR often drops the dash of a size range: "4-4,5 mm" read as "44,5 mm". A first digit
+    // that is smaller than or equal to the rest, both sizes in range, is split back.
+    private fun unglueRange(s: String): String? {
+        val m = Regex("""^(\d)(\d(?:\.\d{1,2})?)$""").find(s) ?: return null
+        val a = m.groupValues[1].toFloat(); val b = m.groupValues[2].toFloat()
+        return if (a in 1.5f..15f && b in 1.5f..15f && a < b && b - a <= 3f) "${m.groupValues[1]}-${m.groupValues[2]}" else null
     }
 
     private fun sizeInRange(s: String): Boolean =

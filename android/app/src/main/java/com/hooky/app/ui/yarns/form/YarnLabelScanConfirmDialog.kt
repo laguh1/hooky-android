@@ -74,8 +74,8 @@ fun YarnLabelScanConfirmDialog(
                 result.weightCategory?.let { ScanResultRow(stringResource(R.string.yarn_field_weight_category), stringResource(it.labelResId)) }
                 result.ballWeightG?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_weight), "${it}g") }
                 result.ballLengthM?.let { ScanResultRow(stringResource(R.string.yarn_label_ball_length), "${it}m") }
-                result.hookSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_hook_size), "${it}mm") }
-                result.needleSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_needle_size), "${it}mm") }
+                result.hookSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_hook_size), com.hooky.app.util.formatSizeMm(it)) }
+                result.needleSizeMm?.let { ScanResultRow(stringResource(R.string.yarn_label_needle_size), com.hooky.app.util.formatSizeMm(it)) }
                 result.gauge?.let { ScanResultRow(stringResource(R.string.yarn_label_gauge), it) }
                 result.washTemp?.let { ScanResultRow(stringResource(R.string.yarn_label_iron_temp), "${it}°C") }
                 result.machineWash?.let { ScanResultRow(stringResource(R.string.yarn_care_machine_wash), if (it) yes else no) }

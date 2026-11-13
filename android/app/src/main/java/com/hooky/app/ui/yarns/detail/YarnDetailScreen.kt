@@ -1,5 +1,6 @@
 package com.hooky.app.ui.yarns.detail
 
+import com.hooky.app.util.toInputText
 import com.hooky.app.ui.components.FullScreenPhotoViewer
 import com.hooky.app.ui.yarns.YarnColorDot
 import com.hooky.app.domain.model.YarnColor
@@ -340,8 +341,8 @@ private fun YarnDetailContent(
                 YarnInfoCard(title = stringResource(R.string.yarn_section_measurements)) {
                     yarn.ballWeightG?.let { InfoRow(label = stringResource(R.string.yarn_label_ball_weight), value = "${it}g") }
                     yarn.ballLengthM?.let { InfoRow(label = stringResource(R.string.yarn_label_ball_length), value = "${it}m") }
-                    yarn.hookSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_hook_size), value = "${it}mm") }
-                    yarn.needleSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_needle_size), value = it) }
+                    yarn.hookSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_hook_size), value = com.hooky.app.util.formatSizeMm(it.toInputText())) }
+                    yarn.needleSizeMm?.let { InfoRow(label = stringResource(R.string.yarn_label_needle_size), value = com.hooky.app.util.formatSizeMm(it)) }
                     yarn.gauge?.let { InfoRow(label = stringResource(R.string.yarn_label_gauge), value = it) }
                 }
             }

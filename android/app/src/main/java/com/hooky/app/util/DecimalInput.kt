@@ -44,3 +44,17 @@ fun Float.toInputText(locale: java.util.Locale = java.util.Locale.getDefault(), 
     nf.minimumFractionDigits = if (money && !whole) 2 else 0
     return nf.format(this.toDouble())
 }
+
+/**
+ * A hook/needle size as stored on a yarn ("5-5.5", "4,5", "4mm") shown as "5-5,5 mm" in PT/ES,
+ * "5-5.5 mm" in EN: one "mm" after a space, the locale's decimal separator, "-" between sizes.
+ */
+fun formatSizeMm(raw: String, locale: java.util.Locale = java.util.Locale.getDefault()): String {
+    val sep = java.text.DecimalFormatSymbols.getInstance(locale).decimalSeparator
+    val core = raw.trim().replace(Regex("""(?i)\s*mm\s*$"""), "").trim()
+    if (core.isEmpty()) return raw
+    val numeric = Regex("""^\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?$""")
+    if (!numeric.matches(core)) return raw // free text the user typed: show as is
+    val parts = core.split(Regex("""\s*[-–]\s*""")).map { it.replace('.', sep).replace(',', sep) }
+    return parts.joinToString("-") + " mm"
+}

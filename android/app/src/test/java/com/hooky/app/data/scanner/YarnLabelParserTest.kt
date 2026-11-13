@@ -56,7 +56,7 @@ class YarnLabelParserTest {
         )
         assertEquals("Merino Bliss 175", r.name)
         assertEquals("LindeHobby", r.brand)
-        assertEquals("3.5-4", r.hookSizeMm)
+        assertEquals("3.5", r.hookSizeMm) // smaller size: the yarn stores one number
         assertEquals("4-5", r.needleSizeMm)
         assertEquals("50", r.ballWeightG)
         assertEquals("175", r.ballLengthM)
@@ -196,8 +196,9 @@ class YarnLabelParserTest {
         assertEquals("Shine", r.name)
         assertEquals("LindeHobby", r.brand)
         assertEquals("LH-SHI-01", r.colorCode)
-        assertEquals("5-5.5", r.hookSizeMm)
+        assertEquals("5", r.hookSizeMm)
         assertEquals("4-4.5", r.needleSizeMm)
+        assertEquals("70% Polyamide, 21% Acrylic, 9% Wool", r.materialComposition)
         assertEquals("50", r.ballWeightG)
         assertEquals("115", r.ballLengthM)
         assertEquals(Material.BLEND, r.material)
@@ -206,6 +207,44 @@ class YarnLabelParserTest {
     @Test
     fun colourCaptionInItsOwnBlock() {
         val r = scan(l("Colour:", 18, 0), l("LH-SHI-01", 30, 0), l("Dyelot", 18, 1), l("1025", 30, 1))
+        assertEquals("LH-SHI-01", r.colorCode)
+    }
+
+    // The exact ML Kit lines from the S22 (debug log, 2026-11-13 15:32): two photos of the
+    // LindeHobby Shine label. Dash dropped in "44,5 mm", "Dyelot" read between "Colour:" and
+    // the code, composition printed twice (one copy garbled).
+    @Test
+    fun lindeHobbyShine_realOcr_iconSide() {
+        val r = scan(
+            l("X", 123, 0), l("Polyarmide", 56, 1), l("21% ACryie 9% Wool", 105, 2), l("Needle Gauge", 100, 2),
+            l("20 sts/25 rows", 91, 3), l("10x10 Cm", 70, 3), l("Knitting Needle Size", 100, 4), l("44,5 mm", 85, 4),
+            l("Crochet Gauge", 108, 4), l("15 sts / 18 rows", 93, 4), l("10x10 cm", 78, 4), l("Crochet Size", 82, 4),
+            l("5-5,5 mm", 91, 4), l("Yarn Weight", 111, 4), l("50g- 1,7602", 75, 4), l("Yarn Lenght", 100, 4),
+            l("115m - 125yd", 85, 4), l("Shine", 269, 5), l("70% Polyamide | 21% Acrylic", 156, 6), l("9% Wool", 103, 6),
+            l("LndeHebby", 336, 7),
+        )
+        assertEquals("Shine", r.name)
+        assertEquals("LindeHobby", r.brand)
+        assertEquals("4-4.5", r.needleSizeMm)
+        assertEquals("5", r.hookSizeMm)
+        assertEquals("70% Polyamide, 21% Acrylic, 9% Wool", r.materialComposition)
+        assertEquals("50", r.ballWeightG)
+        assertEquals("115", r.ballLengthM)
+    }
+
+    @Test
+    fun lindeHobbyShine_realOcr_barcodeSide() {
+        val r = scan(
+            l("S55 Mm", 70, 0), l("Yarn Weight", 77, 0), l("Sog- L.7607", 61, 0), l("Yarn Lenght", 81, 0),
+            l("115h-125yd", 79, 0), l("Shine", 140, 1), l("70% Polyamide | 21% Acrylic", 92, 2), l("9% Wool", 60, 2),
+            l("LndeCobby", 200, 3), l("5 714215 064256", 69, 4), l("Colour:", 49, 5), l("Dyelot", 65, 6),
+            l("LH-SHI-01 1025", 108, 7), l("OEKO", 77, 8), l("TEX", 88, 8), l("STANDARD", 54, 9), l("100", 46, 9),
+            l("21.HTR.94797", 45, 10), l("HOHENSTEIN HTTI", 48, 10), l("LindeHobby", 118, 11),
+            l("Explore your locai Lindekobby", 67, 12), l("oniine store for detaied", 47, 12),
+            l("intormaion and froe patterns", 67, 13), l("Made in Turkey", 296, 14),
+        )
+        assertEquals("Shine", r.name)
+        assertEquals("LindeHobby", r.brand)
         assertEquals("LH-SHI-01", r.colorCode)
     }
 }
