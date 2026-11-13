@@ -173,6 +173,18 @@ object YarnLabelParser {
         "stylecraft" to "Stylecraft", "paintbox" to "Paintbox Yarns", "hobbii" to "Hobbii"
     )
 
+    // How ML Kit actually read stylized logos on the S22 (2026-11-13), too far from the real
+    // name for the edit distance: Carícia's art-deco A has no crossbar ("CIRICI", "CADICR");
+    // LindeHobby's script logo loses letters. Keys as key() makes them, spaces removed.
+    private val observedMisreads = mapOf(
+        "cirici" to "Carícia", "cadicr" to "Carícia", "caricii" to "Carícia", "carici" to "Carícia",
+        "ciricia" to "Carícia", "cadicia" to "Carícia",
+        "lndeobiy" to "LindeHobby", "lndefobby" to "LindeHobby", "lndehebby" to "LindeHobby",
+        "lndecobby" to "LindeHobby", "lndeoby" to "LindeHobby", "lndeobby" to "LindeHobby",
+        "lindepoboy" to "LindeHobby", "lnde9obby" to "LindeHobby", "londekobby" to "LindeHobby",
+        "lindekobby" to "LindeHobby", "lndehoby" to "LindeHobby", "lndekobby" to "LindeHobby"
+    )
+
     private fun key(s: String) = stripAccents(s).lowercase().replace(Regex("[^a-z0-9 ]"), "").trim()
 
     private fun levenshtein(a: String, b: String): Int {
@@ -202,6 +214,7 @@ object YarnLabelParser {
         val k = key(raw)
         if (k.length < 3) return null
         brandAliases[k]?.let { return it to 0 }
+        observedMisreads[k.replace(" ", "")]?.let { return it to 0 }
         val best = knownYarnBrands.minByOrNull { levenshtein(key(it), k) } ?: return null
         val distance = levenshtein(key(best), k)
         // Allowance from the longer word: script logos lose letters ("Lndeobby" for

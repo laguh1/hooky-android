@@ -380,4 +380,15 @@ class YarnLabelParserTest {
         assertEquals("Perfect DK", merged.name)
         assertNull(merged.brand)
     }
+
+    // Carícia Frescor front on the S22 (2026-11-13 16:03): the art-deco A has no crossbar,
+    // ML Kit read the logo as "CIRICI" and "CADICR"
+    @Test
+    fun caricia_artDecoLogoMisreads() {
+        for (logo in listOf("CIRICI", "CADICR")) {
+            val r = parseLines(listOf(bx(logo, 702, 0, 841, 2026, 1274), bx("Frescor", 250, 1, 929, 2000, 2001)))
+            assertEquals("Carícia", r.brand)
+            assertEquals("Frescor", r.name)
+        }
+    }
 }
