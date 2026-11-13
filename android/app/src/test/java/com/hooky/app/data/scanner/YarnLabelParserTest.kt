@@ -163,4 +163,49 @@ class YarnLabelParserTest {
         assertEquals("Carícia", merged.brand)
         assertEquals("122", merged.colorCode)
     }
+
+    // LindeHobby Shine, scanned on the S22 2026-11-13 with the 1.12 parser: colour code and
+    // hook size were missing ("Colour:" above the code; "Crochet Size", not "Crochet Hook").
+    @Test
+    fun lindeHobbyShine_captionAboveCode_crochetSize_needleGaugeIgnored() {
+        val r = scan(
+            l("Composition", 20, 0),
+            l("70% Polyamide", 18, 0),
+            l("21% Acrylic - 9% Wool", 18, 0),
+            l("Needle Gauge", 20, 1),
+            l("20 sts / 25 rows", 18, 1),
+            l("10x10 cm", 18, 1),
+            l("Knitting Needle Size", 20, 2),
+            l("4-4,5 mm", 18, 2),
+            l("Crochet Gauge", 20, 3),
+            l("15 sts / 18 rows", 18, 3),
+            l("Crochet Size", 20, 4),
+            l("5-5,5 mm", 18, 4),
+            l("Yarn Weight", 20, 5),
+            l("50g - 1,76oz", 18, 5),
+            l("Yarn Lenght", 20, 6),
+            l("115m - 125yd", 18, 6),
+            l("Shine", 90, 7),
+            l("70% Polyamide | 21% Acrylic", 25, 8),
+            l("9% Wool", 25, 8),
+            l("5 714215 064256", 25, 9),
+            l("Colour: Dyelot", 18, 10),
+            l("LH-SHI-01 1025", 30, 10),
+            l("LindeHobby", 30, 11),
+        )
+        assertEquals("Shine", r.name)
+        assertEquals("LindeHobby", r.brand)
+        assertEquals("LH-SHI-01", r.colorCode)
+        assertEquals("5-5.5", r.hookSizeMm)
+        assertEquals("4-4.5", r.needleSizeMm)
+        assertEquals("50", r.ballWeightG)
+        assertEquals("115", r.ballLengthM)
+        assertEquals(Material.BLEND, r.material)
+    }
+
+    @Test
+    fun colourCaptionInItsOwnBlock() {
+        val r = scan(l("Colour:", 18, 0), l("LH-SHI-01", 30, 0), l("Dyelot", 18, 1), l("1025", 30, 1))
+        assertEquals("LH-SHI-01", r.colorCode)
+    }
 }

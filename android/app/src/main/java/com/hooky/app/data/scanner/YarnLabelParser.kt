@@ -31,7 +31,7 @@ object YarnLabelParser {
             name = extractName(lines, brandPick),
             brand = brandPick?.brand,
             colorName = extractColorName(text),
-            colorCode = extractColorCode(text),
+            colorCode = extractColorCode(text, lines),
             // The composition line is the most reliable source; care text and marketing
             // copy elsewhere on the label mention other fibres ("wool cycle").
             material = composition?.let { extractMaterial(it) } ?: extractMaterial(text),
@@ -287,19 +287,41 @@ object YarnLabelParser {
         }
     }
 
+    // A colour code: "122", "UC1000", "LH-SHI-01", "D-17". Has a digit; not a barcode.
+    private val codeToken = """[A-Z0-9]{1,6}(?:-[A-Z0-9]{1,6}){0,3}"""
+
+    private fun isCode(code: String): Boolean =
+        code.length >= 2 && code.any { it.isDigit() } && !Regex("""\d{7,}""").containsMatchIn(code)
+
+    private val colourKeyword = """(?:col|colou?r|cor|shade|farbe|coloris|colore|tono|nuance)"""
+
     // Colour code: a code right after a colour keyword on the same line — "COL 122",
-    // "Colour: UC1000", "Shade 24", "Cor nº 0451". Never barcode digits on the next line,
-    // never a weight or length ("Color 50g").
-    private fun extractColorCode(text: String): String? {
+    // "Colour: UC1000", "Shade 24", "Cor nº 0451" — or, when the keyword is a caption on its
+    // own line ("Colour:" above "LH-SHI-01", LindeHobby Shine 2026-11-13), the first code on
+    // the next line. Never barcode digits, never a weight or length ("Color 50g").
+    private fun extractColorCode(text: String, lines: List<OcrLine>): String? {
         val pattern = Regex(
-            """(?im)\b(?:col|colou?r|cor|shade|farbe|coloris|colore|tono|nuance)\b\.?[ \t]*(?:code|n[º°o]\.?|num\.?|nr\.?|#)?[ \t]*[:.\-]?[ \t]*(?:([A-Za-zÀ-ÿ]{2,20})[ \t]+)?([A-Z]{0,3}[ \t-]?\d{1,6}[A-Z]?)\b(?![ \t]*(?:g|gr|m|mm|cm|%|oz|yds?)\b)"""
+            """(?im)\b$colourKeyword\b\.?[ \t]*(?:code|n[º°o]\.?|num\.?|nr\.?|#)?[ \t]*[:.\-]?[ \t]*(?:([A-Za-zÀ-ÿ]{2,20})[ \t]+)?($codeToken|[A-Z]{1,3}[ \t]\d{1,6})\b(?![ \t]*(?:g|gr|m|mm|cm|%|oz|yds?)\b)"""
         )
-        return pattern.findAll(text)
+        pattern.findAll(text)
             // One colour name may sit between keyword and code ("Color: Rojo 52"), never a
             // field word ("Colour Lot 1210" is the lot)
             .filter { m -> m.groupValues[1].isEmpty() || !isFieldWord(normalizeWord(m.groupValues[1])) }
-            .map { it.groupValues[2].replace(Regex("[ \t]"), "") }
-            .firstOrNull { code -> code.count { it.isDigit() } >= 1 && code.length >= 2 }
+            .map { it.groupValues[2].replace(Regex("[ \t]"), "").uppercase() }
+            .firstOrNull { isCode(it) }
+            ?.let { return it }
+
+        // Caption line: only the keyword, maybe with a neighbouring caption ("Colour: Dyelot")
+        val caption = Regex("""(?i)^\s*$colourKeyword\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
+        for ((i, line) in lines.withIndex()) {
+            if (!caption.matches(line.text)) continue
+            val next = lines.getOrNull(i + 1)?.text ?: continue
+            // A barcode line ("5 714215 064256") is never a colour code
+            if (next.count { it.isDigit() } >= 10 && next.none { it.isLetter() }) continue
+            val first = Regex(codeToken).find(next.trim().uppercase())?.value ?: continue
+            if (isCode(first) && next.trim().uppercase().startsWith(first)) return first
+        }
+        return null
     }
 
     // ---------------------------------------------------------------- material
@@ -420,7 +442,7 @@ object YarnLabelParser {
     // above the value ("Crochet Needle Size\n3,5-4 mm") and "G/4mm" US notation.
     private fun extractHookSize(text: String): String? {
         val hookPattern = Regex(
-            """(?is)(?:crochet\s+(?:hook|needle)s?(?:\s+size)?|\bhook(?:\s+size)?|ganchillo|crochê|gancho|griffe|haken)\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*mm"""
+            """(?is)(?:crochet\s+(?:(?:hook|needle)s?(?:\s+size)?|size)|\bhook(?:\s+size)?|ganchillo|crochê|gancho|griffe|haken)\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*mm"""
         )
         hookPattern.find(text)?.groupValues?.get(1)?.let { return cleanSize(it) }
 
@@ -433,7 +455,7 @@ object YarnLabelParser {
     // a line that is only a size range ("3-4" in the crossed-needles box).
     private fun extractNeedleSize(text: String, lines: List<OcrLine>): String? {
         val pattern = Regex(
-            """(?is)(?<!crochet\s)(?:knitting\s+)?(?:needle[s]?|agujas?|agulha[s]?|aiguilles?|nadeln?)(?:\s+size)?\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*(?:mm)?"""
+            """(?is)(?<!crochet\s)(?:knitting\s+)?(?:needle[s]?|agujas?|agulha[s]?|aiguilles?|nadeln?)(?:\s+size)?\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*mm"""
         )
         pattern.findAll(text).firstOrNull { m ->
             // "Crochet Needle Size" is the hook, not the knitting needles

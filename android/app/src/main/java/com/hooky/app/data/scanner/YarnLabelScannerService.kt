@@ -42,6 +42,11 @@ class YarnLabelScannerService @Inject constructor(
         val ocrLines = result.textBlocks.withIndex().flatMap { (blockIndex, block) ->
             block.lines.map { line -> OcrLine(line.text, line.boundingBox?.height() ?: 0, blockIndex) }
         }
+        if (com.hooky.app.BuildConfig.DEBUG) {
+            // Debug builds only: the raw OCR lines, to tune the parser from real labels
+            // (adb logcat -s HookyOCR). Never logged in release builds.
+            ocrLines.forEach { android.util.Log.d("HookyOCR", "b${it.block} h${it.heightPx} | ${it.text}") }
+        }
         return YarnLabelParser.parse(result.text, ocrLines)
     }
 
