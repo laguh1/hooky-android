@@ -510,7 +510,7 @@
     <string name="yarn_scanning">Scanning label…</string>
     <string name="yarn_scan_label">Scan Label</string>
     <string name="yarn_from_gallery">From Gallery</string>
-    <string name="yarn_scan_hint">Scan the yarn label to auto-fill brand, color, material, weight, and more.</string>
+    <string name="yarn_scan_hint">Scan the yarn label to auto-fill brand, color, material, weight, and more. For small print (grams, meters), get close so it fills the photo.</string>
     <string name="yarn_color_detected">Detected:</string>
     <string name="yarn_field_color_name">Color name</string>
     <string name="yarn_color_pick">Or pick the colour</string>

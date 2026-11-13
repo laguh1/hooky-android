@@ -510,7 +510,7 @@
     <string name="yarn_scanning">Escaneando etiqueta…</string>
     <string name="yarn_scan_label">Escanear etiqueta</string>
     <string name="yarn_from_gallery">Desde galería</string>
-    <string name="yarn_scan_hint">Escanea la etiqueta de la lana para rellenar automáticamente la marca, el color, el material, el gramaje y más.</string>
+    <string name="yarn_scan_hint">Escanea la etiqueta de la lana para rellenar automáticamente la marca, el color, el material, el gramaje y más. Para la letra pequeña (gramos, metros), acércate hasta que llene la foto.</string>
     <string name="yarn_color_detected">Detectado:</string>
     <string name="yarn_field_color_name">Nombre del color</string>
     <string name="yarn_color_pick">O elige el color</string>

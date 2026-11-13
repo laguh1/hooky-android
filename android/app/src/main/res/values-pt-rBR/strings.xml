@@ -510,7 +510,7 @@
     <string name="yarn_scanning">Escaneando etiqueta…</string>
     <string name="yarn_scan_label">Escanear etiqueta</string>
     <string name="yarn_from_gallery">Da galeria</string>
-    <string name="yarn_scan_hint">Escaneie a etiqueta do fio para preencher automaticamente a marca, cor, material, gramagem e mais.</string>
+    <string name="yarn_scan_hint">Escaneie a etiqueta do fio para preencher automaticamente a marca, cor, material, gramatura e mais. Para letras pequenas (gramas, metros), aproxime a câmera até preencher a foto.</string>
     <string name="yarn_color_detected">Detectado:</string>
     <string name="yarn_field_color_name">Nome da cor</string>
     <string name="yarn_color_pick">Ou escolha a cor</string>
