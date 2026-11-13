@@ -10,11 +10,44 @@ import java.text.Normalizer
 // gracefully to line order; block = -1 when unknown (lines are then never joined).
 // left/top/right: the line's box in the photo (-1 when unknown); used to find a value printed
 // under its caption, since ML Kit's block order is not reading order.
+// angle: the line's rotation in degrees (ML Kit, clockwise); 90 on a label photographed
+// sideways. heightPx is the text's own height (the box width for sideways text).
 data class OcrLine(
     val text: String, val heightPx: Int, val block: Int = -1,
-    val left: Int = -1, val top: Int = -1, val right: Int = -1
+    val left: Int = -1, val top: Int = -1, val right: Int = -1,
+    val bottom: Int = -1, val angle: Float = 0f
 ) {
     val hasBox: Boolean get() = left >= 0 && top >= 0 && right > left && heightPx > 0
+    private val boxBottom: Int get() = if (bottom > top) bottom else top + heightPx
+    private val rad: Double get() = Math.toRadians(angle.toDouble())
+    private val sideways: Boolean get() = kotlin.math.abs(kotlin.math.sin(rad)) > 0.7
+
+    /** Length of the text along its own direction. */
+    val lengthPx: Double get() = if (sideways) (boxBottom - top).toDouble() else (right - left).toDouble()
+
+    /** Centre position along the text direction of a line at [frameAngle] (u) and across it, downwards (v). */
+    fun frame(frameAngle: Float): Pair<Double, Double> {
+        val a = Math.toRadians(frameAngle.toDouble())
+        val cx = (left + right) / 2.0; val cy = (top + boxBottom) / 2.0
+        return (cx * kotlin.math.cos(a) + cy * kotlin.math.sin(a)) to (-cx * kotlin.math.sin(a) + cy * kotlin.math.cos(a))
+    }
+}
+
+/**
+ * Lines of [lines] printed under [cap] in the same column, nearest first, measured along the
+ * caption's own text direction — so it also works on a label photographed sideways.
+ */
+internal fun linesBelow(cap: OcrLine, lines: List<OcrLine>, maxGapLines: Int): List<OcrLine> {
+    if (!cap.hasBox) return emptyList()
+    val (cu, cv) = cap.frame(cap.angle)
+    val h = cap.heightPx.toDouble()
+    return lines.filter { o ->
+        if (o === cap || !o.hasBox) return@filter false
+        val (ou, ov) = o.frame(cap.angle)
+        val dv = ov - cv
+        dv >= h * 0.5 && dv <= h * (maxGapLines + 1) &&
+            kotlin.math.abs(ou - cu) < (cap.lengthPx + o.lengthPx) / 2 // overlaps the column
+    }.sortedBy { it.frame(cap.angle).second }
 }
 
 /**
@@ -340,13 +373,7 @@ object YarnLabelParser {
 
     // Under the code, a colour name is often printed ("UC1000" / "Light Grey Heather")
     private fun colourNameBelow(codeLine: OcrLine, lines: List<OcrLine>): OcrLine? {
-        if (!codeLine.hasBox) return null
-        val bottom = codeLine.top + codeLine.heightPx
-        val next = lines.filter { o ->
-            o !== codeLine && o.hasBox && o.top >= codeLine.top + codeLine.heightPx / 2 &&
-                o.top <= bottom + codeLine.heightPx * 2 &&
-                minOf(o.right, codeLine.right) - maxOf(o.left, codeLine.left) > 0
-        }.minByOrNull { it.top } ?: return null
+        val next = linesBelow(codeLine, lines, maxGapLines = 2).firstOrNull() ?: return null
         val t = next.text.trim()
         val ws = words(t)
         val ok = t.none { it.isDigit() } && t.length in 3..30 && ws.size in 1..4 &&
@@ -383,12 +410,7 @@ object YarnLabelParser {
         // column). ML Kit lists blocks in no fixed order — on the S22 "OEKO TEX", "Dyelot" or a
         // barcode piece came between "Colour:" and "LH-SHI-01" in the line list.
         for (cap in lines.filter { it.hasBox && caption.matches(it.text) }) {
-            val capBottom = cap.top + cap.heightPx
-            val below = lines.filter { o ->
-                o !== cap && o.hasBox && o.top >= cap.top + cap.heightPx / 2 &&
-                    o.top <= capBottom + cap.heightPx * 4 &&
-                    minOf(o.right, cap.right) - maxOf(o.left, cap.left) > 0 // overlaps the column
-            }.sortedBy { it.top }
+            val below = linesBelow(cap, lines, maxGapLines = 4)
             for (o in below) {
                 val t = o.text.trim()
                 if (otherCaption.matches(t) || isBarcodePiece(t)) continue

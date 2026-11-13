@@ -31,7 +31,14 @@ class YarnLabelScannerService @Inject constructor(
         // 2026-11-13). When a key number is missing, read the photo turned 180° too and take
         // only numeric/technical fields from it.
         if (primary.colorCode != null && primary.ballWeightG != null && primary.ballLengthM != null) return primary
-        val rotated = try { parseImage(InputImage.fromBitmap(bitmap, 180)) } catch (_: Exception) { null }
+        if (com.hooky.app.BuildConfig.DEBUG) android.util.Log.d("HookyOCR", "--- second pass, turned 180°")
+        // The pixels must be turned: passing rotation 180 to ML Kit read the same text again
+        // (upside-down "Acrylique" came back as "ənbyuY" both times, S22 2026-11-13)
+        val rotated = try {
+            val turned = android.graphics.Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height,
+                android.graphics.Matrix().apply { postRotate(180f) }, true)
+            parseImage(InputImage.fromBitmap(turned, 0))
+        } catch (_: Exception) { null }
         return rotated?.let { YarnLabelParser.fillFromRotated(primary, it) } ?: primary
     }
 
@@ -42,13 +49,18 @@ class YarnLabelScannerService @Inject constructor(
         val ocrLines = result.textBlocks.withIndex().flatMap { (blockIndex, block) ->
             block.lines.map { line ->
                 val box = line.boundingBox
-                OcrLine(line.text, box?.height() ?: 0, blockIndex, box?.left ?: -1, box?.top ?: -1, box?.right ?: -1)
+                val angle = line.angle
+                val sideways = kotlin.math.abs(kotlin.math.sin(Math.toRadians(angle.toDouble()))) > 0.7
+                // Text height: the box width when the label was photographed sideways
+                val textHeight = if (sideways) box?.width() ?: 0 else box?.height() ?: 0
+                OcrLine(line.text, textHeight, blockIndex, box?.left ?: -1, box?.top ?: -1, box?.right ?: -1,
+                    box?.bottom ?: -1, angle)
             }
         }
         if (com.hooky.app.BuildConfig.DEBUG) {
             // Debug builds only: the raw OCR lines, to tune the parser from real labels
             // (adb logcat -s HookyOCR). Never logged in release builds.
-            ocrLines.forEach { android.util.Log.d("HookyOCR", "b${it.block} h${it.heightPx} x${it.left}-${it.right} y${it.top} | ${it.text}") }
+            ocrLines.forEach { android.util.Log.d("HookyOCR", "b${it.block} h${it.heightPx} x${it.left}-${it.right} y${it.top}-${it.bottom} a${it.angle.toInt()} | ${it.text}") }
         }
         return YarnLabelParser.parse(result.text, ocrLines)
     }

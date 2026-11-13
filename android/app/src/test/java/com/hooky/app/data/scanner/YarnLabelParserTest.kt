@@ -391,4 +391,17 @@ class YarnLabelParserTest {
             assertEquals("Frescor", r.name)
         }
     }
+
+    // Carícia back photographed sideways (S22 2026-11-13 16:03, exact boxes and angles):
+    // "COL" with "122" under it in the label's own direction, i.e. to the left in the photo
+    @Test
+    fun caricia_sidewaysLabel_colourCodeBelowCaptionAlongTheText() {
+        fun ln(text: String, h: Int, block: Int, l: Int, t: Int, r: Int, b: Int, a: Float) = OcrLine(text, h, block, l, t, r, b, a)
+        val lines = listOf(
+            ln("24F08", 98, 2, 1709, 1653, 1807, 1990, 90f), ln("LOT", 93, 2, 1839, 1713, 1932, 1936, 90f),
+            ln("122", 97, 3, 1714, 2419, 1811, 2636, 89f), ln("COL", 96, 3, 1845, 2404, 1941, 2639, 89f),
+            ln("8\"435445\"403901\"", 88, 4, 1994, 1629, 2082, 2619, 89f),
+        )
+        assertEquals("122", parseLines(lines).colorCode)
+    }
 }
