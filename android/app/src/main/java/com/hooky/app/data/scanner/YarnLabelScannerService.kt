@@ -26,12 +26,21 @@ class YarnLabelScannerService @Inject constructor(
         // camera resolution — avoids decoding a 40MB+ bitmap just to read a label.
         val bitmap = decodeSampledBitmapFromFile(photoPath, maxDimension = 2048)
             ?: throw IllegalStateException("Could not decode image at: $photoPath")
-        val image = InputImage.fromBitmap(bitmap, 0)
+        val primary = parseImage(InputImage.fromBitmap(bitmap, 0))
+        // Stickers are often stuck on upside down ("COL 122 / LOT 24F08" on a Carícia label,
+        // 2026-11-13). When a key number is missing, read the photo turned 180° too and take
+        // only numeric/technical fields from it.
+        if (primary.colorCode != null && primary.ballWeightG != null && primary.ballLengthM != null) return primary
+        val rotated = try { parseImage(InputImage.fromBitmap(bitmap, 180)) } catch (_: Exception) { null }
+        return rotated?.let { YarnLabelParser.fillFromRotated(primary, it) } ?: primary
+    }
+
+    private suspend fun parseImage(image: InputImage): YarnLabelScanResult {
         val result = recognizeTextResult(image)
         // Line height (from ML Kit's bounding boxes) tells brand/logo text (largest print)
         // apart from the product name and small-print details — order alone is unreliable.
-        val ocrLines = result.textBlocks.flatMap { block ->
-            block.lines.map { line -> OcrLine(line.text, line.boundingBox?.height() ?: 0) }
+        val ocrLines = result.textBlocks.withIndex().flatMap { (blockIndex, block) ->
+            block.lines.map { line -> OcrLine(line.text, line.boundingBox?.height() ?: 0, blockIndex) }
         }
         return YarnLabelParser.parse(result.text, ocrLines)
     }

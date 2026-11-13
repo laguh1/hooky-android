@@ -3,33 +3,44 @@ package com.hooky.app.data.scanner
 import com.hooky.app.domain.model.YarnLabelScanResult
 import com.hooky.app.domain.model.enums.Material
 import com.hooky.app.domain.model.enums.WeightCategory
+import java.text.Normalizer
 
-// A line of recognized text plus its height in pixels (from ML Kit's bounding box).
-// heightPx = 0 when size info isn't available, which degrades gracefully to the
-// original line-order heuristic (see extractBrandLine/extractName).
-data class OcrLine(val text: String, val heightPx: Int)
+// A line of recognized text plus its height in pixels (from ML Kit's bounding box) and the
+// text block it came from. heightPx = 0 when size info isn't available, which degrades
+// gracefully to line order; block = -1 when unknown (lines are then never joined).
+data class OcrLine(val text: String, val heightPx: Int, val block: Int = -1)
 
+/**
+ * Turns the OCR text of a yarn label into form fields. Reworked in 1.12 after testing five
+ * real labels (2026-11-13): name, brand and colour code were mostly wrong — script logos and
+ * icon captions ("Knitting Needle Size") taken as the name, a marketing sentence as the
+ * colour, barcode digits as the colour code. Tests: YarnLabelParserTest.
+ */
 object YarnLabelParser {
 
     fun parse(ocrText: String, ocrLines: List<OcrLine> = emptyList()): YarnLabelScanResult {
         val text = ocrText.trim()
-        val lines = if (ocrLines.isNotEmpty()) ocrLines
-            else text.lines().map { OcrLine(it.trim(), 0) }.filter { it.text.isNotBlank() }
-        val brandLine = extractBrandLine(lines)
-        val brand = brandLine?.text?.let { stripTrademarkSymbols(it) }?.let { correctKnownBrand(it) }
+        val lines = (if (ocrLines.isNotEmpty()) ocrLines
+            else text.lines().map { OcrLine(it.trim(), 0) })
+            .map { it.copy(text = it.text.trim()) }
+            .filter { it.text.isNotBlank() }
+        val brandPick = extractBrand(lines, text)
+        val composition = extractMaterialComposition(lines)
 
         return YarnLabelScanResult(
-            name = extractName(lines, brandLine),
-            brand = brand,
+            name = extractName(lines, brandPick),
+            brand = brandPick?.brand,
             colorName = extractColorName(text),
             colorCode = extractColorCode(text),
-            material = extractMaterial(text),
-            materialComposition = extractMaterialComposition(text),
+            // The composition line is the most reliable source; care text and marketing
+            // copy elsewhere on the label mention other fibres ("wool cycle").
+            material = composition?.let { extractMaterial(it) } ?: extractMaterial(text),
+            materialComposition = composition,
             weightCategory = extractWeightCategory(text),
             ballWeightG = extractBallWeightG(text),
             ballLengthM = extractBallLengthM(text),
             hookSizeMm = extractHookSize(text),
-            needleSizeMm = extractNeedleSize(text),
+            needleSizeMm = extractNeedleSize(text, lines),
             gauge = extractGauge(text),
             washTemp = extractWashTemp(text),
             machineWash = extractMachineWash(text),
@@ -40,22 +51,74 @@ object YarnLabelParser {
         )
     }
 
-    private val skipKeywords = setOf(
-        "color", "colour", "cor", "col", "lot", "art", "weight", "categoria", "category",
-        "peso", "grosor", "espesor", "grossura", "gramatura", "calibre",
-        "lace", "dk", "worsted", "bulky", "chunky", "superchunky", "jumbo", "aran",
-        "fingering", "sport", "ply", "plies", "fio", "fios", "hilo", "hilado", "novelo",
-        "light", "medium", "heavy", "fine", "superfine", "extrafine",
-        "lana", "lã", "algodón", "algodão", "acrilico", "acrílico",
-        "wool", "cotton", "acrylic", "silk", "bamboo", "alpaca", "mohair",
-        "made", "hecho", "feito", "fabricado", "product", "wash", "care", "lavado", "lavar",
-        "machine", "hand", "iron", "dry", "tumble", "bleach"
+    /**
+     * Fills fields from a second OCR pass of the photo turned 180° (stickers are often stuck
+     * on upside down, e.g. "COL 122 / LOT 24F08"). Only numeric/technical fields are taken:
+     * upside-down passes also read junk, which must never become a name or brand.
+     */
+    fun fillFromRotated(primary: YarnLabelScanResult, rotated: YarnLabelScanResult): YarnLabelScanResult =
+        primary.copy(
+            colorCode = primary.colorCode ?: rotated.colorCode,
+            ballWeightG = primary.ballWeightG ?: rotated.ballWeightG,
+            ballLengthM = primary.ballLengthM ?: rotated.ballLengthM,
+            hookSizeMm = primary.hookSizeMm ?: rotated.hookSizeMm,
+            needleSizeMm = primary.needleSizeMm ?: rotated.needleSizeMm,
+            materialComposition = primary.materialComposition ?: rotated.materialComposition,
+            material = primary.material ?: rotated.material,
+            weightCategory = primary.weightCategory ?: rotated.weightCategory
+        )
+
+    // ---------------------------------------------------------------- words and helpers
+
+    // Words that only appear in field captions, icons and care text. A line with any of
+    // them is never the name or brand ("Knitting Needle Size", "Yarn Weight", "Colour").
+    private val fieldLabelWords = setOf(
+        "color", "colour", "colours", "colors", "cor", "col", "lot", "lote", "art", "shade",
+        "weight", "peso", "categoria", "category", "grosor", "espesor", "grossura", "gramatura",
+        "size", "sizes", "needle", "needles", "hook", "hooks", "aguja", "agujas", "agulha", "agulhas",
+        "ganchillo", "gancho", "tamanho", "tamaño", "length", "largo", "longitud", "comprimento",
+        "yarn", "knitting", "knit", "crochet", "crochê", "tricô", "tricot", "punto",
+        "made", "hecho", "feito", "fabricado", "product", "producto", "produto",
+        "wash", "care", "lavado", "lavar", "machine", "hand", "iron", "dry", "tumble", "bleach",
+        "oeko", "tex", "gauge", "tension", "muestra", "amostra", "composition", "composición",
+        "composição", "meters", "metres", "metros", "grams", "gramos", "gramas", "barcode",
+        "www", "http", "https", "approx", "aprox"
     )
 
-    // Strips leading/trailing punctuation and trademark/copyright symbols so keyword
-    // matching isn't fooled by "(DK)", "DK:", "Katia®", etc.
+    // Weight and fibre words: fine inside a name ("Merino Bliss", "Perfect DK") but a line
+    // made only of them is a description, not a name.
+    private val genericWords = setOf(
+        "lace", "dk", "worsted", "bulky", "chunky", "superchunky", "jumbo", "aran", "fingering",
+        "sport", "ply", "plies", "fio", "fios", "hilo", "hilado", "novelo", "ovillo",
+        "light", "medium", "heavy", "fine", "superfine", "extrafine", "super", "baby",
+        "lana", "lã", "algodón", "algodão", "acrilico", "acrílico", "acrylic", "wool", "cotton",
+        "silk", "seda", "bamboo", "alpaca", "mohair", "merino", "superwash", "nylon", "polyamide",
+        "poliamida", "viscose", "linen", "linho", "lino", "100", "virgin", "new", "pure", "puro", "pura"
+    )
+
+    // Words that turn a line into a sentence ("A luxurious blend of brushed alpaca and silk").
+    private val sentenceWords = setOf(
+        "a", "an", "the", "of", "and", "with", "for", "in", "on", "is", "this", "that", "your",
+        "de", "del", "la", "el", "los", "las", "con", "para", "por", "en", "y", "un", "una",
+        "com", "e", "em", "do", "da", "dos", "das", "um", "uma", "o", "os", "as", "seu", "sua"
+    )
+
+    private fun stripAccents(s: String): String =
+        Normalizer.normalize(s, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")
+
     private fun normalizeWord(word: String): String =
-        word.lowercase().trim { !it.isLetter() }
+        word.lowercase().trim { !it.isLetterOrDigit() }
+
+    private fun words(line: String): List<String> =
+        line.split(Regex("[\\s/|·•,;:]+")).map { normalizeWord(it) }.filter { it.isNotEmpty() }
+
+    // Field words, also when OCR dropped or changed a letter ("NITTING" from "knitting",
+    // "Neede" from "needle"): a word of 5+ letters within one edit of a field word.
+    private fun isFieldWord(w: String): Boolean {
+        if (w in fieldLabelWords) return true
+        if (w.length < 5) return false
+        return fieldLabelWords.any { it.length >= 5 && kotlin.math.abs(it.length - w.length) <= 1 && levenshtein(it, w) <= 1 }
+    }
 
     private fun isUrlOrEmail(line: String): Boolean =
         line.contains("@") || Regex("""(?i)www\.|\.com\b|\.es\b|\.pt\b|\.br\b|\.co\.uk\b|https?://""").containsMatchIn(line)
@@ -63,10 +126,14 @@ object YarnLabelParser {
     private fun stripTrademarkSymbols(value: String): String =
         value.replace(Regex("[®™©]"), "").trim()
 
-    // Real, established yarn brands — used to auto-correct minor OCR misreads (dropped
-    // or swapped letters are common on stylized/low-contrast label fonts, e.g. ML Kit
-    // reading "VIKING GARN" as "VKING GARN"). Not exhaustive — extend as more brands
-    // are reported.
+    // A measurement or count: "50g", "175 m", "100%", "4,5 mm", "10 x 10 cm".
+    private val measurement = Regex("""(?i)\d\s*(?:%|g\b|gr\b|grs\b|m\b|mts?\b|mm\b|cm\b|oz\b|yds?\b)""")
+
+    // ---------------------------------------------------------------- brand
+
+    // Real, established yarn brands — used to auto-correct OCR misreads (dropped, swapped or
+    // accent letters are common on stylized logos, e.g. "VKING GARN", "CARICIi"). Not
+    // exhaustive — extend as more brands are reported.
     private val knownYarnBrands = listOf(
         "Katia", "DROPS", "Phildar", "Rico Design", "Schachenmayr", "Sirdar", "Stylecraft",
         "Sublime", "King Cole", "Hayfield", "Wendy", "James C Brett", "Debbie Bliss", "Rowan",
@@ -75,8 +142,17 @@ object YarnLabelParser {
         "Novita", "Adriafil", "Anchor", "DMC", "Coats", "Círculo", "Bergère de France", "Regia",
         "West Yorkshire Spinners", "Pingouin", "LindeHobby", "Järbo", "Svarta", "Mondial",
         "Utopia Crafts", "Lana Gatto", "Coopay", "AUAUY", "Manos del Uruguay", "Hjertegarn",
-        "Hoooked", "EuroRoma", "Linhas Corrente", "Corrente"
+        "Hoooked", "EuroRoma", "Linhas Corrente", "Corrente", "Carícia", "Cisne", "Rosários 4",
+        "Lanas Stop", "Hilaturas LM", "Paintbox Yarns", "Hobbii", "Durable", "Lana Grossa", "Fibra Natura"
     )
+
+    // A distinctive word printed alone on some labels (logo split over two lines).
+    private val brandAliases = mapOf(
+        "utopia" to "Utopia Crafts", "linde" to "LindeHobby", "scheepjes" to "Scheepjes",
+        "stylecraft" to "Stylecraft", "paintbox" to "Paintbox Yarns", "hobbii" to "Hobbii"
+    )
+
+    private fun key(s: String) = stripAccents(s).lowercase().replace(Regex("[^a-z0-9 ]"), "").trim()
 
     private fun levenshtein(a: String, b: String): Int {
         val dp = Array(a.length + 1) { IntArray(b.length + 1) }
@@ -91,112 +167,161 @@ object YarnLabelParser {
         return dp[a.length][b.length]
     }
 
-    // Matches a noisy OCR reading against knownYarnBrands within a length-scaled edit
-    // distance. Returns the correctly-spelled/cased brand plus the match distance, or
-    // null when nothing in the list is close enough — so this never forces a match
-    // onto a genuinely unlisted brand.
+    private fun maxBrandDistance(len: Int) = when {
+        len <= 4 -> 0
+        len <= 8 -> 1
+        len <= 14 -> 2
+        else -> 3
+    }
+
+    // Matches a noisy OCR reading against knownYarnBrands (accents and case ignored) within a
+    // length-scaled edit distance. Returns the correctly-spelled brand plus the distance, or
+    // null when nothing is close enough — never forces a match onto an unlisted brand.
     private fun bestKnownBrandMatch(raw: String): Pair<String, Int>? {
-        val maxDistance = when {
-            raw.length <= 8 -> 1
-            raw.length <= 14 -> 2
-            else -> 3
+        val k = key(raw)
+        if (k.length < 3) return null
+        brandAliases[k]?.let { return it to 0 }
+        val best = knownYarnBrands.minByOrNull { levenshtein(key(it), k) } ?: return null
+        val distance = levenshtein(key(best), k)
+        return if (distance <= maxBrandDistance(k.length)) best to distance else null
+    }
+
+    private class BrandPick(val brand: String, val line: OcrLine?)
+
+    // Brand: a line that matches a known brand wins, whatever its size (labels often print
+    // the product name bigger). Then a known brand written anywhere in the text. Last, the
+    // tallest plausible line — keeps unlisted brands working as before.
+    private fun extractBrand(lines: List<OcrLine>, text: String): BrandPick? {
+        val known = lines.filter { it.text.length in 3..35 && !isUrlOrEmail(it.text) }
+            .mapNotNull { line -> bestKnownBrandMatch(stripTrademarkSymbols(line.text))?.let { Triple(line, it.first, it.second) } }
+            .minByOrNull { it.third }
+        if (known != null) return BrandPick(known.second, known.first)
+
+        val flat = " " + key(text.replace('\n', ' ')) + " "
+        (knownYarnBrands.map { it to key(it) } + brandAliases.map { (alias, brand) -> brand to alias })
+            .firstOrNull { (_, k) -> k.length >= 4 && flat.contains(" $k ") }
+            ?.let { return BrandPick(it.first, null) }
+
+        val fallback = lines.filter { isNameLike(it.text, 3..35) }.maxByOrNull { it.heightPx } ?: return null
+        return BrandPick(tidyCase(stripTrademarkSymbols(fallback.text)), fallback)
+    }
+
+    // ---------------------------------------------------------------- name
+
+    // Could this line be a product name? Digits are fine ("Merino Bliss 175"), captions,
+    // measurements, sentences and pure fibre/weight lines are not.
+    private fun isNameLike(text: String, lengthRange: IntRange = 3..40, allowGeneric: Boolean = false): Boolean {
+        val t = stripTrademarkSymbols(text)
+        if (t.length !in lengthRange || isUrlOrEmail(t)) return false
+        val letters = t.count { it.isLetter() }
+        if (letters < 3 || t.count { it.isDigit() } > letters) return false
+        if (measurement.containsMatchIn(t)) return false
+        val ws = words(t)
+        if (ws.isEmpty() || ws.size > 5) return false
+        if (ws.any { isFieldWord(it) }) return false
+        if (ws.all { it in genericWords || it.all(Char::isDigit) } && !(allowGeneric && ws.size >= 2)) return false
+        if (ws.size >= 3 && ws.any { it in sentenceWords }) return false
+        return true
+    }
+
+    // A line that can continue a name on the next line ("Brushed" / "Alpaca Silk").
+    private fun canContinueName(text: String): Boolean {
+        val t = stripTrademarkSymbols(text)
+        if (t.length > 25 || isUrlOrEmail(t) || measurement.containsMatchIn(t)) return false
+        val ws = words(t)
+        return ws.isNotEmpty() && ws.size <= 3 && ws.none { isFieldWord(it) || it in sentenceWords } &&
+            t.count { it.isLetter() } >= 2
+    }
+
+    // Is [line] (very likely) the brand logo read badly ("Lndeobiy" for "LindeHobby")?
+    private fun looksLikeBrand(line: String, brand: String): Boolean {
+        val a = key(line).replace(" ", ""); val b = key(brand).replace(" ", "")
+        if (a.isEmpty() || b.isEmpty()) return false
+        if (a == b || a.contains(b) || (a.length >= 4 && b.contains(a))) return true
+        return levenshtein(a, b) <= (maxOf(a.length, b.length) * 0.45).toInt()
+    }
+
+    // Name: the tallest name-like line that isn't the brand, joined with the next line of the
+    // same block when it has a similar size (names often wrap: "PERFECT" / "DK").
+    private fun extractName(lines: List<OcrLine>, brand: BrandPick?): String? {
+        fun pick(allowGeneric: Boolean) = lines.filter { line ->
+            line != brand?.line && isNameLike(line.text, allowGeneric = allowGeneric) &&
+                (brand == null || !looksLikeBrand(line.text, brand.brand))
+        }.maxByOrNull { it.heightPx }
+        // A name made only of fibre/weight words ("Merino Aran") is the fallback when no
+        // other line qualifies
+        val best = pick(false) ?: pick(true) ?: return null
+        var name = stripTrademarkSymbols(best.text)
+        val i = lines.indexOf(best)
+        val next = lines.getOrNull(i + 1)
+        if (next != null && best.block >= 0 && next.block == best.block && best.heightPx > 0 &&
+            next.heightPx >= best.heightPx * 0.7 && next.heightPx <= best.heightPx * 1.4 &&
+            next != brand?.line && canContinueName(next.text) &&
+            (brand == null || !looksLikeBrand(next.text, brand.brand))
+        ) {
+            name += " " + stripTrademarkSymbols(next.text)
         }
-        val bestMatch = knownYarnBrands.minByOrNull { levenshtein(it.lowercase(), raw.lowercase()) }
-            ?: return null
-        val distance = levenshtein(bestMatch.lowercase(), raw.lowercase())
-        return if (distance <= maxDistance) bestMatch to distance else null
+        return tidyCase(name)
     }
 
-    // Corrects a noisy OCR brand reading to its properly-spelled form when it's close
-    // enough to something in knownYarnBrands. Falls back to the raw OCR text unchanged
-    // otherwise, so this never overwrites a legitimate brand that isn't in the list yet.
-    private fun correctKnownBrand(raw: String): String = bestKnownBrandMatch(raw)?.first ?: raw
-
-    private fun isCandidateLine(text: String, lengthRange: IntRange): Boolean =
-        text.length in lengthRange &&
-        text.any { it.isLetter() } &&
-        text.none { it.isDigit() } &&
-        !isUrlOrEmail(text) &&
-        text.split(Regex("\\s+")).none { normalizeWord(it) in skipKeywords }
-
-    // Brand/trademark: prefers a line that closely matches a real, known yarn brand
-    // regardless of its printed size on the label — many labels print the product
-    // name or weight/type larger than the brand itself, so size alone picks the
-    // wrong line more often than expected. Falls back to the tallest candidate line
-    // (the original heuristic) only when no line is a close enough match to anything
-    // known — this keeps unlisted brands working exactly as before.
-    private fun extractBrandLine(lines: List<OcrLine>): OcrLine? {
-        val candidates = lines.filter { isCandidateLine(it.text, 3..35) }
-        if (candidates.isEmpty()) return null
-
-        val knownMatch = candidates
-            .mapNotNull { line -> bestKnownBrandMatch(stripTrademarkSymbols(line.text))?.let { line to it.second } }
-            .minByOrNull { (_, distance) -> distance }
-
-        return knownMatch?.first ?: candidates.maxByOrNull { it.heightPx }
+    // "PERFECT DK" → "Perfect DK", "MERINO BLISS 175" → "Merino Bliss 175": all-caps words
+    // of 4+ letters get title case, short ones (DK, 4PLY) stay. Mixed-case text is kept.
+    private fun tidyCase(s: String): String {
+        if (s.any { it.isLowerCase() }) return s
+        return s.split(" ").joinToString(" ") { w ->
+            if (w.count { it.isLetter() } >= 4) w.lowercase().replaceFirstChar { it.titlecase() } else w
+        }
     }
 
-    // Name: the next-tallest candidate line after brand (the product/type name,
-    // usually printed smaller than the brand but larger than material/care text).
-    // Excludes the brand's own line by identity, not by string match, since the
-    // brand string returned to callers has trademark symbols stripped already.
-    private fun extractName(lines: List<OcrLine>, brandLine: OcrLine?): String? {
-        return lines.filter { isCandidateLine(it.text, 4..50) && it != brandLine }
-            .maxByOrNull { it.heightPx }
-            ?.text?.let { stripTrademarkSymbols(it) }
-    }
+    // ---------------------------------------------------------------- colour
 
-    // Color name: after color/colour/cor/col/farbe/coloris keywords
+    // Colour name: after a colour keyword, on the same line, and short (never a sentence:
+    // "colour\nA luxurious blend of brushed" gave a whole slogan as the colour).
     private fun extractColorName(text: String): String? {
         val pattern = Regex(
-            """(?i)(?:col(?:or(?:way|is)?|ou?r|\.)?|cor|farbe|colori?s?)[:\s]+([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s\-]+?)(?:\s*[\d/\\|,]|${'$'})""",
-            RegexOption.MULTILINE
+            """(?im)\b(?:colou?r(?:way)?|cor|farbe|coloris|colori)\b[ \t]*[:.\-]?[ \t]*([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ \t\-]*?)[ \t]*(?:[\d/\\|,(]|$)"""
         )
-        return pattern.find(text)?.groupValues?.get(1)?.trim()
-            ?.takeIf { it.length in 2..40 && it.any { c -> c.isLetter() } }
+        return pattern.findAll(text).map { it.groupValues[1].trim() }.firstOrNull { c ->
+            val ws = words(c)
+            c.length in 2..25 && ws.size in 1..3 && ws.none { it in sentenceWords || isFieldWord(it) }
+        }
     }
 
-    // Color code: standalone numeric/alphanumeric code near a color keyword
+    // Colour code: a code right after a colour keyword on the same line — "COL 122",
+    // "Colour: UC1000", "Shade 24", "Cor nº 0451". Never barcode digits on the next line,
+    // never a weight or length ("Color 50g").
     private fun extractColorCode(text: String): String? {
         val pattern = Regex(
-            """(?i)(?:col(?:or|ou?r)?\.?\s*(?:code|no\.?|num\.?|#|nr\.?)?\s*:?\s*)([A-Z]?\d{2,6}[A-Z]?)"""
+            """(?im)\b(?:col|colou?r|cor|shade|farbe|coloris|colore|tono|nuance)\b\.?[ \t]*(?:code|n[º°o]\.?|num\.?|nr\.?|#)?[ \t]*[:.\-]?[ \t]*(?:([A-Za-zÀ-ÿ]{2,20})[ \t]+)?([A-Z]{0,3}[ \t-]?\d{1,6}[A-Z]?)\b(?![ \t]*(?:g|gr|m|mm|cm|%|oz|yds?)\b)"""
         )
-        return pattern.find(text)?.groupValues?.get(1)?.trim()
+        return pattern.findAll(text)
+            // One colour name may sit between keyword and code ("Color: Rojo 52"), never a
+            // field word ("Colour Lot 1210" is the lot)
+            .filter { m -> m.groupValues[1].isEmpty() || !isFieldWord(normalizeWord(m.groupValues[1])) }
+            .map { it.groupValues[2].replace(Regex("[ \t]"), "") }
+            .firstOrNull { code -> code.count { it.isDigit() } >= 1 && code.length >= 2 }
     }
 
-    // Material: detect fiber keywords; if multiple fibers, return BLEND
+    // ---------------------------------------------------------------- material
+
+    private val fiberMap = mapOf(
+        "wool" to Material.WOOL, "merino" to Material.WOOL, "lana" to Material.WOOL, "lã" to Material.WOOL,
+        "cotton" to Material.COTTON, "algodón" to Material.COTTON, "algodão" to Material.COTTON, "algodon" to Material.COTTON,
+        "acrylic" to Material.ACRYLIC, "acrílico" to Material.ACRYLIC, "acrilico" to Material.ACRYLIC, "acrílica" to Material.ACRYLIC,
+        "alpaca" to Material.ALPACA, "silk" to Material.SILK, "seda" to Material.SILK,
+        "linen" to Material.LINEN, "linho" to Material.LINEN, "lino" to Material.LINEN,
+        "bamboo" to Material.BAMBOO, "bambú" to Material.BAMBOO, "bambou" to Material.BAMBOO,
+        "mohair" to Material.MOHAIR,
+        "viscose" to Material.OTHER, "nylon" to Material.OTHER, "polyester" to Material.OTHER,
+        "poliéster" to Material.OTHER, "polyamide" to Material.OTHER, "poliamida" to Material.OTHER
+    )
+
+    // Material: fibre keywords; several fibres → BLEND. Bilingual labels name one fibre twice
+    // ("100% Acrílico / Acrylic"), which is still one material.
     private fun extractMaterial(text: String): Material? {
         val lower = text.lowercase()
-        val fiberMap = mapOf(
-            "wool" to Material.WOOL,
-            "merino" to Material.WOOL,
-            "lana" to Material.WOOL,
-            "lã" to Material.WOOL,
-            "cotton" to Material.COTTON,
-            "algodón" to Material.COTTON,
-            "algodão" to Material.COTTON,
-            "acrylic" to Material.ACRYLIC,
-            "acrílico" to Material.ACRYLIC,
-            "acrilico" to Material.ACRYLIC,
-            "acrílica" to Material.ACRYLIC,
-            "alpaca" to Material.ALPACA,
-            "silk" to Material.SILK,
-            "seda" to Material.SILK,
-            "linen" to Material.LINEN,
-            "linho" to Material.LINEN,
-            "lino" to Material.LINEN,
-            "bamboo" to Material.BAMBOO,
-            "bambú" to Material.BAMBOO,
-            "bambou" to Material.BAMBOO,
-            "mohair" to Material.MOHAIR,
-            "viscose" to Material.OTHER,
-            "nylon" to Material.OTHER,
-            "polyester" to Material.OTHER,
-            "poliéster" to Material.OTHER
-        )
-        val detected = fiberMap.entries.filter { (keyword, _) -> keyword in lower }
-            .map { it.value }
-            .distinct()
+        val detected = fiberMap.entries.filter { (k, _) -> Regex("""(?<![\p{L}])${Regex.escape(k)}""").containsMatchIn(lower) }
+            .map { it.value }.distinct()
         return when {
             detected.isEmpty() -> null
             detected.size == 1 -> detected.first()
@@ -204,14 +329,44 @@ object YarnLabelParser {
         }
     }
 
-    // Material composition: percentage patterns like "80% Merino Wool 20% Nylon"
-    private fun extractMaterialComposition(text: String): String? {
-        val pattern = Regex("""(\d{1,3}\s*%\s*[\w\s]+(?:\d{1,3}\s*%\s*[\w\s]+)*)""")
-        return pattern.findAll(text)
-            .map { it.value.trim() }
-            .filter { it.length > 5 }
-            .maxByOrNull { it.length }
-            ?.trim()
+    private val compositionWords = fiberMap.keys + setOf(
+        "superwash", "extrafine", "extra", "fine", "virgin", "new", "baby", "brushed", "combed",
+        "mercerized", "mercerised", "mercerizado", "peinado", "penteado", "elastane", "elastano",
+        "polyamid", "acrylique", "laine", "coton", "soie", "wolle", "baumwolle"
+    )
+
+    // Composition: only the "NN% fibre" lines, cleaned ("100%Acrylic" → "100% Acrylic"),
+    // with a following fibre-only line kept ("100% Merino Wool" / "Superwash") and junk
+    // (OEKO-TEX, barcode digits, logo misreads) dropped.
+    private fun extractMaterialComposition(lines: List<OcrLine>): String? {
+        val pct = Regex("""\d{1,3}\s*%""")
+        val parts = mutableListOf<String>()
+        for ((i, line) in lines.withIndex()) {
+            if (!pct.containsMatchIn(line.text)) continue
+            var part = cleanComposition(line.text) ?: continue
+            val next = lines.getOrNull(i + 1)?.text
+            if (next != null && !pct.containsMatchIn(next)) {
+                val ws = words(next)
+                if (ws.isNotEmpty() && ws.all { it in compositionWords }) part += " " + next.trim()
+            }
+            if (parts.none { key(it) == key(part) }) parts += part
+            if (parts.size == 3) break
+        }
+        return parts.takeIf { it.isNotEmpty() }?.joinToString(", ")
+    }
+
+    private fun cleanComposition(raw: String): String? {
+        val s = raw.replace(Regex("""(\d)\s*%\s*"""), "$1% ")
+        // Keep from the first "NN%" on; drop words that aren't fibres or percentages
+        val start = Regex("""\d{1,3}% """).find(s)?.range?.first ?: return null
+        val kept = s.substring(start).split(Regex("\\s+")).filter { w ->
+            val n = normalizeWord(w)
+            w.matches(Regex("""\d{1,3}%""")) || w == "/" || w == "-" ||
+                (n.isNotEmpty() && n.none { it.isDigit() } && n !in setOf("oeko", "tex", "standard") &&
+                    (n in compositionWords || n.length >= 3 && n.all { it.isLetter() } && !isFieldWord(n)))
+        }
+        val out = kept.joinToString(" ").replace(Regex("""\s*/\s*$"""), "").trim()
+        return out.takeIf { it.length > 5 && Regex("""\d{1,3}% \p{L}""").containsMatchIn(it) }
     }
 
     // Weight category: standard English names + CYC numbers + Spanish/Portuguese terms
@@ -229,49 +384,77 @@ object YarnLabelParser {
         }
     }
 
-    // Ball weight in grams — also converts oz to g
+    // Ball weight in grams — also converts oz to g. Takes the first plausible ball weight:
+    // OCR glues neighbouring digits on ("2154g"), so numbers out of range are skipped.
+    private val commonBallWeights = setOf(20, 25, 40, 50, 75, 80, 100, 125, 150, 200, 250, 300, 400, 500)
+
     private fun extractBallWeightG(text: String): String? {
-        val gramsPattern = Regex("""(\d{2,4})\s*g(?:r(?:ams?)?)?(?=\s|/|${'$'})""", RegexOption.IGNORE_CASE)
-        val grams = gramsPattern.find(text)?.groupValues?.get(1)
-        if (grams != null) return grams
+        val grams = Regex("""(?i)(?<![\d.,])(\d{2,4})\s*(?:g|gr|grs|grams?|gramos|gramas)(?![\p{L}])""")
+            .findAll(text).mapNotNull { it.groupValues[1].toIntOrNull() }.toList()
+        (grams.firstOrNull { it in commonBallWeights } ?: grams.firstOrNull { it in 10..500 })
+            ?.let { return it.toString() }
 
-        val ozPattern = Regex("""(\d+\.?\d*)\s*oz(?=\s|/|${'$'})""", RegexOption.IGNORE_CASE)
-        return ozPattern.find(text)?.groupValues?.get(1)?.toFloatOrNull()
-            ?.let { (it * 28.3495).toInt().toString() }
+        val ozPattern = Regex("""(?i)(\d+[.,]?\d*)\s*oz(?![\p{L}])""")
+        return ozPattern.find(text)?.groupValues?.get(1)?.replace(',', '.')?.toFloatOrNull()
+            ?.let { (it * 28.3495).toInt() }?.takeIf { it in 10..500 }?.toString()
     }
 
-    // Ball length in meters — also converts yards to meters
+    // Ball length in meters — also converts yards. "165m." and "175 m / 191 yds" both work;
+    // "4 mm" and "10 cm" never match.
     private fun extractBallLengthM(text: String): String? {
-        val metersPattern = Regex("""(\d{2,4})\s*m(?:etres?|eters?)?(?=\s|/|${'$'})""", RegexOption.IGNORE_CASE)
-        val meters = metersPattern.find(text)?.groupValues?.get(1)
-        if (meters != null) return meters
+        val meters = Regex("""(?i)(?<![\d.,])(\d{2,4})\s*(?:m|mt|mts|metres?|meters?|metros?)(?![\p{L}])""")
+            .findAll(text).mapNotNull { it.groupValues[1].toIntOrNull() }.firstOrNull { it in 20..3000 }
+        if (meters != null) return meters.toString()
 
-        val yardsPattern = Regex("""(\d{2,4})\s*y(?:ds?|ards?)(?=\s|/|${'$'})""", RegexOption.IGNORE_CASE)
-        return yardsPattern.find(text)?.groupValues?.get(1)?.toIntOrNull()
-            ?.let { (it * 0.9144).toInt().toString() }
+        val yards = Regex("""(?i)(?<![\d.,])(\d{2,4})\s*(?:yds?|yards?)(?![\p{L}])""")
+            .findAll(text).mapNotNull { it.groupValues[1].toIntOrNull() }.firstOrNull { it in 20..3000 }
+        return yards?.let { (it * 0.9144).toInt().toString() }
     }
 
-    // Hook size in mm (crochet hook) — handles European decimal comma
+    private val sizeValue = """(\d{1,2}(?:[.,]\d{1,2})?(?:\s*[-–]\s*\d{1,2}(?:[.,]\d{1,2})?)?)"""
+
+    private fun cleanSize(raw: String): String =
+        raw.replace(',', '.').replace(Regex("""\s*[-–]\s*"""), "-").trim()
+
+    // Hook size in mm (crochet hook) — handles European decimal comma, captions on the line
+    // above the value ("Crochet Needle Size\n3,5-4 mm") and "G/4mm" US notation.
     private fun extractHookSize(text: String): String? {
         val hookPattern = Regex(
-            """(?i)(?:crochet\s+)?(?:hook|ganchillo|crochê|gancho|griffe|haken)[:\s]*(\d+[.,]\d+|\d+)\s*mm"""
+            """(?is)(?:crochet\s+(?:hook|needle)s?(?:\s+size)?|\bhook(?:\s+size)?|ganchillo|crochê|gancho|griffe|haken)\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*mm"""
         )
-        hookPattern.find(text)?.groupValues?.get(1)?.let { return it.replace(',', '.') }
+        hookPattern.find(text)?.groupValues?.get(1)?.let { return cleanSize(it) }
 
-        // US size / mm notation like "7/4.5mm" or "G/4mm"
-        val slashPattern = Regex("""[A-Z\d]+/(\d+[.,]?\d*)\s*mm""")
-        slashPattern.find(text)?.groupValues?.get(1)?.let { return it.replace(',', '.') }
-
+        val slashPattern = Regex("""\b[A-Z\d]{1,3}/(\d+[.,]?\d*)\s*mm""")
+        slashPattern.find(text)?.groupValues?.get(1)?.let { return cleanSize(it) }
         return null
     }
 
-    // Needle size in mm (knitting needles) — handles Spanish/Portuguese and decimal comma
-    private fun extractNeedleSize(text: String): String? {
+    // Needle size in mm (knitting needles). Also "Knitting Needle Size\n4-5 mm" and, last,
+    // a line that is only a size range ("3-4" in the crossed-needles box).
+    private fun extractNeedleSize(text: String, lines: List<OcrLine>): String? {
         val pattern = Regex(
-            """(?i)(?:needle[s]?|agujas?|agulha[s]?|aiguilles?)[:\s]*(\d+[.,]?\d*(?:\s*[-–]\s*\d+[.,]?\d*)?)\s*mm"""
+            """(?is)(?<!crochet\s)(?:knitting\s+)?(?:needle[s]?|agujas?|agulha[s]?|aiguilles?|nadeln?)(?:\s+size)?\b[^\d\n]{0,12}\n?[^\d\n]{0,12}$sizeValue\s*(?:mm)?"""
         )
-        return pattern.find(text)?.groupValues?.get(1)?.trim()?.replace(',', '.')
+        pattern.findAll(text).firstOrNull { m ->
+            // "Crochet Needle Size" is the hook, not the knitting needles
+            !text.substring(maxOf(0, m.range.first - 9), m.range.first).lowercase().contains("crochet")
+        }?.groupValues?.get(1)?.let { v ->
+            val c = cleanSize(v)
+            if (sizeInRange(c)) return c
+        }
+
+        val rangeOnly = Regex("""^\s*(\d{1,2}(?:[.,]\d)?)\s*[-–]\s*(\d{1,2}(?:[.,]\d)?)\s*(?:mm)?\s*$""")
+        return lines.firstNotNullOfOrNull { l ->
+            rangeOnly.find(l.text)?.let { m ->
+                val a = m.groupValues[1].replace(',', '.').toFloatOrNull()
+                val b = m.groupValues[2].replace(',', '.').toFloatOrNull()
+                if (a != null && b != null && a in 1.5f..15f && b in 1.5f..15f && a < b && b - a <= 3f) cleanSize(m.value) else null
+            }
+        }
     }
+
+    private fun sizeInRange(s: String): Boolean =
+        s.split('-').all { it.toFloatOrNull()?.let { v -> v in 0.5f..25f } == true }
 
     // Gauge: stitches per 10cm
     private fun extractGauge(text: String): String? {
