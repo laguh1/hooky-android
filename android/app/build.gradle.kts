@@ -30,8 +30,8 @@ android {
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
-        versionCode = 32
-        versionName = "1.11.0"
+        versionCode = 33
+        versionName = "1.12.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -59,6 +59,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            // ./gradlew installDebug -PsideBySide installs "com.laguh.hooky.debug" next to the
+            // Play app, so a phone with real data can test a build without uninstalling it.
+            // Needs a local src/debug/google-services.json with that package (not in git).
+            if (project.hasProperty("sideBySide")) {
+                applicationIdSuffix = ".debug"
+            }
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
