@@ -247,4 +247,62 @@ class YarnLabelParserTest {
         assertEquals("LindeHobby", r.brand)
         assertEquals("LH-SHI-01", r.colorCode)
     }
+
+    // Second phone test (2026-11-13 15:40): front, then the barcode side twice. The front
+    // only had the script logo ("Lndeobby"); "Colours" misread; a barcode piece between
+    // "Colour:" and the code.
+    private val shineFront = arrayOf(
+        l("6#X# X", 855, 0), l("composition", 70, 1), l("70% Polyamide", 79, 1), l("216 ACrylic", 76, 1),
+        l("Needle Gauge", 102, 1), l("20 sts/25 rOws", 87, 1), l("10x10 Cm", 72, 1), l("96Wol", 60, 2),
+        l("Knitting Needle Size", 106, 3), l("44,5 mm", 81, 3), l("Crochet Gauge", 101, 3),
+        l("15 sts / 18 rowS", 91, 3), l("10x10 cm", 72, 3), l("Crochet Size", 82, 3), l("5-5,5 mm", 73, 4),
+        l("Yarn Weight", 97, 4), l("50g- 1,760z", 68, 4), l("Yarn Lenght", 95, 4), l("115m - 125yd", 90, 4),
+        l("Shine", 241, 5), l("70% Polyamide | 21% Acrylic", 122, 6), l("9% Wool", 100, 6), l("Lndeobby", 270, 7),
+    )
+    private val shineBack1 = arrayOf(
+        l("Shine", 208, 0), l("70% Polyamide |21% Acrylic", 142, 1), l("9% Wool", 89, 2), l("Lndeoby", 279, 3),
+        l("6\"714215 064256", 193, 4), l("Colours", 72, 5), l("LH-SHI-01 1025", 145, 6), l("OEKO", 111, 7),
+        l("TEX", 107, 7), l("Dyaiut", 110, 8), l("Egee your", 46, 9), l("STANDARD", 92, 10), l("100", 74, 10),
+        l("21NTR S4797", 96, 11), l("HOHENSTEN HTTI", 72, 11), l("LindeHobby", 161, 12),
+    )
+    private val shineBack2 = arrayOf(
+        l("Shine", 227, 0), l("70% Polyamide | 21% Acrylic", 178, 1), l("9% Wool", 91, 1), l("Lndeobby", 273, 2),
+        l("5", 59, 3), l("5714215", 118, 3), l("Colour:", 67, 4), l("064256", 76, 5), l("Dyelot", 72, 6),
+        l("LH-SHI-01 1025", 156, 6), l("OEKO", 85, 7), l("TEX®", 79, 7), l("STANDARD", 75, 8), l("100", 55, 8),
+        l("21.HTR.94797", 67, 9), l("HOHENSTEIN HTTI", 76, 9), l("LindeHobby", 173, 10),
+        l("Explore your local Lndekobby", 99, 11), l("oniine store for dotailed", 80, 11),
+        l("intormatlon and tree patterns", 107, 12), l("Made in Turkey", 302, 13),
+    )
+
+    @Test
+    fun shine_scriptLogoAloneStillMatchesTheBrand() {
+        val r = scan(*shineFront)
+        assertEquals("LindeHobby", r.brand)
+        assertEquals("Shine", r.name)
+    }
+
+    @Test
+    fun shine_coloursMisread_and_barcodePieceSkipped() {
+        assertEquals("LH-SHI-01", scan(*shineBack1).colorCode)
+        assertEquals("LH-SHI-01", scan(*shineBack2).colorCode)
+    }
+
+    @Test
+    fun shine_threeScansMerged() {
+        val merged = scan(*shineFront).mergeWith(scan(*shineBack1)).mergeWith(scan(*shineBack2))
+        assertEquals("Shine", merged.name)
+        assertEquals("LindeHobby", merged.brand)
+        assertEquals("LH-SHI-01", merged.colorCode)
+        assertEquals("4-4.5", merged.needleSizeMm)
+        assertEquals("5", merged.hookSizeMm)
+        assertEquals("70% Polyamide, 21% Acrylic, 9% Wool", merged.materialComposition)
+    }
+
+    @Test
+    fun knownBrandFromLaterSideReplacesAGuess() {
+        val guess = scan(l("Zorblax", 200, 0), l("Merino Soft", 120, 1))
+        val known = scan(l("DROPS", 100, 0))
+        assertEquals("Zorblax", guess.brand)
+        assertEquals("DROPS", guess.mergeWith(known).brand)
+    }
 }

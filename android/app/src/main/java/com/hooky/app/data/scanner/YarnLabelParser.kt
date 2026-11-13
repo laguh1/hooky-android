@@ -30,6 +30,7 @@ object YarnLabelParser {
         return YarnLabelScanResult(
             name = extractName(lines, brandPick),
             brand = brandPick?.brand,
+            brandIsKnown = brandPick?.known == true,
             colorName = extractColorName(text),
             colorCode = extractColorCode(text, lines),
             // The composition line is the most reliable source; care text and marketing
@@ -185,10 +186,13 @@ object YarnLabelParser {
         brandAliases[k]?.let { return it to 0 }
         val best = knownYarnBrands.minByOrNull { levenshtein(key(it), k) } ?: return null
         val distance = levenshtein(key(best), k)
-        return if (distance <= maxBrandDistance(k.length)) best to distance else null
+        // Allowance from the longer word: script logos lose letters ("Lndeobby" for
+        // "LindeHobby", S22 2026-11-13), and the shorter reading alone allows too little
+        val allowed = maxBrandDistance(maxOf(k.length, key(best).length))
+        return if (distance <= allowed && k.length >= key(best).length / 2) best to distance else null
     }
 
-    private class BrandPick(val brand: String, val line: OcrLine?)
+    private class BrandPick(val brand: String, val line: OcrLine?, val known: Boolean = true)
 
     // Brand: a line that matches a known brand wins, whatever its size (labels often print
     // the product name bigger). Then a known brand written anywhere in the text. Last, the
@@ -205,7 +209,7 @@ object YarnLabelParser {
             ?.let { return BrandPick(it.first, null) }
 
         val fallback = lines.filter { isNameLike(it.text, 3..35) }.maxByOrNull { it.heightPx } ?: return null
-        return BrandPick(tidyCase(stripTrademarkSymbols(fallback.text)), fallback)
+        return BrandPick(tidyCase(stripTrademarkSymbols(fallback.text)), fallback, known = false)
     }
 
     // ---------------------------------------------------------------- name
@@ -314,16 +318,19 @@ object YarnLabelParser {
             ?.let { return it }
 
         // Caption line: only the keyword, maybe with a neighbouring caption ("Colour: Dyelot")
-        val caption = Regex("""(?i)^\s*$colourKeyword\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
+        val caption = Regex("""(?i)^\s*${colourKeyword}s?\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
         val otherCaption = Regex("""(?i)^\s*(?:dye\s*)?lot[e\w]*\s*(?:n[º°o]\.?)?\s*:?\s*$|^\s*bain\s*:?\s*$|^\s*partida\s*:?\s*$""")
         for ((i, line) in lines.withIndex()) {
             if (!caption.matches(line.text)) continue
             // The code is on the next line, or one further down when OCR read the neighbouring
             // caption in between ("Colour:" / "Dyelot" / "LH-SHI-01 1025")
-            for (next in lines.drop(i + 1).take(2).map { it.text.trim() }) {
+            for (next in lines.drop(i + 1).take(3).map { it.text.trim() }) {
                 if (otherCaption.matches(next)) continue
-                // A barcode line ("5 714215 064256") is never a colour code
-                if (next.count { it.isDigit() } >= 10 && next.none { it.isLetter() }) break
+                // Barcode pieces ("5 714215 064256", "064256") are never a colour code; OCR
+                // can read them between the caption and the code
+                if (next.none { it.isLetter() } && next.count { it.isDigit() } >= 6) continue
+                // A weight or length ("175m", "50g") is not a code
+                if (measurement.containsMatchIn(next)) break
                 val first = Regex(codeToken).find(next.uppercase())?.value
                 if (first != null && isCode(first) && next.uppercase().startsWith(first)) return first
                 break

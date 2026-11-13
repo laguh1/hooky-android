@@ -21,7 +21,10 @@ data class YarnLabelScanResult(
     val handWash: Boolean? = null,
     val tumbleDry: Boolean? = null,
     val bleach: Boolean? = null,
-    val dryClean: Boolean? = null
+    val dryClean: Boolean? = null,
+    // True when the brand matched a known brand; false when it is only a guess (tallest line).
+    // Not shown; lets a clear brand on another side replace a guess from the first side.
+    val brandIsKnown: Boolean = false
 ) {
     val hasAnyData: Boolean get() = listOfNotNull(
         name, brand, colorName, colorCode, materialComposition,
@@ -33,7 +36,8 @@ data class YarnLabelScanResult(
     // Merge two scan results: this takes priority, other fills in nulls
     fun mergeWith(other: YarnLabelScanResult): YarnLabelScanResult = YarnLabelScanResult(
         name = this.name ?: other.name,
-        brand = this.brand ?: other.brand,
+        brand = if (!this.brandIsKnown && other.brandIsKnown) other.brand else this.brand ?: other.brand,
+        brandIsKnown = this.brandIsKnown || other.brandIsKnown,
         colorName = this.colorName ?: other.colorName,
         colorCode = this.colorCode ?: other.colorCode,
         material = this.material ?: other.material,
