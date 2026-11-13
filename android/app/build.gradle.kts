@@ -27,6 +27,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
+        manifestPlaceholders["appLabel"] = "@string/app_name"
         applicationId = "com.laguh.hooky"
         minSdk = 26
         targetSdk = 36
@@ -65,6 +66,9 @@ android {
             // Needs a local src/debug/google-services.json with that package (not in git).
             if (project.hasProperty("sideBySide")) {
                 applicationIdSuffix = ".debug"
+                versionNameSuffix = "-test"
+                // "Hooky TEST" under the icon, so it can't be mistaken for the real app
+                manifestPlaceholders["appLabel"] = "Hooky TEST"
             }
         }
         release {
