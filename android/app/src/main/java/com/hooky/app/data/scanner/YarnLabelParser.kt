@@ -31,15 +31,25 @@ object YarnLabelParser {
             else text.lines().map { OcrLine(it.trim(), 0) })
             .map { it.copy(text = it.text.trim()) }
             .filter { it.text.isNotBlank() }
-        val brandPick = extractBrand(lines, text)
+        val colour = extractColorCode(text, lines)
+        // The colour block ("UC1000" / "Light Grey Heather") is never the name or brand
+        val rest = lines.filter { l -> colour.usedLines.none { it === l } }
+        var brandPick = extractBrand(rest, text)
+        var name = extractName(rest, brandPick)
+        if (brandPick != null && !brandPick.known && name == null) {
+            // The guess took the only name-like line, so it was the name ("PERFECT" / "DK" on a
+            // Utopia Crafts label whose gold script logo OCR can't read): no brand beats a wrong one
+            brandPick = null
+            name = extractName(rest, null)
+        }
         val composition = extractMaterialComposition(lines)
 
         return YarnLabelScanResult(
-            name = extractName(lines, brandPick),
+            name = name,
             brand = brandPick?.brand,
             brandIsKnown = brandPick?.known == true,
-            colorName = extractColorName(text),
-            colorCode = extractColorCode(text, lines),
+            colorName = colour.name ?: extractColorName(text),
+            colorCode = colour.code,
             // The composition line is the most reliable source; care text and marketing
             // copy elsewhere on the label mention other fibres ("wool cycle").
             material = composition?.let { extractMaterial(it) } ?: extractMaterial(text),
@@ -92,7 +102,8 @@ object YarnLabelParser {
         "wash", "care", "lavado", "lavar", "machine", "hand", "iron", "dry", "tumble", "bleach",
         "oeko", "tex", "gauge", "tension", "muestra", "amostra", "composition", "composición",
         "composição", "meters", "metres", "metros", "grams", "gramos", "gramas", "barcode",
-        "www", "http", "https", "approx", "aprox"
+        "www", "http", "https", "approx", "aprox",
+        "standard", "confidence", "textiles", "tested", "harmful", "substances", "hohenstein", "certified"
     )
 
     // Weight and fibre words: fine inside a name ("Merino Bliss", "Perfect DK") but a line
@@ -120,7 +131,7 @@ object YarnLabelParser {
         word.lowercase().trim { !it.isLetterOrDigit() }
 
     private fun words(line: String): List<String> =
-        line.split(Regex("[\\s/|·•,;:]+")).map { normalizeWord(it) }.filter { it.isNotEmpty() }
+        line.split(Regex("[\\s/|·•,;:\\-]+")).map { normalizeWord(it) }.filter { it.isNotEmpty() }
 
     // Field words, also when OCR dropped or changed a letter ("NITTING" from "knitting",
     // "Neede" from "needle"): a word of 5+ letters within one edit of a field word.
@@ -312,7 +323,25 @@ object YarnLabelParser {
     // "Colour: UC1000", "Shade 24", "Cor nº 0451" — or, when the keyword is a caption on its
     // own line ("Colour:" above "LH-SHI-01", LindeHobby Shine 2026-11-13), the first code on
     // the next line. Never barcode digits, never a weight or length ("Color 50g").
-    private fun extractColorCode(text: String, lines: List<OcrLine>): String? {
+    private class ColourPick(val code: String?, val name: String? = null, val usedLines: List<OcrLine> = emptyList())
+
+    // Under the code, a colour name is often printed ("UC1000" / "Light Grey Heather")
+    private fun colourNameBelow(codeLine: OcrLine, lines: List<OcrLine>): OcrLine? {
+        if (!codeLine.hasBox) return null
+        val bottom = codeLine.top + codeLine.heightPx
+        val next = lines.filter { o ->
+            o !== codeLine && o.hasBox && o.top >= codeLine.top + codeLine.heightPx / 2 &&
+                o.top <= bottom + codeLine.heightPx * 2 &&
+                minOf(o.right, codeLine.right) - maxOf(o.left, codeLine.left) > 0
+        }.minByOrNull { it.top } ?: return null
+        val t = next.text.trim()
+        val ws = words(t)
+        val ok = t.none { it.isDigit() } && t.length in 3..30 && ws.size in 1..4 &&
+            ws.none { isFieldWord(it) || it in sentenceWords } && !measurement.containsMatchIn(t)
+        return next.takeIf { ok }
+    }
+
+    private fun extractColorCode(text: String, lines: List<OcrLine>): ColourPick {
         val pattern = Regex(
             """(?im)\b$colourKeyword\b\.?[ \t]*(?:code|n[º°o]\.?|num\.?|nr\.?|#)?[ \t]*[:.\-]?[ \t]*(?:([A-Za-zÀ-ÿ]{2,20})[ \t]+)?($codeToken|[A-Z]{1,3}[ \t]\d{1,6})\b(?![ \t]*(?:g|gr|m|mm|cm|%|oz|yds?)\b)"""
         )
@@ -322,7 +351,11 @@ object YarnLabelParser {
             .filter { m -> m.groupValues[1].isEmpty() || !isFieldWord(normalizeWord(m.groupValues[1])) }
             .map { it.groupValues[2].replace(Regex("[ \t]"), "").uppercase() }
             .firstOrNull { isCode(it) }
-            ?.let { return it }
+            ?.let { code ->
+                val line = lines.firstOrNull { l -> l.text.uppercase().replace(" ", "").contains(code) }
+                val nameLine = line?.let { colourNameBelow(it, lines) }
+                return ColourPick(code, nameLine?.text?.trim(), listOfNotNull(line, nameLine))
+            }
 
         // Caption line: only the keyword, maybe with a neighbouring caption ("Colour: Dyelot")
         val caption = Regex("""(?i)^\s*${colourKeyword}s?\s*(?:code|n[º°o]\.?)?\s*:?\s*(?:(?:dye\s*)?lot\w*\s*:?)?\s*$""")
@@ -347,7 +380,10 @@ object YarnLabelParser {
                 val t = o.text.trim()
                 if (otherCaption.matches(t) || isBarcodePiece(t)) continue
                 if (measurement.containsMatchIn(t)) break
-                codeAtStart(t)?.let { return it }
+                codeAtStart(t)?.let { code ->
+                    val nameLine = colourNameBelow(o, lines)
+                    return ColourPick(code, nameLine?.text?.trim(), listOfNotNull(cap, o, nameLine))
+                }
                 break
             }
         }
@@ -364,11 +400,11 @@ object YarnLabelParser {
                 // A weight or length ("175m", "50g") is not a code
                 if (measurement.containsMatchIn(next)) break
                 val first = Regex(codeToken).find(next.uppercase())?.value
-                if (first != null && isCode(first) && next.uppercase().startsWith(first)) return first
+                if (first != null && isCode(first) && next.uppercase().startsWith(first)) return ColourPick(first)
                 break
             }
         }
-        return null
+        return ColourPick(null)
     }
 
     // ---------------------------------------------------------------- material

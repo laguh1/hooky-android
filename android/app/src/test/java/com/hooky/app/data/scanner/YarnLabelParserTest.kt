@@ -336,4 +336,48 @@ class YarnLabelParserTest {
         )
         assertEquals("LH-SHI-01", YarnLabelParser.parse(withPiece.joinToString("\n") { it.text }, withPiece).colorCode)
     }
+
+    // Utopia Crafts Perfect DK on the S22 (2026-11-13 15:55), exact ML Kit lines with boxes.
+    // The gold script "Utopia Crafts" logo is not read at all.
+    private fun bx(text: String, h: Int, block: Int, left: Int, right: Int, top: Int) = OcrLine(text, h, block, left, top, right)
+
+    private val utopiaFront = listOf(
+        bx("PERFECT", 307, 0, 870, 2120, 1348),
+        bx("DK", 219, 0, 1232, 1671, 1728),
+    )
+    private val utopiaBack = listOf(
+        bx("100%Acrylic", 525, 0, 988, 1137, 1337), bx("4mm", 109, 1, 1132, 1178, 1313),
+        bx("8", 14, 2, 1235, 1283, 1370), bx("UK", 30, 2, 1234, 1282, 1307),
+        bx("Color", 85, 3, 1176, 1393, 3012), bx("OEKO-TEX®", 283, 4, 1577, 1652, 1401),
+        bx("UC1000", 70, 5, 1131, 1450, 3142), bx("STANDARD 100", 327, 6, 1661, 1740, 1401),
+        bx("cONFIDENCE IN TEXTILES", 290, 7, 1633, 1684, 1412),
+        bx("20.HTR.23732 HOHENSTEIN HTTI", 373, 8, 1716, 1776, 1398),
+        bx("5\" 060967 564095", 88, 9, 1182, 1955, 2856), bx("Light Grey Heather", 90, 10, 905, 1679, 3260),
+        bx("om/standard100", 159, 11, 1779, 1829, 1384), bx("Tested for harmful substances.", 271, 11, 1754, 1807, 1395),
+        bx("www.oeko- tex.com", 164, 11, 1799, 1838, 1513), bx("100 gr- 300 m", 722, 12, 1896, 2044, 1136),
+        bx("Lot", 71, 13, 1900, 2029, 3031), bx("MADE IN TURKEY", 697, 14, 2037, 2149, 1142),
+        bx("1210", 79, 15, 1865, 2067, 3147),
+    )
+
+    private fun parseLines(lines: List<OcrLine>) = YarnLabelParser.parse(lines.joinToString("\n") { it.text }, lines)
+
+    @Test
+    fun utopia_unreadableScriptLogo_nameNotBrand() {
+        val r = parseLines(utopiaFront)
+        assertEquals("Perfect DK", r.name)
+        assertNull(r.brand) // empty beats wrong ("Perfect")
+    }
+
+    @Test
+    fun utopia_back_colourCodeAndNameBelow_certificateNotAName() {
+        val r = parseLines(utopiaBack)
+        assertEquals("UC1000", r.colorCode)
+        assertEquals("Light Grey Heather", r.colorName)
+        assertEquals("100", r.ballWeightG)
+        assertEquals("300", r.ballLengthM)
+        assertEquals("100% Acrylic", r.materialComposition)
+        val merged = parseLines(utopiaFront).mergeWith(r)
+        assertEquals("Perfect DK", merged.name)
+        assertNull(merged.brand)
+    }
 }
