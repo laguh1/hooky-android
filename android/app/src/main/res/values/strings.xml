@@ -654,7 +654,10 @@
     <string name="settings_backup_import_title">Import backup</string>
     <string name="settings_backup_import_subtitle">Replaces current data with backup contents</string>
     <string name="settings_backup_share_title">Save Hooky backup</string>
-    <string name="settings_backup_import_done">%d items restored successfully</string>
+    <plurals name="settings_backup_import_done">
+        <item quantity="one">%d item restored successfully</item>
+        <item quantity="other">%d items restored successfully</item>
+    </plurals>
     <string name="settings_backup_export_choice">Save the backup file on this phone (Downloads, Drive…) or share it (email, WhatsApp…)?</string>
     <string name="settings_backup_save_to_phone">Save to phone</string>
     <string name="settings_backup_share">Share</string>
@@ -817,4 +820,14 @@
     <string name="settings_brand_mark_sub_pro">Turn off to show only your brand</string>
     <string name="share_card_via">via Hooky App</string>
     <string name="reports_revenue_split">Sold %1$s · Still to sell %2$s</string>
+    <!-- 1.12: filter-specific empty states -->
+    <string name="piece_empty_due_title">No deliveries scheduled</string>
+    <string name="piece_empty_due_subtitle">Add a delivery date to a piece in Edit.</string>
+    <string name="piece_empty_filter_title">No pieces here</string>
+    <string name="piece_empty_filter_subtitle">No pieces match this filter.</string>
+    <!-- 1.12: share card shows yarn and hook instead of time and rows -->
+    <string name="share_card_yarn">Yarn</string>
+    <string name="share_card_yarn_brand">Yarn · %1$s</string>
+    <string name="share_card_hook">Hook</string>
+    <string name="share_card_needles">Needles</string>
 </resources>

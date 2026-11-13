@@ -236,7 +236,17 @@ fun PieceListScreen(
                 }
 
                 uiState.pieces.isEmpty() -> {
-                    PieceEmptyState()
+                    // Only "no pieces at all" invites adding a first piece; an empty filter
+                    // or search says so (1.11 showed "Add your first piece" on an empty Entregas).
+                    when {
+                        uiState.selectedFilter == PieceFilter.DUE -> PieceEmptyState(
+                            R.string.piece_empty_due_title, R.string.piece_empty_due_subtitle)
+                        uiState.selectedFilter != PieceFilter.ALL -> PieceEmptyState(
+                            R.string.piece_empty_filter_title, R.string.piece_empty_filter_subtitle)
+                        uiState.searchQuery.isNotBlank() -> PieceEmptyState(
+                            R.string.search_no_results, null)
+                        else -> PieceEmptyState()
+                    }
                 }
 
                 else -> {
@@ -371,7 +381,10 @@ private fun PieceGridCard(
 }
 
 @Composable
-private fun PieceEmptyState() {
+private fun PieceEmptyState(
+    @androidx.annotation.StringRes titleRes: Int = R.string.piece_empty_title,
+    @androidx.annotation.StringRes subtitleRes: Int? = R.string.piece_empty_subtitle,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -397,15 +410,17 @@ private fun PieceEmptyState() {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.piece_empty_title),
+                text = stringResource(titleRes),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Text(
-                text = stringResource(R.string.piece_empty_subtitle),
+            if (subtitleRes != null) Text(
+                text = stringResource(subtitleRes),
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondary
+                color = TextSecondary,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }

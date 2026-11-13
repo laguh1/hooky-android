@@ -649,7 +649,10 @@
     <string name="settings_backup_import_title">Importar cópia de segurança</string>
     <string name="settings_backup_import_subtitle">Substitui os dados atuais pelo conteúdo do backup</string>
     <string name="settings_backup_share_title">Salvar cópia de segurança do Hooky</string>
-    <string name="settings_backup_import_done">%d itens restaurados com sucesso</string>
+    <plurals name="settings_backup_import_done">
+        <item quantity="one">%d item restaurado com sucesso</item>
+        <item quantity="other">%d itens restaurados com sucesso</item>
+    </plurals>
     <string name="settings_backup_export_choice">Salvar o backup neste celular (Downloads, Drive…) ou compartilhar (e-mail, WhatsApp…)?</string>
     <string name="settings_backup_save_to_phone">Salvar no celular</string>
     <string name="settings_backup_share">Compartilhar</string>
@@ -806,4 +809,14 @@
     <string name="settings_brand_mark_sub_pro">Desligue para mostrar só a sua marca</string>
     <string name="share_card_via">via Hooky App</string>
     <string name="reports_revenue_split">Vendido %1$s · A vender %2$s</string>
+    <!-- 1.12: filter-specific empty states -->
+    <string name="piece_empty_due_title">Nenhuma entrega marcada</string>
+    <string name="piece_empty_due_subtitle">Adicione uma data de entrega a uma peça em Editar.</string>
+    <string name="piece_empty_filter_title">Nenhuma peça aqui</string>
+    <string name="piece_empty_filter_subtitle">Nenhuma peça corresponde a este filtro.</string>
+    <!-- 1.12: share card shows yarn and hook instead of time and rows -->
+    <string name="share_card_yarn">Fio</string>
+    <string name="share_card_yarn_brand">Fio · %1$s</string>
+    <string name="share_card_hook">Agulha</string>
+    <string name="share_card_needles">Agulha</string>
 </resources>

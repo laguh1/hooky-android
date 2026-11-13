@@ -42,6 +42,9 @@ data class PieceDetailUiState(
     val yarnColors: Map<String, Int> = emptyMap(),
     val stitchNames: Map<String, String> = emptyMap(),
     val needleNames: Map<String, String> = emptyMap(),
+    // For the share card: yarn name + brand, and hook/needle size by ID
+    val shareYarns: Map<String, com.hooky.app.ui.share.ShareCardYarn> = emptyMap(),
+    val shareTools: Map<String, com.hooky.app.ui.share.ShareCardTool> = emptyMap(),
     val isPremium: Boolean = false,
     val counters: List<CounterEntity> = emptyList(),
     val navigateToClone: Int? = null,
@@ -128,7 +131,8 @@ class PieceDetailViewModel @Inject constructor(
                         yarn.yarnId to "${yarn.name}${yarn.brand?.let { " (${it})" } ?: ""}"
                     }
                     val colors = yarns.mapNotNull { y -> YarnColor.effective(y.colorHex, y.color)?.let { y.yarnId to it } }.toMap()
-                    _uiState.update { it.copy(yarnNames = map, yarnColors = colors) }
+                    val share = yarns.associate { y -> y.yarnId to com.hooky.app.ui.share.ShareCardYarn(y.name, y.brand?.takeIf { it.isNotBlank() }) }
+                    _uiState.update { it.copy(yarnNames = map, yarnColors = colors, shareYarns = share) }
                 }
         }
 
@@ -150,7 +154,12 @@ class PieceDetailViewModel @Inject constructor(
                     val map = needles.associate { needle ->
                         needle.needleId to "${needle.name}${needle.sizeMm?.let { " ${it}mm" } ?: ""}"
                     }
-                    _uiState.update { it.copy(needleNames = map) }
+                    val tools = needles.mapNotNull { n ->
+                        val size = n.sizeMm ?: return@mapNotNull null
+                        val type = runCatching { com.hooky.app.domain.model.enums.NeedleType.valueOf(n.type) }.getOrNull()
+                        n.needleId to com.hooky.app.ui.share.ShareCardTool(size, type)
+                    }.toMap()
+                    _uiState.update { it.copy(needleNames = map, shareTools = tools) }
                 }
         }
 

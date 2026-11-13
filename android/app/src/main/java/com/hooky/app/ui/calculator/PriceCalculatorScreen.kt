@@ -145,7 +145,7 @@ fun PriceCalculatorScreen(
                         OutlinedTextField(
                             value = uiState.materialCost,
                             onValueChange = { viewModel.onAction(CalculatorAction.MaterialCostChanged(it)) },
-                            placeholder = { Text("0.00", color = TextMuted) },
+                            placeholder = { Text(String.format(java.util.Locale.getDefault(), "%.2f", 0.0), color = TextMuted) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -165,7 +165,7 @@ fun PriceCalculatorScreen(
                         OutlinedTextField(
                             value = uiState.workHours,
                             onValueChange = { viewModel.onAction(CalculatorAction.WorkHoursChanged(it)) },
-                            placeholder = { Text("0.0", color = TextMuted) },
+                            placeholder = { Text(String.format(java.util.Locale.getDefault(), "%.1f", 0.0), color = TextMuted) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),
@@ -185,7 +185,7 @@ fun PriceCalculatorScreen(
                         OutlinedTextField(
                             value = uiState.laborRate,
                             onValueChange = { viewModel.onAction(CalculatorAction.LaborRateChanged(it)) },
-                            placeholder = { Text("8.00", color = TextMuted) },
+                            placeholder = { Text(String.format(java.util.Locale.getDefault(), "%.2f", 8.0), color = TextMuted) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             shape = RoundedCornerShape(10.dp),

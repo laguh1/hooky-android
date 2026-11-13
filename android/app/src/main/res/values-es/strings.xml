@@ -649,7 +649,10 @@
     <string name="settings_backup_import_title">Importar copia de seguridad</string>
     <string name="settings_backup_import_subtitle">Reemplaza los datos actuales con el contenido de la copia</string>
     <string name="settings_backup_share_title">Guardar copia de seguridad de Hooky</string>
-    <string name="settings_backup_import_done">%d elementos restaurados correctamente</string>
+    <plurals name="settings_backup_import_done">
+        <item quantity="one">%d elemento restaurado correctamente</item>
+        <item quantity="other">%d elementos restaurados correctamente</item>
+    </plurals>
     <string name="settings_backup_export_choice">¿Guardar la copia en este móvil (Descargas, Drive…) o compartirla (email, WhatsApp…)?</string>
     <string name="settings_backup_save_to_phone">Guardar en el móvil</string>
     <string name="settings_backup_share">Compartir</string>
@@ -806,4 +809,14 @@
     <string name="settings_brand_mark_sub_pro">Desactívalo para mostrar solo tu marca</string>
     <string name="share_card_via">via Hooky App</string>
     <string name="reports_revenue_split">Vendido %1$s · Por vender %2$s</string>
+    <!-- 1.12: filter-specific empty states -->
+    <string name="piece_empty_due_title">No hay entregas programadas</string>
+    <string name="piece_empty_due_subtitle">Añade una fecha de entrega a una pieza en Editar.</string>
+    <string name="piece_empty_filter_title">No hay piezas aquí</string>
+    <string name="piece_empty_filter_subtitle">Ninguna pieza coincide con este filtro.</string>
+    <!-- 1.12: share card shows yarn and hook instead of time and rows -->
+    <string name="share_card_yarn">Hilo</string>
+    <string name="share_card_yarn_brand">Hilo · %1$s</string>
+    <string name="share_card_hook">Ganchillo</string>
+    <string name="share_card_needles">Agujas</string>
 </resources>

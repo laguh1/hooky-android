@@ -13,27 +13,54 @@ import android.graphics.Typeface
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.hooky.app.R
+import com.hooky.app.domain.model.enums.NeedleType
 import com.hooky.app.util.MakerBrand
 import com.hooky.app.util.decodeSampledBitmapFromFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/** A yarn as the share card shows it: name big, "Yarn · brand" small. */
+data class ShareCardYarn(val name: String, val brand: String?)
+
+/** A hook or needle size for the share card; [type] picks the label (Hook / Needles). */
+data class ShareCardTool(val sizeMm: Float, val type: NeedleType?)
+
 object ShareCardGenerator {
+
+    // Tools that set the piece's gauge; tapestry and cable needles never describe the work.
+    private val gaugeTools = setOf(NeedleType.CROCHET_HOOK, NeedleType.KNITTING_NEEDLE, NeedleType.DPN, NeedleType.CIRCULAR)
+
+    /**
+     * The hook/needle to show: the first linked one that sets the gauge, then any linked one,
+     * then the piece's own hook size (often empty, so the linked needles come first).
+     */
+    fun pickTool(linked: List<ShareCardTool>, pieceHookSizeMm: Float?): ShareCardTool? =
+        linked.firstOrNull { it.type in gaugeTools }
+            ?: linked.firstOrNull { it.type != NeedleType.TAPESTRY_NEEDLE && it.type != NeedleType.CABLE_NEEDLE }
+            ?: pieceHookSizeMm?.takeIf { it > 0f }?.let { ShareCardTool(it, NeedleType.CROCHET_HOOK) }
+
+    /** "4,5 mm" in PT/ES, "4.5 mm" in EN; no ".0" on whole sizes. */
+    fun formatSize(mm: Float, locale: java.util.Locale = java.util.Locale.getDefault()): String {
+        val nf = java.text.NumberFormat.getNumberInstance(locale)
+        nf.maximumFractionDigits = 2
+        nf.isGroupingUsed = false
+        return nf.format(mm.toDouble()) + " mm"
+    }
 
     suspend fun generateAndShare(
         context: Context,
         pieceName: String,
         pieceType: String?,
         destination: String?,
-        workHours: Float?,
-        rowCount: Int,
+        yarns: List<ShareCardYarn>,
+        tool: ShareCardTool?,
         photoPath: String?,
         isPremium: Boolean = false
     ): Intent? = withContext(Dispatchers.IO) {
         try {
             val brand = MakerBrand.load(context)
-            val bitmap = createCard(context, pieceName, pieceType, destination, workHours, rowCount, photoPath, brand, isPremium)
+            val bitmap = createCard(context, pieceName, pieceType, destination, yarns, tool, photoPath, brand, isPremium)
             val uri = saveToFilesDir(context, bitmap) ?: return@withContext null
             Intent(Intent.ACTION_SEND).apply {
                 type = "image/jpeg"
@@ -50,8 +77,8 @@ object ShareCardGenerator {
         pieceName: String,
         pieceType: String?,
         destination: String?,
-        workHours: Float?,
-        rowCount: Int,
+        yarns: List<ShareCardYarn>,
+        tool: ShareCardTool?,
         photoPath: String?,
         brand: MakerBrand,
         isPremium: Boolean
@@ -136,18 +163,36 @@ object ShareCardGenerator {
             textSize = 34f
             isAntiAlias = true
         }
-        var statX = textX
-        if (workHours != null && workHours > 0f) {
-            val hoursStr = com.hooky.app.util.formatWorkTime(workHours)
-            val label = context.getString(R.string.share_card_work_time)
-            canvas.drawText(hoursStr, statX, y, statBoldPaint)
-            canvas.drawText(label, statX, y + 44f, statLabelPaint)
-            // ES/PT labels are wider than "Work time", so space by the text
-            statX += maxOf(280f, statBoldPaint.measureText(hoursStr) + 60f, statLabelPaint.measureText(label) + 60f)
+        // Stats: the yarn (what buyers and followers ask about) and the hook/needle size.
+        // Replaced work time + rows in 1.12 (user, 2026-11-12); a stat with no data is hidden.
+        val rightEdge = size - 52f
+        var toolW = 0f
+        var toolValue: String? = null
+        var toolLabel: String? = null
+        if (tool != null) {
+            toolValue = formatSize(tool.sizeMm)
+            toolLabel = context.getString(
+                if (tool.type == NeedleType.CROCHET_HOOK || tool.type == null) R.string.share_card_hook else R.string.share_card_needles
+            )
+            toolW = maxOf(statBoldPaint.measureText(toolValue), statLabelPaint.measureText(toolLabel))
         }
-        if (rowCount > 0) {
-            canvas.drawText("$rowCount", statX, y, statBoldPaint)
-            canvas.drawText(context.getString(R.string.share_card_rows), statX, y + 44f, statLabelPaint)
+        val firstYarn = yarns.firstOrNull()
+        if (firstYarn != null) {
+            val more = if (yarns.size > 1) " +${yarns.size - 1}" else ""
+            val yarnLabel = firstYarn.brand?.let { context.getString(R.string.share_card_yarn_brand, it) }
+                ?: context.getString(R.string.share_card_yarn)
+            val maxW = (if (toolValue != null) rightEdge - toolW - 60f else rightEdge) - textX
+            val yarnPaint = Paint(statBoldPaint)
+            // Long yarn names shrink a little before being cut with "…"
+            while (yarnPaint.measureText(firstYarn.name + more) > maxW && yarnPaint.textSize > 42f) yarnPaint.textSize -= 2f
+            canvas.drawText(ellipsize(firstYarn.name, more, yarnPaint, maxW), textX, y, yarnPaint)
+            canvas.drawText(ellipsize(yarnLabel, "", statLabelPaint, maxW), textX, y + 44f, statLabelPaint)
+        }
+        if (toolValue != null && toolLabel != null) {
+            // Right-aligned when next to a yarn, otherwise in the yarn's place
+            val x = if (firstYarn != null) rightEdge - toolW else textX
+            canvas.drawText(toolValue, x, y, statBoldPaint)
+            canvas.drawText(toolLabel, x, y + 44f, statLabelPaint)
         }
 
         val margin = 44
@@ -213,6 +258,14 @@ object ShareCardGenerator {
         }
 
         return bitmap
+    }
+
+    // Cuts [text] with "…" so text + suffix fits [maxW]; the suffix ("+2") is always kept.
+    private fun ellipsize(text: String, suffix: String, paint: Paint, maxW: Float): String {
+        if (paint.measureText(text + suffix) <= maxW) return text + suffix
+        var t = text
+        while (t.length > 1 && paint.measureText(t.trimEnd() + "…" + suffix) > maxW) t = t.dropLast(1)
+        return t.trimEnd() + "…" + suffix
     }
 
     private fun saveToFilesDir(context: Context, bitmap: Bitmap): Uri? = try {

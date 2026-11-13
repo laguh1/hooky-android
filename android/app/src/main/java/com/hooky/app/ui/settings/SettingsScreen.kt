@@ -511,7 +511,7 @@ fun SettingsScreen(
                         viewModel.clearBackupState()
                     }
                     Text(
-                        text = stringResource(R.string.settings_backup_import_done, s.count),
+                        text = androidx.compose.ui.res.pluralStringResource(R.plurals.settings_backup_import_done, s.count, s.count),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)

@@ -187,6 +187,8 @@ fun PieceDetailScreen(
                     yarnColors = uiState.yarnColors,
                     stitchNames = uiState.stitchNames,
                     needleNames = uiState.needleNames,
+                    shareYarns = uiState.shareYarns,
+                    shareTools = uiState.shareTools,
                     isPremium = uiState.isPremium,
                     onNavigateToPro = onNavigateToPro,
                     counters = uiState.counters,
@@ -242,6 +244,8 @@ private fun PieceDetailContent(
     yarnColors: Map<String, Int>,
     stitchNames: Map<String, String>,
     needleNames: Map<String, String>,
+    shareYarns: Map<String, com.hooky.app.ui.share.ShareCardYarn>,
+    shareTools: Map<String, com.hooky.app.ui.share.ShareCardTool>,
     isPremium: Boolean,
     onNavigateToPro: () -> Unit,
     counters: List<CounterEntity>,
@@ -577,8 +581,8 @@ private fun PieceDetailContent(
                             pieceName = piece.name,
                             pieceType = typeName,
                             destination = destBaseName,
-                            workHours = piece.workHours,
-                            rowCount = piece.rowCount,
+                            yarns = yarnsUsed.mapNotNull { shareYarns[it.yarnId] },
+                            tool = ShareCardGenerator.pickTool(needlesUsed.mapNotNull { shareTools[it] }, piece.hookSizeMm),
                             photoPath = photos.firstOrNull(),
                             isPremium = isPremium
                         )
